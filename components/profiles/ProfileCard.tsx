@@ -1,157 +1,181 @@
-"use client";
-import { useState } from "react";
+'use client'
 
-interface Profile {
-  id: string;
-  lookingFor: "bride" | "groom";
-  name: string;
-  age: number;
-  height: string;
-  location: string;
-  education: string;
-  profession: string;
-  monthlyIncome?: number;
-  religion: string;
-  maritalStatus: string;
-  photoUrl?: string;
-  isVerified: boolean;
-  isPremium: boolean;
-  isPhotoVisible: boolean;
-  lastActive: string;
-  managedBy: string;
-  familyType: string;
-  religiousPractice: string;
+import { Profile } from '@/types/profile'
+import Link from 'next/link'
+import { Heart, Eye } from 'lucide-react'
+
+interface ProfileCardProps {
+  profile: Profile
 }
 
-export default function ProfileCard({ profile }: { profile: Profile }) {
-  const [showContact, setShowContact] = useState(false);
+export default function ProfileCard({ profile }: ProfileCardProps) {
+  // Generate initials for avatar
+  const initials = profile.full_name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+
+  // Determine if profile is "premium" (for demo, every 3rd profile)
+  const isPremium = profile.id % 3 === 0
+  
+  // Determine if profile is "verified" (for demo, profiles with even IDs)
+  const isVerified = profile.id % 2 === 0
+
+  // Gender emoji
+  const genderEmoji = profile.gender === 'Male' ? '🤵' : '👰'
+
+  // Calculate how long ago profile was created
+  const getActiveStatus = (createdAt: string) => {
+    const now = new Date()
+    const created = new Date(createdAt)
+    const diffMs = now.getTime() - created.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
+
+    if (diffMins < 60) return `${diffMins}m ago`
+    if (diffHours < 24) return `${diffHours}h ago`
+    if (diffDays === 1) return 'Yesterday'
+    if (diffDays < 7) return `${diffDays}d ago`
+    return 'Active recently'
+  }
+
+  // Format location display
+  const locationDisplay = profile.location_detail 
+    ? `${profile.location_detail}, ${profile.city || 'Bangladesh'}`
+    : profile.city || 'Bangladesh'
 
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-200 relative group hover:scale-[1.02]">
-      
-      {/* Badges */}
-      {profile.isPremium && (
-        <div className="absolute top-2 right-2 z-20">
-          <div className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white px-2.5 py-1 rounded-full text-[10px] font-black shadow-lg">
+    <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200">
+      {/* Badges Row */}
+      <div className="flex items-center gap-2 p-3 bg-gray-50 border-b border-gray-200">
+        {isPremium && (
+          <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded flex items-center gap-1">
             ⭐ PREMIUM
-          </div>
-        </div>
-      )}
-      {profile.isVerified && (
-        <div className="absolute top-2 left-2 z-20">
-          <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-2.5 py-1 rounded-full text-[10px] font-black shadow-lg">
-            ✓ VERIFIED
-          </div>
-        </div>
-      )}
-
-      {/* Photo Section - More Compact */}
-      <div className="relative bg-gradient-to-br from-rose-100 via-pink-100 to-orange-100 h-56 overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_50%_120%,#ff69b4,transparent_50%)]"></div>
-        
-        {profile.isPhotoVisible && profile.photoUrl ? (
-          <img 
-            src={profile.photoUrl} 
-            alt={profile.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center">
-            <div className="w-20 h-20 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center mb-2 shadow-lg">
-              <span className="text-4xl">{profile.lookingFor === "bride" ? "👰" : "🤵"}</span>
-            </div>
-            <p className="text-xs font-bold text-gray-600 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full">
-              Photo on request
-            </p>
-          </div>
+          </span>
         )}
-        
-        {/* Active - Compact */}
-        <div className="absolute bottom-2 left-2">
-          <div className="bg-white/95 backdrop-blur px-2 py-1 rounded-full text-[10px] font-bold text-gray-700 shadow flex items-center gap-1">
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-            {profile.lastActive}
+        {isVerified && (
+          <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded flex items-center gap-1">
+            ✓ VERIFIED
+          </span>
+        )}
+      </div>
+
+      {/* Photo Section */}
+      <div className="relative">
+        <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-rose-50 to-pink-50">
+          {/* Avatar Circle - NOW WITH PHOTO SUPPORT */}
+          <div className="flex-shrink-0">
+            {profile.photo_url ? (
+              <img 
+                src={profile.photo_url} 
+                alt={profile.full_name}
+                className="w-16 h-16 rounded-full object-cover shadow-md border-2 border-white"
+              />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white text-2xl font-bold shadow-md">
+                {initials}
+              </div>
+            )}
+          </div>
+
+          {/* Info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 text-2xl mb-1">
+              <span>{genderEmoji}</span>
+              <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded">
+                {profile.photo_url ? 'Photo available' : 'Photo on request'}
+              </span>
+            </div>
+            <p className="text-xs text-gray-500">{getActiveStatus(profile.created_at)}</p>
           </div>
         </div>
       </div>
 
-      {/* Content - Super Compact */}
-      <div className="p-3.5">
-        
-        {/* Name & Info */}
-        <div className="mb-3">
-          <h3 className="text-base font-black text-gray-900 mb-0.5 leading-tight">{profile.name}</h3>
-          <p className="text-[10px] text-gray-500 font-semibold mb-2">By {profile.managedBy}</p>
+      {/* Profile Details */}
+      <div className="p-4">
+        {/* Name */}
+        <h3 className="text-lg font-bold text-gray-900 mb-1">
+          {profile.full_name}
+        </h3>
 
-          <div className="flex flex-wrap gap-1.5">
-            <span className="bg-gradient-to-r from-rose-500 to-pink-500 text-white px-2 py-0.5 rounded-md text-[10px] font-bold">
-              {profile.age}y
-            </span>
-            <span className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-2 py-0.5 rounded-md text-[10px] font-bold">
-              {profile.height}
-            </span>
-            <span className="bg-gradient-to-r from-purple-500 to-violet-500 text-white px-2 py-0.5 rounded-md text-[10px] font-bold">
-              {profile.maritalStatus}
-            </span>
-          </div>
+        {/* Managed By */}
+        <p className="text-xs text-gray-500 mb-3">By {profile.managed_by || 'Self'}</p>
+
+        {/* Quick Stats */}
+        <div className="flex items-center gap-2 text-sm text-gray-700 mb-4">
+          <span className="font-medium">{profile.age ? `${profile.age}y` : 'N/A'}</span>
+          <span>•</span>
+          <span>{profile.height || 'N/A'}</span>
+          <span>•</span>
+          <span>{profile.marital_status || 'Never married'}</span>
         </div>
 
-        {/* Details - Compact Grid */}
-        <div className="space-y-2 mb-3 text-[11px]">
-          <div className="flex items-center gap-1.5 bg-gradient-to-r from-gray-50 to-white p-2 rounded-lg">
+        {/* Details with Emojis - REAL DATA */}
+        <div className="space-y-2 text-sm mb-4">
+          <div className="flex items-start gap-2">
             <span>📍</span>
-            <span className="font-bold text-gray-900">{profile.location}</span>
+            <span className="text-gray-700">{locationDisplay}</span>
           </div>
-          <div className="grid grid-cols-2 gap-1.5">
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-2 rounded-lg">
-              <p className="text-[9px] text-gray-500 font-bold mb-0.5">🎓 Education</p>
-              <p className="font-black text-gray-900 text-[10px] leading-tight">{profile.education}</p>
+          
+          {profile.education && (
+            <div className="flex items-start gap-2">
+              <span>🎓</span>
+              <div className="flex-1">
+                <p className="text-xs text-gray-500">Education</p>
+                <p className="text-gray-700">{profile.education}</p>
+              </div>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-2 rounded-lg">
-              <p className="text-[9px] text-gray-500 font-bold mb-0.5">💼 Work</p>
-              <p className="font-black text-gray-900 text-[10px] leading-tight">{profile.profession}</p>
+          )}
+          
+          {profile.occupation && (
+            <div className="flex items-start gap-2">
+              <span>💼</span>
+              <div className="flex-1">
+                <p className="text-xs text-gray-500">Work</p>
+                <p className="text-gray-700">{profile.occupation}</p>
+              </div>
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-1.5">
-            <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-2 rounded-lg">
-              <p className="text-[9px] text-gray-500 font-bold mb-0.5">👨‍👩‍👧 Family</p>
-              <p className="font-black text-gray-900 text-[10px]">{profile.familyType}</p>
+          )}
+          
+          {profile.family_type && (
+            <div className="flex items-start gap-2">
+              <span>👨‍👩‍👧</span>
+              <div className="flex-1">
+                <p className="text-xs text-gray-500">Family</p>
+                <p className="text-gray-700">{profile.family_type}</p>
+              </div>
             </div>
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-2 rounded-lg">
-              <p className="text-[9px] text-gray-500 font-bold mb-0.5">🕌 Religious</p>
-              <p className="font-black text-gray-900 text-[10px]">{profile.religiousPractice}</p>
+          )}
+          
+          {profile.religious_level && (
+            <div className="flex items-start gap-2">
+              <span>🕌</span>
+              <div className="flex-1">
+                <p className="text-xs text-gray-500">Religious</p>
+                <p className="text-gray-700">{profile.religious_level}</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Buttons - Compact */}
-        <div className="grid grid-cols-2 gap-2">
-          <button 
-            onClick={() => setShowContact(!showContact)}
-            className="bg-gradient-to-r from-rose-500 via-pink-500 to-red-500 text-white py-2.5 px-3 rounded-xl font-bold text-[11px] hover:shadow-lg transition-all transform hover:-translate-y-0.5"
-          >
-            💌 Interest
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          <button className="flex-1 bg-rose-500 hover:bg-rose-600 text-white text-sm font-medium py-2 px-4 rounded transition-colors flex items-center justify-center gap-2">
+            <Heart className="w-4 h-4" />
+            Interest
           </button>
-          <a 
-            href={`/profile/${profile.id}`}
-            className="bg-gradient-to-r from-gray-100 to-gray-50 text-gray-700 py-2.5 px-3 rounded-xl font-bold text-[11px] hover:shadow-md transition-all border border-gray-200 flex items-center justify-center"
+          <Link 
+            href={`/profiles/${profile.id}`}
+            className="flex-1 border-2 border-rose-500 text-rose-500 hover:bg-rose-50 text-sm font-medium py-2 px-4 rounded transition-colors flex items-center justify-center gap-2"
           >
-            👁️ View
-          </a>
+            <Eye className="w-4 h-4" />
+            View
+          </Link>
         </div>
-
-        {/* Contact */}
-        {showContact && (
-          <div className="mt-2 p-2.5 bg-gradient-to-br from-red-50 to-rose-50 rounded-xl border border-red-200">
-            <p className="text-[10px] font-bold text-red-900 mb-1">📞 Contact Info</p>
-            <p className="text-[9px] text-gray-700 leading-relaxed">
-              {profile.managedBy.toLowerCase() === 'self' 
-                ? 'Details shared after mutual consent.'
-                : 'Details shared after family approval.'}
-            </p>
-          </div>
-        )}
       </div>
     </div>
-  );
+  )
 }

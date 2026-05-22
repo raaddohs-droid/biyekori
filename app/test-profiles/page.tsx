@@ -4,7 +4,7 @@ export default function TestProfiles() {
   const profile1 = {
     id: "1",
     lookingFor: "bride" as const,
-    name: "Ayesha Rahman",
+    full_name: "Ayesha Rahman",
     age: 26,
     height: "5'4\"",
     location: "Dhaka",
