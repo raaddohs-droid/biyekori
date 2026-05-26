@@ -11,6 +11,13 @@ export async function POST(request: NextRequest) {
   try {
     const { identifier, password } = await request.json()
 
+    if (!identifier || !password) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Phone/email and password are required' 
+      }, { status: 400 })
+    }
+
     // Find user by phone or email
     const { data: users, error } = await supabase
       .from('profiles')
@@ -27,8 +34,25 @@ export async function POST(request: NextRequest) {
 
     const user = users[0]
 
-    // Verify password
-    const isValid = await bcrypt.compare(password, user.password)
+    // Check if password exists in database
+    if (!user.password) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Account has no password set. Please contact support.' 
+      }, { status: 401 })
+    }
+
+    // Verify password with bcrypt
+    let isValid = false;
+    try {
+      isValid = await bcrypt.compare(password, user.password);
+    } catch (bcryptError) {
+      console.error('Bcrypt comparison error:', bcryptError);
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Password verification failed. Please try again.' 
+      }, { status: 500 })
+    }
 
     if (!isValid) {
       return NextResponse.json({ 
@@ -57,9 +81,10 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error: any) {
+    console.error('Login error:', error);
     return NextResponse.json({ 
       success: false, 
-      error: error.message || 'Login failed' 
+      error: 'Login failed. Please try again.' 
     }, { status: 500 })
   }
 }
