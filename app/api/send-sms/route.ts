@@ -1,48 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 export async function POST(request: NextRequest) {
   try {
-    const { phone, message } = await request.json()
-
-    console.log('=== SEND SMS DEBUG ===');
-    console.log('Received phone:', phone);
-    console.log('Phone type:', typeof phone);
-    console.log('Received message:', message);
-
-    // Remove + sign only
-    const cleanPhone = phone.replace('+', '')
+    const formData = await request.formData()
+    const file = formData.get('file') as File
     
-    console.log('Clean phone after replace:', cleanPhone);
-
-    const apiKey = process.env.BULKSMS_API_KEY
-    const senderId = process.env.BULKSMS_SENDER_ID
-
-    console.log('API Key exists:', !!apiKey);
-    console.log('Sender ID:', senderId);
-
-    const url = `http://bulksmsbd.net/api/smsapi?api_key=${apiKey}&type=text&number=${cleanPhone}&senderid=${senderId}&message=${encodeURIComponent(message)}`
-
-    console.log('Calling URL:', url);
-
-    const response = await fetch(url)
-    const data = await response.json()
-
-    console.log('BulkSMS Response:', JSON.stringify(data));
-
-    if (data.response_code === 202) {
-      return NextResponse.json({ success: true })
-    } else {
-      console.error('BulkSMS Error:', data);
-      return NextResponse.json({ 
-        success: false, 
-        error: data.error_message || 'SMS sending failed' 
-      }, { status: 400 })
+    if (!file) {
+      return NextResponse.json({ success: false, error: 'No file provided' }, { status: 400 })
     }
-  } catch (error) {
-    console.error('Exception:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: 'Failed to send SMS' 
-    }, { status: 500 })
+
+    // Generate unique filename
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+    
+    // Convert File to Buffer
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+
+    // Upload to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from('profile-photos')
+      .upload(fileName, buffer, {
+        contentType: file.type,
+        upsert: false
+      })
+
+    if (error) {
+      console.error('Upload error:', error)
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 })
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('profile-photos')
+      .getPublicUrl(fileName)
+
+    return NextResponse.json({ success: true, url: publicUrl })
+
+  } catch (error: any) {
+    console.error('Upload exception:', error)
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 })
   }
 }
