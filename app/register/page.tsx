@@ -9,6 +9,7 @@ export default function RegisterPage() {
   
   // Step 1: Photo + Looking For
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
+  const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
   const [lookingFor, setLookingFor] = useState<'bride' | 'groom' | ''>('');
   
   // Step 2: Basic Info
@@ -29,6 +30,16 @@ export default function RegisterPage() {
 
   const handlePhotoSelect = (file: File) => {
     setSelectedPhoto(file);
+  };
+
+  const handleAdditionalPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const newPhotos = [...additionalPhotos, ...files].slice(0, 5); // Max 5 total
+    setAdditionalPhotos(newPhotos);
+  };
+
+  const removeAdditionalPhoto = (index: number) => {
+    setAdditionalPhotos(additionalPhotos.filter((_, i) => i !== index));
   };
 
   const handleSendOtp = async () => {
@@ -82,7 +93,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      // Upload photo to Supabase storage
+      // Upload main photo
       let photoUrl = '';
       if (selectedPhoto) {
         const formData = new FormData();
@@ -96,6 +107,23 @@ export default function RegisterPage() {
         const uploadData = await uploadResponse.json();
         if (uploadData.success) {
           photoUrl = uploadData.url;
+        }
+      }
+
+      // Upload additional photos
+      const additionalPhotoUrls: string[] = [];
+      for (const photo of additionalPhotos) {
+        const formData = new FormData();
+        formData.append('file', photo);
+
+        const uploadResponse = await fetch('/api/upload-photo', {
+          method: 'POST',
+          body: formData
+        });
+
+        const uploadData = await uploadResponse.json();
+        if (uploadData.success) {
+          additionalPhotoUrls.push(uploadData.url);
         }
       }
 
@@ -115,6 +143,7 @@ export default function RegisterPage() {
           looking_for: lookingFor,
           gender: lookingFor === 'bride' ? 'male' : 'female',
           photo_url: photoUrl,
+          additional_photos: additionalPhotoUrls,
           package: 'prottasha',
           phone_verified: true
         })
@@ -165,15 +194,68 @@ export default function RegisterPage() {
         {/* Step 1: Photo + Looking For */}
         {step === 1 && (
           <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-black text-gray-900 mb-6">Upload Your Photo</h2>
+            <h2 className="text-2xl font-black text-gray-900 mb-6">Upload Your Photos</h2>
             
+            {/* Main Photo */}
             <div className="mb-6">
+              <label className="block text-sm font-bold text-gray-900 mb-3">
+                📷 Main Photo (Profile Picture)
+              </label>
               <AIPhotoCropper 
                 onPhotoSelect={handlePhotoSelect}
                 uploadCount={0}
               />
             </div>
 
+            {/* Additional Photos */}
+            <div className="mb-6">
+              <label className="block text-sm font-bold text-gray-900 mb-3">
+                📸 Additional Photos (Optional, 2-5 photos)
+              </label>
+              <p className="text-xs text-gray-600 mb-3">
+                ✨ Add full-body shots, family photos, or hobby photos to get 5x more responses!
+              </p>
+              
+              {/* Photo Grid */}
+              <div className="grid grid-cols-3 gap-3 mb-3">
+                {additionalPhotos.map((photo, index) => (
+                  <div key={index} className="relative aspect-square rounded-lg overflow-hidden border-2 border-rose-200">
+                    <img 
+                      src={URL.createObjectURL(photo)} 
+                      alt={`Photo ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => removeAdditionalPhoto(index)}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold hover:bg-red-600"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                
+                {/* Upload Button */}
+                {additionalPhotos.length < 5 && (
+                  <label className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-rose-500 flex flex-col items-center justify-center cursor-pointer bg-gray-50 hover:bg-rose-50 transition">
+                    <span className="text-3xl text-gray-400">+</span>
+                    <span className="text-xs text-gray-600 mt-1">Add Photo</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleAdditionalPhotoUpload}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
+              
+              <p className="text-xs text-gray-500">
+                {additionalPhotos.length}/5 photos added
+              </p>
+            </div>
+
+            {/* Looking For */}
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-900 mb-3">
                 আপনি খুঁজছেন / You are looking for:

@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
       looking_for,
       gender,
       photo_url,
+      additional_photos,
       package: userPackage
     } = formData;
 
@@ -112,13 +113,14 @@ export async function POST(request: NextRequest) {
           profession,
           phone,
           email,
-          password: hashedPassword, // Hashed password stored
+          password: hashedPassword,
           looking_for,
           gender,
           photo_url,
+          additional_photos: additional_photos || [],
           package: userPackage || 'prottasha',
-          profile_completion: 30, // Basic info completed
-          phone_verified: true, // Already verified via OTP
+          profile_completion: 30,
+          phone_verified: true,
           is_verified: false,
           is_premium: false,
           is_admin: false,
@@ -144,7 +146,8 @@ export async function POST(request: NextRequest) {
         id: newProfile.id,
         full_name: newProfile.full_name,
         email: newProfile.email,
-        phone: newProfile.phone
+        phone: newProfile.phone,
+        total_photos: 1 + (additional_photos?.length || 0)
       }
     });
 
