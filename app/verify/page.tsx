@@ -1,416 +1,262 @@
-'use client'
+"use client";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
-
-export default function VerifyPage() {
-  const router = useRouter()
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+export default function VerifyNIDPage() {
+  const router = useRouter();
+  const [step, setStep] = useState(1);
+  const [frontImage, setFrontImage] = useState<string>('');
+  const [backImage, setBackImage] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<any>(null);
   
-  // Phone verification states
-  const [phone, setPhone] = useState('')
-  const [otp, setOtp] = useState('')
-  const [generatedOTP, setGeneratedOTP] = useState('')
-  const [phoneStep, setPhoneStep] = useState<'input' | 'verify'>('input')
-  const [phoneError, setPhoneError] = useState('')
-  const [phoneLoading, setPhoneLoading] = useState(false)
-  const [phoneVerified, setPhoneVerified] = useState(false)
-  
-  // NID verification states
-  const [nidNumber, setNidNumber] = useState('')
-  const [nidFrontFile, setNidFrontFile] = useState<File | null>(null)
-  const [nidBackFile, setNidBackFile] = useState<File | null>(null)
-  const [nidError, setNidError] = useState('')
-  const [nidLoading, setNidLoading] = useState(false)
-  const [aiMismatches, setAiMismatches] = useState<string[]>([])
-  const [aiVerifying, setAiVerifying] = useState(false)
-  const [nidVerified, setNidVerified] = useState(false)
+  // TODO: Get this from localStorage or API
+  const [userData] = useState({
+    name: 'Test User',
+    dob: '01-01-1995',
+    district: 'Dhaka',
+    blood_group: '' // Empty = not provided yet
+  });
 
-  useEffect(() => {
-    checkUser()
-  }, [])
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, side: 'front' | 'back') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const checkUser = async () => {
-    try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser()
-      
-      if (authError || !user) {
-        router.push('/login')
-        return
-      }
-      
-      setUser(user)
-      setLoading(false)
-    } catch (err: any) {
-      setError('Error: ' + err.message)
-      setLoading(false)
-    }
-  }
-
-  const handleSendOTP = async () => {
-    setPhoneError('')
-    setPhoneLoading(true)
-
-    if (!phone.startsWith('+880')) {
-      setPhoneError('Phone must start with +880')
-      setPhoneLoading(false)
-      return
-    }
-
-    const code = Math.floor(100000 + Math.random() * 900000).toString()
-    setGeneratedOTP(code)
-
-    try {
-      const response = await fetch('/api/send-sms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone: phone,
-          message: `Your Biyekori verification code is: ${code}`
-        })
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setPhoneStep('verify')
-        alert('✅ OTP sent! Check your phone.')
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      if (side === 'front') {
+        setFrontImage(base64);
       } else {
-        setPhoneError(data.error || 'Failed to send OTP')
+        setBackImage(base64);
       }
-    } catch (err) {
-      setPhoneError('Failed to send OTP')
-    }
-    setPhoneLoading(false)
-  }
+    };
+    reader.readAsDataURL(file);
+  };
 
-  const handleVerifyOTP = async () => {
-    setPhoneError('')
-    setPhoneLoading(true)
-
-    if (otp === generatedOTP) {
-      setPhoneVerified(true)
-      alert('✅ Phone verified successfully!')
-      setPhoneError('')
-    } else {
-      setPhoneError('❌ Invalid OTP code')
-    }
-    setPhoneLoading(false)
-  }
-
-  const convertToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => resolve(reader.result as string)
-      reader.onerror = (error) => reject(error)
-    })
-  }
-
-  const handleNIDUpload = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setNidError('')
-    setAiMismatches([])
-    setNidLoading(true)
-    setAiVerifying(true)
-
-    if (!/^\d{10}$|^\d{13}$|^\d{17}$/.test(nidNumber)) {
-      setNidError('NID must be 10, 13, or 17 digits')
-      setNidLoading(false)
-      setAiVerifying(false)
-      return
+  const handleVerify = async () => {
+    if (!frontImage || !backImage) {
+      alert('Please upload both front and back images of your NID');
+      return;
     }
 
-    if (!nidFrontFile || !nidBackFile) {
-      setNidError('Please upload both front and back of NID')
-      setNidLoading(false)
-      setAiVerifying(false)
-      return
-    }
+    setLoading(true);
+    setResult(null);
 
     try {
-      // Convert images to base64
-      const frontBase64 = await convertToBase64(nidFrontFile)
-      const backBase64 = await convertToBase64(nidBackFile)
-
-      // AI Verification
-      const verifyResponse = await fetch('/api/verify-nid', {
+      const response = await fetch('/api/verify-nid', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          frontImage: frontBase64,
-          backImage: backBase64,
-          userData: {
-            name: 'Test User',
-            dob: '01-01-1995',
-            gender: 'Male',
-            district: 'Dhaka'
-          }
+          frontImage,
+          backImage,
+          userData
         })
-      })
+      });
 
-      const verifyData = await verifyResponse.json()
-      setAiVerifying(false)
-
-      if (!verifyData.success && verifyData.mismatches) {
-        setAiMismatches(verifyData.mismatches)
-        setNidError('⚠️ AI detected mismatches! Please correct your profile data.')
-        setNidLoading(false)
-        return
+      const data = await response.json();
+      setResult(data);
+      
+      if (data.success) {
+        // TODO: Update user profile:
+        // - is_verified = true
+        // - blood_group = extractedData.blood_group (if user didn't have it)
+        // - nid_number = extractedData.nid_number
+        
+        setTimeout(() => {
+          alert('✅ Verification Successful!\n\nYour profile is now verified!');
+          router.push('/dashboard');
+        }, 2000);
       }
-
-      setNidVerified(true)
-      alert('✅ NID verified by AI successfully!')
-      setNidError('')
-      setNidLoading(false)
-
-    } catch (err: any) {
-      setNidError(err.message || 'Failed to verify NID')
-      setNidLoading(false)
-      setAiVerifying(false)
+    } catch (error) {
+      console.error('Verification error:', error);
+      alert('❌ Verification failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="bg-red-50 p-6 rounded-lg">
-          <p className="text-red-700">{error}</p>
-        </div>
-      </div>
-    )
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-rose-50 to-white py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            🔐 Verify Your Account
-          </h1>
-          <p className="text-gray-600">
-            Complete phone and NID verification with AI
-          </p>
+        
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-black text-gray-900">NID Verification</h1>
+              <p className="text-gray-600 mt-2">Get your verified badge and boost your profile!</p>
+            </div>
+            <div className="text-right">
+              <div className="text-4xl font-black text-rose-600">৳200</div>
+              <p className="text-xs text-gray-500">One-time fee</p>
+              <p className="text-xs text-green-600 font-bold">FREE with ৳500+ plans</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 mt-6">
+            <div className="bg-green-50 p-4 rounded-xl text-center">
+              <div className="text-2xl mb-2">✓</div>
+              <p className="text-sm font-bold text-gray-900">Verified Badge</p>
+            </div>
+            <div className="bg-blue-50 p-4 rounded-xl text-center">
+              <div className="text-2xl mb-2">⭐</div>
+              <p className="text-sm font-bold text-gray-900">5x More Views</p>
+            </div>
+            <div className="bg-purple-50 p-4 rounded-xl text-center">
+              <div className="text-2xl mb-2">🔝</div>
+              <p className="text-sm font-bold text-gray-900">Top Search Results</p>
+            </div>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Phone Verification Card */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">📱 Phone Verification</h2>
-              {phoneVerified && (
-                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                  ✓ Verified
-                </span>
-              )}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          
+          <div className="flex items-center justify-center mb-8">
+            <div className={`flex items-center ${step >= 1 ? 'text-rose-600' : 'text-gray-400'}`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${step >= 1 ? 'bg-rose-600 text-white' : 'bg-gray-200'}`}>
+                1
+              </div>
+              <span className="ml-2 font-bold">Upload Front</span>
             </div>
             
-            {!phoneVerified ? (
-              phoneStep === 'input' ? (
-                <div className="space-y-4">
-                  {phoneError && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded text-sm">
-                      {phoneError}
-                    </div>
-                  )}
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+880 1712345678"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 text-gray-900"
-                    />
-                  </div>
+            <div className={`w-16 h-1 mx-4 ${step >= 2 ? 'bg-rose-600' : 'bg-gray-200'}`}></div>
+            
+            <div className={`flex items-center ${step >= 2 ? 'text-rose-600' : 'text-gray-400'}`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${step >= 2 ? 'bg-rose-600 text-white' : 'bg-gray-200'}`}>
+                2
+              </div>
+              <span className="ml-2 font-bold">Upload Back</span>
+            </div>
+            
+            <div className={`w-16 h-1 mx-4 ${step >= 3 ? 'bg-rose-600' : 'bg-gray-200'}`}></div>
+            
+            <div className={`flex items-center ${step >= 3 ? 'text-rose-600' : 'text-gray-400'}`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${step >= 3 ? 'bg-rose-600 text-white' : 'bg-gray-200'}`}>
+                3
+              </div>
+              <span className="ml-2 font-bold">Verify</span>
+            </div>
+          </div>
 
+          <div className="mb-6">
+            <label className="block text-lg font-bold text-gray-900 mb-3">
+              📄 NID Front Side
+            </label>
+            <div className="border-4 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-rose-500 transition">
+              {frontImage ? (
+                <div className="relative">
+                  <img src={frontImage} alt="NID Front" className="max-h-64 mx-auto rounded-lg shadow-lg" />
                   <button
-                    onClick={handleSendOTP}
-                    disabled={phoneLoading}
-                    className="w-full bg-rose-500 hover:bg-rose-600 text-white font-medium py-2 px-4 rounded-lg disabled:bg-gray-400"
+                    onClick={() => setFrontImage('')}
+                    className="mt-4 px-6 py-2 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600"
                   >
-                    {phoneLoading ? 'Sending...' : 'Send OTP'}
+                    Remove
                   </button>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {phoneError && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded text-sm">
-                      {phoneError}
-                    </div>
-                  )}
-                  
-                  <p className="text-sm text-gray-600">OTP sent to: {phone}</p>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Enter OTP Code
-                    </label>
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                      placeholder="123456"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 text-gray-900 text-center text-xl tracking-widest"
-                    />
-                  </div>
-
-                  <button
-                    onClick={handleVerifyOTP}
-                    disabled={phoneLoading || otp.length !== 6}
-                    className="w-full bg-rose-500 hover:bg-rose-600 text-white font-medium py-2 px-4 rounded-lg disabled:bg-gray-400"
-                  >
-                    {phoneLoading ? 'Verifying...' : 'Verify OTP'}
-                  </button>
-
-                  <button
-                    onClick={() => setPhoneStep('input')}
-                    className="w-full text-rose-500 hover:text-rose-600 text-sm"
-                  >
-                    Change Number
-                  </button>
-                </div>
-              )
-            ) : (
-              <div className="bg-green-50 border-2 border-green-200 rounded-lg p-6 text-center">
-                <div className="text-6xl mb-3">✓</div>
-                <p className="text-green-800 font-bold text-lg mb-2">Phone Verified!</p>
-                <p className="text-green-700 text-sm">{phone}</p>
-              </div>
-            )}
-          </div>
-
-          {/* NID Verification Card */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">🤖 AI NID Verification</h2>
-              {nidVerified && (
-                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                  ✓ Verified
-                </span>
+                <label className="cursor-pointer">
+                  <div className="text-6xl mb-4">📸</div>
+                  <p className="text-xl font-bold text-gray-900 mb-2">Click to upload NID front</p>
+                  <p className="text-sm text-gray-500">PNG, JPG up to 10MB</p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, 'front')}
+                    className="hidden"
+                  />
+                </label>
               )}
             </div>
-            
-            {!nidVerified ? (
-              <form onSubmit={handleNIDUpload} className="space-y-4">
-                {nidError && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded text-sm">
-                    {nidError}
-                  </div>
-                )}
-                
-                {aiMismatches.length > 0 && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="font-medium text-yellow-800 mb-2">⚠️ AI Detected Mismatches:</p>
-                    <ul className="text-sm text-yellow-700 space-y-1">
-                      {aiMismatches.map((mismatch, index) => (
-                        <li key={index}>• {mismatch}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {aiVerifying && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                    <p className="text-blue-800 font-medium">🤖 AI is analyzing your NID...</p>
-                    <p className="text-blue-600 text-sm">This may take 10-15 seconds</p>
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    NID Number
-                  </label>
-                  <input
-                    type="text"
-                    value={nidNumber}
-                    onChange={(e) => setNidNumber(e.target.value.replace(/\D/g, ''))}
-                    placeholder="10, 13, or 17 digits"
-                    maxLength={17}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 text-gray-900"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    NID Front Photo
-                  </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setNidFrontFile(e.target.files?.[0] || null)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    NID Back Photo
-                  </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setNidBackFile(e.target.files?.[0] || null)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-900 text-sm"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={nidLoading}
-                  className="w-full bg-rose-500 hover:bg-rose-600 text-white font-medium py-2 px-4 rounded-lg disabled:bg-gray-400"
-                >
-                  {nidLoading ? (aiVerifying ? '🤖 AI Analyzing...' : 'Uploading...') : '🤖 Verify with AI'}
-                </button>
-              </form>
-            ) : (
-              <div className="bg-green-50 border-2 border-green-200 rounded-lg p-6 text-center">
-                <div className="text-6xl mb-3">✓</div>
-                <p className="text-green-800 font-bold text-lg mb-2">NID Verified by AI!</p>
-                <p className="text-green-700 text-sm">NID: {nidNumber}</p>
-              </div>
-            )}
           </div>
+
+          <div className="mb-6">
+            <label className="block text-lg font-bold text-gray-900 mb-3">
+              📄 NID Back Side
+            </label>
+            <div className="border-4 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-rose-500 transition">
+              {backImage ? (
+                <div className="relative">
+                  <img src={backImage} alt="NID Back" className="max-h-64 mx-auto rounded-lg shadow-lg" />
+                  <button
+                    onClick={() => setBackImage('')}
+                    className="mt-4 px-6 py-2 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <label className="cursor-pointer">
+                  <div className="text-6xl mb-4">📸</div>
+                  <p className="text-xl font-bold text-gray-900 mb-2">Click to upload NID back</p>
+                  <p className="text-sm text-gray-500">PNG, JPG up to 10MB</p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, 'back')}
+                    className="hidden"
+                  />
+                </label>
+              )}
+            </div>
+          </div>
+
+          <button
+            onClick={handleVerify}
+            disabled={!frontImage || !backImage || loading}
+            className={`w-full py-4 rounded-xl font-bold text-lg transition ${
+              frontImage && backImage && !loading
+                ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:shadow-2xl transform hover:scale-105'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+          >
+            {loading ? '🔄 Verifying...' : '✓ Verify My NID'}
+          </button>
+
+          {result && (
+            <div className={`mt-6 p-6 rounded-xl ${result.success ? 'bg-green-50 border-2 border-green-500' : 'bg-red-50 border-2 border-red-500'}`}>
+              <h3 className={`text-xl font-black mb-3 ${result.success ? 'text-green-900' : 'text-red-900'}`}>
+                {result.success ? '✅ Verification Successful!' : '❌ Verification Failed'}
+              </h3>
+              <p className={`text-sm ${result.success ? 'text-green-800' : 'text-red-800'}`}>
+                {result.message}
+              </p>
+              
+              {result.extractedData && (
+                <div className="mt-4 p-4 bg-white rounded-lg">
+                  <p className="text-xs font-bold text-gray-600 mb-2">Extracted Data:</p>
+                  <div className="text-sm text-gray-800 space-y-1">
+                    <p><strong>Name:</strong> {result.extractedData.name}</p>
+                    <p><strong>DOB:</strong> {result.extractedData.dob}</p>
+                    <p><strong>Blood Group:</strong> {result.extractedData.blood_group}</p>
+                    <p><strong>District:</strong> {result.extractedData.district}</p>
+                    <p><strong>NID Number:</strong> {result.extractedData.nid_number}</p>
+                  </div>
+                </div>
+              )}
+              
+              {result.mismatches && result.mismatches.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-sm font-bold text-red-900 mb-2">Issues Found:</p>
+                  <ul className="list-disc list-inside text-sm text-red-800">
+                    {result.mismatches.map((mismatch: string, i: number) => (
+                      <li key={i}>{mismatch}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        {phoneVerified && nidVerified && (
-          <div className="mt-8 bg-gradient-to-r from-green-400 to-emerald-500 rounded-lg shadow-lg p-6 text-center text-white">
-            <div className="text-5xl mb-3">🎉</div>
-            <h2 className="text-2xl font-bold mb-2">Account Fully Verified!</h2>
-            <p className="mb-4">Your phone and NID have been verified successfully.</p>
-            <button
-              onClick={() => router.push('/profiles')}
-              className="bg-white text-green-600 hover:bg-gray-100 font-bold py-2 px-6 rounded-lg"
-            >
-              Browse Profiles →
-            </button>
-          </div>
-        )}
-
-        <div className="mt-6 text-center">
+        <div className="text-center mt-6">
           <button
-            onClick={() => router.push('/profiles')}
-            className="text-rose-500 hover:text-rose-600 font-medium"
+            onClick={() => router.push('/dashboard')}
+            className="px-6 py-3 bg-gray-100 text-gray-900 rounded-xl font-bold hover:bg-gray-200 transition"
           >
-            ← Back to Profiles
+            ← Back to Dashboard
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }

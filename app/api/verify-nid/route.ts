@@ -9,14 +9,13 @@ export async function POST(request: NextRequest) {
   try {
     const { frontImage, backImage, userData } = await request.json()
 
-    // Call OpenAI Vision to extract NID data
     const prompt = `You are analyzing a Bangladesh National ID Card (NID).
 
 FRONT IMAGE: Extract the following:
 - Full Name (in English)
 - Date of Birth (format: DD-MM-YYYY)
-- Gender (Male/Female)
 - NID Number
+- Blood Group (A+, A-, B+, B-, O+, O-, AB+, AB-)
 
 BACK IMAGE: Extract:
 - District name
@@ -25,8 +24,8 @@ Return ONLY a JSON object with this exact structure:
 {
   "name": "extracted name",
   "dob": "DD-MM-YYYY",
-  "gender": "Male or Female",
   "nid_number": "extracted number",
+  "blood_group": "extracted blood group or UNCLEAR",
   "district": "extracted district"
 }
 
@@ -55,7 +54,6 @@ If you cannot read any field clearly, use "UNCLEAR" as the value.`
 
     const extractedText = response.choices[0].message.content || ''
     
-    // Parse JSON from response
     const jsonMatch = extractedText.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       return NextResponse.json({ 
@@ -66,10 +64,9 @@ If you cannot read any field clearly, use "UNCLEAR" as the value.`
 
     const extractedData = JSON.parse(jsonMatch[0])
 
-    // Validate against user data
     const mismatches: string[] = []
 
-    // Compare name (case-insensitive, ignore extra spaces)
+    // Compare name
     const extractedName = extractedData.name.toLowerCase().trim()
     const userName = userData.name.toLowerCase().trim()
     if (!extractedName.includes(userName) && !userName.includes(extractedName)) {
@@ -83,17 +80,19 @@ If you cannot read any field clearly, use "UNCLEAR" as the value.`
       }
     }
 
-    // Compare gender (case-insensitive)
-    if (extractedData.gender.toLowerCase() !== userData.gender.toLowerCase()) {
-      mismatches.push(`Gender mismatch: NID shows "${extractedData.gender}" but you entered "${userData.gender}"`)
-    }
-
-    // Compare district (case-insensitive)
+    // Compare district
     if (userData.district && extractedData.district !== 'UNCLEAR') {
       const extractedDistrict = extractedData.district.toLowerCase().trim()
       const userDistrict = userData.district.toLowerCase().trim()
       if (!extractedDistrict.includes(userDistrict) && !userDistrict.includes(extractedDistrict)) {
         mismatches.push(`District mismatch: NID shows "${extractedData.district}" but you entered "${userData.district}"`)
+      }
+    }
+
+    // Blood Group - if user has it, compare; if not, we'll auto-fill
+    if (userData.blood_group && extractedData.blood_group !== 'UNCLEAR') {
+      if (extractedData.blood_group !== userData.blood_group) {
+        mismatches.push(`Blood Group mismatch: NID shows "${extractedData.blood_group}" but you entered "${userData.blood_group}"`)
       }
     }
 
