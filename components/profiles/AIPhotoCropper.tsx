@@ -17,7 +17,6 @@ export default function AIPhotoCropper({ onPhotoSelect, uploadCount }: AIPhotoCr
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Show upload limit warning
     if (uploadCount >= 75) {
       alert('⚠️ আপনি ৭৫টি ছবি আপলোড করেছেন!\n\nসর্বোচ্চ ৮০টি ছবি আপলোড করা যাবে।\n\nYou have uploaded 75 photos! Maximum 80 photos allowed.');
     }
@@ -65,39 +64,43 @@ export default function AIPhotoCropper({ onPhotoSelect, uploadCount }: AIPhotoCr
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        // Set canvas to 500x500 for profile photo
         canvas.width = 500;
         canvas.height = 500;
 
         if (detections.detections.length > 0) {
-          const face = detections.detections[0].boundingBox;
+          const detection = detections.detections[0];
+          const face = detection.boundingBox;
           
           if (face) {
-            // Add padding around face (30% extra)
             const padding = 0.3;
             const paddedWidth = face.width * (1 + padding);
             const paddedHeight = face.height * (1 + padding);
             
-            // Center the padded area on the face
             const x = Math.max(0, face.x - (paddedWidth - face.width) / 2);
             const y = Math.max(0, face.y - (paddedHeight - face.height) / 2);
             
-            // Ensure we don't go beyond image boundaries
             const cropWidth = Math.min(paddedWidth, img.width - x);
             const cropHeight = Math.min(paddedHeight, img.height - y);
             
-            // Calculate size to maintain aspect ratio
             const size = Math.min(cropWidth, cropHeight);
             
-            // Draw cropped face centered on canvas
             ctx.drawImage(
               img,
-              x, y, size, size,  // Source
-              0, 0, 500, 500     // Destination (fill entire 500x500 canvas)
+              x, y, size, size,
+              0, 0, 500, 500
+            );
+          } else {
+            const size = Math.min(img.width, img.height);
+            const x = (img.width - size) / 2;
+            const y = (img.height - size) / 2;
+            
+            ctx.drawImage(
+              img,
+              x, y, size, size,
+              0, 0, 500, 500
             );
           }
         } else {
-          // No face detected - just center crop
           const size = Math.min(img.width, img.height);
           const x = (img.width - size) / 2;
           const y = (img.height - size) / 2;
@@ -113,7 +116,6 @@ export default function AIPhotoCropper({ onPhotoSelect, uploadCount }: AIPhotoCr
         setCroppedImage(croppedDataUrl);
         setIsProcessing(false);
 
-        // Convert to File and pass to parent
         canvas.toBlob((blob) => {
           if (blob) {
             const file = new File([blob], 'profile-photo.jpg', { type: 'image/jpeg' });
