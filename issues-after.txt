@@ -1,0 +1,60 @@
+﻿­ƒöì Fetching all profiles...
+
+­ƒôè Total profiles fetched: 312
+
+ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+Ôòæ         ISSUE SUMMARY              Ôòæ
+ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+  BIO            : 9 profiles
+  AGE-EDU        : 8 profiles
+
+  TOTAL profiles with issues: 13 / 312
+
+ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+Ôòæ         DETAILED LIST              Ôòæ
+ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+
+ID 1 |  | Male | Age null
+  ÔÜá´©Å  [BIO] about_me missing or too short
+  ÔÜá´©Å  [BIO] partner_preference missing or too short
+
+ID 157 | Xiulan Akter | Female | Age 27
+  ÔÜá´©Å  [BIO] partner_preference missing or too short
+
+ID 175 | Hasan | null | Age null
+  ÔÜá´©Å  [BIO] about_me missing or too short
+  ÔÜá´©Å  [BIO] partner_preference missing or too short
+
+ID 178 | ss | female | Age 23
+  ÔÜá´©Å  [BIO] about_me missing or too short
+  ÔÜá´©Å  [BIO] partner_preference missing or too short
+
+ID 179 | Firoz | female | Age 23
+  ÔÜá´©Å  [BIO] about_me missing or too short
+  ÔÜá´©Å  [BIO] partner_preference missing or too short
+
+ID 413 | Sunita Biswas | female | Age 19
+  ÔÜá´©Å  [AGE-EDU] Age=19 too young for Bachelor's (min 21)
+
+ID 416 | Deepa Datta | female | Age 20
+  ÔÜá´©Å  [AGE-EDU] Age=20 too young for Bachelor's (min 21)
+
+ID 449 | Diana Costa | female | Age 20
+  ÔÜá´©Å  [AGE-EDU] Age=20 too young for Bachelor's (min 21)
+
+ID 469 | Rehana Khatun Sheikh | female | Age 18
+  ÔÜá´©Å  [AGE-EDU] Age=18 too young for Bachelor's (min 21)
+
+ID 476 | Maksuda Akter | female | Age 19
+  ÔÜá´©Å  [AGE-EDU] Age=19 too young for Bachelor's (min 21)
+
+ID 504 | Lata Sarkar | female | Age 18
+  ÔÜá´©Å  [AGE-EDU] Age=18 too young for Bachelor's (min 21)
+
+ID 531 | Munira Akter | female | Age 18
+  ÔÜá´©Å  [AGE-EDU] Age=18 too young for Bachelor's (min 21)
+
+ID 538 | Bilkis Begum | female | Age 19
+  ÔÜá´©Å  [AGE-EDU] Age=19 too young for Bachelor's (min 21)
+
+Ô£à Check complete!

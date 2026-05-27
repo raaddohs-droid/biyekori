@@ -1,0 +1,1008 @@
+﻿­ƒöì Fetching all profiles...
+
+­ƒôè Total profiles fetched: 312
+
+ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+Ôòæ         ISSUE SUMMARY              Ôòæ
+ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+  INCOME         : 232 profiles
+  EXP-AGE        : 216 profiles
+  FAMILY         : 75 profiles
+  HEIGHT         : 62 profiles
+  RELIGION       : 62 profiles
+  AGE-EDU        : 19 profiles
+  BIO            : 9 profiles
+  NRB            : 8 profiles
+
+  TOTAL profiles with issues: 151 / 312
+
+ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+Ôòæ         DETAILED LIST              Ôòæ
+ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+
+ID 1 |  | Male | Age null
+  ÔÜá´©Å  [BIO] about_me missing or too short
+  ÔÜá´©Å  [BIO] partner_preference missing or too short
+
+ID 6 | Md. Sohel Rana | Male | Age 29
+  ÔÜá´©Å  [NRB] nrb=true but country=Bangladesh
+
+ID 16 | Kawsar Ahmed | Male | Age 30
+  ÔÜá´©Å  [NRB] nrb=true but country=Bangladesh
+
+ID 25 | Noor Mohammed | Male | Age 32
+  ÔÜá´©Å  [NRB] nrb=true but country=Bangladesh
+
+ID 34 | Faisal Rahman | Male | Age 28
+  ÔÜá´©Å  [NRB] nrb=true but country=Bangladesh
+
+ID 48 | Tariq Hassan | Male | Age 29
+  ÔÜá´©Å  [NRB] nrb=true but country=Bangladesh
+
+ID 67 | Nowab Ali | Male | Age 31
+  ÔÜá´©Å  [NRB] nrb=true but country=Bangladesh
+
+ID 117 | Israt Sultana | Female | Age 25
+  ÔÜá´©Å  [NRB] nrb=true but country=Bangladesh
+
+ID 157 | Xiulan Akter | Female | Age 27
+  ÔÜá´©Å  [BIO] partner_preference missing or too short
+
+ID 163 | Dina Islam | Female | Age 25
+  ÔÜá´©Å  [NRB] nrb=true but country=Bangladesh
+
+ID 175 | Hasan | null | Age null
+  ÔÜá´©Å  [BIO] about_me missing or too short
+  ÔÜá´©Å  [BIO] partner_preference missing or too short
+
+ID 178 | ss | female | Age 23
+  ÔÜá´©Å  [BIO] about_me missing or too short
+  ÔÜá´©Å  [BIO] partner_preference missing or too short
+
+ID 179 | Firoz | female | Age 23
+  ÔÜá´©Å  [BIO] about_me missing or too short
+  ÔÜá´©Å  [BIO] partner_preference missing or too short
+
+ID 404 | Shumi Begum Chowdhury | female | Age 33
+  ÔÜá´©Å  [EXP-AGE] Female age=33 wants min age 30 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=33 wants min age 30 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=30421 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=30421 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'9" unrealistically tall for Bangladeshi woman
+
+ID 405 | Ruksana Khanam | female | Age 29
+  ÔÜá´©Å  [EXP-AGE] Female age=29 wants min age 26 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=29 wants min age 26 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=67561 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=67561 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'7" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 406 | Rahela Akter Talukder | female | Age 28
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=14596 not rounded to 500
+
+ID 407 | Maksuda Akter | female | Age 37
+  ÔÜá´©Å  [EXP-AGE] Female age=37 wants min age 34 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=37 wants min age 34 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+  ÔÜá´©Å  [FAMILY] mother_alive=true but mother_status=Deceased
+
+ID 408 | Diana Costa | female | Age 24
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Christianity
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=235904 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=235904 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'1" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 409 | Mitu Saha | female | Age 29
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=29 wants min age 26 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=29 wants min age 26 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=272143 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=272143 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'1" unrealistically short
+
+ID 410 | Morsheda Khatun | female | Age 35
+  ÔÜá´©Å  [EXP-AGE] Female age=35 wants min age 32 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=35 wants min age 32 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=1700 not rounded to 500
+
+ID 411 | Farida Hossain | female | Age 29
+  ÔÜá´©Å  [EXP-AGE] Female age=29 wants min age 26 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=29 wants min age 26 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [HEIGHT] Female height=5'10" unrealistically tall for Bangladeshi woman
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 412 | Taslima Begum | female | Age 26
+  ÔÜá´©Å  [INCOME] monthly_income=334884 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=334884 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 413 | Sunita Biswas | female | Age 19
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [AGE-EDU] Age=19 too young for Master's (min 23)
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=91511 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=91511 not rounded to 500
+  ÔÜá´©Å  [FAMILY] mother_alive=false but mother_status=Alive
+
+ID 414 | Sunita Biswas | female | Age 19
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [AGE-EDU] Age=19 too young for Bachelor's (min 21)
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=29373 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=29373 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'4" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 415 | Papiya Chakraborty | female | Age 20
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [AGE-EDU] Age=20 too young for Bachelor's (min 21)
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=51818 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=51818 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 416 | Deepa Datta | female | Age 20
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [AGE-EDU] Age=20 too young for Law degree (min 24)
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=133827 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=133827 not rounded to 500
+
+ID 417 | Maliha Hossain | female | Age 32
+  ÔÜá´©Å  [EXP-AGE] Female age=32 wants min age 29 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=32 wants min age 29 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=61503 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=61503 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'7" unrealistically short
+
+ID 418 | Lata Sarkar | female | Age 21
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=21 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=21 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=46882 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=46882 not rounded to 500
+
+ID 419 | Meherun Nessa | female | Age 31
+  ÔÜá´©Å  [EXP-AGE] Female age=31 wants min age 28 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=31 wants min age 28 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=66047 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=66047 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 420 | Rehana Khatun | female | Age 24
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=68789 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=68789 not rounded to 500
+  ÔÜá´©Å  [FAMILY] mother_alive=false but mother_status=Alive
+
+ID 421 | Trishna Das | female | Age 23
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=23 wants min age 20 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=23 wants min age 20 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=48778 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=48778 not rounded to 500
+  ÔÜá´©Å  [FAMILY] mother_alive=true but mother_status=Deceased
+
+ID 422 | Sunita Biswas | female | Age 37
+  ÔÜá´©Å  [INCOME] monthly_income=206164 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=206164 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'6" unrealistically short
+
+ID 423 | Sabiha Akter | female | Age 25
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=52761 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=52761 not rounded to 500
+
+ID 424 | Sadia Islam Sarkar | female | Age 23
+  ÔÜá´©Å  [EXP-AGE] Female age=23 wants min age 20 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=23 wants min age 20 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=15199 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'9" unrealistically tall for Bangladeshi woman
+  ÔÜá´©Å  [FAMILY] mother_alive=false but mother_status=Alive
+
+ID 425 | Sumona Khatun | female | Age 26
+  ÔÜá´©Å  [INCOME] monthly_income=300578 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=300578 not rounded to 500
+
+ID 426 | Bilkis Begum | female | Age 36
+  ÔÜá´©Å  [EXP-AGE] Female age=36 wants min age 33 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=36 wants min age 33 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=1352 not rounded to 500
+
+ID 427 | Shilpa Roy | female | Age 29
+  ÔÜá´©Å  [INCOME] monthly_income=83757 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=83757 not rounded to 500
+
+ID 428 | Tasnia Rahman | female | Age 34
+  ÔÜá´©Å  [INCOME] monthly_income=21776 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=21776 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'3" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 429 | Lata Sarkar | female | Age 20
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [HEIGHT] Female height=4'1" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 430 | Lamia Hossain Miah | female | Age 27
+  ÔÜá´©Å  [INCOME] monthly_income=127347 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=127347 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'6" unrealistically short
+
+ID 431 | Parveen Sultana Talukder | female | Age 31
+  ÔÜá´©Å  [EXP-AGE] Female age=31 wants min age 28 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=31 wants min age 28 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=50530 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=50530 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'4" unrealistically short
+
+ID 432 | Nasreen Akter | female | Age 34
+  ÔÜá´©Å  [INCOME] monthly_income=35552 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=35552 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'5" unrealistically short
+
+ID 433 | Shilpa Roy | female | Age 22
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] partner_preference mentions Óª¿Óª¥Óª«Óª¥Óª£Óª┐ but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=9397 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'11" unrealistically tall for Bangladeshi woman
+
+ID 434 | Rehana Khatun | female | Age 27
+  ÔÜá´©Å  [INCOME] monthly_income=27761 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=27761 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 435 | Piyali Ghosh | female | Age 22
+  ÔÜá´©Å  [RELIGION] partner_preference mentions Óª¿Óª¥Óª«Óª¥Óª£Óª┐ but religion=Hinduism
+  ÔÜá´©Å  [AGE-EDU] Age=22 too young for Engineering degree (min 23)
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=373275 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=373275 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 436 | Asma Akter | female | Age 32
+  ÔÜá´©Å  [EXP-AGE] Female age=32 wants min age 29 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=32 wants min age 29 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=27521 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=27521 not rounded to 500
+
+ID 437 | Tania Sultana | female | Age 21
+  ÔÜá´©Å  [EXP-AGE] Female age=21 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=21 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=23032 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=23032 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+  ÔÜá´©Å  [FAMILY] mother_alive=false but mother_status=Alive
+
+ID 438 | Afroza Begum | female | Age 19
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=5848 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'9" unrealistically tall for Bangladeshi woman
+
+ID 439 | Shumi Begum Sarkar | female | Age 38
+  ÔÜá´©Å  [EXP-AGE] Female age=38 wants min age 35 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=38 wants min age 35 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=22372 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=22372 not rounded to 500
+
+ID 440 | Monira Begum | female | Age 22
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=19756 not rounded to 500
+  ÔÜá´©Å  [FAMILY] mother_alive=true but mother_status=Deceased
+
+ID 441 | Lamia Hossain Talukder | female | Age 24
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=53545 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=53545 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 442 | Deepa Datta | female | Age 26
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=26 wants min age 23 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=26 wants min age 23 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=41671 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=41671 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'0" unrealistically short
+  ÔÜá´©Å  [FAMILY] mother_alive=false but mother_status=Alive
+
+ID 443 | Maksuda Akter | female | Age 38
+  ÔÜá´©Å  [INCOME] monthly_income=143478 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=143478 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'6" unrealistically short
+
+ID 444 | Afroza Begum | female | Age 20
+  ÔÜá´©Å  [AGE-EDU] Age=20 too young for Bachelor's (min 21)
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=47053 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=47053 not rounded to 500
+
+ID 445 | Rupa Ghosh | female | Age 25
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=89978 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=89978 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'11" unrealistically tall for Bangladeshi woman
+
+ID 446 | Rita Gomes | female | Age 26
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Christianity
+  ÔÜá´©Å  [INCOME] monthly_income=59997 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=59997 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'6" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+  ÔÜá´©Å  [FAMILY] mother_alive=false but mother_status=Alive
+
+ID 447 | Soma Roy | female | Age 21
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [AGE-EDU] Age=21 too young for Engineering degree (min 23)
+  ÔÜá´©Å  [EXP-AGE] Female age=21 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=21 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=375164 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=375164 not rounded to 500
+
+ID 448 | Nusrat Jahan | female | Age 33
+  ÔÜá´©Å  [EXP-AGE] Female age=33 wants min age 30 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=33 wants min age 30 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=33974 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=33974 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 449 | Diana Costa | female | Age 20
+  ÔÜá´©Å  [AGE-EDU] Age=20 too young for Engineering degree (min 23)
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=102760 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=102760 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'1" unrealistically short
+  ÔÜá´©Å  [FAMILY] mother_alive=true but mother_status=Deceased
+
+ID 450 | Suchitra Dey | female | Age 19
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=4104 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'6" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 451 | Farida Hossain | female | Age 34
+  ÔÜá´©Å  [EXP-AGE] Female age=34 wants min age 31 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=34 wants min age 31 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=7444 not rounded to 500
+
+ID 452 | Tania Sultana | female | Age 30
+  ÔÜá´©Å  [EXP-AGE] Female age=30 wants min age 27 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=30 wants min age 27 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=56504 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=56504 not rounded to 500
+
+ID 453 | Rupa Ghosh | female | Age 38
+  ÔÜá´©Å  [INCOME] monthly_income=10069 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'9" unrealistically tall for Bangladeshi woman
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 454 | Mitu Saha | female | Age 24
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] partner_preference mentions Óª¿Óª¥Óª«Óª¥Óª£Óª┐ but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=46279 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=46279 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'6" unrealistically short
+
+ID 455 | Rupa Ghosh | female | Age 28
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=154961 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=154961 not rounded to 500
+
+ID 456 | Asma Akter Talukder | female | Age 19
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 457 | Trishna Das | female | Age 31
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] partner_preference mentions Óª¿Óª¥Óª«Óª¥Óª£Óª┐ but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=31 wants min age 28 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=31 wants min age 28 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=33153 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=33153 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'0" unrealistically short
+
+ID 458 | Tamanna Akter Khan | female | Age 30
+  ÔÜá´©Å  [EXP-AGE] Female age=30 wants min age 27 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=30 wants min age 27 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=51745 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=51745 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'1" unrealistically short
+
+ID 459 | Jannat Ara | female | Age 33
+  ÔÜá´©Å  [EXP-AGE] Female age=33 wants min age 30 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=33 wants min age 30 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=33187 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=33187 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'0" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 460 | Halima Khatun | female | Age 22
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=33394 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=33394 not rounded to 500
+
+ID 461 | Rehana Khatun | female | Age 26
+  ÔÜá´©Å  [EXP-AGE] Female age=26 wants min age 23 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=26 wants min age 23 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=54703 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=54703 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 462 | Moumita Biswas | female | Age 30
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=30 wants min age 27 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=30 wants min age 27 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=31526 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=31526 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'5" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 463 | Sumaiya Rahman Chowdhury | female | Age 36
+  ÔÜá´©Å  [EXP-AGE] Female age=36 wants min age 33 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=36 wants min age 33 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=42048 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=42048 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'4" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 464 | Farhana Begum Miah | female | Age 18
+  ÔÜá´©Å  [AGE-EDU] Age=18 too young for Bachelor's (min 21)
+  ÔÜá´©Å  [EXP-AGE] Female age=18 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=24482 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=24482 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+  ÔÜá´©Å  [FAMILY] mother_alive=false but mother_status=Alive
+
+ID 465 | Anita Roy | female | Age 30
+  ÔÜá´©Å  [EXP-AGE] Female age=30 wants min age 27 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=30 wants min age 27 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=25555 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=25555 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'11" unrealistically tall for Bangladeshi woman
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+  ÔÜá´©Å  [FAMILY] mother_alive=true but mother_status=Deceased
+
+ID 466 | Rubina Yasmin | female | Age 32
+  ÔÜá´©Å  [EXP-AGE] Female age=32 wants min age 29 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=32 wants min age 29 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=55082 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=55082 not rounded to 500
+
+ID 467 | Sunita Biswas | female | Age 35
+  ÔÜá´©Å  [EXP-AGE] Female age=35 wants min age 32 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=35 wants min age 32 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=35278 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=35278 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'5" unrealistically short
+
+ID 468 | Papiya Chakraborty | female | Age 18
+  ÔÜá´©Å  [AGE-EDU] Age=18 too young for Bachelor's (min 21)
+  ÔÜá´©Å  [EXP-AGE] Female age=18 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=46761 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=46761 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 469 | Rehana Khatun Sheikh | female | Age 18
+  ÔÜá´©Å  [AGE-EDU] Age=18 too young for Master's (min 23)
+  ÔÜá´©Å  [EXP-AGE] Female age=18 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=92598 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=92598 not rounded to 500
+
+ID 470 | Morsheda Khatun | female | Age 24
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=42826 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=42826 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'11" unrealistically tall for Bangladeshi woman
+
+ID 471 | Maliha Hossain | female | Age 25
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=12491 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'3" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 472 | Bilkis Begum | female | Age 26
+  ÔÜá´©Å  [INCOME] monthly_income=103154 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=103154 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'3" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 473 | Ankita Saha | female | Age 29
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=29 wants min age 26 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=29 wants min age 26 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=83743 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=83743 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'9" unrealistically tall for Bangladeshi woman
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 474 | Sabrina Islam | female | Age 32
+  ÔÜá´©Å  [INCOME] monthly_income=85684 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=85684 not rounded to 500
+  ÔÜá´©Å  [FAMILY] mother_alive=true but mother_status=Deceased
+
+ID 475 | Halima Khatun Talukder | female | Age 30
+  ÔÜá´©Å  [EXP-AGE] Female age=30 wants min age 27 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=30 wants min age 27 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=130613 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=130613 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'5" unrealistically short
+
+ID 476 | Maksuda Akter | female | Age 19
+  ÔÜá´©Å  [AGE-EDU] Age=19 too young for MBBS (min 25 with internship)
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=89791 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=89791 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'4" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 477 | Maksuda Akter | female | Age 33
+  ÔÜá´©Å  [EXP-AGE] Female age=33 wants min age 30 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=33 wants min age 30 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=105298 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=105298 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'11" unrealistically tall for Bangladeshi woman
+
+ID 478 | Diana Costa | female | Age 23
+  ÔÜá´©Å  [EXP-AGE] Female age=23 wants min age 20 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=23 wants min age 20 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=201088 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=201088 not rounded to 500
+
+ID 479 | Sumona Khatun Sarkar | female | Age 36
+  ÔÜá´©Å  [EXP-AGE] Female age=36 wants min age 33 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=36 wants min age 33 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=32887 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=32887 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 480 | Afsana Begum Khan | female | Age 18
+  ÔÜá´©Å  [EXP-AGE] Female age=18 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [HEIGHT] Female height=5'11" unrealistically tall for Bangladeshi woman
+
+ID 481 | Momena Khatun Miah | female | Age 37
+  ÔÜá´©Å  [EXP-AGE] Female age=37 wants min age 34 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=37 wants min age 34 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=92441 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=92441 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 482 | Rina Dey | female | Age 25
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=153664 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=153664 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'9" unrealistically tall for Bangladeshi woman
+
+ID 483 | Piyali Ghosh | female | Age 35
+  ÔÜá´©Å  [EXP-AGE] Female age=35 wants min age 32 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=35 wants min age 32 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=14008 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'7" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 484 | Meherun Nessa | female | Age 35
+  ÔÜá´©Å  [INCOME] monthly_income=43769 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=43769 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 485 | Sunita Biswas | female | Age 34
+  ÔÜá´©Å  [RELIGION] partner_preference mentions Óª¿Óª¥Óª«Óª¥Óª£Óª┐ but religion=Hinduism
+  ÔÜá´©Å  [EXP-AGE] Female age=34 wants min age 31 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=34 wants min age 31 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=93867 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=93867 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'2" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 486 | Rita Gomes | female | Age 20
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö too close (should be age+2 minimum)
+
+ID 487 | Suchitra Dey | female | Age 31
+  ÔÜá´©Å  [EXP-AGE] Female age=31 wants min age 28 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=31 wants min age 28 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=49425 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=49425 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'6" unrealistically short
+
+ID 488 | Suchitra Dey | female | Age 35
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [INCOME] monthly_income=3005 not rounded to 500
+
+ID 489 | Mitu Akter Sarkar | female | Age 37
+  ÔÜá´©Å  [EXP-AGE] Female age=37 wants min age 34 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=37 wants min age 34 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=11656 not rounded to 500
+  ÔÜá´©Å  [FAMILY] mother_alive=false but mother_status=Alive
+
+ID 490 | Zakia Sultana | female | Age 27
+  ÔÜá´©Å  [EXP-AGE] Female age=27 wants min age 24 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=27 wants min age 24 ÔÇö too close (should be age+2 minimum)
+
+ID 491 | Shanta Akter Sarkar | female | Age 23
+  ÔÜá´©Å  [EXP-AGE] Female age=23 wants min age 20 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=23 wants min age 20 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=21098 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=21098 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'9" unrealistically tall for Bangladeshi woman
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 492 | Shilpa Roy | female | Age 35
+  ÔÜá´©Å  [INCOME] monthly_income=135928 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=135928 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'11" unrealistically tall for Bangladeshi woman
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 493 | Halima Khatun Khan | female | Age 36
+  ÔÜá´©Å  [INCOME] monthly_income=15677 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 494 | Sabrina Islam | female | Age 33
+  ÔÜá´©Å  [EXP-AGE] Female age=33 wants min age 30 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=33 wants min age 30 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=1660 not rounded to 500
+  ÔÜá´©Å  [FAMILY] mother_alive=true but mother_status=Deceased
+
+ID 495 | Lamia Hossain Sarkar | female | Age 18
+  ÔÜá´©Å  [EXP-AGE] Female age=18 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=8961 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'1" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 496 | Meherun Nessa | female | Age 28
+  ÔÜá´©Å  [INCOME] monthly_income=40023 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=40023 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 497 | Tamanna Akter | female | Age 34
+  ÔÜá´©Å  [EXP-AGE] Female age=34 wants min age 31 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=34 wants min age 31 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=57346 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=57346 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'9" unrealistically tall for Bangladeshi woman
+
+ID 498 | Bilkis Begum | female | Age 22
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=6285 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 499 | Sunita Biswas | female | Age 24
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=38911 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=38911 not rounded to 500
+
+ID 500 | Taslima Begum | female | Age 20
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=20 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=13583 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'11" unrealistically tall for Bangladeshi woman
+
+ID 501 | Puja Chakraborty | female | Age 34
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] partner_preference mentions Óª¿Óª¥Óª«Óª¥Óª£Óª┐ but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=34 wants min age 31 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=34 wants min age 31 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=3270 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 502 | Farhana Begum | female | Age 36
+  ÔÜá´©Å  [EXP-AGE] Female age=36 wants min age 33 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=36 wants min age 33 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=38278 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=38278 not rounded to 500
+
+ID 503 | Tamanna Akter | female | Age 28
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=200622 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=200622 not rounded to 500
+  ÔÜá´©Å  [FAMILY] mother_alive=false but mother_status=Alive
+
+ID 504 | Lata Sarkar | female | Age 18
+  ÔÜá´©Å  [AGE-EDU] Age=18 too young for MBBS (min 25 with internship)
+  ÔÜá´©Å  [EXP-AGE] Female age=18 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=144283 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=144283 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 505 | Rania Islam Talukder | female | Age 27
+  ÔÜá´©Å  [EXP-AGE] Female age=27 wants min age 24 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=27 wants min age 24 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=105025 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=105025 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+  ÔÜá´©Å  [FAMILY] mother_alive=false but mother_status=Alive
+
+ID 506 | Sharmin Sultana | female | Age 25
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=37665 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=37665 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'5" unrealistically short
+
+ID 507 | Maliha Hossain | female | Age 18
+  ÔÜá´©Å  [AGE-EDU] Age=18 too young for Bachelor's (min 21)
+  ÔÜá´©Å  [EXP-AGE] Female age=18 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=54620 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=54620 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'10" unrealistically tall for Bangladeshi woman
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 508 | Kajol Mondal | female | Age 32
+  ÔÜá´©Å  [EXP-AGE] Female age=32 wants min age 29 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=32 wants min age 29 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=21790 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=21790 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'4" unrealistically short
+
+ID 509 | Rahela Akter | female | Age 30
+  ÔÜá´©Å  [INCOME] monthly_income=15265 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'10" unrealistically tall for Bangladeshi woman
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 510 | Soma Roy | female | Age 33
+  ÔÜá´©Å  [RELIGION] partner_preference mentions Óª¿Óª¥Óª«Óª¥Óª£Óª┐ but religion=Hinduism
+  ÔÜá´©Å  [EXP-AGE] Female age=33 wants min age 30 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=33 wants min age 30 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=32195 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=32195 not rounded to 500
+
+ID 511 | Farida Hossain | female | Age 25
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=46483 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=46483 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'4" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 512 | Mitu Saha | female | Age 28
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=33427 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=33427 not rounded to 500
+
+ID 513 | Mita Paul | female | Age 29
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [INCOME] monthly_income=277 not rounded to 500
+
+ID 514 | Momena Khatun | female | Age 22
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=15540 not rounded to 500
+
+ID 515 | Sabiha Akter | female | Age 28
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=4976 not rounded to 500
+
+ID 516 | Taslima Begum Sheikh | female | Age 27
+  ÔÜá´©Å  [EXP-AGE] Female age=27 wants min age 24 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=27 wants min age 24 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=9197 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'11" unrealistically tall for Bangladeshi woman
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 517 | Puja Chakraborty | female | Age 25
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=36687 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=36687 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'9" unrealistically tall for Bangladeshi woman
+  ÔÜá´©Å  [FAMILY] mother_alive=true but mother_status=Deceased
+
+ID 518 | Tamanna Akter | female | Age 35
+  ÔÜá´©Å  [EXP-AGE] Female age=35 wants min age 32 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=35 wants min age 32 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=42707 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=42707 not rounded to 500
+
+ID 519 | Shumi Begum | female | Age 31
+  ÔÜá´©Å  [EXP-AGE] Female age=31 wants min age 28 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=31 wants min age 28 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [FAMILY] mother_alive=true but mother_status=Deceased
+
+ID 520 | Priya Das | female | Age 30
+  ÔÜá´©Å  [EXP-AGE] Female age=30 wants min age 27 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=30 wants min age 27 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=15304 not rounded to 500
+
+ID 521 | Afroza Begum Miah | female | Age 24
+  ÔÜá´©Å  [AGE-EDU] Age=24 too young for MBBS (min 25 with internship)
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=273162 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=273162 not rounded to 500
+
+ID 522 | Momena Khatun Talukder | female | Age 21
+  ÔÜá´©Å  [EXP-AGE] Female age=21 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=21 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=41630 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=41630 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'4" unrealistically short
+
+ID 523 | Shanta Akter | female | Age 31
+  ÔÜá´©Å  [EXP-AGE] Female age=31 wants min age 28 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=31 wants min age 28 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=19844 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 524 | Mithu Mondal | female | Age 37
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [INCOME] monthly_income=69488 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=69488 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 525 | Monira Begum Miah | female | Age 28
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=20628 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=20628 not rounded to 500
+  ÔÜá´©Å  [FAMILY] mother_alive=false but mother_status=Alive
+
+ID 526 | Mitu Akter | female | Age 33
+  ÔÜá´©Å  [INCOME] monthly_income=102472 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=102472 not rounded to 500
+  ÔÜá´©Å  [FAMILY] mother_alive=false but mother_status=Alive
+
+ID 527 | Soma Roy | female | Age 28
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=28 wants min age 25 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=95679 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=95679 not rounded to 500
+
+ID 528 | Trishna Das | female | Age 35
+  ÔÜá´©Å  [RELIGION] partner_preference mentions Óª¿Óª¥Óª«Óª¥Óª£Óª┐ but religion=Hinduism
+  ÔÜá´©Å  [INCOME] monthly_income=126417 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=126417 not rounded to 500
+
+ID 529 | Maksuda Akter | female | Age 38
+  ÔÜá´©Å  [EXP-AGE] Female age=38 wants min age 35 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=38 wants min age 35 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=44799 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=44799 not rounded to 500
+
+ID 530 | Tamanna Akter Talukder | female | Age 25
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=25 wants min age 22 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=34310 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=34310 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'3" unrealistically short
+
+ID 531 | Munira Akter | female | Age 18
+  ÔÜá´©Å  [AGE-EDU] Age=18 too young for MBBS (min 25 with internship)
+  ÔÜá´©Å  [EXP-AGE] Female age=18 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=112107 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=112107 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'4" unrealistically short
+
+ID 532 | Grace Biswas | female | Age 19
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Christianity
+  ÔÜá´©Å  [RELIGION] partner_preference mentions Óª¿Óª¥Óª«Óª¥Óª£Óª┐ but religion=Christianity
+  ÔÜá´©Å  [AGE-EDU] Age=19 too young for Bachelor's (min 21)
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=43255 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=43255 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 533 | Shilpa Roy | female | Age 33
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [INCOME] monthly_income=34648 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=34648 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'11" unrealistically tall for Bangladeshi woman
+
+ID 534 | Zakia Sultana Sarkar | female | Age 24
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=24 wants min age 21 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=80983 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=80983 not rounded to 500
+
+ID 535 | Rina Dey | female | Age 37
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Hinduism
+  ÔÜá´©Å  [RELIGION] Hindu profile has diet=Halal
+  ÔÜá´©Å  [INCOME] monthly_income=41398 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=41398 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'6" unrealistically short
+
+ID 536 | Rita Gomes | female | Age 37
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Christianity
+  ÔÜá´©Å  [EXP-AGE] Female age=37 wants min age 34 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=37 wants min age 34 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=54888 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=54888 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=5'11" unrealistically tall for Bangladeshi woman
+
+ID 537 | Reba Datta | female | Age 34
+  ÔÜá´©Å  [EXP-AGE] Female age=34 wants min age 31 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=34 wants min age 31 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=53727 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=53727 not rounded to 500
+
+ID 538 | Bilkis Begum | female | Age 19
+  ÔÜá´©Å  [AGE-EDU] Age=19 too young for MBBS (min 25 with internship)
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=19 wants min age 18 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=122408 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=122408 not rounded to 500
+  ÔÜá´©Å  [HEIGHT] Female height=4'7" unrealistically short
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 539 | Momena Khatun | female | Age 22
+  ÔÜá´©Å  [AGE-EDU] Age=22 too young for Law degree (min 24)
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=22 wants min age 19 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=69651 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=69651 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=true but father_status=Deceased
+
+ID 540 | Rahela Akter Khan | female | Age 38
+  ÔÜá´©Å  [INCOME] monthly_income=142038 not rounded to 500
+  ÔÜá´©Å  [INCOME] expected_income=142038 not rounded to 500
+  ÔÜá´©Å  [FAMILY] father_alive=false but father_status=Alive
+
+ID 541 | Angela Costa | female | Age 32
+  ÔÜá´©Å  [RELIGION] Diet=Halal but religion=Christianity
+  ÔÜá´©Å  [EXP-AGE] Female age=32 wants min age 29 ÔÇö younger than her
+  ÔÜá´©Å  [EXP-AGE] Female age=32 wants min age 29 ÔÇö too close (should be age+2 minimum)
+  ÔÜá´©Å  [INCOME] monthly_income=17375 not rounded to 500
+
+Ô£à Check complete!

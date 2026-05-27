@@ -1,0 +1,25 @@
+const https = require('https');
+const opts = {
+  hostname: 'bwxxctyakpexqfbtoolg.supabase.co',
+  path: '/storage/v1/object/list/profile-photos',
+  method: 'POST',
+  headers: {
+    'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3eHhjdHlha3BleHFmYnRvb2xnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMDY0OTYsImV4cCI6MjA5NDU4MjQ5Nn0.034YBMbkx3Eco-oBPfJDelLjnbOk9uHZJoOPxhogNM4',
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ3eHhjdHlha3BleHFmYnRvb2xnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMDY0OTYsImV4cCI6MjA5NDU4MjQ5Nn0.034YBMbkx3Eco-oBPfJDelLjnbOk9uHZJoOPxhogNM4',
+    'Content-Type': 'application/json'
+  }
+};
+const req = https.request(opts, (res) => {
+  let data = '';
+  res.on('data', chunk => data += chunk);
+  res.on('end', () => {
+    const files = JSON.parse(data);
+    const female1 = files.filter(f => f.name.startsWith('female-')).length;
+    const female2 = files.filter(f => f.name.startsWith('female_batch2_')).length;
+    console.log('female-001 to female-149 type:', female1);
+    console.log('female_batch2_ type:', female2);
+    console.log('Total female photos:', female1 + female2);
+  });
+});
+req.write(JSON.stringify({ prefix: '', limit: 500 }));
+req.end();

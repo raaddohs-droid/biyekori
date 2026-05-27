@@ -1,0 +1,42 @@
+﻿­ƒöì Deep checking all profiles...
+
+­ƒôè Total: 507
+
+ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+Ôòæ       DEEP ISSUE SUMMARY         Ôòæ
+ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+  AGE-PROF       : 3 profiles
+  NRB            : 3 profiles
+  FAMILY         : 2 profiles
+
+  TOTAL profiles with issues: 8 / 507
+
+ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+Ôòæ         DETAILED LIST            Ôòæ
+ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+
+ID 575 | Fatema Akter | female | Age 37
+  ÔÜá´©Å  [FAMILY] family_type="Nuclear" but total_siblings=5 ÔÇö large families rarely live nuclear
+
+ID 581 | Rania Islam | female | Age 24
+  ÔÜá´©Å  [AGE-PROF] Age=24 but profession="NGO Manager" ÔÇö too young for this senior role
+
+ID 620 | Rimi Sultana Miah | female | Age 33
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+
+ID 656 | Rahela Akter Sheikh | female | Age 24
+  ÔÜá´©Å  [AGE-PROF] Age=24 but profession="NGO Manager" ÔÇö too young for this senior role
+
+ID 664 | Kohinur Begum | female | Age 33
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+
+ID 669 | Nipa Akter | female | Age 35
+  ÔÜá´©Å  [FAMILY] family_type="Nuclear" but total_siblings=5 ÔÇö large families rarely live nuclear
+
+ID 686 | Munira Akter | female | Age 18
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+
+ID 704 | Reba Datta | female | Age 24
+  ÔÜá´©Å  [AGE-PROF] Age=24 but profession="University Lecturer" ÔÇö too young for this senior role
+
+Ô£à Deep check complete!

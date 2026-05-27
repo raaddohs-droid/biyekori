@@ -1,0 +1,244 @@
+﻿­ƒöì Deep checking all profiles...
+
+­ƒôè Total: 308
+
+ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+Ôòæ       DEEP ISSUE SUMMARY         Ôòæ
+ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+  PRAYER         : 36 profiles
+  NRB            : 19 profiles
+  EDU-PROF       : 12 profiles
+  PERSONALITY    : 8 profiles
+  AGE-PROF       : 5 profiles
+  FAMILY         : 3 profiles
+
+  TOTAL profiles with issues: 70 / 308
+
+ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+Ôòæ         DETAILED LIST            Ôòæ
+ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
+
+ID 6 | Md. Sohel Rana | Male | Age 29
+  ÔÜá´©Å  [NRB] nrb=true but willing_to_relocate=false ÔÇö already relocated abroad
+
+ID 15 | Saiful Islam | Male | Age 29
+  ÔÜá´©Å  [EDU-PROF] education="SSC" but profession="Lawyer" ÔÇö impossible combination
+
+ID 16 | Kawsar Ahmed | Male | Age 30
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+  ÔÜá´©Å  [NRB] nrb=true but willing_to_relocate=false ÔÇö already relocated abroad
+
+ID 25 | Noor Mohammed | Male | Age 32
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+  ÔÜá´©Å  [NRB] nrb=true but willing_to_relocate=false ÔÇö already relocated abroad
+
+ID 34 | Faisal Rahman | Male | Age 28
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+  ÔÜá´©Å  [NRB] nrb=true but willing_to_relocate=false ÔÇö already relocated abroad
+
+ID 37 | Ibrahim Khalil | Male | Age 30
+  ÔÜá´©Å  [EDU-PROF] education="HSC" but profession="Doctor" ÔÇö impossible combination
+
+ID 45 | Quamrul Islam | Male | Age 34
+  ÔÜá´©Å  [EDU-PROF] education="SSC" but profession="Doctor" ÔÇö impossible combination
+
+ID 47 | Sazzad Hossain | Male | Age 30
+  ÔÜá´©Å  [EDU-PROF] education="SSC" but profession="Engineer" ÔÇö impossible combination
+
+ID 48 | Tariq Hassan | Male | Age 29
+  ÔÜá´©Å  [NRB] nrb=true but willing_to_relocate=false ÔÇö already relocated abroad
+
+ID 60 | Gias Uddin | Male | Age 33
+  ÔÜá´©Å  [EDU-PROF] education="SSC" but profession="Lawyer" ÔÇö impossible combination
+
+ID 67 | Nowab Ali | Male | Age 31
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+  ÔÜá´©Å  [NRB] nrb=true but willing_to_relocate=false ÔÇö already relocated abroad
+
+ID 117 | Israt Sultana | Female | Age 25
+  ÔÜá´©Å  [NRB] nrb=true but willing_to_relocate=false ÔÇö already relocated abroad
+
+ID 121 | Momtaz Begum | Female | Age 24
+  ÔÜá´©Å  [EDU-PROF] education="HSC" but profession="Doctor" ÔÇö impossible combination
+
+ID 137 | Dilruba Akter | Female | Age 27
+  ÔÜá´©Å  [EDU-PROF] education="SSC" but profession="Doctor" ÔÇö impossible combination
+
+ID 142 | Irin Parvin | Female | Age 25
+  ÔÜá´©Å  [EDU-PROF] education="HSC" but profession="Doctor" ÔÇö impossible combination
+
+ID 163 | Dina Islam | Female | Age 25
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+  ÔÜá´©Å  [NRB] nrb=true but willing_to_relocate=false ÔÇö already relocated abroad
+
+ID 172 | Mila Khatun | Female | Age 24
+  ÔÜá´©Å  [EDU-PROF] education="HSC" but profession="Doctor" ÔÇö impossible combination
+
+ID 404 | Shumi Begum Chowdhury | female | Age 33
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 406 | Rahela Akter Talukder | female | Age 28
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 407 | Maksuda Akter | female | Age 37
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 410 | Morsheda Khatun | female | Age 35
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 411 | Farida Hossain | female | Age 29
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 412 | Taslima Begum | female | Age 26
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 413 | Sunita Biswas | female | Age 19
+  ÔÜá´©Å  [AGE-PROF] Age=19 but profession="Senior Bank Officer" ÔÇö too young for this senior role
+
+ID 414 | Sunita Biswas | female | Age 19
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+
+ID 417 | Maliha Hossain | female | Age 32
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 420 | Rehana Khatun | female | Age 24
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+  ÔÜá´©Å  [AGE-PROF] Age=24 but profession="University Lecturer" ÔÇö too young for this senior role
+
+ID 424 | Sadia Islam Sarkar | female | Age 23
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 427 | Shilpa Roy | female | Age 29
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+
+ID 431 | Parveen Sultana Talukder | female | Age 31
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 434 | Rehana Khatun | female | Age 27
+  ÔÜá´©Å  [PERSONALITY] personality_type="Modern" but religious_level="Very Religious" ÔÇö contradiction
+  ÔÜá´©Å  [PERSONALITY] personality_type="Modern" but family_values="Very Conservative" ÔÇö contradiction
+  ÔÜá´©Å  [FAMILY] family_type="Nuclear" but total_siblings=5 ÔÇö large families rarely live nuclear
+
+ID 436 | Asma Akter | female | Age 32
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 438 | Afroza Begum | female | Age 19
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 440 | Monira Begum | female | Age 22
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 444 | Afroza Begum | female | Age 20
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 445 | Rupa Ghosh | female | Age 25
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+
+ID 449 | Diana Costa | female | Age 20
+  ÔÜá´©Å  [EDU-PROF] education="HSC" but profession="Engineer" ÔÇö impossible combination
+
+ID 451 | Farida Hossain | female | Age 34
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 452 | Tania Sultana | female | Age 30
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 454 | Mitu Saha | female | Age 24
+  ÔÜá´©Å  [AGE-PROF] Age=24 but profession="NGO Manager" ÔÇö too young for this senior role
+
+ID 456 | Asma Akter Talukder | female | Age 19
+  ÔÜá´©Å  [FAMILY] family_type="Nuclear" but total_siblings=5 ÔÇö large families rarely live nuclear
+
+ID 458 | Tamanna Akter Khan | female | Age 30
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 459 | Jannat Ara | female | Age 33
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 461 | Rehana Khatun | female | Age 26
+  ÔÜá´©Å  [PERSONALITY] personality_type="Modern" but religious_level="Very Religious" ÔÇö contradiction
+  ÔÜá´©Å  [PERSONALITY] personality_type="Modern" but family_values="Very Conservative" ÔÇö contradiction
+  ÔÜá´©Å  [FAMILY] family_type="Nuclear" but total_siblings=6 ÔÇö large families rarely live nuclear
+
+ID 464 | Farhana Begum Miah | female | Age 18
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 466 | Rubina Yasmin | female | Age 32
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 469 | Rehana Khatun Sheikh | female | Age 18
+  ÔÜá´©Å  [AGE-PROF] Age=18 but profession="NGO Manager" ÔÇö too young for this senior role
+
+ID 470 | Morsheda Khatun | female | Age 24
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 472 | Bilkis Begum | female | Age 26
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 477 | Maksuda Akter | female | Age 33
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 479 | Sumona Khatun Sarkar | female | Age 36
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 481 | Momena Khatun Miah | female | Age 37
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 484 | Meherun Nessa | female | Age 35
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 489 | Mitu Akter Sarkar | female | Age 37
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 490 | Zakia Sultana | female | Age 27
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+
+ID 497 | Tamanna Akter | female | Age 34
+  ÔÜá´©Å  [PERSONALITY] personality_type="Modern" but religious_level="Very Religious" ÔÇö contradiction
+  ÔÜá´©Å  [PERSONALITY] personality_type="Modern" but family_values="Very Conservative" ÔÇö contradiction
+
+ID 500 | Taslima Begum | female | Age 20
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+
+ID 502 | Farhana Begum | female | Age 36
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 503 | Tamanna Akter | female | Age 28
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 506 | Sharmin Sultana | female | Age 25
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 511 | Farida Hossain | female | Age 25
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 515 | Sabiha Akter | female | Age 28
+  ÔÜá´©Å  [NRB] nrb=true but family_type="Joint" ÔÇö NRB people abroad almost always live nuclear
+
+ID 518 | Tamanna Akter | female | Age 35
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 521 | Afroza Begum Miah | female | Age 24
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 522 | Momena Khatun Talukder | female | Age 21
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+ID 523 | Shanta Akter | female | Age 31
+  ÔÜá´©Å  [PERSONALITY] personality_type="Modern" but religious_level="Very Religious" ÔÇö contradiction
+  ÔÜá´©Å  [PERSONALITY] personality_type="Modern" but family_values="Very Conservative" ÔÇö contradiction
+
+ID 532 | Grace Biswas | female | Age 19
+  ÔÜá´©Å  [EDU-PROF] education="HSC" but profession="Bank Officer" ÔÇö impossible combination
+
+ID 534 | Zakia Sultana Sarkar | female | Age 24
+  ÔÜá´©Å  [AGE-PROF] Age=24 but profession="Senior Bank Officer" ÔÇö too young for this senior role
+
+ID 538 | Bilkis Begum | female | Age 19
+  ÔÜá´©Å  [EDU-PROF] education="HSC" but profession="Doctor" ÔÇö impossible combination
+
+ID 540 | Rahela Akter Khan | female | Age 38
+  ÔÜá´©Å  [PRAYER] Female with prayer_habit="Friday and special occasions" ÔÇö Friday Jumu'ah is for men only
+
+Ô£à Deep check complete!
