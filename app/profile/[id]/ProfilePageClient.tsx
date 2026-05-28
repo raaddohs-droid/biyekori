@@ -1,7 +1,20 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+async function recordView(profileId: string) {
+  const userData = localStorage.getItem('biyekori_user');
+  const viewer = userData ? JSON.parse(userData) : null;
+  await fetch(`${SUPABASE_URL}/rest/v1/profile_views`, {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ viewed_profile_id: profileId, viewer_id: viewer?.id || null })
+  });
+}
 
 // ─── SCORING ENGINE ───────────────────────────────────────────
 
@@ -213,6 +226,10 @@ function ScoreModal({ profile, onClose }: { profile: any, onClose: () => void })
 export default function ProfilePageClient({ profile }: { profile: any }) {
   const [showModal, setShowModal] = useState(false)
   const { matchScore, predictability } = calculateScores(profile)
+
+  useEffect(() => {
+    if (profile?.id) recordView(String(profile.id));
+  }, [profile?.id])
 
   const matchCircle = 2 * Math.PI * 54
   const predCircle = 2 * Math.PI * 54
