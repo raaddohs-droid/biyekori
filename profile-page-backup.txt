@@ -1,0 +1,548 @@
+﻿import { createClient } from '@supabase/supabase-js'
+import Image from 'next/image'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
+export default async function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params
+  
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', resolvedParams.id)
+    .single()
+
+  if (error || !profile) {
+    notFound()
+  }
+
+  // Helper function to check if a value exists and is not "Not specified"
+  const hasValue = (value: any) => {
+    if (value === null || value === undefined) return false
+    if (typeof value === 'string') {
+      const trimmed = value.trim()
+      return trimmed !== '' && trimmed.toLowerCase() !== 'not specified'
+    }
+    return true
+  }
+
+  // Helper to format field value
+  const formatValue = (value: any) => {
+    if (!hasValue(value)) return null
+    return String(value)
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 py-8 px-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Back Button */}
+        <Link 
+          href="/profiles" 
+          className="inline-flex items-center text-pink-600 hover:text-pink-700 mb-6 font-medium"
+        >
+          â† Back to Profiles
+        </Link>
+
+        {/* Header Card */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+          <div className="bg-gradient-to-r from-pink-500 to-purple-500 h-32"></div>
+          
+          <div className="px-8 pb-8">
+            <div className="flex flex-col md:flex-row gap-6 -mt-16">
+              {/* Profile Photo */}
+              <div className="flex-shrink-0">
+                {profile.photo_url ? (
+                  <Image
+                    src={profile.photo_url}
+                    alt={profile.full_name || 'Profile Photo'}
+                    width={160}
+                    height={160}
+                    className="rounded-2xl border-4 border-white shadow-lg object-cover"
+                    style={{ width: '160px', height: '160px' }}
+                  />
+                ) : (
+                  <div className="w-40 h-40 bg-gradient-to-br from-pink-100 to-purple-100 rounded-2xl border-4 border-white shadow-lg flex items-center justify-center">
+                    <span className="text-4xl text-pink-600">
+                      {profile.gender === 'Male' ? 'ðŸ‘¨' : 'ðŸ‘©'}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Name & Key Info */}
+              <div className="flex-1 mt-4 md:mt-16">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  {profile.full_name || 'Anonymous'}
+                </h1>
+                
+                {/* Key Info Badges */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {hasValue(profile.age) && (
+                    <span className="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium">
+                      {profile.age} years
+                    </span>
+                  )}
+                  {hasValue(profile.gender) && (
+                    <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                      {profile.gender}
+                    </span>
+                  )}
+                  {hasValue(profile.marital_status) && (
+                    <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                      {profile.marital_status}
+                    </span>
+                  )}
+                </div>
+
+                {/* Essential Details Badges */}
+                <div className="flex flex-wrap gap-2">
+                  {hasValue(profile.religious_level) && (
+                    <span className="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 rounded-lg text-sm">
+                      ðŸ•Œ {profile.religious_level}
+                    </span>
+                  )}
+                  {hasValue(profile.prayer_habit) && (
+                    <span className="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 rounded-lg text-sm">
+                      ðŸ“¿ {profile.prayer_habit}
+                    </span>
+                  )}
+                  {hasValue(profile.city) && (
+                    <span className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm">
+                      ðŸ“ {profile.city}
+                    </span>
+                  )}
+                  {hasValue(profile.profession) && (
+                    <span className="inline-flex items-center px-3 py-1 bg-purple-50 text-purple-700 rounded-lg text-sm">
+                      ðŸ’¼ {profile.profession}
+                    </span>
+                  )}
+                  {hasValue(profile.education) && (
+                    <span className="inline-flex items-center px-3 py-1 bg-orange-50 text-orange-700 rounded-lg text-sm">
+                      ðŸŽ“ {profile.education}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* About Me Section */}
+        {hasValue(profile.about_me) && (
+          <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+              <span className="text-pink-500 mr-2">ðŸ“</span>
+              About Me
+            </h2>
+            <div className="prose max-w-none">
+              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                {profile.about_me}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* What I'm Looking For Section */}
+        {hasValue(profile.partner_preference) && (
+          <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+              <span className="text-pink-500 mr-2">ðŸ’•</span>
+              What I'm Looking For
+            </h2>
+            <div className="prose max-w-none">
+              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                {profile.partner_preference}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Two Column Layout for Details */}
+        <div className="grid md:grid-cols-2 gap-6 mb-6">
+          
+          {/* Personal Details */}
+          {(hasValue(profile.height) || hasValue(profile.weight) || hasValue(profile.complexion) || 
+            hasValue(profile.body_type) || hasValue(profile.blood_group)) && (
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <span className="text-pink-500 mr-2">ðŸ‘¤</span>
+                Personal Details
+              </h3>
+              <div className="space-y-3">
+                {hasValue(profile.height) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Height</span>
+                    <span className="font-medium text-gray-900">{profile.height}</span>
+                  </div>
+                )}
+                {hasValue(profile.weight) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Weight</span>
+                    <span className="font-medium text-gray-900">{profile.weight}</span>
+                  </div>
+                )}
+                {hasValue(profile.complexion) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Complexion</span>
+                    <span className="font-medium text-gray-900">{profile.complexion}</span>
+                  </div>
+                )}
+                {hasValue(profile.body_type) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Body Type</span>
+                    <span className="font-medium text-gray-900">{profile.body_type}</span>
+                  </div>
+                )}
+                {hasValue(profile.blood_group) && (
+                  <div className="flex justify-between py-2">
+                    <span className="text-gray-600">Blood Group</span>
+                    <span className="font-medium text-gray-900">{profile.blood_group}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Location & Address */}
+          {(hasValue(profile.city) || hasValue(profile.district) || hasValue(profile.country) || 
+            hasValue(profile.current_address) || hasValue(profile.permanent_address) || 
+            hasValue(profile.willing_to_relocate)) && (
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <span className="text-pink-500 mr-2">ðŸ“</span>
+                Location & Address
+              </h3>
+              <div className="space-y-3">
+                {hasValue(profile.city) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">City</span>
+                    <span className="font-medium text-gray-900">{profile.city}</span>
+                  </div>
+                )}
+                {hasValue(profile.district) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">District</span>
+                    <span className="font-medium text-gray-900">{profile.district}</span>
+                  </div>
+                )}
+                {hasValue(profile.country) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Country</span>
+                    <span className="font-medium text-gray-900">{profile.country}</span>
+                  </div>
+                )}
+                {hasValue(profile.current_address) && (
+                  <div className="py-2 border-b border-gray-100">
+                    <span className="text-gray-600 block mb-1">Current Address</span>
+                    <span className="font-medium text-gray-900 text-sm">{profile.current_address}</span>
+                  </div>
+                )}
+                {hasValue(profile.permanent_address) && (
+                  <div className="py-2 border-b border-gray-100">
+                    <span className="text-gray-600 block mb-1">Permanent Address</span>
+                    <span className="font-medium text-gray-900 text-sm">{profile.permanent_address}</span>
+                  </div>
+                )}
+                {hasValue(profile.willing_to_relocate) && (
+                  <div className="flex justify-between py-2">
+                    <span className="text-gray-600">Willing to Relocate</span>
+                    <span className="font-medium text-gray-900">{profile.willing_to_relocate}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Education */}
+          {(hasValue(profile.education) || hasValue(profile.institution) || hasValue(profile.degree) || 
+            hasValue(profile.major_subject) || hasValue(profile.passing_year)) && (
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <span className="text-pink-500 mr-2">ðŸŽ“</span>
+                Education
+              </h3>
+              <div className="space-y-3">
+                {hasValue(profile.education) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Education Level</span>
+                    <span className="font-medium text-gray-900">{profile.education}</span>
+                  </div>
+                )}
+                {hasValue(profile.institution) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Institution</span>
+                    <span className="font-medium text-gray-900">{profile.institution}</span>
+                  </div>
+                )}
+                {hasValue(profile.degree) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Degree</span>
+                    <span className="font-medium text-gray-900">{profile.degree}</span>
+                  </div>
+                )}
+                {hasValue(profile.major_subject) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Major</span>
+                    <span className="font-medium text-gray-900">{profile.major_subject}</span>
+                  </div>
+                )}
+                {hasValue(profile.passing_year) && (
+                  <div className="flex justify-between py-2">
+                    <span className="text-gray-600">Passing Year</span>
+                    <span className="font-medium text-gray-900">{profile.passing_year}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Career & Income */}
+          {(hasValue(profile.profession) || hasValue(profile.occupation) || hasValue(profile.annual_income)) && (
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <span className="text-pink-500 mr-2">ðŸ’¼</span>
+                Career & Income
+              </h3>
+              <div className="space-y-3">
+                {hasValue(profile.profession) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Profession</span>
+                    <span className="font-medium text-gray-900">{profile.profession}</span>
+                  </div>
+                )}
+                {hasValue(profile.occupation) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Occupation</span>
+                    <span className="font-medium text-gray-900">{profile.occupation}</span>
+                  </div>
+                )}
+                {hasValue(profile.annual_income) && (
+                  <div className="flex justify-between py-2">
+                    <span className="text-gray-600">Annual Income</span>
+                    <span className="font-medium text-gray-900">{profile.annual_income}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Religious Background */}
+          {(hasValue(profile.religious_level) || hasValue(profile.prayer_habit) || 
+            hasValue(profile.quran_reading) || hasValue(profile.islamic_knowledge)) && (
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <span className="text-pink-500 mr-2">ðŸ•Œ</span>
+                Religious Background
+              </h3>
+              <div className="space-y-3">
+                {hasValue(profile.religious_level) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Religious Level</span>
+                    <span className="font-medium text-gray-900">{profile.religious_level}</span>
+                  </div>
+                )}
+                {hasValue(profile.prayer_habit) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Prayer Habit</span>
+                    <span className="font-medium text-gray-900">{profile.prayer_habit}</span>
+                  </div>
+                )}
+                {hasValue(profile.quran_reading) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Quran Reading</span>
+                    <span className="font-medium text-gray-900">{profile.quran_reading}</span>
+                  </div>
+                )}
+                {hasValue(profile.islamic_knowledge) && (
+                  <div className="flex justify-between py-2">
+                    <span className="text-gray-600">Islamic Knowledge</span>
+                    <span className="font-medium text-gray-900">{profile.islamic_knowledge}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Family Background */}
+          {(hasValue(profile.father_name) || hasValue(profile.mother_name) || 
+            hasValue(profile.father_profession) || hasValue(profile.mother_profession) || 
+            hasValue(profile.total_siblings) || hasValue(profile.family_values) || 
+            hasValue(profile.home_ownership)) && (
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <span className="text-pink-500 mr-2">ðŸ‘¨â€ðŸ‘©â€ðŸ‘§â€ðŸ‘¦</span>
+                Family Background
+              </h3>
+              <div className="space-y-3">
+                {hasValue(profile.father_name) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Father's Name</span>
+                    <span className="font-medium text-gray-900">{profile.father_name}</span>
+                  </div>
+                )}
+                {hasValue(profile.father_profession) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Father's Profession</span>
+                    <span className="font-medium text-gray-900">{profile.father_profession}</span>
+                  </div>
+                )}
+                {hasValue(profile.mother_name) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Mother's Name</span>
+                    <span className="font-medium text-gray-900">{profile.mother_name}</span>
+                  </div>
+                )}
+                {hasValue(profile.mother_profession) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Mother's Profession</span>
+                    <span className="font-medium text-gray-900">{profile.mother_profession}</span>
+                  </div>
+                )}
+                {hasValue(profile.total_siblings) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Total Siblings</span>
+                    <span className="font-medium text-gray-900">{profile.total_siblings}</span>
+                  </div>
+                )}
+                {hasValue(profile.family_values) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Family Values</span>
+                    <span className="font-medium text-gray-900">{profile.family_values}</span>
+                  </div>
+                )}
+                {hasValue(profile.home_ownership) && (
+                  <div className="flex justify-between py-2">
+                    <span className="text-gray-600">Home Ownership</span>
+                    <span className="font-medium text-gray-900">{profile.home_ownership}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Lifestyle & Hobbies */}
+          {(hasValue(profile.diet) || hasValue(profile.hobbies) || hasValue(profile.interests) || 
+            hasValue(profile.personality_type) || hasValue(profile.social_level)) && (
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                <span className="text-pink-500 mr-2">ðŸŽ¨</span>
+                Lifestyle & Hobbies
+              </h3>
+              <div className="space-y-3">
+                {hasValue(profile.diet) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Diet</span>
+                    <span className="font-medium text-gray-900">{profile.diet}</span>
+                  </div>
+                )}
+                {hasValue(profile.personality_type) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Personality Type</span>
+                    <span className="font-medium text-gray-900">{profile.personality_type}</span>
+                  </div>
+                )}
+                {hasValue(profile.social_level) && (
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">Social Level</span>
+                    <span className="font-medium text-gray-900">{profile.social_level}</span>
+                  </div>
+                )}
+                {hasValue(profile.hobbies) && (
+                  <div className="py-2 border-b border-gray-100">
+                    <span className="text-gray-600 block mb-1">Hobbies</span>
+                    <span className="font-medium text-gray-900 text-sm">{profile.hobbies}</span>
+                  </div>
+                )}
+                {hasValue(profile.interests) && (
+                  <div className="py-2">
+                    <span className="text-gray-600 block mb-1">Interests</span>
+                    <span className="font-medium text-gray-900 text-sm">{profile.interests}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+        </div>
+
+        {/* Partner Expectations - Full Width */}
+        {(hasValue(profile.expected_age_min) || hasValue(profile.expected_height_min) || 
+          hasValue(profile.expected_education) || hasValue(profile.expected_profession) || 
+          hasValue(profile.expected_income) || hasValue(profile.expected_religious_level)) && (
+          <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <span className="text-pink-500 mr-2">ðŸ’‘</span>
+              Partner Expectations
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {(hasValue(profile.expected_age_min) || hasValue(profile.expected_age_max)) && (
+                <div className="flex justify-between py-2 border-b border-gray-100">
+                  <span className="text-gray-600">Expected Age</span>
+                  <span className="font-medium text-gray-900">
+                    {profile.expected_age_min || '?'} - {profile.expected_age_max || '?'} years
+                  </span>
+                </div>
+              )}
+              {(hasValue(profile.expected_height_min) || hasValue(profile.expected_height_max)) && (
+                <div className="flex justify-between py-2 border-b border-gray-100">
+                  <span className="text-gray-600">Expected Height</span>
+                  <span className="font-medium text-gray-900">
+                    {profile.expected_height_min || '?'} - {profile.expected_height_max || '?'}
+                  </span>
+                </div>
+              )}
+              {hasValue(profile.expected_education) && (
+                <div className="flex justify-between py-2 border-b border-gray-100">
+                  <span className="text-gray-600">Expected Education</span>
+                  <span className="font-medium text-gray-900">{profile.expected_education}</span>
+                </div>
+              )}
+              {hasValue(profile.expected_profession) && (
+                <div className="flex justify-between py-2 border-b border-gray-100">
+                  <span className="text-gray-600">Expected Profession</span>
+                  <span className="font-medium text-gray-900">{profile.expected_profession}</span>
+                </div>
+              )}
+              {hasValue(profile.expected_income) && (
+                <div className="flex justify-between py-2 border-b border-gray-100">
+                  <span className="text-gray-600">Expected Income</span>
+                  <span className="font-medium text-gray-900">{profile.expected_income}</span>
+                </div>
+              )}
+              {hasValue(profile.expected_religious_level) && (
+                <div className="flex justify-between py-2 border-b border-gray-100">
+                  <span className="text-gray-600">Expected Religious Level</span>
+                  <span className="font-medium text-gray-900">{profile.expected_religious_level}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <div className="flex flex-wrap gap-4 justify-center">
+            <button className="px-8 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-semibold rounded-lg hover:from-pink-600 hover:to-pink-700 transition-all shadow-md">
+              ðŸ’Œ Send Interest
+            </button>
+            <button className="px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-semibold rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all shadow-md">
+              ðŸ’¬ Send Message
+            </button>
+            <button className="px-8 py-3 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-gray-400 transition-all">
+              ðŸ“¥ Download PDF Biodata
+            </button>
+            <button className="px-8 py-3 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-gray-400 transition-all">
+              ðŸ”— Add to Shortlist
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  )
+}
