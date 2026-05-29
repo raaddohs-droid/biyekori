@@ -74,7 +74,7 @@ export default function Navbar() {
           {user ? (
             <>
               {[
-                { href: '/profiles', label: 'Profiles' },
+                { href: user ? `/profiles?userGender=${user.gender}` : '/profiles', label: 'Profiles' },
                 { href: '/interests', label: 'Interests' },
                 { href: '/dashboard', label: 'Dashboard' },
               ].map(({ href, label }) => (
@@ -93,7 +93,7 @@ export default function Navbar() {
           ) : (
             <>
               {[
-                { href: '/profiles', label: 'Profiles' },
+                { href: user ? `/profiles?userGender=${user.gender}` : '/profiles', label: 'Profiles' },
                 { href: '/pricing', label: 'Pricing' },
               ].map(({ href, label }) => (
                 <Link key={href} href={href} style={{
