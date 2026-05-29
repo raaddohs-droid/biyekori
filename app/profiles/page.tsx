@@ -156,15 +156,15 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
             {/* Results Header */}
             <div className="bg-white rounded-2xl shadow-sm p-5 mb-6">
               <p className="text-xl font-black text-gray-900">
-                Profiles For You
+                {totalFilteredProfiles} Profiles Found
                 {isFreeTier && hiddenProfilesCount > 0 && (
                   <span className="text-sm font-normal text-orange-600 ml-2">
-                    
+                    (+{hiddenProfilesCount} more with Premium)
                   </span>
                 )}
               </p>
               <p className="text-sm text-gray-500 mt-1">
-                
+                Page {currentPage} of {totalPages}
               </p>
             </div>
 
@@ -174,13 +174,13 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-2xl font-black text-gray-900 mb-2">
-                      🎉 Unlock More Profiles Waiting for You!
+                      🎉 Unlock {hiddenProfilesCount}+ More Profiles!
                     </p>
                     <p className="text-sm text-gray-700 mb-3">
-                      You are seeing a small selection. Upgrade to discover thousands of verified matches across Bangladesh.
+                      You are viewing limited profiles. Upgrade to see everyone who matches your preferences!
                     </p>
                     <ul className="text-sm text-gray-800 space-y-1 mb-4">
-                      <li>✅ Access thousands of verified profiles</li>
+                      <li>✅ See all {filteredProfiles.length} matching profiles</li>
                       <li>✅ Send unlimited messages</li>
                       <li>✅ View contact details</li>
                       <li>✅ Get priority in search results</li>
