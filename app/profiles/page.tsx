@@ -1,4 +1,4 @@
-import { getProfiles } from '@/lib/supabase-server'
+﻿import { getProfiles } from '@/lib/supabase-server'
 import ProfileCard from '@/components/profiles/ProfileCard'
 import ProfileFilters from '@/components/profiles/ProfileFilters'
 
@@ -56,7 +56,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   
   // BUSINESS STRATEGY: Limit free users to first 20 profiles
   const isFreeTier = true // TODO: Check user's package from localStorage
-  const displayProfiles = isFreeTier ? filteredProfiles.slice(0, 20) : filteredProfiles
+  const displayProfiles = isFreeTier ? filteredProfiles.slice(0, 50) : filteredProfiles
   
   const genderCounts = allProfiles.reduce((acc, p) => {
     const g = p.gender || 'NULL'
@@ -79,13 +79,13 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const hiddenProfilesCount = filteredProfiles.length - displayProfiles.length
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
+    <div className="pt-16 min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
       {/* Header */}
       <div className="bg-white shadow-lg border-b sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h1 className="text-3xl font-black text-gray-900">Browse Profiles 💕</h1>
+              <h1 className="text-3xl font-black text-gray-900">Browse Profiles ðŸ’•</h1>
               <p className="text-sm text-gray-600 mt-1">
                 {allProfiles.length} verified profiles waiting for you
               </p>
@@ -111,7 +111,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
                     : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-rose-300'
                 }`}
               >
-                👰 Brides ({genderCounts['female'] || 0})
+                ðŸ‘° Brides ({genderCounts['female'] || 0})
               </a>
               <a 
                 href="/profiles?gender=male"
@@ -121,7 +121,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
                     : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-rose-300'
                 }`}
               >
-                🤵 Grooms ({genderCounts['male'] || 0})
+                ðŸ¤µ Grooms ({genderCounts['male'] || 0})
               </a>
             </div>
           </div>
@@ -174,21 +174,21 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-2xl font-black text-gray-900 mb-2">
-                      🎉 Unlock {hiddenProfilesCount}+ More Profiles!
+                      ðŸŽ‰ Unlock {hiddenProfilesCount}+ More Profiles!
                     </p>
                     <p className="text-sm text-gray-700 mb-3">
                       You are viewing limited profiles. Upgrade to see everyone who matches your preferences!
                     </p>
                     <ul className="text-sm text-gray-800 space-y-1 mb-4">
-                      <li>✅ See all {filteredProfiles.length} matching profiles</li>
-                      <li>✅ Send unlimited messages</li>
-                      <li>✅ View contact details</li>
-                      <li>✅ Get priority in search results</li>
+                      <li>âœ… See all {filteredProfiles.length} matching profiles</li>
+                      <li>âœ… Send unlimited messages</li>
+                      <li>âœ… View contact details</li>
+                      <li>âœ… Get priority in search results</li>
                     </ul>
                   </div>
                   <div className="text-center">
                     <p className="text-sm text-gray-600 mb-2">Starting at</p>
-                    <p className="text-4xl font-black text-rose-600 mb-3">৳100</p>
+                    <p className="text-4xl font-black text-rose-600 mb-3">à§³100</p>
                     <button className="px-8 py-3 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-xl font-bold hover:shadow-lg transition">
                       Upgrade Now
                     </button>
@@ -237,14 +237,14 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
                 {totalFilteredProfiles > 0 && totalFilteredProfiles < 5 && !isFreeTier && (
                   <div className="mt-8 p-5 bg-blue-50 border-l-4 border-blue-500 rounded-xl">
                     <p className="text-sm text-blue-900 font-bold">
-                      💡 Only {totalFilteredProfiles} matches? Try relaxing your age or location filters to see more profiles!
+                      ðŸ’¡ Only {totalFilteredProfiles} matches? Try relaxing your age or location filters to see more profiles!
                     </p>
                   </div>
                 )}
               </>
             ) : (
               <div className="bg-white rounded-2xl shadow-sm p-12 text-center">
-                <div className="text-6xl mb-4">😔</div>
+                <div className="text-6xl mb-4">ðŸ˜”</div>
                 <p className="text-2xl font-bold text-gray-400 mb-4">No profiles match your criteria</p>
                 <p className="text-gray-600 mb-6">Try adjusting your filters or browse all profiles</p>
                 <a 
@@ -261,3 +261,4 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
     </div>
   )
 }
+
