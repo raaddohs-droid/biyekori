@@ -10,7 +10,7 @@ export default function InterestsPage() {
   const [userId, setUserId] = useState("")
 
   useEffect(() => {
-    const stored = localStorage.getItem("userId") || localStorage.getItem("user_id")
+    const userStr = localStorage.getItem("biyekori_user"); const stored = userStr ? JSON.parse(userStr).id : null
     if (stored) { setUserId(stored); fetchInterests(stored) }
     else setLoading(false)
   }, [])

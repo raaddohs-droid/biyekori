@@ -49,7 +49,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
   };
 
   const handleSendInterest = async () => {
-    const userId = localStorage.getItem("userId") || localStorage.getItem("user_id");
+    const userStr = localStorage.getItem("biyekori_user"); const userId = userStr ? JSON.parse(userStr).id : null;
     if (!userId) { alert("Please login first!"); window.location.href = "/login"; return; }
     try {
       const res = await fetch("/api/interests/send", {
