@@ -48,9 +48,21 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
     return phone.substring(0, 3) + "***" + phone.substring(phone.length - 2);
   };
 
-  const handleSendInterest = () => {
-    setInterestSent(true);
-    alert("Interest sent! They will be notified.");
+  const handleSendInterest = async () => {
+    const userId = localStorage.getItem("userId") || localStorage.getItem("user_id");
+    if (!userId) { alert("Please login first!"); window.location.href = "/login"; return; }
+    try {
+      const res = await fetch("/api/interests/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ senderId: parseInt(userId), receiverId: parseInt(String(profile.id)) })
+      });
+      const data = await res.json();
+      if (res.ok) { setInterestSent(true); }
+      else if (data.upgrade) { alert("You have reached your monthly limit of 3 interests. Upgrade to send more!"); window.location.href = "/pricing"; }
+      else if (res.status === 409) { setInterestSent(true); }
+      else { alert("Error: " + data.error); }
+    } catch (e) { alert("Something went wrong. Please try again."); }
   };
 
   const handleSendGift = (gift: string, price: number) => {
