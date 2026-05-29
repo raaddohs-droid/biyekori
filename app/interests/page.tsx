@@ -4,8 +4,8 @@ import Link from "next/link"
 
 export default function InterestsPage() {
   const [tab, setTab] = useState("received")
-  const [received, setReceived] = useState([])
-  const [sent, setSent] = useState([])
+  const [received, setReceived] = useState<any[]>([])
+  const [sent, setSent] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [userId, setUserId] = useState("")
 
@@ -36,9 +36,9 @@ export default function InterestsPage() {
     else alert("Error. Please try again.")
   }
 
-  const statusBadge = (status) => {
-    const styles = { pending: "bg-yellow-100 text-yellow-800", accepted: "bg-green-100 text-green-800", declined: "bg-red-100 text-red-800" }
-    const labels = { pending: "Pending", accepted: "Accepted", declined: "Declined" }
+  const statusBadge = (status: string) => {
+    const styles: Record<string,string> = { pending: "bg-yellow-100 text-yellow-800", accepted: "bg-green-100 text-green-800", declined: "bg-red-100 text-red-800" }
+    const labels: Record<string,string> = { pending: "Pending", accepted: "Accepted", declined: "Declined" }
     return <span className={"px-3 py-1 rounded-full text-xs font-bold " + (styles[status] || "bg-gray-100 text-gray-800")}>{labels[status] || status}</span>
   }
 
@@ -98,5 +98,8 @@ export default function InterestsPage() {
     </div>
   )
 }
+
+
+
 
 
