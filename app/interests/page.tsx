@@ -43,7 +43,7 @@ export default function InterestsPage() {
   const list = tab === "received" ? received : sent
 
   const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
-    pending:  { label: "Waiting",  bg: "#FEF3C7", color: "#92400E" },
+    pending:  { label: "Waiting for Response",  bg: "#FEF3C7", color: "#92400E" },
     accepted: { label: "Accepted", bg: "#D1FAE5", color: "#065F46" },
     declined: { label: "Declined", bg: "#FEE2E2", color: "#991B1B" },
   }

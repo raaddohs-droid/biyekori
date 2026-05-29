@@ -171,7 +171,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
             </button>
           ) : (
             <div className="w-full bg-green-100 border-2 border-green-500 text-green-800 py-3 rounded-xl font-bold text-sm text-center">
-              Interest Sent! Waiting...
+              Waiting for Response...
             </div>
           )}
           <div className="grid grid-cols-2 gap-2">
