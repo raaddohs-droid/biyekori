@@ -1,8 +1,1 @@
-﻿{
-  "crons": [
-    {
-      "path": "/api/interests/auto-respond",
-      "schedule": "0 * * * *"
-    }
-  ]
-}
+﻿{}
