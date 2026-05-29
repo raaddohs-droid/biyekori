@@ -76,7 +76,9 @@ export async function POST(request: NextRequest) {
         phone: user.phone,
         package: user.package,
         is_verified: user.is_verified,
-        photo_url: user.photo_url
+        photo_url: user.photo_url,
+        gender: user.gender,
+        profile_completion: user.profile_completion
       }
     })
 
