@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useRef } from 'react';
 import { FilesetResolver, FaceDetector } from '@mediapipe/tasks-vision';
 
@@ -18,11 +18,11 @@ export default function AIPhotoCropper({ onPhotoSelect, uploadCount }: AIPhotoCr
     if (!file) return;
 
     if (uploadCount >= 75) {
-      alert('âš ï¸ à¦†à¦ªà¦¨à¦¿ à§­à§«à¦Ÿà¦¿ à¦›à¦¬à¦¿ à¦†à¦ªà¦²à§‹à¦¡ à¦•à¦°à§‡à¦›à§‡à¦¨!\n\nà¦¸à¦°à§à¦¬à§‹à¦šà§à¦š à§®à§¦à¦Ÿà¦¿ à¦›à¦¬à¦¿ à¦†à¦ªà¦²à§‹à¦¡ à¦•à¦°à¦¾ à¦¯à¦¾à¦¬à§‡à¥¤\n\nYou have uploaded 75 photos! Maximum 80 photos allowed.');
+      alert('⚠️ আপনি ৭৫টি ছবি আপলোড করেছেন!\n\nসর্বোচ্চ ৮০টি ছবি আপলোড করা যাবে।\n\nYou have uploaded 75 photos! Maximum 80 photos allowed.');
     }
 
     if (uploadCount >= 80) {
-      alert('âŒ à¦¸à¦°à§à¦¬à§‹à¦šà§à¦š à¦¸à§€à¦®à¦¾ à¦ªà§Œà¦à¦›à§‡à¦›à§‡!\n\nà§®à§¦à¦Ÿà¦¿ à¦›à¦¬à¦¿à¦° à¦¬à§‡à¦¶à¦¿ à¦†à¦ªà¦²à§‹à¦¡ à¦•à¦°à¦¾ à¦¯à¦¾à¦¬à§‡ à¦¨à¦¾à¥¤\n\nMaximum limit reached! Cannot upload more than 80 photos.');
+      alert('❌ সর্বোচ্চ সীমা পৌঁছেছে!\n\n৮০টি ছবির বেশি আপলোড করা যাবে না।\n\nMaximum limit reached! Cannot upload more than 80 photos.');
       return;
     }
 
@@ -142,15 +142,15 @@ export default function AIPhotoCropper({ onPhotoSelect, uploadCount }: AIPhotoCr
       {!selectedImage ? (
         <label className="block cursor-pointer">
           <div className="border-4 border-dashed border-rose-300 rounded-2xl p-8 text-center hover:border-rose-500 transition bg-white">
-            <div className="text-6xl mb-4">ðŸ“¸</div>
+            <div className="text-6xl mb-4">📸</div>
             <p className="text-xl font-bold text-gray-900 mb-2">
-              à¦›à¦¬à¦¿ à¦†à¦ªà¦²à§‹à¦¡ à¦•à¦°à§à¦¨ / Upload Photo
+              ছবি আপলোড করুন / Upload Photo
             </p>
             <p className="text-sm text-gray-500 mb-2">
               AI automatically crops to your face
             </p>
             <p className="text-xs text-orange-600 font-bold">
-              
+              {uploadCount}/80 photos uploaded
             </p>
           </div>
           <input
@@ -164,7 +164,7 @@ export default function AIPhotoCropper({ onPhotoSelect, uploadCount }: AIPhotoCr
         <div className="space-y-4">
           {isProcessing ? (
             <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-8 text-center">
-              <div className="text-4xl mb-4">ðŸ”„</div>
+              <div className="text-4xl mb-4">🔄</div>
               <p className="text-lg font-bold text-blue-900">
                 AI detecting face and cropping...
               </p>
@@ -172,7 +172,7 @@ export default function AIPhotoCropper({ onPhotoSelect, uploadCount }: AIPhotoCr
           ) : croppedImage ? (
             <div className="bg-green-50 border-2 border-green-300 rounded-2xl p-6">
               <p className="text-sm font-bold text-green-900 mb-4 text-center">
-                âœ… Photo ready! (500x500)
+                ✅ Photo ready! (500x500)
               </p>
               <img 
                 src={croppedImage} 
