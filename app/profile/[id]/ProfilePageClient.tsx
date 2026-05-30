@@ -232,7 +232,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const { matchScore, predictability } = calculateScores(profile)
 
-  const [interestSent, setInterestSent] = useState(false)
+  const [interestSent, setInterestSent] = useState<boolean | null>(null)
   const [actionMsg, setActionMsg] = useState<{text: string, type: 'info'|'success'|'upgrade'} | null>(null)
 
   useEffect(() => {
@@ -561,10 +561,10 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           <div className="flex flex-wrap gap-4 justify-center">
             <button
               onClick={handleSendInterest}
-              disabled={interestSent}
-              className={`px-8 py-3 font-semibold rounded-lg transition-all ${interestSent ? 'bg-gray-100 text-gray-400 border-2 border-gray-200 cursor-not-allowed' : 'bg-gradient-to-r from-pink-500 to-pink-600 text-white hover:shadow-lg'}`}
+              disabled={interestSent === true}
+              className={`px-8 py-3 font-semibold rounded-lg transition-all ${interestSent === true ? 'bg-gray-100 text-gray-400 border-2 border-gray-200 cursor-not-allowed' : 'bg-gradient-to-r from-pink-500 to-pink-600 text-white hover:shadow-lg'}`}
             >
-              {interestSent ? 'Interest Sent' : 'Express Interest'}
+              {interestSent === true ? 'Interest Sent' : 'Express Interest'}
             </button>
             <button
               onClick={handleSendMessage}
@@ -578,12 +578,14 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             >
               Download Biodata
             </button>
-            <button
-              onClick={handleShareWhatsApp}
-              className="px-8 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 hover:shadow-lg transition-all"
+            <a
+              href={'https://wa.me/?text=' + encodeURIComponent('Ei profile ta dekho Biye Kori te: https://biyekori.com/profile/' + profile.id)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-8 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 hover:shadow-lg transition-all inline-block"
             >
               Share on WhatsApp
-            </button>
+            </a>
           </div>
         </div>
 
