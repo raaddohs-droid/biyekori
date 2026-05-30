@@ -26,7 +26,7 @@ export default function LoginPage() {
 
       if (data.success) {
         localStorage.setItem('biyekori_user', JSON.stringify(data.user));
-        router.push('/dashboard');
+        window.location.href = '/dashboard';
       } else {
         setError(data.error || 'Login failed');
       }
