@@ -1,3 +1,4 @@
+import UpgradeNudge from '@/components/UpgradeNudge'
 ﻿import { getProfiles } from '@/lib/supabase-server'
 import ProfileCard from '@/components/profiles/ProfileCard'
 import ProfileFilters from '@/components/profiles/ProfileFilters'
@@ -179,6 +180,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
           </div>
         </div>
       </div>
+    <UpgradeNudge currentPage={currentPage} />
     </div>
   )
 }
