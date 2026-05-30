@@ -83,7 +83,7 @@ export default function Dashboard() {
                   <h1 className="text-3xl font-black text-gray-900">Welcome, {user.full_name || user.name}!</h1>
                   <p className="text-gray-600 mt-1">Manage your matrimony profile</p>
                 </div>
-                <button onClick={handleLogout} className="px-6 py-2 bg-gray-100 text-gray-900 rounded-xl font-bold hover:bg-gray-200 transition">Logout</button>
+                
               </div>
             </div>
 
