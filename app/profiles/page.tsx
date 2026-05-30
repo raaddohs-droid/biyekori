@@ -99,13 +99,13 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
               <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-6 mb-6">
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div className="flex-1">
-                    <h3 className="text-xl font-black text-gray-900 mb-2">Thousands More Profiles Waiting!</h3>
-                    <p className="text-sm text-gray-600 mb-3">You are seeing a small selection. Upgrade to discover thousands of verified matches across Bangladesh.</p>
+                    <h3 className="text-xl font-black text-gray-900 mb-2">Your Perfect Match is Out There!</h3>
+                    <p className="text-sm text-gray-600 mb-3">You are viewing a limited selection. Upgrade to unlock thousands of verified profiles and find your ideal partner.</p>
                     <ul className="space-y-1">
-                      <li className="text-sm text-gray-700">Access thousands of verified profiles</li>
-                      <li className="text-sm text-gray-700">Send unlimited interests</li>
-                      <li className="text-sm text-gray-700">View contact details</li>
-                      <li className="text-sm text-gray-700">Get priority in search results</li>
+                      <li className="text-sm text-gray-700">Unlock thousands of verified profiles across Bangladesh</li>
+                      <li className="text-sm text-gray-700">Send unlimited interests to potential matches</li>
+                      <li className="text-sm text-gray-700">View phone numbers and contact details directly</li>
+                      <li className="text-sm text-gray-700">Appear at the top of search results</li>
                     </ul>
                   </div>
                   <div className="text-center">
