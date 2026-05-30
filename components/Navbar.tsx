@@ -7,18 +7,35 @@ export default function Navbar() {
   const pathname = usePathname()
   const [user, setUser] = useState<any>(null)
   const [showMenu, setShowMenu] = useState(false)
+  const [showNotifs, setShowNotifs] = useState(false)
+  const [notifs, setNotifs] = useState<any[]>([])
+  const [unreadCount, setUnreadCount] = useState(0)
+  const notifRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem('biyekori_user')
-      if (stored) setUser(JSON.parse(stored))
+      if (stored) {
+        const u = JSON.parse(stored)
+        setUser(u)
+        if (u?.id) {
+          fetch('/api/notifications?userId=' + u.id)
+            .then(r => r.json())
+            .then(data => {
+              setNotifs(data.notifications || [])
+              setUnreadCount(data.unreadCount || 0)
+            })
+            .catch(() => {})
+        }
+      }
     } catch(e) {}
   }, [])
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) setShowMenu(false)
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setShowNotifs(false)
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
@@ -29,6 +46,21 @@ export default function Navbar() {
     setUser(null)
     setShowMenu(false)
     window.location.href = '/'
+  }
+
+  const handleOpenNotifs = () => {
+    setShowNotifs(!showNotifs)
+    if (!showNotifs && unreadCount > 0) {
+      const stored = localStorage.getItem('biyekori_user')
+      const u = stored ? JSON.parse(stored) : null
+      if (u?.id) {
+        fetch('/api/notifications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: u.id })
+        }).then(() => setUnreadCount(0))
+      }
+    }
   }
 
   const isActive = (path: string) => pathname === path
@@ -110,6 +142,73 @@ export default function Navbar() {
         {/* Right */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {user ? (
+            <>
+            {/* Notification Bell */}
+            <div style={{ position: 'relative' }} ref={notifRef}>
+              <button onClick={handleOpenNotifs} style={{
+                position: 'relative', background: 'transparent', border: 'none',
+                cursor: 'pointer', padding: '6px', borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={isHome ? '#F0C040' : '#6b7280'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                {unreadCount > 0 && (
+                  <span style={{
+                    position: 'absolute', top: '2px', right: '2px',
+                    background: '#e11d48', color: 'white', borderRadius: '50%',
+                    width: '16px', height: '16px', fontSize: '10px', fontWeight: 700,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    lineHeight: 1
+                  }}>
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {showNotifs && (
+                <div style={{
+                  position: 'absolute', right: 0, top: 'calc(100% + 10px)',
+                  width: '300px', background: 'white', borderRadius: '16px',
+                  border: '1px solid #e5e7eb',
+                  boxShadow: '0 12px 40px rgba(0,0,0,0.12)', zIndex: 100, overflow: 'hidden'
+                }}>
+                  <div style={{ padding: '14px 16px', borderBottom: '1px solid #f3f4f6' }}>
+                    <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#111827' }}>Notifications</p>
+                  </div>
+                  <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
+                    {notifs.length === 0 ? (
+                      <div style={{ padding: '24px', textAlign: 'center', color: '#9ca3af', fontSize: '13px' }}>
+                        No notifications yet
+                      </div>
+                    ) : notifs.map((n: any, i: number) => (
+                      <div key={n.id || i} style={{
+                        padding: '12px 16px', borderBottom: '1px solid #f9fafb',
+                        background: n.is_read ? 'white' : '#fef2f8',
+                        display: 'flex', gap: '10px', alignItems: 'flex-start'
+                      }}>
+                        <span style={{ fontSize: '18px', flexShrink: 0 }}>
+                          {n.type === 'profile_view' ? 'eye' : n.type === 'interest_received' ? 'heart' : 'bell'}
+                        </span>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ margin: '0 0 2px', fontSize: '13px', color: '#111827', lineHeight: 1.4 }}>{n.message}</p>
+                          {n.created_at && (
+                            <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>
+                              {new Date(n.created_at).toLocaleDateString('en-GB')}
+                            </p>
+                          )}
+                        </div>
+                        {!n.is_read && (
+                          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e11d48', flexShrink: 0, marginTop: '4px' }} />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div style={{ position: 'relative' }} ref={menuRef}>
               <button onClick={() => setShowMenu(!showMenu)} style={{
                 display: 'flex', alignItems: 'center', gap: '8px',
@@ -213,6 +312,7 @@ export default function Navbar() {
                 </div>
               )}
             </div>
+            </>
           ) : (
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <Link href="/login" style={{
