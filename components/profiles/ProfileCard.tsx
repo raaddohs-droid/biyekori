@@ -21,6 +21,31 @@ function getActivityStatus(profileId: any) {
   return                                              { text: "Recently active",  color: "#6b7280", pulse: false };
 }
 
+function getQuickScore(profile: any): number {
+  let score = 0
+  if (profile.religion === 'Islam') score += 25
+  else score += 5
+  const age = profile.age || 0
+  if (age >= 20 && age <= 35) score += 15
+  else if (age >= 18 && age <= 40) score += 8
+  else score += 3
+  const eduRank: Record<string, number> = { 'SSC': 1, 'HSC': 2, "Bachelor's": 3, "Master's": 4, 'Medical': 5, 'Engineering': 5, 'Law': 4 }
+  score += (eduRank[profile.education] || 3) >= 3 ? 15 : (eduRank[profile.education] || 3) === 2 ? 8 : 5
+  score += 7
+  score += profile.personality_type ? 8 : 5
+  score += profile.religious_level === 'Religious' ? 10 : 5
+  score += profile.family_values ? 8 : 5
+  score += profile.hobbies ? 4 : 2
+  return Math.min(Math.round(score), 100)
+}
+
+function getScoreColor(score: number): string {
+  if (score >= 85) return '#10b981'
+  if (score >= 70) return '#3b82f6'
+  if (score >= 55) return '#f59e0b'
+  return '#e11d48'
+}
+
 const GIFTS: [string, number][] = [
   ["Rose", 50], ["Bouquet", 99], ["Chocolate", 49], ["Ring Hint", 199], ["Dua Card", 29]
 ];
@@ -92,6 +117,20 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
         {isPremium && (
           <div className="absolute top-3 right-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-2 py-1 rounded-full text-xs font-bold">Premium</div>
         )}
+        {!isPremium && (() => {
+          const score = getQuickScore(profile)
+          return (
+            <div style={{
+              position: 'absolute', top: '10px', right: '10px',
+              background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)',
+              borderRadius: '20px', padding: '4px 10px',
+              display: 'flex', alignItems: 'center', gap: '4px'
+            }}>
+              <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>AI</span>
+              <span style={{ fontSize: '13px', fontWeight: 800, color: getScoreColor(score) }}>{score}%</span>
+            </div>
+          )
+        })()}
         <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5">
           {activity.pulse ? (
             <span className="relative flex h-2 w-2">
