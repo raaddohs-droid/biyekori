@@ -94,8 +94,8 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
           {/* Main content */}
           <div className="flex-1">
 
-            {/* Upgrade banner for free users */}
-            {isFreeTier && (
+            {/* Upgrade banner for free users - only from page 3 */}
+            {isFreeTier && currentPage >= 3 && (
               <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-6 mb-6">
                 <div className="flex items-center justify-between flex-wrap gap-4">
                   <div className="flex-1">
