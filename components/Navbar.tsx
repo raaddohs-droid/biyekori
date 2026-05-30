@@ -188,7 +188,7 @@ export default function Navbar() {
                     {[
                       { href: '/dashboard', icon: '', label: 'Dashboard' },
                       { href: '/interests', icon: '', label: 'My Interests' },
-                      { href: '/profiles', icon: '', label: 'Browse Profiles' },
+                      { href: user ? `/profiles?userGender=${user.gender}` : '/profiles', icon: '', label: 'Browse Profiles' },
                       { href: '/pricing', icon: '', label: 'Plans & Pricing' },
                     ].map(({ href, icon, label }) => (
                       <Link key={href} href={href} onClick={() => setShowMenu(false)}
