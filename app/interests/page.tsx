@@ -50,7 +50,7 @@ export default function InterestsPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #fff5f7 0%, #fdf2f8 50%, #f5f3ff 100%)", fontFamily: "Georgia, serif" }}>
-      <div style={{ maxWidth: "680px", margin: "0 auto", padding: "40px 16px" }}>
+      <div style={{ maxWidth: "680px", margin: "0 auto", padding: "120px 16px 40px" }}>
 
         {/* Header */}
         <div style={{ marginBottom: "32px" }}>
