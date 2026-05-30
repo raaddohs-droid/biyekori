@@ -122,12 +122,13 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
           return (
             <div style={{
               position: 'absolute', top: '10px', right: '10px',
-              background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)',
+              background: getScoreColor(score),
               borderRadius: '20px', padding: '4px 10px',
-              display: 'flex', alignItems: 'center', gap: '4px'
+              display: 'flex', alignItems: 'center', gap: '4px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
             }}>
-              <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>AI</span>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: getScoreColor(score) }}>{score}%</span>
+              <span style={{ fontSize: '10px', color: 'white', fontWeight: 600, opacity: 0.85 }}>AI</span>
+              <span style={{ fontSize: '13px', fontWeight: 800, color: 'white' }}>{score}%</span>
             </div>
           )
         })()}
