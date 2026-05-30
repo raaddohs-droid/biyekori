@@ -219,7 +219,7 @@ export default function Dashboard() {
 
             {/* Quick Actions */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <Link href="/profiles" className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-2xl transition transform hover:scale-105">
+              <Link href={`/profiles?userGender=${typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('biyekori_user') || '{}').gender || '' : ''}`} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-2xl transition transform hover:scale-105">
                 <div className="text-4xl mb-3">🔍</div>
                 <h3 className="text-xl font-black text-gray-900 mb-2">Browse Profiles</h3>
                 <p className="text-gray-600 text-sm">Find your perfect match</p>
