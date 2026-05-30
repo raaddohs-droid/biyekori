@@ -50,7 +50,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
 
   const handleSendInterest = async () => {
     const userStr = localStorage.getItem("biyekori_user"); const userId = userStr ? JSON.parse(userStr).id : null;
-    if (!userId) { alert("Please login first!"); window.location.href = "/login"; return; }
+    if (!userId) { window.location.href = "/register?reason=interest"; return; }
     try {
       const res = await fetch("/api/interests/send", {
         method: "POST",
@@ -178,9 +178,9 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
             <Link href={"/profile/" + profile.id} className="bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2.5 rounded-xl font-bold text-sm text-center">
               View Profile
             </Link>
-            <Link href={"/biodata/" + profile.id} className="bg-gradient-to-r from-green-500 to-teal-500 text-white py-2.5 rounded-xl font-bold text-sm text-center col-span-2 mt-1" style={{display:"block",textAlign:"center"}}>
+            <button onClick={() => { const u = localStorage.getItem("biyekori_user"); if (!u) { window.location.href = "/register?reason=biodata"; return; } window.location.href = "/biodata/" + profile.id; }} className="bg-gradient-to-r from-green-500 to-teal-500 text-white py-2.5 rounded-xl font-bold text-sm col-span-2 mt-1" style={{display:"block",textAlign:"center",width:"100%",border:"none",cursor:"pointer"}}>
               Download PDF Biodata
-            </Link>
+            </button>
             <div className="relative">
               <button onClick={() => setShowGiftMenu(!showGiftMenu)} className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-2.5 rounded-xl font-bold text-sm">
                 Send Gift
