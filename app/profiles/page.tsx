@@ -1,7 +1,7 @@
-import UpgradeNudge from '@/components/UpgradeNudge'
 ﻿import { getProfiles } from '@/lib/supabase-server'
 import ProfileCard from '@/components/profiles/ProfileCard'
 import ProfileFilters from '@/components/profiles/ProfileFilters'
+import UpgradeNudge from '@/components/UpgradeNudge'
 import Link from 'next/link'
 
 export const revalidate = 0
@@ -23,38 +23,27 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const currentPage = typeof params.page === 'string' ? parseInt(params.page) || 1 : 1
   const isFreeTier = true
 
-  // Filter opposite gender only
-  let filteredProfiles = allProfiles
-  if (userGender) {
-    const showGender = userGender === 'male' ? 'female' : 'male'
-    filteredProfiles = allProfiles.filter((p: any) => p.gender === showGender)
-  }
-
-  // Remove own profile
-  if (excludeId) {
-    filteredProfiles = filteredProfiles.filter((p: any) => String(p.id) !== String(excludeId))
-  }
-
-  // Apply other filters
-  const heightFilter = typeof params.height === 'string' ? params.height : ''
   const districtFilter = typeof params.district === 'string' ? params.district : ''
-  const religionFilter = typeof params.religion === 'string' ? params.religion : ''
-  const maritalFilter = typeof params.marital === 'string' ? params.marital : ''
   const educationFilter = typeof params.education === 'string' ? params.education : ''
   const professionFilter = typeof params.profession === 'string' ? params.profession : ''
   const minAge = typeof params.minAge === 'string' ? parseInt(params.minAge) : 18
   const maxAge = typeof params.maxAge === 'string' ? parseInt(params.maxAge) : 80
 
-  if (heightFilter) filteredProfiles = filteredProfiles.filter((p: any) => p.height === heightFilter)
+  let filteredProfiles = allProfiles
+
+  if (userGender) {
+    const showGender = userGender === 'male' ? 'female' : 'male'
+    filteredProfiles = filteredProfiles.filter((p: any) => p.gender === showGender)
+  }
+
+  if (excludeId) {
+    filteredProfiles = filteredProfiles.filter((p: any) => String(p.id) !== String(excludeId))
+  }
+
   if (districtFilter) filteredProfiles = filteredProfiles.filter((p: any) => p.district === districtFilter || p.city === districtFilter)
-  if (religionFilter) filteredProfiles = filteredProfiles.filter((p: any) => p.religion === religionFilter)
-  if (maritalFilter) filteredProfiles = filteredProfiles.filter((p: any) => p.marital_status === maritalFilter)
   if (educationFilter) filteredProfiles = filteredProfiles.filter((p: any) => p.education === educationFilter)
   if (professionFilter) filteredProfiles = filteredProfiles.filter((p: any) => p.profession === professionFilter)
-  filteredProfiles = filteredProfiles.filter((p: any) => {
-    const age = p.age || 0
-    return age >= minAge && age <= maxAge
-  })
+  filteredProfiles = filteredProfiles.filter((p: any) => { const age = p.age || 0; return age >= minAge && age <= maxAge })
 
   const totalProfiles = filteredProfiles.length
   const totalPages = Math.ceil(totalProfiles / PROFILES_PER_PAGE)
@@ -62,15 +51,13 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const paginatedProfiles = filteredProfiles.slice(startIndex, startIndex + PROFILES_PER_PAGE)
   const prevPage = currentPage - 1
   const nextPage = currentPage + 1
-
   const baseUrl = `/profiles?userGender=${userGender}&excludeId=${excludeId}`
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50" style={{paddingTop:"120px"}}>
       <div className="max-w-7xl mx-auto px-4">
 
-        {/* Header */}
-        <div className="bg-white shadow-lg border-b sticky top-0 z-20" style={{top:"60px"}}>
+        <div className="bg-white shadow-lg border-b sticky z-20" style={{top:"60px"}}>
           <div className="max-w-7xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div>
@@ -82,7 +69,6 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         </div>
 
         <div className="flex gap-6 py-6">
-          {/* Filters sidebar */}
           <div className="w-64 flex-shrink-0">
             <ProfileFilters
               cities={[]}
@@ -92,35 +78,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
             />
           </div>
 
-          {/* Main content */}
           <div className="flex-1">
-
-            {/* Upgrade banner for free users - only from page 3 */}
-            {isFreeTier && currentPage >= 3 && (
-              <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-6 mb-6">
-                <div className="flex items-center justify-between flex-wrap gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-black text-gray-900 mb-2">{currentPage === 3 ? "Enjoying the profiles?" : currentPage === 4 ? "Your Perfect Match is Closer Than You Think" : "Last Chance — Upgrade to Keep Browsing"}</h3>
-                    <p className="text-sm text-gray-600 mb-3">{currentPage === 3 ? "You have seen a small selection. Thousands more verified profiles from Bangladesh, UK, USA, Canada and Middle East are waiting." : currentPage === 4 ? "Premium members get 10x more responses. Upgrade now and find your match faster." : "You have reached the free browsing limit. Upgrade to continue discovering your perfect match."}</p>
-                    <ul className="space-y-1">
-                      <li className="text-sm text-gray-700">Unlimited access to verified profiles worldwide</li>
-                      <li className="text-sm text-gray-700">Send unlimited interests — no monthly cap</li>
-                      <li className="text-sm text-gray-700">View phone numbers and contact details</li>
-                      <li className="text-sm text-gray-700">Priority placement — appear at the top</li>
-                    </ul>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm text-gray-600 mb-1">Starting at</p>
-                    <p className="text-4xl font-black text-rose-600 mb-3">৳799/mo</p>
-                    <Link href="/pricing" className="px-8 py-3 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-xl font-bold hover:shadow-lg transition inline-block">
-                      Upgrade Now
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Profile Grid */}
             {paginatedProfiles.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
@@ -129,7 +87,6 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
                   ))}
                 </div>
 
-                {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="flex justify-center items-center gap-2 flex-wrap mt-4 mb-8">
                     {currentPage > 1 && (
@@ -180,7 +137,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
           </div>
         </div>
       </div>
-    <UpgradeNudge currentPage={currentPage} />
+      <UpgradeNudge currentPage={currentPage} />
     </div>
   )
 }
