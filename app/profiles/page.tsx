@@ -17,7 +17,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const params = await searchParams
   const allProfiles = await getProfiles()
 
-  const userGender = typeof params.userGender === 'string' ? params.userGender : ''
+  const userGender = typeof params.userGender === 'string' ? params.userGender : (typeof params.gender === 'string' ? params.gender : '')
   const excludeId = typeof params.excludeId === 'string' ? params.excludeId : ''
   const currentPage = typeof params.page === 'string' ? parseInt(params.page) || 1 : 1
   const isFreeTier = true
