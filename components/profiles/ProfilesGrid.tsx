@@ -78,13 +78,14 @@ function ListRow({ profile }: { profile: any }) {
     } catch(e) {}
   }
 
+  const religionLevel = profile.religious_level && profile.religious_level !== 'Unknown' ? ', ' + profile.religious_level : ''
   const infoRows = [
     [
       profile.age ? profile.age + ' yrs' + (profile.height ? ', ' + profile.height : '') : null,
       profile.marital_status || null
     ],
     [
-      profile.religion ? profile.religion + (profile.religious_level ? ', ' + profile.religious_level : '') : null,
+      profile.religion ? profile.religion + religionLevel : null,
       (profile.city || profile.district) || null
     ],
     [
@@ -151,14 +152,17 @@ function ListRow({ profile }: { profile: any }) {
         </div>
         {/* About me snippet */}
         {profile.about_me && (
-          <p style={{ margin: 0, fontSize: '11.5px', color: '#6b7280', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontStyle: 'italic', borderTop: '1px solid #f3f4f6', paddingTop: '8px', marginTop: '4px' }}>
-            {profile.about_me}
-          </p>
+          <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '8px', marginTop: '4px' }}>
+            <p style={{ margin: '0 0 2px', fontSize: '11.5px', color: '#6b7280', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontStyle: 'italic' }}>
+              {profile.about_me}
+            </p>
+            <a href={'/profile/' + profile.id} onClick={e => e.stopPropagation()} style={{ fontSize: '11px', color: '#e11d48', fontWeight: 600, textDecoration: 'none' }}>More</a>
+          </div>
         )}
       </div>
 
       {/* Right: action section */}
-      <div style={{ flexShrink: 0, width: '120px', borderLeft: '1px solid #f3f4f6', background: 'linear-gradient(180deg,#fff5f7,#ffffff)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px 12px' }}>
+      <div style={{ flexShrink: 0, width: '120px', borderLeft: '1px solid #f3f4f6', background: 'linear-gradient(180deg,#fff5f7,#ffffff)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '16px 12px', minHeight: '100%' }}>
         <p style={{ margin: 0, fontSize: '10px', color: '#e11d48', fontWeight: 700, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quick Actions</p>
 
         {/* Connect - green circle */}
