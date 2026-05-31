@@ -83,11 +83,16 @@ function ListRow({ profile }: { profile: any }) {
       border: isPremium ? '2px solid #fcd34d' : '1px solid #f3f4f6',
       boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
       display: 'flex', gap: '16px', alignItems: 'center',
-      transition: 'box-shadow 0.2s'
+      transition: 'box-shadow 0.2s', cursor: 'pointer',
+      position: 'relative'
+    }}
+    onClick={(e) => {
+      if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('a')) return;
+      window.location.href = '/profile/' + profile.id;
     }}>
       {/* Photo */}
       <div style={{ position: 'relative', flexShrink: 0 }}>
-        <div style={{ width: '90px', height: '100px', borderRadius: '12px', overflow: 'hidden', background: '#f3f4f6' }}>
+        <div style={{ width: '90px', height: '120px', borderRadius: '12px', overflow: 'hidden', background: '#f3f4f6' }}>
           {photoUrl ? (
             <img src={photoUrl} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
           ) : (
