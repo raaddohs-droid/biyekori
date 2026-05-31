@@ -17,6 +17,9 @@ export default function RegisterPage() {
   // Step 2
   const [fullName, setFullName] = useState('');
   const [age, setAge] = useState('');
+  const [dobDay, setDobDay] = useState('');
+  const [dobMonth, setDobMonth] = useState('');
+  const [dobYear, setDobYear] = useState('');
   const [city, setCity] = useState('');
   const [education, setEducation] = useState('');
   const [profession, setProfession] = useState('');
@@ -94,7 +97,8 @@ export default function RegisterPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           full_name: fullName,
-          age: parseInt(age),
+          age: dobDay && dobMonth && dobYear ? Math.floor((Date.now() - new Date(parseInt(dobYear), parseInt(dobMonth)-1, parseInt(dobDay)).getTime()) / (365.25*24*60*60*1000)) : parseInt(age),
+          date_of_birth: dobDay && dobMonth && dobYear ? `${dobYear}-${dobMonth.padStart(2,'0')}-${dobDay.padStart(2,'0')}` : null,
           city,
           district: city,
           education,
@@ -248,13 +252,32 @@ export default function RegisterPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-2">Age</label>
-                  <select value={age} onChange={(e) => setAge(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" required>
-                    <option value="">Select Age</option>
-                    {Array.from({length: 53}, (_, i) => i + 18).map(a => (
-                      <option key={a} value={a}>{a} years</option>
-                    ))}
-                  </select>
+                  <label className="block text-sm font-bold text-gray-900 mb-2">Date of Birth</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <select value={dobDay} onChange={(e) => setDobDay(e.target.value)} className="px-2 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 text-sm">
+                      <option value="">Day</option>
+                      {Array.from({length: 31}, (_, i) => i + 1).map(d => (
+                        <option key={d} value={d}>{d}</option>
+                      ))}
+                    </select>
+                    <select value={dobMonth} onChange={(e) => setDobMonth(e.target.value)} className="px-2 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 text-sm">
+                      <option value="">Month</option>
+                      {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((m, i) => (
+                        <option key={i+1} value={i+1}>{m}</option>
+                      ))}
+                    </select>
+                    <select value={dobYear} onChange={(e) => setDobYear(e.target.value)} className="px-2 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 text-sm">
+                      <option value="">Year</option>
+                      {Array.from({length: 53}, (_, i) => new Date().getFullYear() - 18 - i).map(y => (
+                        <option key={y} value={y}>{y}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {dobDay && dobMonth && dobYear && (
+                    <p className="text-xs text-rose-500 font-semibold mt-1">
+                      Age: {Math.floor((Date.now() - new Date(parseInt(dobYear), parseInt(dobMonth)-1, parseInt(dobDay)).getTime()) / (365.25*24*60*60*1000))} years
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-2">District</label>
@@ -299,7 +322,7 @@ export default function RegisterPage() {
             </div>
             <div className="flex gap-4 mt-6">
               <button onClick={() => setStep(1)} className="flex-1 py-4 bg-gray-100 text-gray-900 rounded-xl font-bold hover:bg-gray-200">Back</button>
-              <button onClick={() => setStep(3)} disabled={!fullName || !age || !city || !education || !profession} className={`flex-1 py-4 rounded-xl font-bold ${fullName && age && city && education && profession ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>Next</button>
+              <button onClick={() => setStep(3)} disabled={!fullName || (!age && !(dobDay && dobMonth && dobYear)) || !city || !education || !profession} className={`flex-1 py-4 rounded-xl font-bold ${fullName && (age || (dobDay && dobMonth && dobYear)) && city && education && profession ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>Next</button>
             </div>
           </div>
         )}
