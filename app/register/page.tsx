@@ -10,6 +10,7 @@ export default function RegisterPage() {
   // Step 1
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
+  const [photoPrivacy, setPhotoPrivacy] = useState(false);
   const [iAm, setIAm] = useState(''); // 'bride' or 'groom'
   const [managedBy, setManagedBy] = useState('');
 
@@ -106,6 +107,7 @@ export default function RegisterPage() {
           managed_by: managedBy,
           photo_url: photoUrl,
           additional_photos: additionalPhotoUrls,
+          photo_privacy: photoPrivacy,
           package: 'prottasha',
           phone_verified: true
         })
@@ -186,6 +188,23 @@ export default function RegisterPage() {
             <div className="mb-5">
               <label className="block text-sm font-bold text-gray-900 mb-2">Profile Photo</label>
               <AIPhotoCropper onPhotoSelect={handlePhotoSelect} uploadCount={0} />
+
+              {/* Photo privacy toggle */}
+              <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-gray-800">Photo Privacy</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Only show my photo to people whose interest I accept</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPhotoPrivacy(!photoPrivacy)}
+                    className={`relative w-12 h-6 rounded-full transition-colors ${photoPrivacy ? 'bg-rose-500' : 'bg-gray-300'}`}
+                  >
+                    <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${photoPrivacy ? 'translate-x-6' : 'translate-x-0'}`} />
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Additional Photos */}
