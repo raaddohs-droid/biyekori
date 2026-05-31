@@ -204,7 +204,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
 
         {paginatedProfiles.length > 0 ? (
           <>
-            <ProfilesGrid profiles={paginatedProfiles} view={viewMode} onToggle={() => {}} />
+            <ProfilesGrid profiles={paginatedProfiles} view={viewMode} />
 
             {totalPages > 1 && (
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', flexWrap: 'wrap', paddingBottom: '48px' }}>

@@ -241,7 +241,7 @@ export function ViewToggle({ view, onToggle }: { view: 'grid' | 'list', onToggle
   )
 }
 
-export default function ProfilesGrid({ profiles, view, onToggle }: { profiles: any[], view: 'grid' | 'list', onToggle: (v: 'grid' | 'list') => void }) {
+export default function ProfilesGrid({ profiles, view }: { profiles: any[], view: 'grid' | 'list' }) {
   return (
     <div>
       {/* Profiles */}
