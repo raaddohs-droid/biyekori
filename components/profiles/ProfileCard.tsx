@@ -98,7 +98,12 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
   return (
     <div className={"bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden " + (isPremium ? "border-2 border-yellow-400" : "border border-gray-100")}>
       <div className="relative h-64 bg-gradient-to-br from-rose-100 to-purple-100">
-        {allPhotos.length > 0 ? (
+        {profile.photo_privacy ? (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50 gap-2">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c084fc" strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+            <p className="text-xs font-semibold text-purple-400">Photo Private</p>
+          </div>
+        ) : allPhotos.length > 0 ? (
           <img src={allPhotos[currentPhotoIndex]} alt={name} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-6xl">👤</div>
