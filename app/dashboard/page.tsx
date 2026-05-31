@@ -31,6 +31,10 @@ export default function Dashboard() {
   const [viewCount, setViewCount] = useState('0');
   const [showViewers, setShowViewers] = useState(false);
   const [loadingViewers, setLoadingViewers] = useState(false);
+  const [interestsSent, setInterestsSent] = useState(0);
+  const [interestsReceived, setInterestsReceived] = useState(0);
+  const [unreadNotifs, setUnreadNotifs] = useState(0);
+  const [suggestedProfiles, setSuggestedProfiles] = useState<any[]>([]);
 
   useEffect(() => {
     const userData = localStorage.getItem('biyekori_user');
@@ -41,6 +45,27 @@ export default function Dashboard() {
     // Fetch view count
     if (parsed.id) {
       fetchViewCount(parsed.id).then(setViewCount);
+
+      // Fetch interests counts
+      fetch('/api/interests/list?userId=' + parsed.id)
+        .then(r => r.json())
+        .then(data => {
+          setInterestsSent((data.sent || []).length);
+          setInterestsReceived((data.received || []).length);
+        }).catch(() => {});
+
+      // Fetch notifications unread count
+      fetch('/api/notifications?userId=' + parsed.id)
+        .then(r => r.json())
+        .then(data => setUnreadNotifs(data.unreadCount || 0))
+        .catch(() => {});
+
+      // Fetch suggested profiles (opposite gender, 3 profiles)
+      const showGender = parsed.gender === 'male' ? 'female' : 'male';
+      fetch('/api/profiles?gender=' + showGender + '&limit=3&excludeId=' + parsed.id)
+        .then(r => r.json())
+        .then(data => setSuggestedProfiles(Array.isArray(data) ? data.slice(0, 3) : []))
+        .catch(() => {});
     }
   }, [router]);
 
@@ -217,6 +242,33 @@ export default function Dashboard() {
               )}
             </div>
 
+            {/* Suggested Matches */}
+            {suggestedProfiles.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-black text-gray-900">Suggested for You</h2>
+                  <Link href={'/profiles?userGender=' + (user.gender || '')} className="text-sm text-rose-600 font-bold hover:underline">See all</Link>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {suggestedProfiles.map((p: any) => (
+                    <Link key={p.id} href={'/profile/' + p.id} className="text-center group">
+                      <div className="w-full aspect-square rounded-xl overflow-hidden bg-gray-100 mb-2">
+                        {p.photo_url ? (
+                          <img src={p.photo_url} alt={p.full_name} style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center 15%'}} />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-3xl bg-gradient-to-br from-pink-100 to-purple-100">
+                            {p.gender === 'male' ? '👨' : '👩'}
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-xs font-bold text-gray-800 truncate group-hover:text-rose-600">{p.full_name || 'Anonymous'}</p>
+                      <p className="text-xs text-gray-500">{p.age} yrs • {p.city || p.district || ''}</p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Quick Actions */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               <Link href={`/profiles?userGender=${typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('biyekori_user') || '{}').gender || '' : ''}`} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-2xl transition transform hover:scale-105">
@@ -224,7 +276,7 @@ export default function Dashboard() {
                 <h3 className="text-xl font-black text-gray-900 mb-2">Browse Profiles</h3>
                 <p className="text-gray-600 text-sm">Find your perfect match</p>
               </Link>
-              <Link href="/verify" className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-2xl transition transform hover:scale-105">
+              <Link href="/verify" className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-2xl transition transform hover:scale-105 relative">
                 <div className="text-4xl mb-3">✓</div>
                 <h3 className="text-xl font-black text-gray-900 mb-2">Verify NID</h3>
                 <p className="text-gray-600 text-sm">Get verified badge</p>
@@ -241,11 +293,11 @@ export default function Dashboard() {
               <h2 className="text-2xl font-black text-gray-900 mb-4">Your Profile Stats</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-rose-50 rounded-xl">
-                  <div className="text-3xl font-black text-rose-600">0</div>
+                  <div className="text-3xl font-black text-rose-600">{interestsSent}</div>
                   <p className="text-sm text-gray-600 mt-1">Interests Sent</p>
                 </div>
                 <div className="text-center p-4 bg-blue-50 rounded-xl">
-                  <div className="text-3xl font-black text-blue-600">0</div>
+                  <div className="text-3xl font-black text-blue-600">{interestsReceived}</div>
                   <p className="text-sm text-gray-600 mt-1">Interests Received</p>
                 </div>
                 <div className="text-center p-4 bg-purple-50 rounded-xl cursor-pointer hover:bg-purple-100 transition" onClick={handleShowViewers}>
