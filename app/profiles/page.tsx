@@ -2,7 +2,7 @@ import UpgradeNudge from '@/components/UpgradeNudge'
 import AdvancedSearch from '@/components/profiles/AdvancedSearch'
 import { getProfiles } from '@/lib/supabase-server'
 import ProfileCard from '@/components/profiles/ProfileCard'
-import ProfilesGrid from '@/components/profiles/ProfilesGrid'
+import ProfilesGrid, { ViewToggle } from '@/components/profiles/ProfilesGrid'
 import Link from 'next/link'
 
 export const revalidate = 0
@@ -40,6 +40,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const minAge = typeof params.minAge === 'string' ? parseInt(params.minAge) || 18 : 18
   const maxAge = typeof params.maxAge === 'string' ? parseInt(params.maxAge) || 70 : 70
   const maritalFilter = typeof params.marital === 'string' ? params.marital : ''
+  const viewMode = typeof params.view === 'string' && params.view === 'grid' ? 'grid' : 'list'
   const eduFilter = typeof params.edu === 'string' ? params.edu : ''
   const relLevelFilter = typeof params.relLevel === 'string' ? params.relLevel : ''
   const profFilter = typeof params.prof === 'string' ? params.prof : ''
@@ -232,6 +233,17 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
             Search
           </button>
 
+          {/* View toggle - right side of search bar */}
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: '4px', alignItems: 'center' }}>
+            <input type="hidden" name="view" value={viewMode} />
+            <a href={'?userGender=' + userGender + '&excludeId=' + excludeId + '&view=list'} style={{ padding: '6px 8px', borderRadius: '7px', border: '2px solid', borderColor: viewMode === 'list' ? '#e11d48' : '#e5e7eb', background: viewMode === 'list' ? '#fff1f2' : 'white', display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={viewMode === 'list' ? '#e11d48' : '#9ca3af'} strokeWidth="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </a>
+            <a href={'?userGender=' + userGender + '&excludeId=' + excludeId + '&view=grid'} style={{ padding: '6px 8px', borderRadius: '7px', border: '2px solid', borderColor: viewMode === 'grid' ? '#e11d48' : '#e5e7eb', background: viewMode === 'grid' ? '#fff1f2' : 'white', display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={viewMode === 'grid' ? '#e11d48' : '#9ca3af'} strokeWidth="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            </a>
+          </div>
+
           {(districtFilter || minAge !== 18 || maxAge !== 70 || maritalFilter) && (
             <Link href={`/profiles?userGender=${userGender}&excludeId=${excludeId}`} style={{
               padding: '8px 16px', background: '#f3f4f6', color: '#6b7280',
@@ -246,7 +258,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         {/* Profile grid */}
         {paginatedProfiles.length > 0 ? (
           <>
-            <ProfilesGrid profiles={paginatedProfiles} />
+            <ProfilesGrid profiles={paginatedProfiles} view={viewMode} onToggle={() => {}} />
 
             {/* Pagination */}
             {totalPages > 1 && (

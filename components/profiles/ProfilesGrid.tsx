@@ -136,119 +136,114 @@ function ListRow({ profile }: { profile: any }) {
           )}
         </div>
         {/* Activity */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: activity.color, display: 'inline-block', flexShrink: 0 }} />
-          <span style={{ fontSize: '12px', color: activity.color, fontWeight: 600 }}>{activity.label}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '10px' }}>
+          <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: activity.color, display: 'inline-block', flexShrink: 0 }} />
+          <span style={{ fontSize: '11px', color: activity.color, fontWeight: 600 }}>{activity.label}</span>
         </div>
         {/* 2-col info grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 16px', marginBottom: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 20px', marginBottom: '8px' }}>
           {infoRows.map((row, i) => row.some(Boolean) && (
             <React.Fragment key={i}>
-              {row[0] && <span style={{ fontSize: '13px', color: '#374151' }}>{row[0]}</span>}
-              {row[1] && <span style={{ fontSize: '13px', color: '#374151' }}>{row[1]}</span>}
+              {row[0] && <span style={{ fontSize: '12px', color: '#374151', fontWeight: 500 }}>{row[0]}</span>}
+              {row[1] && <span style={{ fontSize: '12px', color: '#374151', fontWeight: 500 }}>{row[1]}</span>}
             </React.Fragment>
           ))}
         </div>
         {/* About me snippet */}
         {profile.about_me && (
-          <p style={{ margin: 0, fontSize: '12px', color: '#6b7280', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+          <p style={{ margin: 0, fontSize: '11.5px', color: '#6b7280', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontStyle: 'italic', borderTop: '1px solid #f3f4f6', paddingTop: '8px', marginTop: '4px' }}>
             {profile.about_me}
           </p>
         )}
       </div>
 
       {/* Right: action section */}
-      <div style={{ flexShrink: 0, width: '130px', borderLeft: '1px solid #f3f4f6', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', padding: '16px' }}>
-        <p style={{ margin: '0 0 4px', fontSize: '11px', color: '#9ca3af', fontWeight: 600, textAlign: 'center' }}>Interested?</p>
-        {/* Express Interest - circular */}
+      <div style={{ flexShrink: 0, width: '120px', borderLeft: '1px solid #f3f4f6', background: 'linear-gradient(180deg,#fff5f7,#ffffff)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px 12px' }}>
+        <p style={{ margin: 0, fontSize: '10px', color: '#e11d48', fontWeight: 700, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quick Actions</p>
+
+        {/* Connect - green circle */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
           <button
             onClick={handleSendInterest}
             disabled={interestSent}
+            title={interestSent ? 'Interest Sent' : 'Send Interest'}
             style={{
-              width: '52px', height: '52px', borderRadius: '50%', border: 'none', cursor: interestSent ? 'default' : 'pointer',
+              width: '48px', height: '48px', borderRadius: '50%', border: 'none',
+              cursor: interestSent ? 'default' : 'pointer',
               background: interestSent ? '#f3f4f6' : 'linear-gradient(135deg,#10b981,#059669)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: interestSent ? 'none' : '0 4px 12px rgba(16,185,129,0.3)',
+              boxShadow: interestSent ? 'none' : '0 3px 10px rgba(16,185,129,0.35)',
               transition: 'all 0.2s'
             }}
           >
-            {interestSent ? (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-            )}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={interestSent ? '#9ca3af' : 'white'} strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
           </button>
-          <span style={{ fontSize: '10px', color: interestSent ? '#9ca3af' : '#059669', fontWeight: 600 }}>{interestSent ? 'Sent' : 'Connect'}</span>
+          <span style={{ fontSize: '10px', color: interestSent ? '#9ca3af' : '#059669', fontWeight: 700 }}>{interestSent ? 'Sent' : 'Connect'}</span>
         </div>
-        {/* View Profile - circular */}
+
+        {/* Phone - pink circle */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              const stored = localStorage.getItem('biyekori_user');
+              if (!stored) { window.location.href = '/register?reason=contact'; return; }
+              const user = JSON.parse(stored);
+              const isPaidUser = user.package && user.package !== 'prottasha';
+              if (!isPaidUser) { window.location.href = '/pricing'; return; }
+              window.location.href = '/profile/' + profile.id;
+            }}
+            title="View Contact"
+            style={{
+              width: '48px', height: '48px', borderRadius: '50%', border: 'none', cursor: 'pointer',
+              background: 'linear-gradient(135deg,#e11d48,#db2777)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 3px 10px rgba(225,29,72,0.3)',
+              transition: 'all 0.2s'
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </button>
+          <span style={{ fontSize: '10px', color: '#e11d48', fontWeight: 700 }}>Contact</span>
+        </div>
+
+        {/* View - grey circle */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
           <Link
             href={'/profile/' + profile.id}
             onClick={e => e.stopPropagation()}
             style={{
-              width: '52px', height: '52px', borderRadius: '50%',
+              width: '48px', height: '48px', borderRadius: '50%',
               border: '2px solid #e5e7eb', background: 'white',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               textDecoration: 'none', transition: 'all 0.2s'
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </Link>
-          <span style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600 }}>View</span>
+          <span style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600 }}>Profile</span>
         </div>
       </div>
     </div>
   )
 }
 
-export default function ProfilesGrid({ profiles }: { profiles: any[] }) {
-  const [view, setView] = useState<'grid' | 'list'>('list')
+export function ViewToggle({ view, onToggle }: { view: 'grid' | 'list', onToggle: (v: 'grid' | 'list') => void }) {
+  return (
+    <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+      <button onClick={() => onToggle('list')} title="List view" style={{ padding: '6px 8px', borderRadius: '7px', border: '2px solid', borderColor: view === 'list' ? '#e11d48' : '#e5e7eb', background: view === 'list' ? '#fff1f2' : 'white', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={view === 'list' ? '#e11d48' : '#9ca3af'} strokeWidth="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <button onClick={() => onToggle('grid')} title="Grid view" style={{ padding: '6px 8px', borderRadius: '7px', border: '2px solid', borderColor: view === 'grid' ? '#e11d48' : '#e5e7eb', background: view === 'grid' ? '#fff1f2' : 'white', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={view === 'grid' ? '#e11d48' : '#9ca3af'} strokeWidth="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      </button>
+    </div>
+  )
+}
 
-  useEffect(() => {
-    const saved = localStorage.getItem('biyekori_view')
-    if (saved === 'grid' || saved === 'list') setView(saved as 'grid' | 'list')
-  }, [])
-
-  const toggleView = (v: 'grid' | 'list') => {
-    setView(v)
-    localStorage.setItem('biyekori_view', v)
-  }
-
+export default function ProfilesGrid({ profiles, view, onToggle }: { profiles: any[], view: 'grid' | 'list', onToggle: (v: 'grid' | 'list') => void }) {
   return (
     <div>
-      {/* View toggle */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px', gap: '4px' }}>
-        <button
-          onClick={() => toggleView('list')}
-          title="List view"
-          style={{
-            padding: '7px 10px', borderRadius: '8px', border: '2px solid',
-            borderColor: view === 'list' ? '#e11d48' : '#e5e7eb',
-            background: view === 'list' ? '#fff1f2' : 'white',
-            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={view === 'list' ? '#e11d48' : '#9ca3af'} strokeWidth="2.5">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-          </svg>
-        </button>
-        <button
-          onClick={() => toggleView('grid')}
-          title="Grid view"
-          style={{
-            padding: '7px 10px', borderRadius: '8px', border: '2px solid',
-            borderColor: view === 'grid' ? '#e11d48' : '#e5e7eb',
-            background: view === 'grid' ? '#fff1f2' : 'white',
-            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={view === 'grid' ? '#e11d48' : '#9ca3af'} strokeWidth="2.5">
-            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-          </svg>
-        </button>
-      </div>
-
       {/* Profiles */}
       {view === 'list' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
