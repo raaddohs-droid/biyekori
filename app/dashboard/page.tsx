@@ -115,12 +115,16 @@ export default function Dashboard() {
           <div>
 
             {/* Stats */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '12px', marginBottom: '24px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px', marginBottom: '24px' }}>
               {stats.map((s, i) => (
-                <div key={i} style={{ background: 'white', borderRadius: '14px', padding: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.06)', border: '1px solid #f3f4f6' }}>
-                  <div style={{ width: '36px', height: '36px', background: s.bg, borderRadius: '10px', marginBottom: '10px' }} />
-                  <div style={{ fontSize: '22px', fontWeight: 800, color: s.color, marginBottom: '2px' }}>{s.value}</div>
-                  <div style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 600 }}>{s.label}</div>
+                <div key={i} style={{ background: 'white', borderRadius: '12px', padding: '12px 14px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid #f3f4f6', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '40px', height: '40px', background: s.bg, borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '18px', fontWeight: 800, color: s.color }}>
+                    {String(s.value).length <= 3 ? s.value : String(s.value).slice(0,3)}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '18px', fontWeight: 800, color: s.color, lineHeight: 1.1 }}>{s.value}</div>
+                    <div style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 600, marginTop: '1px' }}>{s.label}</div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -245,16 +249,21 @@ export default function Dashboard() {
             </div>
 
             {/* Quick Actions */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px' }}>
+            <div style={{ background: 'white', borderRadius: '14px', boxShadow: '0 1px 6px rgba(0,0,0,0.06)', border: '1px solid #f3f4f6', overflow: 'hidden' }}>
               {[
-                { href: '/profiles?userGender=' + (user.gender || ''), bg: '#fff1f2', title: 'Browse Profiles', sub: 'Find your match' },
-                { href: '/interests', bg: '#f5f3ff', title: 'My Interests', sub: interestsReceived > 0 ? interestsReceived + ' waiting' : 'View all' },
-                { href: '/pricing', bg: '#fffbeb', title: isPremium ? 'Manage Plan' : 'Upgrade Plan', sub: isPremium ? planLabel : 'Unlock features' },
+                { href: '/profiles?userGender=' + (user.gender || ''), color: '#e11d48', bg: '#fff1f2', title: 'Browse Profiles', sub: 'Find your perfect match' },
+                { href: '/interests', color: '#7c3aed', bg: '#f5f3ff', title: 'My Interests', sub: interestsReceived > 0 ? interestsReceived + ' new interest waiting' : 'View sent and received' },
+                { href: '/pricing', color: '#d97706', bg: '#fffbeb', title: isPremium ? 'Manage Plan' : 'Upgrade Plan', sub: isPremium ? 'Current: ' + planLabel : 'Unlock premium features' },
               ].map((a, i) => (
-                <Link key={i} href={a.href} style={{ textDecoration: 'none', background: 'white', borderRadius: '14px', padding: '18px', boxShadow: '0 1px 6px rgba(0,0,0,0.06)', border: '1px solid #f3f4f6', display: 'block' }}>
-                  <div style={{ width: '40px', height: '40px', background: a.bg, borderRadius: '10px', marginBottom: '10px' }} />
-                  <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>{a.title}</p>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af' }}>{a.sub}</p>
+                <Link key={i} href={a.href} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', borderBottom: i < 2 ? '1px solid #f9fafb' : 'none' }}>
+                  <div style={{ width: '36px', height: '36px', background: a.bg, borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: '14px', height: '14px', background: a.color, borderRadius: '3px', opacity: 0.7 }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ margin: '0 0 1px', fontSize: '13px', fontWeight: 700, color: '#111827' }}>{a.title}</p>
+                    <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{a.sub}</p>
+                  </div>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
                 </Link>
               ))}
             </div>
