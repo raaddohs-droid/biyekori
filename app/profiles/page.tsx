@@ -158,9 +158,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
 
         {/* Advanced Search */}
         <Suspense fallback={null}>
-          <Suspense fallback={null}>
           <AdvancedSearch userGender={userGender} excludeId={excludeId} />
-        </Suspense>
         </Suspense>
 
         {/* Simple filter bar */}
