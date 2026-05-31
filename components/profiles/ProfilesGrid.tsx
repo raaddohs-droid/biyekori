@@ -92,6 +92,7 @@ function ListRow({ profile }: { profile: any }) {
   }
 
   const religionLevel = profile.religious_level && profile.religious_level !== 'Unknown' ? ', ' + profile.religious_level : ''
+  const isFeatured = profile.is_featured && profile.featured_until && new Date(profile.featured_until) > new Date()
   const infoRows = [
     [
       profile.age ? profile.age + ' yrs' + (profile.height ? ', ' + profile.height : '') : null,
@@ -150,6 +151,12 @@ function ListRow({ profile }: { profile: any }) {
         {/* Name row */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '17px', fontWeight: 800, color: '#111827' }}>{name}</span>
+          {isFeatured && (
+            <span style={{ fontSize: '10px', fontWeight: 800, color: 'white', background: 'linear-gradient(135deg,#f59e0b,#d97706)', borderRadius: '20px', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '3px' }}>
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Featured
+            </span>
+          )}
           {isPremium && (
             <span style={{ fontSize: '10px', fontWeight: 700, color: '#b45309', background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: '6px', padding: '2px 7px' }}>Premium</span>
           )}

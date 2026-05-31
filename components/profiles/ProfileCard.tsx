@@ -63,6 +63,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
   const allPhotos: string[] = photoUrl ? [photoUrl, ...additionalPhotos] : additionalPhotos;
   const isVerified = profile.is_verified || profile.isVerified || false;
   const isPremium = profile.package !== "prottasha";
+  const isFeatured = profile.is_featured && profile.featured_until && new Date(profile.featured_until) > new Date();
   const monthlyIncome = profile.monthly_income || profile.monthlyIncome;
   const canViewContact = currentUserVerified || currentUserPackage === "bondhon" || currentUserPackage === "milon";
   const showDegree = profile.degree && profile.degree !== profile.education && !["SSC","HSC"].includes(profile.education);
@@ -118,6 +119,12 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
         )}
         {isVerified && (
           <div className="absolute top-3 left-3 bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold">Verified</div>
+        )}
+        {isFeatured && (
+          <div className="absolute top-3 left-3 z-10" style={{background:'linear-gradient(135deg,#f59e0b,#d97706)',borderRadius:'20px',padding:'3px 10px',display:'flex',alignItems:'center',gap:'4px',boxShadow:'0 2px 8px rgba(245,158,11,0.4)'}}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="#fff" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span style={{fontSize:'10px',color:'white',fontWeight:800,letterSpacing:'0.3px'}}>Featured</span>
+          </div>
         )}
         {(() => {
           const score = getQuickScore(profile)

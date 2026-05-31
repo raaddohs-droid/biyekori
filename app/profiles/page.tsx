@@ -109,6 +109,15 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
     filtered = filtered.filter((p: any) => p.marital_status === 'Never married')
   }
 
+  // Sort featured profiles to top
+  filtered = [...filtered.sort((a: any, b: any) => {
+    const aFeatured = a.is_featured && a.featured_until && new Date(a.featured_until) > new Date()
+    const bFeatured = b.is_featured && b.featured_until && new Date(b.featured_until) > new Date()
+    if (aFeatured && !bFeatured) return -1
+    if (!aFeatured && bFeatured) return 1
+    return 0
+  })]
+
   const totalProfiles = filtered.length
   const totalPages = Math.ceil(totalProfiles / PROFILES_PER_PAGE)
   const startIndex = (currentPage - 1) * PROFILES_PER_PAGE
