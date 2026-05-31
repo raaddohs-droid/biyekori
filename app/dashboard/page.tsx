@@ -254,7 +254,7 @@ export default function Dashboard() {
                 { href: '/interests', color: '#7c3aed', bg: '#f5f3ff', title: 'My Interests', sub: interestsReceived > 0 ? interestsReceived + ' new interest waiting' : 'View sent and received' },
                 { href: '/verify', color: '#d97706', bg: '#fffbeb', title: 'Verify NID', sub: user.is_verified ? 'Already verified' : 'Get your verified badge' },
                 { href: '/pricing', color: '#0891b2', bg: '#ecfeff', title: isPremium ? 'Manage Plan' : 'Upgrade to Premium', sub: isPremium ? 'Current: ' + planLabel : 'Unlock all features' },
-                { href: 'mailto:support@biyekori.com?subject=Spotlight Request&body=Please activate Spotlight for my profile. My registered phone: ' + (user.phone || ''), color: '#f59e0b', bg: '#fffbeb', title: 'Get Spotlight', sub: 'Appear at top for 24hrs — ৳99' },
+                { href: 'mailto:support@biyekori.com?subject=Spotlight Request - ' + (user.full_name || '') + '&body=Please activate Spotlight for my profile.%0A%0AName: ' + (user.full_name || '') + '%0AProfile ID: ' + (user.id || '') + '%0APhone: ' + (user.phone || '') + '%0A%0AI have sent ৳99 via bKash to: 01733577215', color: '#f59e0b', bg: '#fffbeb', title: 'Get Spotlight', sub: 'Appear at top for 24hrs — ৳99' },
               ].map((a, i) => (
                 <Link key={i} href={a.href} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 20px', borderBottom: i < 3 ? '1px solid #f8fafc' : 'none', background: 'white', transition: 'background 0.15s' }}>
                   <div style={{ width: '38px', height: '38px', background: a.bg, borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
