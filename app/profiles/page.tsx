@@ -46,6 +46,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const profFilter = typeof params.prof === 'string' ? params.prof : ''
   const nidOnly = params.nidOnly === '1'
   const neverMarriedOnly = params.neverMarried === '1'
+  const discoverMode = params.discover === '1'
 
   if (currentPage > FREE_MAX_PAGES) {
     return (
@@ -109,6 +110,16 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
     filtered = filtered.filter((p: any) => p.marital_status === 'Never married')
   }
 
+  // Discover mode - new profiles this week
+  if (discoverMode) {
+    const oneWeekAgo = new Date()
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+    filtered = filtered.filter((p: any) => {
+      const created = p.created_at || p.createdAt
+      return created && new Date(created) >= oneWeekAgo
+    })
+  }
+
   // Sort featured profiles to top
   filtered = [...filtered.sort((a: any, b: any) => {
     const aFeatured = a.is_featured && a.featured_until && new Date(a.featured_until) > new Date()
@@ -117,6 +128,15 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
     if (!aFeatured && bFeatured) return 1
     return 0
   })]
+
+  // Count new profiles this week for discover badge
+  const oneWeekAgoDate = new Date()
+  oneWeekAgoDate.setDate(oneWeekAgoDate.getDate() - 7)
+  const newThisWeek = allProfiles.filter((p: any) => {
+    const created = p.created_at || p.createdAt
+    const genderMatch = !userGender || p.gender === (userGender === 'male' ? 'female' : 'male')
+    return created && new Date(created) >= oneWeekAgoDate && genderMatch
+  }).length
 
   const totalProfiles = filtered.length
   const totalPages = Math.ceil(totalProfiles / PROFILES_PER_PAGE)
@@ -139,12 +159,36 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
 
         <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ margin: '0 0 4px', fontSize: '28px', fontWeight: 800, color: '#1f2937' }}>
+          <h1 style={{ margin: '0 0 16px', fontSize: '28px', fontWeight: 800, color: '#1f2937' }}>
             Browse Profiles
           </h1>
-          <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-            Thousands of verified profiles waiting for you
-          </p>
+          {/* Discovery tabs */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <Link href={`/profiles?userGender=${userGender}&excludeId=${excludeId}&view=${viewMode}`} style={{
+              padding: '8px 18px', borderRadius: '24px', fontSize: '13px', fontWeight: 700,
+              textDecoration: 'none',
+              background: !discoverMode ? 'linear-gradient(135deg,#e11d48,#db2777)' : 'white',
+              color: !discoverMode ? 'white' : '#6b7280',
+              border: !discoverMode ? 'none' : '2px solid #e5e7eb'
+            }}>
+              All Profiles
+            </Link>
+            <Link href={`/profiles?userGender=${userGender}&excludeId=${excludeId}&view=${viewMode}&discover=1`} style={{
+              padding: '8px 18px', borderRadius: '24px', fontSize: '13px', fontWeight: 700,
+              textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px',
+              background: discoverMode ? 'linear-gradient(135deg,#8b5cf6,#7c3aed)' : 'white',
+              color: discoverMode ? 'white' : '#6b7280',
+              border: discoverMode ? 'none' : '2px solid #e5e7eb'
+            }}>
+              New This Week
+              {newThisWeek > 0 && (
+                <span style={{
+                  background: discoverMode ? 'rgba(255,255,255,0.25)' : '#8b5cf6',
+                  color: 'white', borderRadius: '20px', padding: '1px 7px', fontSize: '11px', fontWeight: 800
+                }}>{newThisWeek}</span>
+              )}
+            </Link>
+          </div>
         </div>
 
         <Suspense fallback={null}>
