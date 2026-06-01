@@ -1,271 +1,233 @@
 "use client";
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function PricingPage() {
   const router = useRouter();
 
-  const packages = [
+  const plans = [
     {
+      id: 'prottasha',
       name: 'Prottasha',
-      banglaName: 'প্রত্যাশা',
+      bangla: 'প্রত্যাশা',
       price: 0,
-      period: 'Free Forever',
-      color: 'gray',
-      features: [
-        { text: 'Create profile with photos', included: true },
-        { text: 'Browse unlimited profiles', included: true },
-        { text: 'See all photos', included: true },
-        { text: 'Send 3 interests per month', included: true, badge: '3/month' },
-        { text: 'View contact details', included: false },
-        { text: 'Send messages', included: false },
-        { text: 'See who viewed you (last 5)', included: true, badge: 'Last 5' },
-        { text: 'AI compatibility scores', included: false },
-        { text: 'Priority in search', included: false }
-      ],
-      cta: 'Current Plan',
-      popular: false
-    },
-    {
-      name: 'Bondhon',
-      banglaName: 'বন্ধন',
-      price: 999,
-      period: 'per month',
-      yearlyPrice: 8999,
-      color: 'rose',
-      features: [
-        { text: 'Everything in Prottasha', included: true },
-        { text: 'View 25 phone numbers/month', included: true, badge: '25/month' },
-        { text: 'Unlimited interests', included: true },
-        { text: 'Send direct messages (10/month)', included: true, badge: '10/month' },
-        { text: 'See all profile viewers', included: true },
-        { text: 'AI compatibility scores', included: true, badge: 'NEW' },
-        { text: 'Highlighted profile (2x views)', included: true },
-        { text: 'Verified badge display', included: true },
-        { text: 'Priority in search', included: false }
-      ],
-      cta: 'Upgrade Now',
-      popular: true,
-      savings: 'Save ৳3,000/year'
-    },
-    {
-      name: 'Milon',
-      banglaName: 'মিলন',
-      price: 2999,
-      period: 'per month',
-      yearlyPrice: 29999,
-      color: 'purple',
-      features: [
-        { text: 'Everything in Bondhon', included: true },
-        { text: 'Unlimited contact viewing', included: true },
-        { text: 'Unlimited messages', included: true },
-        { text: 'Top 10 search placement', included: true, badge: 'Always' },
-        { text: 'Featured gold badge', included: true, badge: '👑' },
-        { text: 'Profile boost 3x/month', included: true, badge: '3x' },
-        { text: 'AI matchmaker (weekly)', included: true },
-        { text: 'Relationship manager support', included: true },
-        { text: 'Background verification help', included: true }
-      ],
-      cta: 'Go Elite',
+      priceLabel: 'Free',
+      period: 'Forever',
+      color: '#6b7280',
+      bg: '#f9fafb',
+      border: '#e5e7eb',
       popular: false,
-      savings: 'Save ৳6,000/year'
-    }
+      features: [
+        { text: 'Create profile with photos', yes: true },
+        { text: 'Browse up to 5 pages of profiles', yes: true },
+        { text: 'Send 3 interests per month', yes: true },
+        { text: 'Download PDF Biodata', yes: true },
+        { text: 'AI Match Score', yes: true },
+        { text: 'View contact details', yes: false },
+        { text: 'Send messages', yes: false },
+        { text: 'Advanced search filters', yes: false },
+        { text: 'See who viewed you', yes: false },
+      ],
+      cta: 'Get Started Free',
+      ctaAction: '/register',
+    },
+    {
+      id: 'biswas',
+      name: 'Biswas',
+      bangla: 'বিশ্বাস',
+      price: 499,
+      priceLabel: '৳499',
+      period: 'per month',
+      yearly: 4999,
+      yearlySaving: 'Save ৳1,000/year',
+      color: '#e11d48',
+      bg: '#fff1f2',
+      border: '#fecdd3',
+      popular: true,
+      features: [
+        { text: 'Everything in Prottasha', yes: true },
+        { text: 'Browse unlimited profiles', yes: true },
+        { text: 'Unlimited interests', yes: true },
+        { text: 'View 10 contacts/month', yes: true, badge: '10/mo' },
+        { text: 'Send messages (accepted only)', yes: true },
+        { text: 'Advanced search filters', yes: true },
+        { text: 'See who viewed you', yes: true },
+        { text: 'Profile Spotlight (1x/month)', yes: true, badge: '1x' },
+        { text: 'Priority in search', yes: false },
+      ],
+      cta: 'Upgrade to Biswas',
+      ctaAction: 'mailto:support@biyekori.com?subject=Upgrade to Biswas&body=Please upgrade my account to Biswas plan. bKash: 01XXXXXXXXX',
+    },
+    {
+      id: 'shopno',
+      name: 'Shopno',
+      bangla: 'স্বপ্ন',
+      price: 999,
+      priceLabel: '৳999',
+      period: 'per month',
+      yearly: 9999,
+      yearlySaving: 'Save ৳2,000/year',
+      color: '#7c3aed',
+      bg: '#f5f3ff',
+      border: '#ddd6fe',
+      popular: false,
+      features: [
+        { text: 'Everything in Biswas', yes: true },
+        { text: 'Unlimited contact viewing', yes: true },
+        { text: 'Unlimited messages', yes: true },
+        { text: 'Top search placement', yes: true, badge: 'Top 10' },
+        { text: 'Profile Spotlight (3x/month)', yes: true, badge: '3x' },
+        { text: 'Featured gold badge', yes: true },
+        { text: 'AI weekly match suggestions', yes: true },
+        { text: 'Priority support', yes: true },
+        { text: 'Background check assistance', yes: true },
+      ],
+      cta: 'Upgrade to Shopno',
+      ctaAction: 'mailto:support@biyekori.com?subject=Upgrade to Shopno&body=Please upgrade my account to Shopno plan. bKash: 01XXXXXXXXX',
+    },
+  ];
+
+  const nrbPlan = {
+    name: 'NRB Plan',
+    bangla: 'প্রবাসী',
+    price: '$15',
+    period: 'per month (USD)',
+    features: [
+      'All Shopno features',
+      'USD pricing — pay from anywhere',
+      'English-first interface',
+      'Priority matching with NRB profiles',
+      'Dedicated support via WhatsApp',
+      'Family account (add 1 parent)',
+    ],
+  };
+
+  const addons = [
+    { name: 'NID Verification', price: '৳200', desc: 'One-time · Verified badge · 5x more views' },
+    { name: 'Profile Spotlight', price: '৳99', desc: '24 hours · Appear at top of browse' },
+    { name: 'Contact Unlock', price: '৳99', desc: 'Single profile · View phone number' },
+    { name: 'Profile Boost', price: '৳199', desc: '48 hours · Top 10 search placement' },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg,#fff5f7,#fdf2f8,#f5f3ff)', paddingTop: '80px', paddingBottom: '60px' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 20px' }}>
+
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-black text-gray-900 mb-4">
-            Choose Your Perfect Plan
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <h1 style={{ margin: '0 0 12px', fontSize: '36px', fontWeight: 900, color: '#111827' }}>
+            Find Your Perfect Match
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Find your life partner with the plan that fits your needs. 
-            Upgrade anytime, cancel anytime.
+          <p style={{ margin: '0 0 24px', fontSize: '16px', color: '#6b7280', maxWidth: '500px', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.6 }}>
+            Simple, honest pricing. No hidden fees. Cancel anytime.
           </p>
+          <div style={{ display: 'inline-flex', gap: '8px', background: 'white', padding: '6px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+            <span style={{ padding: '6px 16px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', borderRadius: '8px', fontSize: '13px', fontWeight: 700 }}>Monthly</span>
+            <span style={{ padding: '6px 16px', color: '#6b7280', fontSize: '13px', fontWeight: 600 }}>Yearly — Save up to 20%</span>
+          </div>
         </div>
 
-        {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          {packages.map((pkg) => (
-            <div
-              key={pkg.name}
-              className={`relative bg-white rounded-2xl shadow-xl p-8 ${
-                pkg.popular ? 'ring-4 ring-rose-500 scale-105' : ''
-              }`}
-            >
-              {/* Popular Badge */}
-              {pkg.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
-                    ⭐ Most Popular
-                  </span>
+        {/* Main Plans */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '20px', marginBottom: '32px' }}>
+          {plans.map((plan) => (
+            <div key={plan.id} style={{
+              background: 'white', borderRadius: '20px', padding: '28px 24px',
+              border: `2px solid ${plan.popular ? plan.color : plan.border}`,
+              boxShadow: plan.popular ? '0 8px 32px rgba(225,29,72,0.15)' : '0 2px 12px rgba(0,0,0,0.06)',
+              position: 'relative', transform: plan.popular ? 'scale(1.03)' : 'none'
+            }}>
+              {plan.popular && (
+                <div style={{ position: 'absolute', top: '-14px', left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', padding: '4px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 800, whiteSpace: 'nowrap' }}>
+                  Most Popular
                 </div>
               )}
 
-              {/* Plan Name */}
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-black text-gray-900">
-                  {pkg.name}
-                </h3>
-                <p className="text-gray-600">{pkg.banglaName}</p>
-              </div>
-
-              {/* Price */}
-              <div className="text-center mb-6">
-                {pkg.price === 0 ? (
-                  <div className="text-4xl font-black text-gray-900">Free</div>
-                ) : (
-                  <>
-                    <div className="text-5xl font-black text-gray-900">
-                      ৳{pkg.price.toLocaleString()}
-                    </div>
-                    <div className="text-gray-600 mt-1">{pkg.period}</div>
-                    {pkg.yearlyPrice && (
-                      <div className="mt-2 text-sm text-green-600 font-bold">
-                        {pkg.savings}
-                      </div>
-                    )}
-                  </>
+              <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                <h3 style={{ margin: '0 0 2px', fontSize: '20px', fontWeight: 900, color: '#111827' }}>{plan.name}</h3>
+                <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#9ca3af' }}>{plan.bangla}</p>
+                <div style={{ fontSize: plan.price === 0 ? '32px' : '36px', fontWeight: 900, color: plan.color }}>
+                  {plan.priceLabel}
+                </div>
+                <div style={{ fontSize: '13px', color: '#9ca3af', marginTop: '2px' }}>{plan.period}</div>
+                {plan.yearly && (
+                  <div style={{ fontSize: '11px', color: '#10b981', fontWeight: 700, marginTop: '4px' }}>{plan.yearlySaving}</div>
                 )}
               </div>
 
-              {/* Features */}
-              <ul className="space-y-3 mb-8">
-                {pkg.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <span className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mr-3 ${
-                      feature.included ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
-                    }`}>
-                      {feature.included ? '✓' : '✕'}
+              <ul style={{ listStyle: 'none', margin: '0 0 24px', padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {plan.features.map((f, i) => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                    <span style={{ width: '18px', height: '18px', borderRadius: '50%', background: f.yes ? '#ecfdf5' : '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '1px' }}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={f.yes ? '#10b981' : '#d1d5db'} strokeWidth="3"><path d={f.yes ? "M20 6L9 17l-5-5" : "M18 6L6 18M6 6l12 12"}/></svg>
                     </span>
-                    <span className={`text-sm ${feature.included ? 'text-gray-900' : 'text-gray-400'}`}>
-                      {feature.text}
-                      {feature.badge && (
-                        <span className="ml-2 text-xs bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full font-bold">
-                          {feature.badge}
-                        </span>
-                      )}
+                    <span style={{ fontSize: '13px', color: f.yes ? '#374151' : '#9ca3af' }}>
+                      {f.text}
+                      {(f as any).badge && <span style={{ marginLeft: '6px', fontSize: '10px', background: plan.bg, color: plan.color, border: `1px solid ${plan.border}`, padding: '1px 6px', borderRadius: '10px', fontWeight: 700 }}>{(f as any).badge}</span>}
                     </span>
                   </li>
                 ))}
               </ul>
 
-              {/* CTA Button */}
-              <button
-                onClick={() => pkg.price > 0 ? router.push('/dashboard') : null}
-                disabled={pkg.price === 0}
-                className={`w-full py-4 rounded-xl font-bold transition ${
-                  pkg.price === 0
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : pkg.popular
-                    ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:shadow-xl'
-                    : 'bg-gray-900 text-white hover:bg-gray-800'
-                }`}
-              >
-                {pkg.cta}
-              </button>
+              <a href={plan.ctaAction} style={{
+                display: 'block', textAlign: 'center', padding: '12px',
+                background: plan.popular ? `linear-gradient(135deg,${plan.color},#db2777)` : plan.price === 0 ? '#f3f4f6' : `linear-gradient(135deg,${plan.color},#9333ea)`,
+                color: plan.price === 0 ? '#6b7280' : 'white',
+                borderRadius: '12px', fontWeight: 700, fontSize: '14px',
+                textDecoration: 'none', border: 'none'
+              }}>
+                {plan.cta}
+              </a>
             </div>
           ))}
         </div>
 
-        {/* Add-ons Section */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-2xl font-black text-gray-900 mb-6">Add-ons (À La Carte)</h2>
-          
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* NID Verification */}
-            <div className="border-2 border-gray-200 rounded-xl p-6 hover:border-rose-500 transition">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900">NID Verification</h3>
-                  <p className="text-sm text-gray-600">Get verified badge, 5x more views</p>
-                </div>
-                <div className="text-2xl font-black text-rose-500">৳200</div>
-              </div>
-              <ul className="space-y-2 mb-4 text-sm text-gray-600">
-                <li>✓ Green verified badge</li>
-                <li>✓ 5x more profile views</li>
-                <li>✓ 80% more responses</li>
-                <li>✓ One-time payment</li>
-              </ul>
-              <button className="w-full py-3 bg-rose-500 text-white rounded-lg font-bold hover:bg-rose-600">
-                Verify Now
-              </button>
+        {/* NRB Plan */}
+        <div style={{ background: 'linear-gradient(135deg,#0f172a,#1e1b4b)', borderRadius: '20px', padding: '32px', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '32px', flexWrap: 'wrap' }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <span style={{ background: 'rgba(255,255,255,0.1)', color: 'white', padding: '3px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, letterSpacing: '1px' }}>NRB SPECIAL</span>
             </div>
-
-            {/* Profile Boost */}
-            <div className="border-2 border-gray-200 rounded-xl p-6 hover:border-rose-500 transition">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900">Profile Boost</h3>
-                  <p className="text-sm text-gray-600">Top 10 for 48 hours</p>
-                </div>
-                <div className="text-2xl font-black text-rose-500">৳299</div>
-              </div>
-              <ul className="space-y-2 mb-4 text-sm text-gray-600">
-                <li>✓ Appear in top 10 search</li>
-                <li>✓ 500% more views</li>
-                <li>✓ Lasts 48 hours</li>
-                <li>✓ Buy anytime</li>
-              </ul>
-              <button className="w-full py-3 bg-rose-500 text-white rounded-lg font-bold hover:bg-rose-600">
-                Boost Profile
-              </button>
+            <h3 style={{ margin: '0 0 4px', fontSize: '22px', fontWeight: 900, color: 'white' }}>{nrbPlan.name} — {nrbPlan.bangla}</h3>
+            <p style={{ margin: '0 0 16px', fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>For Bangladeshis living abroad</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {nrbPlan.features.map((f, i) => (
+                <span key={i} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', background: 'rgba(255,255,255,0.1)', padding: '4px 10px', borderRadius: '20px' }}>✓ {f}</span>
+              ))}
             </div>
-
-            {/* AI Matchmaker Report */}
-            <div className="border-2 border-gray-200 rounded-xl p-6 hover:border-rose-500 transition">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900">AI Matchmaker Report</h3>
-                  <p className="text-sm text-gray-600">Detailed compatibility analysis</p>
-                </div>
-                <div className="text-2xl font-black text-rose-500">৳499</div>
-              </div>
-              <ul className="space-y-2 mb-4 text-sm text-gray-600">
-                <li>✓ 20-page PDF report</li>
-                <li>✓ Compatibility scores</li>
-                <li>✓ Conversation starters</li>
-                <li>✓ Red flags analysis</li>
-              </ul>
-              <button className="w-full py-3 bg-rose-500 text-white rounded-lg font-bold hover:bg-rose-600">
-                Get Report
-              </button>
-            </div>
-
-            {/* Contact Unlock */}
-            <div className="border-2 border-gray-200 rounded-xl p-6 hover:border-rose-500 transition">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900">Single Contact Unlock</h3>
-                  <p className="text-sm text-gray-600">View one profile's contact</p>
-                </div>
-                <div className="text-2xl font-black text-rose-500">৳99</div>
-              </div>
-              <ul className="space-y-2 mb-4 text-sm text-gray-600">
-                <li>✓ See phone number</li>
-                <li>✓ See email</li>
-                <li>✓ Instant access</li>
-                <li>✓ Perfect for testing</li>
-              </ul>
-              <button className="w-full py-3 bg-rose-500 text-white rounded-lg font-bold hover:bg-rose-600">
-                Unlock Contact
-              </button>
-            </div>
+          </div>
+          <div style={{ textAlign: 'center', flexShrink: 0 }}>
+            <div style={{ fontSize: '40px', fontWeight: 900, color: '#fbbf24' }}>{nrbPlan.price}</div>
+            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginBottom: '16px' }}>{nrbPlan.period}</div>
+            <a href="mailto:support@biyekori.com?subject=NRB Plan Request&body=Please activate NRB plan for my account." style={{ display: 'block', padding: '12px 28px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', color: 'white', borderRadius: '12px', fontWeight: 700, fontSize: '14px', textDecoration: 'none' }}>
+              Contact for NRB Plan
+            </a>
           </div>
         </div>
 
-        {/* FAQ Section */}
-        <div className="mt-12 text-center">
-          <p className="text-gray-600">
-            Have questions? Contact us at{' '}
-            <a href="tel:01733577215" className="text-rose-500 font-bold">
-              01733577215
-            </a>
-          </p>
+        {/* Add-ons */}
+        <div style={{ background: 'white', borderRadius: '20px', padding: '28px', marginBottom: '32px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+          <h2 style={{ margin: '0 0 20px', fontSize: '20px', fontWeight: 800, color: '#111827' }}>Add-ons</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '12px' }}>
+            {addons.map((a, i) => (
+              <div key={i} style={{ border: '1.5px solid #f3f4f6', borderRadius: '14px', padding: '16px', textAlign: 'center' }}>
+                <div style={{ fontSize: '20px', fontWeight: 900, color: '#e11d48', marginBottom: '4px' }}>{a.price}</div>
+                <p style={{ margin: '0 0 4px', fontSize: '13px', fontWeight: 700, color: '#111827' }}>{a.name}</p>
+                <p style={{ margin: '0 0 12px', fontSize: '11px', color: '#9ca3af', lineHeight: 1.4 }}>{a.desc}</p>
+                <a href="mailto:support@biyekori.com" style={{ display: 'block', padding: '7px', background: '#fff1f2', color: '#e11d48', borderRadius: '8px', fontSize: '12px', fontWeight: 700, textDecoration: 'none' }}>
+                  Request
+                </a>
+              </div>
+            ))}
+          </div>
         </div>
+
+        {/* Payment info */}
+        <div style={{ textAlign: 'center', padding: '20px', background: 'white', borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+          <p style={{ margin: '0 0 8px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>Payment via bKash</p>
+          <p style={{ margin: '0 0 4px', fontSize: '13px', color: '#6b7280' }}>Send payment to <strong>01733577215</strong> (Personal) · Include your registered phone number as reference</p>
+          <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af' }}>After payment email us at <a href="mailto:support@biyekori.com" style={{ color: '#e11d48', fontWeight: 600 }}>support@biyekori.com</a> with screenshot · Activation within 2 hours</p>
+        </div>
+
       </div>
     </div>
   );
