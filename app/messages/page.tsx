@@ -37,10 +37,17 @@ export default function MessagesPage() {
       // Get all accepted interests to find conversation partners
       const res = await fetch("/api/interests/list?userId=" + userId)
       const data = await res.json()
-      const accepted = [
-        ...(data.sent || []).filter((i: any) => i.status === "accepted").map((i: any) => ({ person: i.receiver, personId: i.receiver_id })),
-        ...(data.received || []).filter((i: any) => i.status === "accepted").map((i: any) => ({ person: i.sender, personId: i.sender_id }))
+      const all = [
+        ...(data.sent || []).filter((i: any) => i.status === "accepted").map((i: any) => ({ person: i.receiver, personId: String(i.receiver_id) })),
+        ...(data.received || []).filter((i: any) => i.status === "accepted").map((i: any) => ({ person: i.sender, personId: String(i.sender_id) }))
       ]
+      // Deduplicate by personId
+      const seen = new Set()
+      const accepted = all.filter((c: any) => {
+        if (seen.has(c.personId)) return false
+        seen.add(c.personId)
+        return true
+      })
       setConversations(accepted)
     } catch(e) {}
     setLoading(false)
@@ -194,7 +201,7 @@ export default function MessagesPage() {
                     onChange={e => setMsgInput(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
                     placeholder="Type a message..."
-                    style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1.5px solid #e5e7eb", fontSize: "13px", outline: "none" }}
+                    style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1.5px solid #e5e7eb", fontSize: "13px", outline: "none", color: "#111827", background: "white" }}
                   />
                   <button onClick={sendMessage} disabled={sending || !msgInput.trim()} style={{
                     padding: "10px 20px", background: "linear-gradient(135deg,#e11d48,#db2777)",
