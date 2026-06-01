@@ -74,7 +74,7 @@ export default function InterestsPage() {
     const res = await fetch("/api/messages/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ senderId: userId, receiverId: chatWith.id, content: msgInput })
+      body: JSON.stringify({ senderId: parseInt(userId), receiverId: parseInt(chatWith.id), content: msgInput })
     })
     const data = await res.json()
     if (data.success) {
@@ -234,7 +234,7 @@ export default function InterestsPage() {
                 onChange={e => setMsgInput(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
                 placeholder="Type a message..."
-                style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1.5px solid #e5e7eb", fontSize: "13px", outline: "none" }}
+                style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1.5px solid #e5e7eb", fontSize: "13px", outline: "none", color: "#111827", background: "white" }}
               />
               <button onClick={sendMessage} disabled={sendingMsg || !msgInput.trim()} style={{ padding: "10px 18px", background: "linear-gradient(135deg,#e11d48,#db2777)", color: "white", border: "none", borderRadius: "12px", fontWeight: 700, fontSize: "13px", cursor: "pointer" }}>
                 Send
