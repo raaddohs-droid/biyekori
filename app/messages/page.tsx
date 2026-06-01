@@ -15,6 +15,7 @@ export default function MessagesPage() {
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const pollRef = useRef<any>(null)
 
   useEffect(() => {
     try {
@@ -53,15 +54,29 @@ export default function MessagesPage() {
     setLoading(false)
   }
 
-  async function openConversation(convo: any) {
-    setActiveConvo(convo)
-    setMessages([])
+  async function fetchMessages(userId: string, personId: string) {
     try {
-      const res = await fetch(`/api/messages/list?userId=${user.id}&withUserId=${convo.personId}`)
+      const res = await fetch(`/api/messages/list?userId=${userId}&withUserId=${personId}`)
       const data = await res.json()
       setMessages(data.messages || [])
     } catch(e) {}
   }
+
+  async function openConversation(convo: any) {
+    setActiveConvo(convo)
+    setMessages([])
+    if (pollRef.current) clearInterval(pollRef.current)
+    await fetchMessages(user.id, convo.personId)
+    // Poll every 5 seconds
+    pollRef.current = setInterval(() => {
+      fetchMessages(user.id, convo.personId)
+    }, 5000)
+  }
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => { if (pollRef.current) clearInterval(pollRef.current) }
+  }, [])
 
   async function sendMessage() {
     if (!msgInput.trim() || !activeConvo || sending) return
