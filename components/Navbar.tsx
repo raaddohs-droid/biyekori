@@ -254,7 +254,7 @@ export default function Navbar() {
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#FDF6EE', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.full_name}</p>
-                        <p style={{ margin: 0, fontSize: '12px', color: 'rgba(253,246,238,0.4)' }}>{user.phone}</p>
+                        <p style={{ margin: 0, fontSize: '12px', color: 'rgba(253,246,238,0.4)' }}></p>
                       </div>
                     </div>
 
@@ -289,7 +289,6 @@ export default function Navbar() {
                       { href: '/dashboard', icon: '', label: 'Dashboard' },
                       { href: '/interests', icon: '', label: 'My Interests' },
                       { href: '/messages', icon: '', label: 'Messages' },
-                      { href: '/edit-profile', icon: '', label: 'Edit Profile' },
                       { href: '/edit-profile', icon: '', label: 'Edit Profile' },
                       { href: user ? `/profiles?userGender=${user.gender}&excludeId=${user.id}` : '/profiles', icon: '', label: 'Browse Profiles' },
                       { href: '/pricing', icon: '', label: 'Plans & Pricing' },
