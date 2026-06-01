@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     // Allow both sender and receiver to update status
     const isInvolved = String(interest.receiver_id) === String(userId) || String(interest.sender_id) === String(userId);
     if (!isInvolved) return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    await getSupabase().from("interests").update({ status: action, responded_at: new Date().toISOString() }).eq("id", interestId);
+    await getSupabase().from("interests").update({ status: action }).eq("id", interestId);
     const { data: receiver } = await getSupabase().from("profiles").select("full_name").eq("id", userId).single();
     await getSupabase().from("notifications").insert([{ user_id: interest.sender_id, type: action === "accepted" ? "interest_accepted" : "interest_declined", message: action === "accepted" ? receiver?.full_name + " আপনার interest গ্রহণ করেছেন!" : receiver?.full_name + " এবার আপনার interest গ্রহণ করেননি।", profile_id: userId, is_read: false }]);
     if (action === "accepted") {
