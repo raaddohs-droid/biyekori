@@ -289,6 +289,8 @@ export default function Navbar() {
                       { href: '/dashboard', icon: '', label: 'Dashboard' },
                       { href: '/interests', icon: '', label: 'My Interests' },
                       { href: '/messages', icon: '', label: 'Messages' },
+                      { href: '/edit-profile', icon: '', label: 'Edit Profile' },
+                      { href: '/edit-profile', icon: '', label: 'Edit Profile' },
                       { href: user ? `/profiles?userGender=${user.gender}&excludeId=${user.id}` : '/profiles', icon: '', label: 'Browse Profiles' },
                       { href: '/pricing', icon: '', label: 'Plans & Pricing' },
                     ].map(({ href, icon, label }) => (
