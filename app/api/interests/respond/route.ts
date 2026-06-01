@@ -16,7 +16,12 @@ export async function POST(req: Request) {
     if (action === "accepted") {
       const { data: senderProfile } = await getSupabase().from("profiles").select("phone").eq("id", interest.sender_id).single();
       if (senderProfile?.phone) {
-        await fetch("https://api.bulksmsbd.net/api/smsapi", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ api_key: process.env.BULKSMS_API_KEY, senderid: process.env.BULKSMS_SENDER_ID, number: senderProfile.phone, message: "বিয়েকরি: " + receiver?.full_name + " আপনার interest গ্রহণ করেছেন! biyekori.com/dashboard" }) });
+        try {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 3000);
+          await fetch("https://api.bulksmsbd.net/api/smsapi", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ api_key: process.env.BULKSMS_API_KEY, senderid: process.env.BULKSMS_SENDER_ID, number: senderProfile.phone, message: "বিয়েকরি: " + receiver?.full_name + " আপনার interest গ্রহণ করেছেন! biyekori.com/dashboard" }), signal: controller.signal });
+          clearTimeout(timeout);
+        } catch(smsErr) { console.log("SMS failed silently:", smsErr); }
       }
     }
     return NextResponse.json({ success: true });
