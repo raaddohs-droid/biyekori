@@ -98,7 +98,6 @@ export default function EditProfilePage() {
         partner_district: partnerDistrict,
         partner_education: partnerEducation,
         photo_privacy: photoPrivacy,
-        is_deactivated: deactivated,
         updated_at: new Date().toISOString()
       }
 
