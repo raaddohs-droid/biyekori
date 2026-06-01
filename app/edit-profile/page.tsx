@@ -82,24 +82,7 @@ export default function EditProfilePage() {
     if (!user) return
     setSaving(true)
     try {
-      const updates = {
-        full_name: fullName,
-        city, district: city,
-        education, profession,
-        religion,
-        religious_level: religionLevel,
-        marital_status: maritalStatus,
-        height,
-        monthly_income: income,
-        about_me: aboutMe,
-        hobbies,
-        partner_age_min: partnerAgeMin ? parseInt(partnerAgeMin) : null,
-        partner_age_max: partnerAgeMax ? parseInt(partnerAgeMax) : null,
-        partner_district: partnerDistrict,
-        partner_education: partnerEducation,
-        photo_privacy: photoPrivacy,
-        updated_at: new Date().toISOString()
-      }
+      const updates = { full_name: fullName, city, district: city, education, profession, religion, religious_level: religionLevel, marital_status: maritalStatus, height, about_me: aboutMe, photo_privacy: photoPrivacy }
 
       const res = await fetch('/api/update-profile', {
         method: 'POST',
