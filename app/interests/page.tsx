@@ -8,6 +8,12 @@ export default function InterestsPage() {
   const [sent, setSent] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [userId, setUserId] = useState("")
+  const [userPackage, setUserPackage] = useState("")
+  const [showChat, setShowChat] = useState<string | null>(null)
+  const [chatWith, setChatWith] = useState<any>(null)
+  const [messages, setMessages] = useState<any[]>([])
+  const [msgInput, setMsgInput] = useState("")
+  const [sendingMsg, setSendingMsg] = useState(false)
 
   useEffect(() => {
     let stored = null
@@ -16,7 +22,15 @@ export default function InterestsPage() {
       const parsed = userStr ? JSON.parse(userStr) : null
       stored = parsed ? String(parsed.id) : null
     } catch(e) {}
-    if (stored) { setUserId(stored); fetchInterests(stored) } else { setLoading(false) }
+    if (stored) {
+      setUserId(stored)
+      fetchInterests(stored)
+      try {
+        const userStr = localStorage.getItem("biyekori_user")
+        const parsed = userStr ? JSON.parse(userStr) : null
+        setUserPackage(parsed?.package || "prottasha")
+      } catch(e) {}
+    } else { setLoading(false) }
   }, [])
 
   async function fetchInterests(uid: string) {
@@ -38,6 +52,38 @@ export default function InterestsPage() {
     })
     if (res.ok) fetchInterests(userId)
     else alert("Error. Please try again.")
+  }
+
+  async function openChat(person: any, profileId: string) {
+    const isPaid = userPackage && userPackage !== "prottasha"
+    if (!isPaid) {
+      alert("Upgrade to Premium to send messages.")
+      return
+    }
+    setChatWith({ ...person, id: profileId })
+    setShowChat(profileId)
+    setMessages([])
+    const res = await fetch(`/api/messages/list?userId=${userId}&withUserId=${profileId}`)
+    const data = await res.json()
+    setMessages(data.messages || [])
+  }
+
+  async function sendMessage() {
+    if (!msgInput.trim() || !chatWith) return
+    setSendingMsg(true)
+    const res = await fetch("/api/messages/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ senderId: userId, receiverId: chatWith.id, content: msgInput })
+    })
+    const data = await res.json()
+    if (data.success) {
+      setMessages(prev => [...prev, { sender_id: userId, content: msgInput, created_at: new Date().toISOString() }])
+      setMsgInput("")
+    } else if (data.upgrade) {
+      alert("Upgrade to Premium to send messages.")
+    }
+    setSendingMsg(false)
   }
 
   const list = tab === "received" ? received : sent
@@ -133,6 +179,12 @@ export default function InterestsPage() {
                     <Link href={"/profile/" + profileId} style={{ fontSize: "12px", color: "#e11d48", textDecoration: "none", fontWeight: 600 }}>
                       View Profile →
                     </Link>
+
+                    {interest.status === "accepted" && (
+                      <button onClick={() => openChat(person, profileId)} style={{ padding: "6px 14px", background: "linear-gradient(135deg,#7c3aed,#db2777)", color: "white", border: "none", borderRadius: "8px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}>
+                        Send Message
+                      </button>
+                    )}
                   </div>
                 </div>
               )
@@ -140,6 +192,57 @@ export default function InterestsPage() {
           </div>
         )}
       </div>
+
+      {/* Chat Modal */}
+      {showChat && chatWith && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 1000, display: "flex", alignItems: "flex-end", justifyContent: "center", padding: "0 16px 0" }}>
+          <div style={{ background: "white", borderRadius: "20px 20px 0 0", width: "100%", maxWidth: "680px", height: "70vh", display: "flex", flexDirection: "column" }}>
+            {/* Chat header */}
+            <div style={{ padding: "16px 20px", borderBottom: "1px solid #f3f4f6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ width: "40px", height: "40px", borderRadius: "50%", overflow: "hidden", background: "#f3f4f6" }}>
+                  {chatWith.photo_url ? <img src={chatWith.photo_url} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>👤</div>}
+                </div>
+                <div>
+                  <p style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#111827" }}>{chatWith.full_name || "Unknown"}</p>
+                  <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>Premium messaging</p>
+                </div>
+              </div>
+              <button onClick={() => { setShowChat(null); setChatWith(null); setMessages([]) }} style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "#9ca3af" }}>×</button>
+            </div>
+
+            {/* Messages */}
+            <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
+              {messages.length === 0 ? (
+                <div style={{ textAlign: "center", color: "#9ca3af", fontSize: "13px", marginTop: "40px" }}>No messages yet. Say hello!</div>
+              ) : messages.map((msg: any, i: number) => {
+                const isMine = String(msg.sender_id) === String(userId)
+                return (
+                  <div key={i} style={{ display: "flex", justifyContent: isMine ? "flex-end" : "flex-start" }}>
+                    <div style={{ maxWidth: "70%", padding: "10px 14px", borderRadius: isMine ? "16px 16px 4px 16px" : "16px 16px 16px 4px", background: isMine ? "linear-gradient(135deg,#e11d48,#db2777)" : "#f3f4f6", color: isMine ? "white" : "#111827", fontSize: "13px", lineHeight: 1.5 }}>
+                      {msg.content}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Input */}
+            <div style={{ padding: "12px 16px", borderTop: "1px solid #f3f4f6", display: "flex", gap: "8px" }}>
+              <input
+                value={msgInput}
+                onChange={e => setMsgInput(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
+                placeholder="Type a message..."
+                style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1.5px solid #e5e7eb", fontSize: "13px", outline: "none" }}
+              />
+              <button onClick={sendMessage} disabled={sendingMsg || !msgInput.trim()} style={{ padding: "10px 18px", background: "linear-gradient(135deg,#e11d48,#db2777)", color: "white", border: "none", borderRadius: "12px", fontWeight: 700, fontSize: "13px", cursor: "pointer" }}>
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
