@@ -102,18 +102,13 @@ export default function EditProfilePage() {
         updated_at: new Date().toISOString()
       }
 
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`, {
-        method: 'PATCH',
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify(updates)
+      const res = await fetch('/api/update-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, updates })
       })
-
-      if (res.ok) {
+      const result = await res.json()
+      if (result.success) {
         // Update localStorage name
         const stored = localStorage.getItem('biyekori_user')
         if (stored) {
