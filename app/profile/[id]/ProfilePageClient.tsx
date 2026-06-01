@@ -231,6 +231,8 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [showModal, setShowModal] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [photoIndex, setPhotoIndex] = useState(0)
+  const [contactRequest, setContactRequest] = useState<any>(null)
+  const [loadingContact, setLoadingContact] = useState(false)
   const { matchScore, predictability } = calculateScores(profile)
 
   const [interestSent, setInterestSent] = useState<boolean | null>(null)
@@ -240,6 +242,15 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
     if (profile?.id) recordView(String(profile.id));
     const userData = localStorage.getItem('biyekori_user');
     setIsLoggedIn(!!userData);
+    if (userData && profile?.id) {
+      try {
+        const u = JSON.parse(userData)
+        fetch('/api/contact-request/status?userId=' + u.id + '&profileId=' + profile.id)
+          .then(r => r.json())
+          .then(data => setContactRequest(data))
+          .catch(() => {})
+      } catch(e) {}
+    }
 
     // Check if interest already sent
     if (userData) {
@@ -315,6 +326,32 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
     const userData = localStorage.getItem('biyekori_user');
     if (!userData) { window.location.href = '/register?reason=biodata'; return; }
     window.location.href = '/biodata/' + profile.id;
+  }
+
+  const handleRequestContact = async () => {
+    const stored = localStorage.getItem('biyekori_user')
+    if (!stored) { window.location.href = '/register?reason=contact'; return; }
+    const user = JSON.parse(stored)
+    const isPaid = user.package && user.package !== 'prottasha'
+    if (!isPaid) { window.location.href = '/pricing'; return; }
+    setLoadingContact(true)
+    try {
+      const res = await fetch('/api/contact-request/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requesterId: user.id, targetId: profile.id })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setContactRequest((prev: any) => ({ ...prev, sent: { status: 'pending' } }))
+        showMsg('Contact request sent! They will be notified.', 'success')
+      } else if (data.upgrade) {
+        window.location.href = '/pricing'
+      } else {
+        showMsg(data.message || 'Request already sent.', 'info')
+      }
+    } catch(e) {}
+    setLoadingContact(false)
   }
 
   const handleShareWhatsApp = () => {
@@ -639,6 +676,29 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
         </div>
 
       </div>
+
+      {/* Contact Request Section */}
+      {isLoggedIn && contactRequest !== null && (
+        <div style={{ background: 'white', borderRadius: '16px', padding: '20px 24px', margin: '0 0 16px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)', border: '1px solid #f3f4f6' }}>
+          <h3 style={{ margin: '0 0 12px', fontSize: '16px', fontWeight: 800, color: '#111827' }}>Contact Details</h3>
+          {contactRequest.sent?.status === 'pending' ? (
+            <p style={{ margin: 0, fontSize: '13px', color: '#92400e' }}>Contact request sent — waiting for approval.</p>
+          ) : contactRequest.received?.status === 'pending' ? (
+            <div>
+              <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#5b21b6', fontWeight: 600 }}>This person wants to exchange contact details with you.</p>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={async () => { const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}'); await fetch('/api/contact-request/respond', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ requestId: contactRequest.received.id, action: 'approved', userId: u.id }) }); showMsg('Approved!', 'success'); setContactRequest((p: any) => ({ ...p, received: { ...p.received, status: 'approved' } })) }} style={{ padding: '8px 18px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>Approve</button>
+                <button onClick={async () => { const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}'); await fetch('/api/contact-request/respond', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ requestId: contactRequest.received.id, action: 'declined', userId: u.id }) }); setContactRequest((p: any) => ({ ...p, received: { ...p.received, status: 'declined' } })) }} style={{ padding: '8px 18px', background: '#f3f4f6', color: '#6b7280', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>Decline</button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#6b7280' }}>Request to exchange contact details with consent.</p>
+              <button onClick={handleRequestContact} disabled={loadingContact} style={{ padding: '10px 24px', background: 'linear-gradient(135deg,#0891b2,#7c3aed)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>{loadingContact ? 'Sending...' : 'Request Contact Details'}</button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
