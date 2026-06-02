@@ -260,7 +260,7 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
         <div onClick={(e) => { e.stopPropagation(); alert(viewerProfile ? 'AI Match Score: ' + score + '% — Personalized based on your preferences. Factors: Age, Religion, Education, Location, Family type, Income, Height, Lifestyle, Personality.' : 'AI Match Score: ' + score + '% — General score. Fill partner preferences for a personalized score.') }} style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', background: getScoreColor(score), borderRadius: '20px', padding: '3px 10px', display: 'flex', alignItems: 'center', gap: '3px', boxShadow: '0 2px 6px rgba(0,0,0,0.25)', whiteSpace: 'nowrap', cursor: 'pointer' }}>
           <span style={{ fontSize: '9px', color: 'white', fontWeight: 600, opacity: 0.85 }}>AI</span>
           <span style={{ fontSize: '12px', fontWeight: 800, color: 'white' }}>{score}%</span>
-          <span style={{ fontSize: '10px', color: 'white', opacity: 0.8, border: '1px solid rgba(255,255,255,0.6)', borderRadius: '50%', width: '13px', height: '13px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>i</span>
+          
         </div>
       </div>
 
