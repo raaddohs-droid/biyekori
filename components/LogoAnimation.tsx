@@ -57,8 +57,7 @@ export default function LogoAnimation() {
 
     // on very first frame â€” fill solid dark so trail has a base
     if (!initializedRef.current) {
-      ctx.fillStyle = '#080604';
-      ctx.fillRect(0, 0, W, H);
+      ctx.clearRect(0, 0, W, H);
       initializedRef.current = true;
     }
 
@@ -118,8 +117,7 @@ export default function LogoAnimation() {
 
     } else if (phase === 'settle') {
       // clear cleanly once rings bond
-      ctx.fillStyle = '#080604';
-      ctx.fillRect(0, 0, W, H);
+      ctx.clearRect(0, 0, W, H);
 
       const t = Math.min(elapsed / 500, 1);
       const bounce = Math.sin(t * Math.PI) * 5 * (1 - t);
@@ -132,8 +130,7 @@ export default function LogoAnimation() {
       ring(lx, cy, false, 0, 1);
 
     } else {
-      ctx.fillStyle = '#080604';
-      ctx.fillRect(0, 0, W, H);
+      ctx.clearRect(0, 0, W, H);
 
       lx = cx - gap; rx = cx + gap; spin = 0;
 
