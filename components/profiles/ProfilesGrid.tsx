@@ -11,6 +11,20 @@ const EDU_RANK: Record<string, number> = {
   'Law': 4, "Master's": 4, 'Medical': 5, 'Engineering': 5, 'PhD': 6, 'Other': 2
 }
 
+function maskName(fullName: string, relationship: 'none' | 'sent' | 'received' | 'accepted'): string {
+  if (!fullName) return 'Anonymous'
+  if (relationship === 'accepted') return fullName
+  const parts = fullName.trim().split(' ')
+  if (relationship === 'sent' || relationship === 'received') {
+    // Show first name, mask last
+    const first = parts[0]
+    const rest = parts.slice(1).map(p => p[0] + '*'.repeat(Math.max(p.length - 1, 2)))
+    return rest.length > 0 ? first + ' ' + rest.join(' ') : first
+  }
+  // No connection - mask all
+  return parts.map(p => p[0] + '*'.repeat(Math.max(p.length - 1, 2))).join(' ')
+}
+
 function parseHeightToCm(h: string): number {
   if (!h) return 0
   const m = h.match(/(\d+)'(\d+)?/)
@@ -181,9 +195,11 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
   const activity = getActivityStatus(profile)
   const creationBadge = getCreationBadge(profile)
   const photoUrl = profile.photo_url || profile.photoUrl
-  const name = profile.full_name || profile.name || 'Anonymous'
   const isPremium = profile.package !== 'prottasha'
   const [interestSent, setInterestSent] = useState(false)
+  const [relationshipStatus, setRelationshipStatus] = useState<'none'|'sent'|'received'|'accepted'>('none')
+  const rawName = profile.full_name || profile.name || 'Anonymous'
+  const name = maskName(rawName, relationshipStatus)
 
   useEffect(() => {
     try {
@@ -193,8 +209,13 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
         fetch('/api/interests/list?userId=' + user.id)
           .then(r => r.json())
           .then(data => {
-            if (data.sent?.some((s: any) => String(s.receiver_id) === String(profile.id))) {
+            const sentMatch = data.sent?.find((s: any) => String(s.receiver_id) === String(profile.id))
+            const recvMatch = data.received?.find((r: any) => String(r.sender_id) === String(profile.id))
+            if (sentMatch) {
               setInterestSent(true)
+              setRelationshipStatus(sentMatch.status === 'accepted' ? 'accepted' : 'sent')
+            } else if (recvMatch) {
+              setRelationshipStatus(recvMatch.status === 'accepted' ? 'accepted' : 'received')
             }
           }).catch(() => {})
       }
@@ -274,6 +295,11 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
         )}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '17px', fontWeight: 800, color: '#111827' }}>{name}</span>
+              {relationshipStatus === 'none' && (
+                <span style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 600, background: '#f3f4f6', borderRadius: '6px', padding: '2px 6px' }}>
+                  {(() => { const id = profile.id; const dt = new Date(profile.created_at || ''); const yy = String(dt.getFullYear()).slice(2); const mm = String(dt.getMonth()+1).padStart(2,'0'); const nnnn = (id*7+dt.getSeconds()*13+id*31)%9000+1000; return isNaN(nnnn) ? 'BK-'+id : `BK-${yy}${mm}-${nnnn}` })()}
+                </span>
+              )}
           {isFeatured && (
             <span style={{ fontSize: '10px', fontWeight: 800, color: 'white', background: 'linear-gradient(135deg,#f59e0b,#d97706)', borderRadius: '20px', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '3px' }}>
               <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>

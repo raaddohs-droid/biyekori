@@ -6,6 +6,21 @@ import { useState, useEffect } from 'react'
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
+// Profile code generator
+function getProfileCode(id: number, createdAt: string): string {
+  try {
+    const dt = new Date(createdAt)
+    const yy = String(dt.getFullYear()).slice(2)
+    const mm = String(dt.getMonth() + 1).padStart(2, '0')
+    const seconds = dt.getSeconds() * 60 + Math.floor(dt.getMilliseconds() / 10)
+    const nnnn = (id * 7 + seconds * 13 + id * 31) % 9000 + 1000
+    return `BK-${yy}${mm}-${nnnn}`
+  } catch {
+    const nnnn = (id * 7 + 4321) % 9000 + 1000
+    return `BK-2605-${nnnn}`
+  }
+}
+
 async function recordView(profileId: string) {
   const userData = localStorage.getItem('biyekori_user');
   const viewer = userData ? JSON.parse(userData) : null;
@@ -234,6 +249,8 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [contactRequest, setContactRequest] = useState<any>(null)
   const [loadingContact, setLoadingContact] = useState(false)
   const { matchScore, predictability } = calculateScores(profile)
+  const [galleryPhotos, setGalleryPhotos] = useState<any[]>([])
+  const profileCode = getProfileCode(profile.id, profile.created_at || '')
 
   const [interestSent, setInterestSent] = useState<boolean | null>(null)
   const [actionMsg, setActionMsg] = useState<{text: string, type: 'info'|'success'|'upgrade'} | null>(null)
@@ -251,6 +268,13 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           .catch(() => {})
       } catch(e) {}
     }
+
+    // Load gallery photos
+    fetch(`${SUPABASE_URL}/rest/v1/profile_photos?profile_id=eq.${profile.id}&order=order_index.asc`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    }).then(r => r.json()).then(data => {
+      if (Array.isArray(data)) setGalleryPhotos(data)
+    }).catch(() => {})
 
     // Check if interest already sent
     if (userData) {
@@ -507,6 +531,10 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               </div>
               <div className="flex-1 mt-4 md:mt-16">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">{profile.full_name || 'Anonymous'}</h1>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#f3f4f6', borderRadius: '8px', padding: '4px 10px', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 600 }}>Profile ID</span>
+                  <span style={{ fontSize: '12px', color: '#374151', fontWeight: 800, letterSpacing: '0.5px' }}>{profileCode}</span>
+                </div>
                 <div className="flex flex-wrap gap-2 mb-3">
                   {hasValue(profile.age) && <span className="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium">{profile.age} years</span>}
                   {hasValue(profile.marital_status) && <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">{profile.marital_status}</span>}
@@ -623,6 +651,21 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             </div>
           )}
         </div>
+
+        {/* Gallery Photos */}
+        {galleryPhotos.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6" style={{color:"#111827"}}>📷 Photo Gallery</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '12px' }}>
+              {galleryPhotos.map((photo: any, i: number) => (
+                <div key={i} style={{ aspectRatio: '1', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', cursor: 'pointer' }}
+                  onClick={() => window.open(photo.photo_url, '_blank')}>
+                  <img src={photo.photo_url} alt={`Gallery ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {hasValue(profile.expected_age_min) && (
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
