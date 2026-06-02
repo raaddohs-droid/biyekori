@@ -13,10 +13,10 @@ export default function Home() {
         </h1>
 
         <p style={{ fontSize: 'clamp(16px, 1.8vw, 22px)', fontWeight: 700, color: '#F0C040', margin: '0 0 8px', letterSpacing: '3px', position: 'relative', zIndex: 2 }}>
-          বিয়ে করি ম্যাট্রিমনি
+          <span style={{fontFamily: "var(--font-hind-siliguri)"}}>বিয়ে করি ম্যাট্রিমনি</span>
         </p>
         <p style={{ fontSize: 'clamp(15px, 1.6vw, 20px)', color: '#F0C040', margin: '0 0 40px', fontStyle: 'italic', letterSpacing: '2px', position: 'relative', zIndex: 2 }}>
-          মনের মানুষ পাবেই তুমি
+          <span style={{fontFamily: "var(--font-hind-siliguri)"}}>মনের মানুষ পাবেই তুমি</span>
         </p>
 
         <HomeCTA />
@@ -62,10 +62,10 @@ export default function Home() {
       <section style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderTop: '1px solid rgba(240,192,64,0.06)', textAlign: 'center', padding: '80px 24px', position: 'relative' }}>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(192,120,0,0.07) 0%,transparent 70%)', pointerEvents: 'none' }}/>
         <h2 style={{ fontSize: 'clamp(24px, 3.5vw, 50px)', fontWeight: 700, color: '#FDF6EE', margin: '0 0 14px', lineHeight: 1.15 }}>
-          বিয়ে করি ম্যাট্রিমনি
+          <span style={{fontFamily: "var(--font-hind-siliguri)"}}>বিয়ে করি ম্যাট্রিমনি</span>
         </h2>
         <p style={{ fontSize: 'clamp(18px, 2vw, 28px)', color: '#F0C040', fontStyle: 'italic', margin: '0 0 48px' }}>
-          মনের মানুষ পাবেই তুমি
+          <span style={{fontFamily: "var(--font-hind-siliguri)"}}>মনের মানুষ পাবেই তুমি</span>
         </p>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
           <Link href="/register" style={{ padding: '18px 56px', background: 'linear-gradient(135deg,#F0C040,#C07800)', color: '#080604', fontSize: '14px', fontWeight: 700, textDecoration: 'none', borderRadius: '4px', letterSpacing: '2px' }}>JOIN FREE</Link>
