@@ -106,7 +106,7 @@ export default function LogoAnimation() {
       // â”€â”€ TRAIL: paint semi-transparent dark over whole canvas
       // this dims everything by a tiny amount each frame
       // old ring positions fade to dark slowly = visible gold trail
-      ctx.fillStyle = 'rgba(8, 6, 4, 0.04)';
+      ctx.fillStyle = 'rgba(0,0,0,0)';
       ctx.fillRect(0, 0, W, H);
 
       // both rings spin same direction â€” like coins rolling on a table
