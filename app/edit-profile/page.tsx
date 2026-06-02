@@ -299,7 +299,7 @@ export default function EditProfilePage() {
             'Content-Type': 'application/json',
             'Prefer': 'return=representation'
           },
-          body: JSON.stringify({ profile_id: user.id, photo_url: photoUrl, is_approved: true })
+          body: JSON.stringify({ profile_id: user.id, photo_url: photoUrl, order_index: galleryPhotos.length, is_primary: false })
         })
         const inserted = await insertRes.json()
         if (Array.isArray(inserted) && inserted[0]) {
