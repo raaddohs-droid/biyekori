@@ -9,14 +9,14 @@ export default function Home() {
       <section style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundImage: "url('/hero-bg.jpg')", backgroundSize: 'cover', backgroundPosition: 'center 30%', backgroundRepeat: 'no-repeat', padding: '120px 24px 60px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '700px', height: '700px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(192,120,0,0.07) 0%,transparent 65%)', pointerEvents: 'none' }}/>
 
-        <h1 style={{ fontSize: 'clamp(32px, 5.5vw, 76px)', fontWeight: 700, color: '#FFFFFF', margin: '0 0 24px', lineHeight: 1, letterSpacing: '-2px', position: 'relative', zIndex: 2, whiteSpace: 'nowrap', textShadow: '0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.6)' }}>
+        <h1 style={{ fontSize: 'clamp(32px, 5.5vw, 76px)', fontWeight: 700, color: '#FFFFFF', margin: '0 0 24px', lineHeight: 1, letterSpacing: '-2px', position: 'relative', zIndex: 2, textShadow: '0 2px 20px rgba(0,0,0,0.9), 0 4px 40px rgba(0,0,0,0.7)' }}>
           Your person is out there.
         </h1>
 
-        <p style={{ fontSize: 'clamp(16px, 1.8vw, 22px)', fontWeight: 700, color: '#FFE066', margin: '0 0 8px', letterSpacing: '3px', position: 'relative', zIndex: 2, textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>
+        <p style={{ fontSize: 'clamp(22px, 2.8vw, 36px)', fontWeight: 700, color: '#FFE066', margin: '0 0 8px', letterSpacing: '3px', position: 'relative', zIndex: 2, textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>
           <span style={{fontFamily: "var(--font-hind-siliguri)"}}>বিয়ে করি ম্যাট্রিমনি</span>
         </p>
-        <p style={{ fontSize: 'clamp(15px, 1.6vw, 20px)', color: '#FFD700', margin: '0 0 40px', fontStyle: 'normal', letterSpacing: '2px', position: 'relative', zIndex: 2, textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>
+        <p style={{ fontSize: 'clamp(18px, 2.2vw, 28px)', color: '#FFD700', margin: '0 0 40px', fontStyle: 'normal', letterSpacing: '2px', position: 'relative', zIndex: 2, textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>
           <span style={{fontFamily: "var(--font-hind-siliguri)"}}>মনের মানুষ পাবেই তুমি</span>
         </p>
 
