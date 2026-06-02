@@ -184,7 +184,7 @@ export default function Navbar() {
                         No notifications yet
                       </div>
                     ) : notifs.map((n: any, i: number) => (
-                      <a key={n.id || i} href={n.profile_id ? '/profile/' + n.profile_id : n.type === 'interest_received' || n.type === 'contact_request' ? '/interests' : n.type === 'new_message' ? '/messages' : '/dashboard'} onClick={() => setShowNotifs(false)} style={{ padding: '12px 16px', borderBottom: '1px solid #f9fafb', background: n.is_read ? 'white' : '#fef2f8', display: 'flex', gap: '10px', alignItems: 'flex-start', textDecoration: 'none', cursor: 'pointer' }}>
+                      <a key={n.id || i} href={n.type === 'new_message' ? '/messages' : n.type === 'interest_received' || n.type === 'contact_request' || n.type === 'contact_approved' ? '/interests' : n.profile_id ? '/profile/' + n.profile_id : '/dashboard'} onClick={() => setShowNotifs(false)} style={{ padding: '12px 16px', borderBottom: '1px solid #f9fafb', background: n.is_read ? 'white' : '#fef2f8', display: 'flex', gap: '10px', alignItems: 'flex-start', textDecoration: 'none', cursor: 'pointer' }}>
                         <span style={{ fontSize: '16px', flexShrink: 0 }}>{n.type === 'interest_received' ? '💗' : n.type === 'new_message' ? '💬' : n.type === 'contact_request' ? '📋' : '🔔'}</span>
                         <div style={{ flex: 1 }}>
                           <p style={{ margin: '0 0 2px', fontSize: '13px', color: '#111827', lineHeight: 1.4 }}>{n.message}</p>
