@@ -22,7 +22,7 @@ export default function Home() {
 
         <HomeCTA />
 
-        <div style={{ width: '100%', minHeight: '220px', position: 'relative', zIndex: 2, overflow: 'visible', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: '100%', minHeight: '220px', position: 'relative', zIndex: 2, overflow: 'visible', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(8,6,4,0.45)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderRadius: '24px', maxWidth: '480px', margin: '0 auto', padding: '12px 0' }}>
           <LogoWrapper />
         </div>
 
