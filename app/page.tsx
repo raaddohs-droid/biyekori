@@ -1,5 +1,6 @@
 ﻿import LogoWrapper from "@/components/LogoWrapper"
 import Link from "next/link"
+import HomeCTA from "@/components/HomeCTA"
 
 export default function Home() {
   return (
@@ -18,9 +19,7 @@ export default function Home() {
           মনের মানুষ পাবেই তুমি
         </p>
 
-        <Link href="/register" style={{ display: 'inline-block', padding: '16px 56px', background: 'linear-gradient(135deg, #F0C040, #C07800)', color: '#080604', fontSize: '14px', fontWeight: 700, textDecoration: 'none', borderRadius: '4px', letterSpacing: '3px', position: 'relative', zIndex: 2, marginBottom: '48px' }}>
-          JOIN FREE
-        </Link>
+        <HomeCTA />
 
         <div style={{ width: '100%', minHeight: '220px', position: 'relative', zIndex: 2, overflow: 'visible', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <LogoWrapper />
