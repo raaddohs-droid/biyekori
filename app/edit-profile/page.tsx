@@ -1,9 +1,9 @@
 "use client"
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { FilesetResolver, FaceDetector } from '@mediapipe/tasks-vision'
 
 const DISTRICTS = ['Dhaka','Chittagong','Rajshahi','Khulna','Barisal','Sylhet','Rangpur','Mymensingh','Comilla','Gazipur','Narayanganj','Narsingdi','Tangail','Jamalpur','Sherpur','Netrokona','Brahmanbaria','Chandpur','Lakshmipur','Noakhali','Feni',"Cox's Bazar",'Bandarban','Rangamati','Khagrachhari','Bogra','Chapainawabganj','Joypurhat','Naogaon','Natore','Pabna','Sirajganj','Jessore','Jhenaidah','Kushtia','Magura','Meherpur','Narail','Chuadanga','Satkhira','Bagerhat','Barguna','Bhola','Jhalokathi','Patuakhali','Pirojpur','Dinajpur','Gaibandha','Kurigram','Lalmonirhat','Nilphamari','Panchagarh','Thakurgaon','Habiganj','Moulvibazar','Sunamganj','Faridpur','Gopalganj','Madaripur','Rajbari','Shariatpur','Kishoreganj','Manikganj','Munshiganj']
-
 const EDUCATIONS = ['SSC','HSC',"Bachelor's","Master's",'Medical','Engineering','Law','PhD','Diploma','Other']
 const PROFESSIONS = ['Student','Doctor','Engineer','Teacher','Banker','Lawyer','Business','Government Officer','NGO Worker','Homemaker','IT Professional','Accountant','Military','Police','Other']
 const RELIGIONS = ['Islam','Hinduism','Christianity','Buddhism','Other']
@@ -11,6 +11,9 @@ const RELIGION_LEVELS = ['Very Religious','Religious','Moderate','Liberal']
 const MARITAL_STATUSES = ['Never married','Divorced','Widowed','Separated']
 const HEIGHTS = ["4'6\"","4'8\"","4'10\"","4'11\"","5'0\"","5'1\"","5'2\"","5'3\"","5'4\"","5'5\"","5'6\"","5'7\"","5'8\"","5'9\"","5'10\"","5'11\"","6'0\"","6'1\"","6'2\""]
 const INCOMES = ['Under ৳15,000','৳15,000–25,000','৳25,000–50,000','৳50,000–1,00,000','Over ৳1,00,000','Not specified']
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export default function EditProfilePage() {
   const router = useRouter()
@@ -39,8 +42,18 @@ export default function EditProfilePage() {
   const [photoPrivacy, setPhotoPrivacy] = useState(false)
   const [deactivated, setDeactivated] = useState(false)
 
-  const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  // Photo states
+  const [currentMainPhoto, setCurrentMainPhoto] = useState('')
+  const [mainPhotoProcessing, setMainPhotoProcessing] = useState(false)
+  const [mainPhotoPreview, setMainPhotoPreview] = useState('')
+  const [mainPhotoFile, setMainPhotoFile] = useState<File | null>(null)
+  const [mainPhotoSaving, setMainPhotoSaving] = useState(false)
+  const [mainPhotoSaved, setMainPhotoSaved] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  const [galleryPhotos, setGalleryPhotos] = useState<any[]>([])
+  const [galleryUploading, setGalleryUploading] = useState(false)
+  const [galleryError, setGalleryError] = useState('')
 
   useEffect(() => {
     const stored = localStorage.getItem('biyekori_user')
@@ -48,7 +61,6 @@ export default function EditProfilePage() {
     const u = JSON.parse(stored)
     setUser(u)
 
-    // Fetch full profile from Supabase
     fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${u.id}&select=*`, {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
     })
@@ -74,16 +86,38 @@ export default function EditProfilePage() {
           setPartnerEducation(p.partner_education || '')
           setPhotoPrivacy(p.photo_privacy || false)
           setDeactivated(p.is_deactivated || false)
+          setCurrentMainPhoto(p.photo_url || '')
         }
       })
+
+    // Load gallery photos
+    fetch(`${SUPABASE_URL}/rest/v1/profile_photos?profile_id=eq.${u.id}&order=created_at.asc`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data)) setGalleryPhotos(data)
+      })
+      .catch(() => {})
   }, [])
 
   const handleSave = async () => {
     if (!user) return
     setSaving(true)
     try {
-      const updates = { full_name: fullName, city, district: city, education, profession, religion, religious_level: religionLevel, marital_status: maritalStatus, height, about_me: aboutMe, photo_privacy: photoPrivacy }
-
+      const updates = {
+        full_name: fullName,
+        city,
+        district: city,
+        education,
+        profession,
+        religion,
+        religious_level: religionLevel,
+        marital_status: maritalStatus,
+        height,
+        about_me: aboutMe,
+        photo_privacy: photoPrivacy
+      }
       const res = await fetch('/api/update-profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -91,7 +125,6 @@ export default function EditProfilePage() {
       })
       const result = await res.json()
       if (result.success) {
-        // Update localStorage name
         const stored = localStorage.getItem('biyekori_user')
         if (stored) {
           const u = JSON.parse(stored)
@@ -105,14 +138,205 @@ export default function EditProfilePage() {
     setSaving(false)
   }
 
+  // Main photo: AI face crop
+  const handleMainPhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setMainPhotoPreview('')
+    setMainPhotoFile(null)
+    setMainPhotoProcessing(true)
+
+    const reader = new FileReader()
+    reader.onload = async (event) => {
+      const imageUrl = event.target?.result as string
+      try {
+        const vision = await FilesetResolver.forVisionTasks(
+          'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
+        )
+        const faceDetector = await FaceDetector.createFromOptions(vision, {
+          baseOptions: {
+            modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite',
+            delegate: 'GPU'
+          },
+          runningMode: 'IMAGE'
+        })
+
+        const img = new Image()
+        img.crossOrigin = 'anonymous'
+        img.onload = async () => {
+          const detections = faceDetector.detect(img)
+          const canvas = canvasRef.current
+          if (!canvas) return
+          const ctx = canvas.getContext('2d')
+          if (!ctx) return
+          canvas.width = 500
+          canvas.height = 500
+
+          if (detections.detections.length > 0) {
+            const face = detections.detections[0].boundingBox
+            if (face) {
+              const padding = 0.3
+              const paddedWidth = face.width * (1 + padding)
+              const paddedHeight = face.height * (1 + padding)
+              const x = Math.max(0, face.originX - (paddedWidth - face.width) / 2)
+              const y = Math.max(0, face.originY - (paddedHeight - face.height) / 2)
+              const cropWidth = Math.min(paddedWidth, img.width - x)
+              const cropHeight = Math.min(paddedHeight, img.height - y)
+              const size = Math.min(cropWidth, cropHeight)
+              ctx.drawImage(img, x, y, size, size, 0, 0, 500, 500)
+            } else {
+              const size = Math.min(img.width, img.height)
+              ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, 500, 500)
+            }
+          } else {
+            const size = Math.min(img.width, img.height)
+            ctx.drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, 500, 500)
+          }
+
+          const croppedUrl = canvas.toDataURL('image/jpeg', 0.9)
+          setMainPhotoPreview(croppedUrl)
+          setMainPhotoProcessing(false)
+          canvas.toBlob((blob) => {
+            if (blob) setMainPhotoFile(new File([blob], 'profile-photo.jpg', { type: 'image/jpeg' }))
+          }, 'image/jpeg', 0.9)
+        }
+        img.src = imageUrl
+      } catch (err) {
+        setMainPhotoProcessing(false)
+        alert('Face detection failed. Please try another photo.')
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleMainPhotoSave = async () => {
+    if (!mainPhotoFile || !user) return
+    setMainPhotoSaving(true)
+    try {
+      const fileName = `${user.id}/main-${Date.now()}.jpg`
+      const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/profile-photos/${fileName}`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'image/jpeg',
+          'x-upsert': 'true'
+        },
+        body: mainPhotoFile
+      })
+      if (!uploadRes.ok) throw new Error('Upload failed')
+
+      const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/profile-photos/${fileName}`
+
+      // Update profiles table
+      await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ photo_url: photoUrl })
+      })
+
+      // Update localStorage
+      const stored = localStorage.getItem('biyekori_user')
+      if (stored) {
+        const u = JSON.parse(stored)
+        u.photo_url = photoUrl
+        localStorage.setItem('biyekori_user', JSON.stringify(u))
+      }
+
+      setCurrentMainPhoto(photoUrl)
+      setMainPhotoPreview('')
+      setMainPhotoFile(null)
+      setMainPhotoSaved(true)
+      setTimeout(() => setMainPhotoSaved(false), 3000)
+    } catch (err) {
+      alert('Failed to save photo. Please try again.')
+    }
+    setMainPhotoSaving(false)
+  }
+
+  // Gallery: free upload, no crop, max 8
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (!files.length || !user) return
+
+    const remaining = 8 - galleryPhotos.length
+    if (remaining <= 0) {
+      setGalleryError('Maximum 8 gallery photos reached.')
+      return
+    }
+    const toUpload = files.slice(0, remaining)
+    setGalleryError('')
+    setGalleryUploading(true)
+
+    for (const file of toUpload) {
+      try {
+        const fileName = `${user.id}/gallery-${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`
+        const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/profile-photos/${fileName}`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': file.type || 'image/jpeg',
+            'x-upsert': 'true'
+          },
+          body: file
+        })
+        if (!uploadRes.ok) continue
+
+        const photoUrl = `${SUPABASE_URL}/storage/v1/object/public/profile-photos/${fileName}`
+
+        // Insert into profile_photos table
+        const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/profile_photos`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify({ profile_id: user.id, photo_url: photoUrl, is_approved: true })
+        })
+        const inserted = await insertRes.json()
+        if (Array.isArray(inserted) && inserted[0]) {
+          setGalleryPhotos(prev => [...prev, inserted[0]])
+        }
+      } catch (err) {
+        // skip failed uploads silently
+      }
+    }
+
+    setGalleryUploading(false)
+    // reset input
+    e.target.value = ''
+  }
+
+  const handleGalleryDelete = async (photoId: string) => {
+    if (!user) return
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/profile_photos?id=eq.${photoId}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      })
+      setGalleryPhotos(prev => prev.filter(p => p.id !== photoId))
+    } catch (err) {}
+  }
+
   if (!user) return null
 
   const inputClass = "w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 text-sm"
   const labelClass = "block text-sm font-bold text-gray-700 mb-2"
-  const sectionClass = "bg-white rounded-16px p-6 mb-4 shadow-sm border border-gray-100"
 
   const tabs = [
     { id: 'basic', label: 'Basic Info' },
+    { id: 'photos', label: 'Photos' },
     { id: 'personal', label: 'Personal' },
     { id: 'partner', label: 'Partner Prefs' },
     { id: 'privacy', label: 'Privacy' },
@@ -120,6 +344,7 @@ export default function EditProfilePage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: '80px', paddingBottom: '60px' }}>
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
       <div style={{ maxWidth: '680px', margin: '0 auto', padding: '0 16px' }}>
 
         {/* Header */}
@@ -129,7 +354,8 @@ export default function EditProfilePage() {
             <p style={{ margin: 0, fontSize: '13px', color: '#9ca3af' }}>Keep your profile updated for better matches</p>
           </div>
           <button onClick={handleSave} disabled={saving} style={{
-            padding: '10px 24px', background: saved ? '#10b981' : 'linear-gradient(135deg,#e11d48,#db2777)',
+            padding: '10px 24px',
+            background: saved ? '#10b981' : 'linear-gradient(135deg,#e11d48,#db2777)',
             color: 'white', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: 'pointer'
           }}>
             {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}
@@ -137,13 +363,13 @@ export default function EditProfilePage() {
         </div>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: '4px', background: 'white', padding: '4px', borderRadius: '12px', marginBottom: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+        <div style={{ display: 'flex', gap: '4px', background: 'white', padding: '4px', borderRadius: '12px', marginBottom: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', overflowX: 'auto' }}>
           {tabs.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
               flex: 1, padding: '8px', borderRadius: '8px', border: 'none', cursor: 'pointer',
               background: activeTab === tab.id ? 'linear-gradient(135deg,#e11d48,#db2777)' : 'transparent',
               color: activeTab === tab.id ? 'white' : '#6b7280',
-              fontSize: '12px', fontWeight: 700
+              fontSize: '12px', fontWeight: 700, whiteSpace: 'nowrap'
             }}>
               {tab.label}
             </button>
@@ -190,6 +416,127 @@ export default function EditProfilePage() {
                 <label className={labelClass}>About Me</label>
                 <textarea value={aboutMe} onChange={e => setAboutMe(e.target.value)} className={inputClass} rows={4} placeholder="Write something about yourself, your values, and what you're looking for..." style={{ resize: 'vertical' }} />
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Photos Tab */}
+        {activeTab === 'photos' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+            {/* Main Profile Photo */}
+            <div style={{ background: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+              <h3 style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 800, color: '#111827' }}>Main Profile Photo</h3>
+              <p style={{ margin: '0 0 20px', fontSize: '12px', color: '#9ca3af' }}>AI automatically crops to your face. This photo appears on your profile card.</p>
+
+              <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                {/* Current photo */}
+                <div style={{ textAlign: 'center' }}>
+                  <p style={{ margin: '0 0 8px', fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Current</p>
+                  {currentMainPhoto ? (
+                    <img src={currentMainPhoto} alt="Current profile" style={{ width: '100px', height: '100px', borderRadius: '12px', objectFit: 'cover', border: '2px solid #e5e7eb' }} />
+                  ) : (
+                    <div style={{ width: '100px', height: '100px', borderRadius: '12px', background: '#f3f4f6', border: '2px dashed #d1d5db', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>?</div>
+                  )}
+                </div>
+
+                {/* Arrow */}
+                {mainPhotoPreview && (
+                  <div style={{ display: 'flex', alignItems: 'center', paddingTop: '36px' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </div>
+                )}
+
+                {/* New photo preview */}
+                {mainPhotoPreview && (
+                  <div style={{ textAlign: 'center' }}>
+                    <p style={{ margin: '0 0 8px', fontSize: '11px', fontWeight: 600, color: '#10b981', textTransform: 'uppercase', letterSpacing: '0.5px' }}>New Preview</p>
+                    <img src={mainPhotoPreview} alt="New profile preview" style={{ width: '100px', height: '100px', borderRadius: '12px', objectFit: 'cover', border: '2px solid #10b981' }} />
+                  </div>
+                )}
+
+                {/* Processing state */}
+                {mainPhotoProcessing && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingTop: '36px' }}>
+                    <div style={{ width: '16px', height: '16px', border: '2px solid #e11d48', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                    <span style={{ fontSize: '13px', color: '#6b7280' }}>AI detecting face...</span>
+                  </div>
+                )}
+              </div>
+
+              <div style={{ marginTop: '20px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <label style={{ cursor: 'pointer' }}>
+                  <div style={{ padding: '10px 20px', background: '#f8fafc', border: '2px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', fontWeight: 700, color: '#374151', display: 'inline-block' }}>
+                    Choose Photo
+                  </div>
+                  <input type="file" accept="image/*" onChange={handleMainPhotoSelect} style={{ display: 'none' }} />
+                </label>
+
+                {mainPhotoFile && (
+                  <button
+                    onClick={handleMainPhotoSave}
+                    disabled={mainPhotoSaving}
+                    style={{ padding: '10px 20px', background: mainPhotoSaved ? '#10b981' : 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}
+                  >
+                    {mainPhotoSaving ? 'Saving...' : mainPhotoSaved ? 'Saved!' : 'Save as Main Photo'}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Gallery Photos */}
+            <div style={{ background: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#111827' }}>Gallery Photos</h3>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: galleryPhotos.length >= 8 ? '#e11d48' : '#9ca3af' }}>
+                  {galleryPhotos.length}/8
+                </span>
+              </div>
+              <p style={{ margin: '0 0 20px', fontSize: '12px', color: '#9ca3af' }}>Full body, candid, or family photos. No cropping applied. Max 8 photos.</p>
+
+              {galleryError && (
+                <div style={{ padding: '10px 14px', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '8px', fontSize: '13px', color: '#e11d48', marginBottom: '16px' }}>
+                  {galleryError}
+                </div>
+              )}
+
+              {/* Gallery grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '16px' }}>
+                {galleryPhotos.map((photo: any) => (
+                  <div key={photo.id} style={{ position: 'relative', aspectRatio: '1', borderRadius: '10px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
+                    <img src={photo.photo_url} alt="Gallery" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <button
+                      onClick={() => handleGalleryDelete(photo.id)}
+                      style={{ position: 'absolute', top: '4px', right: '4px', width: '22px', height: '22px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                  </div>
+                ))}
+
+                {/* Upload slot */}
+                {galleryPhotos.length < 8 && (
+                  <label style={{ cursor: galleryUploading ? 'not-allowed' : 'pointer', aspectRatio: '1' }}>
+                    <div style={{ width: '100%', height: '100%', border: '2px dashed #d1d5db', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', minHeight: '80px' }}>
+                      {galleryUploading ? (
+                        <div style={{ width: '20px', height: '20px', border: '2px solid #e11d48', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                      ) : (
+                        <>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
+                          <span style={{ fontSize: '10px', color: '#9ca3af', marginTop: '4px', fontWeight: 600 }}>Add</span>
+                        </>
+                      )}
+                    </div>
+                    <input type="file" accept="image/*" multiple onChange={handleGalleryUpload} style={{ display: 'none' }} disabled={galleryUploading} />
+                  </label>
+                )}
+              </div>
+
+              {galleryPhotos.length === 0 && !galleryUploading && (
+                <p style={{ fontSize: '13px', color: '#9ca3af', textAlign: 'center', margin: '8px 0 0' }}>
+                  No gallery photos yet. Add up to 8 photos.
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -308,23 +655,27 @@ export default function EditProfilePage() {
           </div>
         )}
 
-        {/* Save button at bottom */}
-        <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
-          <button onClick={handleSave} disabled={saving} style={{
-            flex: 1, padding: '14px', background: saved ? '#10b981' : 'linear-gradient(135deg,#e11d48,#db2777)',
-            color: 'white', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: 700, cursor: 'pointer'
-          }}>
-            {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}
-          </button>
-          <button onClick={() => router.push('/dashboard')} style={{
-            padding: '14px 24px', background: 'white', color: '#6b7280',
-            border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '14px', fontWeight: 600, cursor: 'pointer'
-          }}>
-            Cancel
-          </button>
-        </div>
+        {/* Save button at bottom (not shown on photos tab) */}
+        {activeTab !== 'photos' && (
+          <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
+            <button onClick={handleSave} disabled={saving} style={{
+              flex: 1, padding: '14px',
+              background: saved ? '#10b981' : 'linear-gradient(135deg,#e11d48,#db2777)',
+              color: 'white', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: 700, cursor: 'pointer'
+            }}>
+              {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}
+            </button>
+            <button onClick={() => router.push('/dashboard')} style={{
+              padding: '14px 24px', background: 'white', color: '#6b7280',
+              border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: '14px', fontWeight: 600, cursor: 'pointer'
+            }}>
+              Cancel
+            </button>
+          </div>
+        )}
 
       </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
 }
