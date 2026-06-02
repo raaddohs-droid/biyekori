@@ -15,7 +15,7 @@ export default function Home() {
         <p style={{ fontSize: 'clamp(16px, 1.8vw, 22px)', fontWeight: 700, color: '#F0C040', margin: '0 0 8px', letterSpacing: '3px', position: 'relative', zIndex: 2 }}>
           <span style={{fontFamily: "var(--font-hind-siliguri)"}}>বিয়ে করি ম্যাট্রিমনি</span>
         </p>
-        <p style={{ fontSize: 'clamp(15px, 1.6vw, 20px)', color: '#F0C040', margin: '0 0 40px', fontStyle: 'italic', letterSpacing: '2px', position: 'relative', zIndex: 2 }}>
+        <p style={{ fontSize: 'clamp(15px, 1.6vw, 20px)', color: '#F0C040', margin: '0 0 40px', fontStyle: 'normal', letterSpacing: '2px', position: 'relative', zIndex: 2 }}>
           <span style={{fontFamily: "var(--font-hind-siliguri)"}}>মনের মানুষ পাবেই তুমি</span>
         </p>
 
