@@ -15,6 +15,7 @@ export default function Navbar() {
 
   useEffect(() => {
     try {
+      if (typeof window !== 'undefined' && (window.location.pathname === '/login' || window.location.pathname === '/register')) return
       const stored = localStorage.getItem('biyekori_user')
       if (stored) {
         const u = JSON.parse(stored)
