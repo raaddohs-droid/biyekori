@@ -2,6 +2,7 @@
 import Link from "next/link"
 import HomeCTA from "@/components/HomeCTA"
 import HomeCTA2 from "@/components/HomeCTA2"
+import OrbitCards from "@/components/OrbitCards"
 
 export default function Home() {
   return (
@@ -35,6 +36,8 @@ export default function Home() {
           <span style={{ fontSize: '10px', letterSpacing: '3px', color: '#F0C040' }}>SCROLL</span>
         </div>
       </section>
+
+      <OrbitCards />
 
       <section style={{ padding: '100px 80px', textAlign: 'center', borderTop: '1px solid rgba(240,192,64,0.06)' }}>
         <p style={{ fontSize: 'clamp(24px, 3.5vw, 48px)', fontWeight: 700, color: '#FDF6EE', lineHeight: 1.3, maxWidth: '900px', margin: '0 auto' }}>
