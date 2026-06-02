@@ -5,7 +5,7 @@ import HomeCTA2 from "@/components/HomeCTA2"
 
 export default function Home() {
   return (
-    <main style={{ fontFamily: "'Georgia', serif", background: '#080604', backgroundImage: 'url(/hero-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', color: '#FDF6EE', overflowX: 'hidden' }}>
+    <main style={{ fontFamily: "'Georgia', serif", background: '#080604', backgroundImage: 'url(/hero-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center 30%', backgroundRepeat: 'no-repeat', color: '#FDF6EE', overflowX: 'hidden' }}>
       <section style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '120px 24px 60px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '700px', height: '700px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(192,120,0,0.07) 0%,transparent 65%)', pointerEvents: 'none' }}/>
 
