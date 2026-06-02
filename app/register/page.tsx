@@ -23,6 +23,7 @@ export default function RegisterPage() {
   const [city, setCity] = useState('');
   const [education, setEducation] = useState('');
   const [profession, setProfession] = useState('');
+  const [aboutMe, setAboutMe] = useState('');
 
   // Step 3
   const [phone, setPhone] = useState('');
@@ -103,6 +104,7 @@ export default function RegisterPage() {
           district: city,
           education,
           profession,
+          about_me: aboutMe,
           phone,
           email,
           password,
@@ -319,6 +321,10 @@ export default function RegisterPage() {
                   <option value="Other">Other</option>
                 </select>
               </div>
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-bold text-gray-900 mb-2">About Me <span className="text-gray-400 font-normal">(optional)</span></label>
+              <textarea value={aboutMe} onChange={(e) => setAboutMe(e.target.value)} rows={3} placeholder="Tell potential matches about yourself, your values, and what you are looking for..." className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 resize-none" />
             </div>
             <div className="flex gap-4 mt-6">
               <button onClick={() => setStep(1)} className="flex-1 py-4 bg-gray-100 text-gray-900 rounded-xl font-bold hover:bg-gray-200">Back</button>
