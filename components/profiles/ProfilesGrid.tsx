@@ -16,13 +16,13 @@ function maskName(fullName: string, relationship: 'none' | 'sent' | 'received' |
   if (relationship === 'accepted') return fullName
   const parts = fullName.trim().split(' ')
   if (relationship === 'sent' || relationship === 'received') {
-    // Show first name, mask last
+    // Show first name only, mask rest
     const first = parts[0]
-    const rest = parts.slice(1).map(p => p[0] + '*'.repeat(Math.max(p.length - 1, 2)))
+    const rest = parts.slice(1).map(p => p[0] + '*'.repeat(Math.max(p.length - 1, 3)))
     return rest.length > 0 ? first + ' ' + rest.join(' ') : first
   }
-  // No connection - mask all
-  return parts.map(p => p[0] + '*'.repeat(Math.max(p.length - 1, 2))).join(' ')
+  // No connection - mask everything including first name
+  return parts.map(p => p[0] + '*'.repeat(Math.max(p.length - 1, 3))).join(' ')
 }
 
 function parseHeightToCm(h: string): number {
