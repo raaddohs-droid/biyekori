@@ -99,7 +99,7 @@ export default function EditProfilePage() {
           localStorage.setItem('biyekori_user', JSON.stringify(u))
         }
         setSaved(true)
-        setTimeout(() => setSaved(false), 3000)
+        setTimeout(() => setSaved(false), 8000)
       }
     } catch(e) {}
     setSaving(false)
