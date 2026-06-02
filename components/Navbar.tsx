@@ -204,7 +204,6 @@ export default function Navbar() {
                           <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e11d48', flexShrink: 0, marginTop: '4px' }} />
                         )}
                       </a>
-                      )
                     })
                   </div>
                 </div>
