@@ -334,13 +334,11 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
           borderRadius: '20px', padding: '4px 10px',
           display: 'flex', alignItems: 'center', gap: '4px',
           boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-          cursor: 'default'
-        }} title={viewerProfile ? 'Personalized match based on your preferences' : 'General compatibility score'}>
+          cursor: 'pointer'
+        }} onClick={() => alert(viewerProfile ? 'AI Match Score: ' + score + '% - Personalized based on your preferences. Factors: Age, Religion, Education, Location, Family type, Income, Height, Lifestyle, Personality.' : 'AI Match Score: ' + score + '% - General compatibility score. Fill partner preferences for a personalized score.')}>
           <span style={{ fontSize: '9px', color: 'white', fontWeight: 600, opacity: 0.85 }}>AI</span>
           <span style={{ fontSize: '13px', fontWeight: 800, color: 'white' }}>{score}%</span>
-          {viewerProfile && (
-            <span style={{ fontSize: '9px', color: 'white', fontWeight: 600, opacity: 0.75 }}>{scoreLabel}</span>
-          )}
+          <span style={{ fontSize: '11px', color: 'white', fontWeight: 700 }}>?</span>
         </div>
 
         <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5">
