@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
+const CallButton = dynamic(() => import('@/components/CallButton'), { ssr: false })
 import { useState, useEffect } from 'react'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -695,6 +697,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             >
               {interestSent === true ? 'Interest Sent' : 'Express Interest'}
             </button>
+            {isLoggedIn && <CallButton currentUser={JSON.parse(localStorage.getItem('biyekori_user') || '{}')} targetProfile={profile} />}
             <button
               onClick={handleSendMessage}
               className="px-8 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all"
