@@ -1,6 +1,7 @@
 ﻿import LogoWrapper from "@/components/LogoWrapper"
 import Link from "next/link"
 import HomeCTA from "@/components/HomeCTA"
+import HomeCTA2 from "@/components/HomeCTA2"
 
 export default function Home() {
   return (
@@ -68,8 +69,7 @@ export default function Home() {
           <span style={{fontFamily: "var(--font-hind-siliguri)"}}>মনের মানুষ পাবেই তুমি</span>
         </p>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Link href="/register" style={{ padding: '18px 56px', background: 'linear-gradient(135deg,#F0C040,#C07800)', color: '#080604', fontSize: '14px', fontWeight: 700, textDecoration: 'none', borderRadius: '4px', letterSpacing: '2px' }}>JOIN FREE</Link>
-          <Link href="/profiles" style={{ padding: '18px 56px', border: '1px solid rgba(240,192,64,0.3)', color: 'rgba(253,246,238,0.5)', fontSize: '14px', textDecoration: 'none', borderRadius: '4px', letterSpacing: '2px' }}>BROWSE</Link>
+          <HomeCTA2 />
         </div>
       </section>
 
