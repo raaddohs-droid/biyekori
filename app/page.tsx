@@ -22,8 +22,30 @@ export default function Home() {
 
         <HomeCTA />
 
-        <div style={{ width: '100%', minHeight: '220px', position: 'relative', zIndex: 2, overflow: 'visible', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(8,6,4,0.45)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderRadius: '24px', maxWidth: '480px', margin: '0 auto', padding: '12px 0' }}>
-          <LogoWrapper />
+        <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '16px' }}>
+          <svg width="160" height="100" viewBox="0 0 160 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="g1" cx="35%" cy="30%" r="60%">
+                <stop offset="0%" stopColor="#FFF8C0"/>
+                <stop offset="20%" stopColor="#F0C040"/>
+                <stop offset="50%" stopColor="#C07800"/>
+                <stop offset="78%" stopColor="#E8A820"/>
+                <stop offset="100%" stopColor="#7A4A00"/>
+              </radialGradient>
+              <radialGradient id="g2" cx="65%" cy="30%" r="60%">
+                <stop offset="0%" stopColor="#FFF8C0"/>
+                <stop offset="20%" stopColor="#F0C040"/>
+                <stop offset="50%" stopColor="#C07800"/>
+                <stop offset="78%" stopColor="#E8A820"/>
+                <stop offset="100%" stopColor="#7A4A00"/>
+              </radialGradient>
+            </defs>
+            <circle cx="58" cy="50" r="34" stroke="#2a1800" strokeWidth="14" fill="none"/>
+            <circle cx="58" cy="50" r="34" stroke="url(#g1)" strokeWidth="11" fill="none"/>
+            <circle cx="102" cy="50" r="34" stroke="#2a1800" strokeWidth="14" fill="none"/>
+            <circle cx="102" cy="50" r="34" stroke="url(#g2)" strokeWidth="11" fill="none"/>
+          </svg>
+          <div style={{ fontFamily: 'Georgia, serif', fontSize: 'clamp(24px, 5vw, 44px)', fontWeight: 700, color: '#F0C040', letterSpacing: '3px', marginTop: '8px' }}>biyekori</div>
         </div>
 
         <p style={{ fontSize: '11px', color: 'rgba(253,246,238,0.15)', letterSpacing: '2.5px', margin: '24px 0 0', position: 'relative', zIndex: 2 }}>
