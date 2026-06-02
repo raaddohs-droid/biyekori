@@ -203,8 +203,9 @@ export default function Navbar() {
                         {!n.is_read && (
                           <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e11d48', flexShrink: 0, marginTop: '4px' }} />
                         )}
-                      </div>
-                    ))}
+                      </a>
+                      )
+                    })
                   </div>
                 </div>
               )}
