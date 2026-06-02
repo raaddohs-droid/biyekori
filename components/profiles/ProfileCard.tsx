@@ -1,5 +1,5 @@
-﻿"use client";
-import { useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 function getActivityStatus(profileId: any) {
@@ -21,22 +21,212 @@ function getActivityStatus(profileId: any) {
   return                                              { text: "Recently active",  color: "#6b7280", pulse: false };
 }
 
-function getQuickScore(profile: any): number {
-  let score = 0
-  if (profile.religion === 'Islam') score += 25
-  else score += 5
+const EDU_RANK: Record<string, number> = {
+  'SSC': 1, 'HSC': 2, 'Diploma': 2, "Bachelor's": 3,
+  'Law': 4, "Master's": 4, 'Medical': 5, 'Engineering': 5, 'PhD': 6, 'Other': 2
+}
+
+function parseHeightToCm(h: string): number {
+  if (!h) return 0
+  const m = h.match(/(\d+)'(\d+)?/)
+  if (!m) return 0
+  return parseInt(m[1]) * 30.48 + (parseInt(m[2] || '0') * 2.54)
+}
+
+// Full scientific match score using viewer's preferences vs profile fields
+function computeMatchScore(profile: any, viewer: any): number {
+  // If no viewer or no meaningful preferences, use generic score
+  const hasPrefs = viewer && (
+    viewer.expected_age_min || viewer.expected_age_max ||
+    viewer.religion || viewer.expected_education ||
+    viewer.expected_religious_level || viewer.expected_family_type
+  )
+  if (!hasPrefs) return getGenericScore(profile)
+
+  let total = 0
+  let maxTotal = 0
+
+  // 1. AGE MATCH (15 pts)
+  maxTotal += 15
   const age = profile.age || 0
-  if (age >= 20 && age <= 35) score += 15
-  else if (age >= 18 && age <= 40) score += 8
+  const ageMin = viewer.expected_age_min || 18
+  const ageMax = viewer.expected_age_max || 60
+  if (age >= ageMin && age <= ageMax) {
+    total += 15
+  } else {
+    const diff = Math.min(Math.abs(age - ageMin), Math.abs(age - ageMax))
+    total += Math.max(0, 15 - diff * 2)
+  }
+
+  // 2. RELIGION MATCH (15 pts)
+  maxTotal += 15
+  if (viewer.religion && profile.religion) {
+    if (viewer.religion === profile.religion) total += 15
+    else total += 0
+  } else {
+    total += 10 // unknown, partial credit
+    maxTotal -= 5
+  }
+
+  // 3. RELIGIOSITY MATCH (10 pts)
+  maxTotal += 10
+  const relLevels = ['Liberal', 'Moderate', 'Religious', 'Very Religious']
+  const viewerRelIdx = relLevels.indexOf(viewer.expected_religious_level || '')
+  const profileRelIdx = relLevels.indexOf(profile.religious_level || '')
+  if (viewerRelIdx >= 0 && profileRelIdx >= 0) {
+    const diff = Math.abs(viewerRelIdx - profileRelIdx)
+    total += diff === 0 ? 10 : diff === 1 ? 6 : diff === 2 ? 2 : 0
+  } else {
+    total += 6
+  }
+
+  // 4. EDUCATION MATCH (10 pts)
+  maxTotal += 10
+  const expectedEduRank = EDU_RANK[viewer.expected_education || ''] || 0
+  const profileEduRank = EDU_RANK[profile.education || ''] || 0
+  if (expectedEduRank === 0) {
+    total += 7
+  } else if (profileEduRank >= expectedEduRank) {
+    total += 10
+  } else {
+    const diff = expectedEduRank - profileEduRank
+    total += Math.max(0, 10 - diff * 3)
+  }
+
+  // 5. DISTRICT/LOCATION (8 pts)
+  maxTotal += 8
+  const viewerDistrict = viewer.district || viewer.city || ''
+  const profileDistrict = profile.district || profile.city || ''
+  const preferredDistrict = viewer.partner_district || ''
+  if (preferredDistrict && profileDistrict) {
+    if (profileDistrict === preferredDistrict) total += 8
+    else if (profileDistrict === viewerDistrict) total += 5
+    else total += 2
+  } else if (profileDistrict === viewerDistrict) {
+    total += 8
+  } else {
+    total += 4
+  }
+
+  // 6. FAMILY TYPE (7 pts)
+  maxTotal += 7
+  if (viewer.expected_family_type && profile.family_type) {
+    total += viewer.expected_family_type === profile.family_type ? 7 : 2
+  } else {
+    total += 4
+  }
+
+  // 7. INCOME COMPATIBILITY (7 pts)
+  maxTotal += 7
+  const expectedIncome = parseFloat(viewer.expected_income || '0')
+  const profileIncome = profile.monthly_income || 0
+  if (expectedIncome > 0 && profileIncome > 0) {
+    const ratio = profileIncome / expectedIncome
+    if (ratio >= 1.0) total += 7
+    else if (ratio >= 0.8) total += 5
+    else if (ratio >= 0.6) total += 3
+    else total += 1
+  } else {
+    total += 4
+  }
+
+  // 8. MARITAL STATUS (5 pts)
+  maxTotal += 5
+  const ms = (profile.marital_status || '').toLowerCase()
+  if (ms === 'never married' || ms === 'never_married') total += 5
+  else if (ms === 'divorced' || ms === 'widowed') total += 3
+  else total += 2
+
+  // 9. HEIGHT MATCH (5 pts)
+  maxTotal += 5
+  const profileHeightCm = parseHeightToCm(profile.height || '')
+  const minH = parseHeightToCm(viewer.expected_height_min || '')
+  const maxH = parseHeightToCm(viewer.expected_height_max || '')
+  if (profileHeightCm > 0 && minH > 0 && maxH > 0) {
+    if (profileHeightCm >= minH && profileHeightCm <= maxH) total += 5
+    else {
+      const diff = Math.min(Math.abs(profileHeightCm - minH), Math.abs(profileHeightCm - maxH))
+      total += diff < 5 ? 3 : diff < 10 ? 1 : 0
+    }
+  } else {
+    total += 3
+  }
+
+  // 10. LIFESTYLE MATCH (6 pts)
+  maxTotal += 6
+  let lifestyleScore = 0
+  // Smoking
+  const profileSmoking = String(profile.smoking || 'false').toLowerCase()
+  if (profileSmoking === 'false' || profileSmoking === 'no') lifestyleScore += 2
+  // Drinking
+  const profileDrinking = String(profile.drinking || 'false').toLowerCase()
+  if (profileDrinking === 'false' || profileDrinking === 'no') lifestyleScore += 2
+  // Diet compatibility
+  if (profile.diet) lifestyleScore += 2
+  total += lifestyleScore
+
+  // 11. PERSONALITY COMPATIBILITY (4 pts)
+  maxTotal += 4
+  if (profile.personality_type && viewer.personality_type) {
+    const compatible: Record<string, string[]> = {
+      'Modern': ['Modern', 'Liberal'],
+      'Traditional': ['Traditional', 'Religious'],
+      'Liberal': ['Modern', 'Liberal'],
+      'Religious': ['Traditional', 'Religious', 'Moderate'],
+      'Moderate': ['Moderate', 'Traditional', 'Religious']
+    }
+    const viewerPersonality = viewer.personality_type || ''
+    const profilePersonality = profile.personality_type || ''
+    const compatList = compatible[viewerPersonality] || []
+    total += compatList.includes(profilePersonality) ? 4 : viewerPersonality === profilePersonality ? 4 : 1
+  } else {
+    total += 2
+  }
+
+  // 12. PROFILE COMPLETENESS BONUS (8 pts)
+  maxTotal += 8
+  const completeness = profile.profile_completion || 0
+  total += Math.round((completeness / 100) * 8)
+
+  // 13. VERIFICATION BONUS (5 pts)
+  maxTotal += 5
+  if (profile.is_verified) total += 5
+  else if (profile.phone_verified) total += 2
+
+  // Normalize to 100
+  const raw = Math.round((total / maxTotal) * 100)
+  return Math.max(30, Math.min(99, raw))
+}
+
+// Generic score when no viewer context (fallback)
+function getGenericScore(profile: any): number {
+  let score = 0
+  // Religion
+  score += profile.religion ? 12 : 4
+  // Age
+  const age = profile.age || 0
+  if (age >= 20 && age <= 35) score += 12
+  else if (age >= 18 && age <= 40) score += 7
   else score += 3
-  const eduRank: Record<string, number> = { 'SSC': 1, 'HSC': 2, "Bachelor's": 3, "Master's": 4, 'Medical': 5, 'Engineering': 5, 'Law': 4 }
-  score += (eduRank[profile.education] || 3) >= 3 ? 15 : (eduRank[profile.education] || 3) === 2 ? 8 : 5
-  score += 7
-  score += profile.personality_type ? 8 : 5
-  score += profile.religious_level === 'Religious' ? 10 : 5
-  score += profile.family_values ? 8 : 5
-  score += profile.hobbies ? 4 : 2
-  return Math.min(Math.round(score), 100)
+  // Education
+  score += (EDU_RANK[profile.education || ''] || 2) >= 3 ? 12 : 6
+  // Profile completeness
+  score += Math.round(((profile.profile_completion || 30) / 100) * 20)
+  // Lifestyle
+  if (String(profile.smoking || 'false') === 'false') score += 5
+  if (String(profile.drinking || 'false') === 'false') score += 5
+  // Verification
+  if (profile.is_verified) score += 8
+  else if (profile.phone_verified) score += 4
+  // Has photo
+  if (profile.photo_url) score += 8
+  // Has about me
+  if (profile.about_me) score += 6
+  // Family values
+  if (profile.family_values) score += 4
+  // Hobbies
+  if (profile.hobbies) score += 4
+  return Math.max(30, Math.min(99, score))
 }
 
 function getScoreColor(score: number): string {
@@ -46,11 +236,18 @@ function getScoreColor(score: number): string {
   return '#e11d48'
 }
 
+function getScoreLabel(score: number): string {
+  if (score >= 85) return 'Excellent'
+  if (score >= 70) return 'Good'
+  if (score >= 55) return 'Fair'
+  return 'Low'
+}
+
 const GIFTS: [string, number][] = [
   ["Rose", 50], ["Bouquet", 99], ["Chocolate", 49], ["Ring Hint", 199], ["Dua Card", 29]
 ];
 
-export default function ProfileCard({ profile, currentUserPackage = "prottasha", currentUserVerified = false }: { profile: any, currentUserPackage?: string, currentUserVerified?: boolean }) {
+export default function ProfileCard({ profile, currentUserPackage = "prottasha", currentUserVerified = false, viewerProfile = null }: { profile: any, currentUserPackage?: string, currentUserVerified?: boolean, viewerProfile?: any }) {
   const [showGiftMenu, setShowGiftMenu] = useState(false);
   const [interestSent, setInterestSent] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
@@ -64,10 +261,13 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
   const isVerified = profile.is_verified || profile.isVerified || false;
   const isPremium = profile.package !== "prottasha";
   const isFeatured = profile.is_featured && profile.featured_until && new Date(profile.featured_until) > new Date();
-  const monthlyIncome = profile.monthly_income || profile.monthlyIncome;
   const canViewContact = currentUserVerified || currentUserPackage === "bondhon" || currentUserPackage === "milon";
   const showDegree = profile.degree && profile.degree !== profile.education && !["SSC","HSC"].includes(profile.education);
   const activity = getActivityStatus(profile.id);
+
+  const score = computeMatchScore(profile, viewerProfile)
+  const scoreColor = getScoreColor(score)
+  const scoreLabel = getScoreLabel(score)
 
   const maskPhone = (phone: string) => {
     if (!phone || phone.length < 8) return "***-***-***";
@@ -107,7 +307,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
         ) : allPhotos.length > 0 ? (
           <img src={allPhotos[currentPhotoIndex]} alt={name} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-6xl">👤</div>
+          <div className="w-full h-full flex items-center justify-center text-6xl">?</div>
         )}
         {allPhotos.length > 1 && (
           <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-1">
@@ -126,21 +326,23 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
             <span style={{fontSize:'10px',color:'white',fontWeight:800,letterSpacing:'0.3px'}}>Featured</span>
           </div>
         )}
-        {(() => {
-          const score = getQuickScore(profile)
-          return (
-            <div style={{
-              position: 'absolute', top: '10px', right: '10px',
-              background: getScoreColor(score),
-              borderRadius: '20px', padding: '4px 10px',
-              display: 'flex', alignItems: 'center', gap: '4px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-            }}>
-              <span style={{ fontSize: '10px', color: 'white', fontWeight: 600, opacity: 0.85 }}>AI</span>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: 'white' }}>{score}%</span>
-            </div>
-          )
-        })()}
+
+        {/* AI Match Score badge */}
+        <div style={{
+          position: 'absolute', top: '10px', right: '10px',
+          background: scoreColor,
+          borderRadius: '20px', padding: '4px 10px',
+          display: 'flex', alignItems: 'center', gap: '4px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+          cursor: 'default'
+        }} title={viewerProfile ? 'Personalized match based on your preferences' : 'General compatibility score'}>
+          <span style={{ fontSize: '9px', color: 'white', fontWeight: 600, opacity: 0.85 }}>AI</span>
+          <span style={{ fontSize: '13px', fontWeight: 800, color: 'white' }}>{score}%</span>
+          {viewerProfile && (
+            <span style={{ fontSize: '9px', color: 'white', fontWeight: 600, opacity: 0.75 }}>{scoreLabel}</span>
+          )}
+        </div>
+
         <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5">
           {activity.pulse ? (
             <span className="relative flex h-2 w-2">
@@ -191,8 +393,6 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
             <p className="font-bold text-gray-900 text-xs">{profile.religion}</p>
           </div>
         </div>
-
-
 
         {profile.phone && (
           <div className={"rounded-xl p-3 mb-3 border-2 " + (canViewContact ? "bg-green-50 border-green-300" : "bg-rose-50 border-rose-300")}>

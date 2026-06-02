@@ -3,21 +3,150 @@ import React, { useState, useEffect } from 'react'
 import ProfileCard from './ProfileCard'
 import Link from 'next/link'
 
-function getQuickScore(profile: any): number {
-  let score = 0
-  if (profile.religion === 'Islam') score += 25; else score += 5
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+const EDU_RANK: Record<string, number> = {
+  'SSC': 1, 'HSC': 2, 'Diploma': 2, "Bachelor's": 3,
+  'Law': 4, "Master's": 4, 'Medical': 5, 'Engineering': 5, 'PhD': 6, 'Other': 2
+}
+
+function parseHeightToCm(h: string): number {
+  if (!h) return 0
+  const m = h.match(/(\d+)'(\d+)?/)
+  if (!m) return 0
+  return parseInt(m[1]) * 30.48 + (parseInt(m[2] || '0') * 2.54)
+}
+
+function computeMatchScore(profile: any, viewer: any): number {
+  const hasPrefs = viewer && (
+    viewer.expected_age_min || viewer.expected_age_max ||
+    viewer.religion || viewer.expected_education ||
+    viewer.expected_religious_level || viewer.expected_family_type
+  )
+  if (!hasPrefs) return getGenericScore(profile)
+
+  let total = 0
+  let maxTotal = 0
+
+  // 1. AGE (15)
+  maxTotal += 15
   const age = profile.age || 0
-  if (age >= 20 && age <= 35) score += 15
-  else if (age >= 18 && age <= 40) score += 8
+  const ageMin = viewer.expected_age_min || 18
+  const ageMax = viewer.expected_age_max || 60
+  if (age >= ageMin && age <= ageMax) total += 15
+  else { const diff = Math.min(Math.abs(age - ageMin), Math.abs(age - ageMax)); total += Math.max(0, 15 - diff * 2) }
+
+  // 2. RELIGION (15)
+  maxTotal += 15
+  if (viewer.religion && profile.religion) {
+    total += viewer.religion === profile.religion ? 15 : 0
+  } else { total += 10; maxTotal -= 5 }
+
+  // 3. RELIGIOSITY (10)
+  maxTotal += 10
+  const relLevels = ['Liberal', 'Moderate', 'Religious', 'Very Religious']
+  const vRI = relLevels.indexOf(viewer.expected_religious_level || '')
+  const pRI = relLevels.indexOf(profile.religious_level || '')
+  if (vRI >= 0 && pRI >= 0) {
+    const d = Math.abs(vRI - pRI)
+    total += d === 0 ? 10 : d === 1 ? 6 : d === 2 ? 2 : 0
+  } else total += 6
+
+  // 4. EDUCATION (10)
+  maxTotal += 10
+  const expEdu = EDU_RANK[viewer.expected_education || ''] || 0
+  const profEdu = EDU_RANK[profile.education || ''] || 0
+  if (expEdu === 0) total += 7
+  else if (profEdu >= expEdu) total += 10
+  else total += Math.max(0, 10 - (expEdu - profEdu) * 3)
+
+  // 5. DISTRICT (8)
+  maxTotal += 8
+  const vDist = viewer.district || viewer.city || ''
+  const pDist = profile.district || profile.city || ''
+  const prefDist = viewer.partner_district || ''
+  if (prefDist && pDist) { total += pDist === prefDist ? 8 : pDist === vDist ? 5 : 2 }
+  else total += pDist === vDist ? 8 : 4
+
+  // 6. FAMILY TYPE (7)
+  maxTotal += 7
+  if (viewer.expected_family_type && profile.family_type)
+    total += viewer.expected_family_type === profile.family_type ? 7 : 2
+  else total += 4
+
+  // 7. INCOME (7)
+  maxTotal += 7
+  const expInc = parseFloat(viewer.expected_income || '0')
+  const profInc = profile.monthly_income || 0
+  if (expInc > 0 && profInc > 0) {
+    const r = profInc / expInc
+    total += r >= 1 ? 7 : r >= 0.8 ? 5 : r >= 0.6 ? 3 : 1
+  } else total += 4
+
+  // 8. MARITAL STATUS (5)
+  maxTotal += 5
+  const ms = (profile.marital_status || '').toLowerCase()
+  total += (ms === 'never married' || ms === 'never_married') ? 5 : (ms === 'divorced' || ms === 'widowed') ? 3 : 2
+
+  // 9. HEIGHT (5)
+  maxTotal += 5
+  const phCm = parseHeightToCm(profile.height || '')
+  const minH = parseHeightToCm(viewer.expected_height_min || '')
+  const maxH = parseHeightToCm(viewer.expected_height_max || '')
+  if (phCm > 0 && minH > 0 && maxH > 0) {
+    if (phCm >= minH && phCm <= maxH) total += 5
+    else { const d = Math.min(Math.abs(phCm - minH), Math.abs(phCm - maxH)); total += d < 5 ? 3 : d < 10 ? 1 : 0 }
+  } else total += 3
+
+  // 10. LIFESTYLE (6)
+  maxTotal += 6
+  let ls = 0
+  if (String(profile.smoking || 'false').toLowerCase() === 'false') ls += 2
+  if (String(profile.drinking || 'false').toLowerCase() === 'false') ls += 2
+  if (profile.diet) ls += 2
+  total += ls
+
+  // 11. PERSONALITY (4)
+  maxTotal += 4
+  if (profile.personality_type && viewer.personality_type) {
+    const compat: Record<string, string[]> = {
+      'Modern': ['Modern', 'Liberal'], 'Traditional': ['Traditional', 'Religious'],
+      'Liberal': ['Modern', 'Liberal'], 'Religious': ['Traditional', 'Religious', 'Moderate'],
+      'Moderate': ['Moderate', 'Traditional', 'Religious']
+    }
+    total += (compat[viewer.personality_type] || []).includes(profile.personality_type) ? 4 : viewer.personality_type === profile.personality_type ? 4 : 1
+  } else total += 2
+
+  // 12. COMPLETENESS (8)
+  maxTotal += 8
+  total += Math.round(((profile.profile_completion || 0) / 100) * 8)
+
+  // 13. VERIFICATION (5)
+  maxTotal += 5
+  total += profile.is_verified ? 5 : profile.phone_verified ? 2 : 0
+
+  return Math.max(30, Math.min(99, Math.round((total / maxTotal) * 100)))
+}
+
+function getGenericScore(profile: any): number {
+  let score = 0
+  score += profile.religion ? 12 : 4
+  const age = profile.age || 0
+  if (age >= 20 && age <= 35) score += 12
+  else if (age >= 18 && age <= 40) score += 7
   else score += 3
-  const eduRank: Record<string, number> = { 'SSC': 1, 'HSC': 2, "Bachelor's": 3, "Master's": 4, 'Medical': 5, 'Engineering': 5, 'Law': 4 }
-  score += (eduRank[profile.education] || 3) >= 3 ? 15 : (eduRank[profile.education] || 3) === 2 ? 8 : 5
-  score += 7
-  score += profile.personality_type ? 8 : 5
-  score += profile.religious_level === 'Religious' ? 10 : 5
-  score += profile.family_values ? 8 : 5
-  score += profile.hobbies ? 4 : 2
-  return Math.min(Math.round(score), 100)
+  score += (EDU_RANK[profile.education || ''] || 2) >= 3 ? 12 : 6
+  score += Math.round(((profile.profile_completion || 30) / 100) * 20)
+  if (String(profile.smoking || 'false') === 'false') score += 5
+  if (String(profile.drinking || 'false') === 'false') score += 5
+  if (profile.is_verified) score += 8
+  else if (profile.phone_verified) score += 4
+  if (profile.photo_url) score += 8
+  if (profile.about_me) score += 6
+  if (profile.family_values) score += 4
+  if (profile.hobbies) score += 4
+  return Math.max(30, Math.min(99, score))
 }
 
 function getScoreColor(score: number): string {
@@ -27,7 +156,6 @@ function getScoreColor(score: number): string {
   return '#e11d48'
 }
 
-// Returns creation-based badge (New Member / Just Joined)
 function getCreationBadge(profile: any): { label: string; bg: string; color: string } | null {
   const created = profile.created_at || profile.createdAt
   if (!created) return null
@@ -37,7 +165,6 @@ function getCreationBadge(profile: any): { label: string; bg: string; color: str
   return null
 }
 
-// Returns activity-based badge (Online now / Active today etc)
 function getActivityStatus(profile: any): { label: string; color: string } {
   if (profile.last_active) {
     const mins = (Date.now() - new Date(profile.last_active).getTime()) / 60000
@@ -49,8 +176,8 @@ function getActivityStatus(profile: any): { label: string; color: string } {
   return { label: 'Recently active', color: '#9ca3af' }
 }
 
-function ListRow({ profile }: { profile: any }) {
-  const score = getQuickScore(profile)
+function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any }) {
+  const score = computeMatchScore(profile, viewerProfile)
   const activity = getActivityStatus(profile)
   const creationBadge = getCreationBadge(profile)
   const photoUrl = profile.photo_url || profile.photoUrl
@@ -122,25 +249,22 @@ function ListRow({ profile }: { profile: any }) {
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)' }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'none' }}
     >
-      {/* Photo section */}
       <div style={{ position: 'relative', flexShrink: 0, width: '160px' }}>
         {photoUrl ? (
           <img src={photoUrl} alt={name} style={{ width: '160px', height: '100%', minHeight: '180px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
         ) : (
           <div style={{ width: '160px', minHeight: '180px', background: 'linear-gradient(135deg,#fce7f3,#ede9fe)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>
-            {profile.gender === 'male' ? '👨' : '👩'}
+            {profile.gender === 'male' ? '?' : '?'}
           </div>
         )}
-        {/* AI score */}
         <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', background: getScoreColor(score), borderRadius: '20px', padding: '3px 10px', display: 'flex', alignItems: 'center', gap: '3px', boxShadow: '0 2px 6px rgba(0,0,0,0.25)', whiteSpace: 'nowrap' }}>
           <span style={{ fontSize: '9px', color: 'white', fontWeight: 600, opacity: 0.85 }}>AI</span>
           <span style={{ fontSize: '12px', fontWeight: 800, color: 'white' }}>{score}%</span>
+          {viewerProfile && <span style={{ fontSize: '9px', color: 'white', fontWeight: 600, opacity: 0.7 }}>{score >= 85 ? 'Excellent' : score >= 70 ? 'Good' : score >= 55 ? 'Fair' : 'Low'}</span>}
         </div>
       </div>
 
-      {/* Middle: info section */}
       <div style={{ flex: 1, padding: '16px 20px', minWidth: 0 }}>
-        {/* Creation badge */}
         {creationBadge && (
           <div style={{ marginBottom: '4px' }}>
             <span style={{ fontSize: '10px', fontWeight: 700, color: creationBadge.color, background: creationBadge.bg, borderRadius: '20px', padding: '2px 10px', letterSpacing: '0.3px' }}>
@@ -148,7 +272,6 @@ function ListRow({ profile }: { profile: any }) {
             </span>
           </div>
         )}
-        {/* Name row */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '17px', fontWeight: 800, color: '#111827' }}>{name}</span>
           {isFeatured && (
@@ -164,12 +287,10 @@ function ListRow({ profile }: { profile: any }) {
             <span style={{ fontSize: '10px', fontWeight: 700, color: '#059669', background: '#ecfdf5', border: '1px solid #6ee7b7', borderRadius: '6px', padding: '2px 7px' }}>NID Verified</span>
           )}
         </div>
-        {/* Activity */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '10px' }}>
           <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: activity.color, display: 'inline-block', flexShrink: 0 }} />
           <span style={{ fontSize: '11px', color: activity.color, fontWeight: 600 }}>{activity.label}</span>
         </div>
-        {/* 2-col info grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 20px', marginBottom: '8px' }}>
           {infoRows.map((row, i) => row.some(Boolean) && (
             <React.Fragment key={i}>
@@ -178,7 +299,6 @@ function ListRow({ profile }: { profile: any }) {
             </React.Fragment>
           ))}
         </div>
-        {/* About me snippet */}
         {profile.about_me && (
           <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '8px', marginTop: '4px' }}>
             <p style={{ margin: '0 0 2px', fontSize: '11.5px', color: '#6b7280', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontStyle: 'italic' }}>
@@ -189,68 +309,25 @@ function ListRow({ profile }: { profile: any }) {
         )}
       </div>
 
-      {/* Right: action section */}
       <div style={{ flexShrink: 0, width: '120px', borderLeft: '1px solid #f3f4f6', background: 'linear-gradient(180deg,#fff5f7,#ffffff)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '16px 12px', minHeight: '100%' }}>
         <p style={{ margin: 0, fontSize: '10px', color: '#e11d48', fontWeight: 700, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quick Actions</p>
-
-        {/* Connect - green circle */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-          <button
-            onClick={handleSendInterest}
-            disabled={interestSent}
-            title={interestSent ? 'Interest Sent' : 'Send Interest'}
-            style={{
-              width: '48px', height: '48px', borderRadius: '50%', border: 'none',
-              cursor: interestSent ? 'default' : 'pointer',
-              background: interestSent ? '#f3f4f6' : 'linear-gradient(135deg,#10b981,#059669)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: interestSent ? 'none' : '0 3px 10px rgba(16,185,129,0.35)',
-              transition: 'all 0.2s'
-            }}
-          >
+          <button onClick={handleSendInterest} disabled={interestSent} title={interestSent ? 'Interest Sent' : 'Send Interest'}
+            style={{ width: '48px', height: '48px', borderRadius: '50%', border: 'none', cursor: interestSent ? 'default' : 'pointer', background: interestSent ? '#f3f4f6' : 'linear-gradient(135deg,#10b981,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: interestSent ? 'none' : '0 3px 10px rgba(16,185,129,0.35)', transition: 'all 0.2s' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={interestSent ? '#9ca3af' : 'white'} strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
           </button>
           <span style={{ fontSize: '10px', color: interestSent ? '#9ca3af' : '#059669', fontWeight: 700 }}>{interestSent ? 'Sent' : 'Connect'}</span>
         </div>
-
-        {/* Phone - pink circle */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              const stored = localStorage.getItem('biyekori_user');
-              if (!stored) { window.location.href = '/register?reason=contact'; return; }
-              const user = JSON.parse(stored);
-              const isPaidUser = user.package && user.package !== 'prottasha';
-              if (!isPaidUser) { window.location.href = '/pricing'; return; }
-              window.location.href = '/profile/' + profile.id;
-            }}
-            title="View Contact"
-            style={{
-              width: '48px', height: '48px', borderRadius: '50%', border: 'none', cursor: 'pointer',
-              background: 'linear-gradient(135deg,#e11d48,#db2777)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 3px 10px rgba(225,29,72,0.3)',
-              transition: 'all 0.2s'
-            }}
-          >
+          <button onClick={(e) => { e.stopPropagation(); const stored = localStorage.getItem('biyekori_user'); if (!stored) { window.location.href = '/register?reason=contact'; return; } const user = JSON.parse(stored); if (!user.package || user.package === 'prottasha') { window.location.href = '/pricing'; return; } window.location.href = '/profile/' + profile.id; }}
+            title="View Contact" style={{ width: '48px', height: '48px', borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#e11d48,#db2777)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 10px rgba(225,29,72,0.3)', transition: 'all 0.2s' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           </button>
           <span style={{ fontSize: '10px', color: '#e11d48', fontWeight: 700 }}>Contact</span>
         </div>
-
-        {/* View - grey circle */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-          <Link
-            href={'/profile/' + profile.id}
-            onClick={e => e.stopPropagation()}
-            style={{
-              width: '48px', height: '48px', borderRadius: '50%',
-              border: '2px solid #e5e7eb', background: 'white',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              textDecoration: 'none', transition: 'all 0.2s'
-            }}
-          >
+          <Link href={'/profile/' + profile.id} onClick={e => e.stopPropagation()}
+            style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #e5e7eb', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', transition: 'all 0.2s' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </Link>
           <span style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600 }}>Profile</span>
@@ -274,19 +351,37 @@ export function ViewToggle({ view, onToggle }: { view: 'grid' | 'list', onToggle
 }
 
 export default function ProfilesGrid({ profiles, view }: { profiles: any[], view: 'grid' | 'list' }) {
+  const [viewerProfile, setViewerProfile] = useState<any>(null)
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('biyekori_user')
+      if (!stored) return
+      const user = JSON.parse(stored)
+      if (!user.id) return
+      fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=*`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (Array.isArray(data) && data[0]) setViewerProfile(data[0])
+        })
+        .catch(() => {})
+    } catch(e) {}
+  }, [])
+
   return (
     <div>
-      {/* Profiles */}
       {view === 'list' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
           {profiles.map((profile: any) => (
-            <ListRow key={profile.id} profile={profile} />
+            <ListRow key={profile.id} profile={profile} viewerProfile={viewerProfile} />
           ))}
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px', marginBottom: '32px' }}>
           {profiles.map((profile: any) => (
-            <ProfileCard key={profile.id} profile={profile} />
+            <ProfileCard key={profile.id} profile={profile} viewerProfile={viewerProfile} />
           ))}
         </div>
       )}
