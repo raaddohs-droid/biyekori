@@ -130,10 +130,10 @@ export default function EditProfilePage() {
         setHasChildren(p.has_children || 'false')
         setWillingToRelocate(p.willing_to_relocate || false)
         // Partner prefs
-        setPartnerAgeMin(p.partner_age_min ? String(p.partner_age_min) : '')
-        setPartnerAgeMax(p.partner_age_max ? String(p.partner_age_max) : '')
-        setPartnerDistrict(p.partner_district || '')
-        setPartnerEducation(p.partner_education || '')
+        setPartnerAgeMin(p.expected_age_min ? String(p.expected_age_min) : '')
+        setPartnerAgeMax(p.expected_age_max ? String(p.expected_age_max) : '')
+        setPartnerDistrict(p.expected_districts || '')
+        setPartnerEducation(p.expected_education || '')
         setExpectedReligion(p.expected_religion || '')
         setExpectedMaritalStatus(p.expected_marital_status || '')
         setExpectedMarriageTimeline(p.expected_marriage_timeline || '')
@@ -143,7 +143,7 @@ export default function EditProfilePage() {
         setExpectedSmoking(p.expected_smoking || '')
         setExpectedDiet(p.expected_diet || '')
         setExpectedFamilyValues(p.expected_family_values || '')
-        setAcceptsChildren(p.accepts_children !== false)
+        setAcceptsChildren(p.accepts_partner_with_children !== false)
         setExpectedReligiousLevel(p.expected_religious_level || '')
       }
     })
@@ -171,9 +171,9 @@ export default function EditProfilePage() {
         smoking, drinking, diet, has_children: hasChildren,
         willing_to_relocate: willingToRelocate,
         // Partner prefs
-        partner_age_min: partnerAgeMin ? parseInt(partnerAgeMin) : null,
-        partner_age_max: partnerAgeMax ? parseInt(partnerAgeMax) : null,
-        partner_district: partnerDistrict, partner_education: partnerEducation,
+        expected_age_min: partnerAgeMin ? parseInt(partnerAgeMin) : null,
+        expected_age_max: partnerAgeMax ? parseInt(partnerAgeMax) : null,
+        expected_districts: partnerDistrict, expected_education: partnerEducation,
         expected_religion: expectedReligion, expected_marital_status: expectedMaritalStatus,
         expected_marriage_timeline: expectedMarriageTimeline,
         expected_living_arrangement: expectedLivingArrangement,
@@ -181,7 +181,7 @@ export default function EditProfilePage() {
         expected_contact_preference: expectedContactPreference,
         expected_smoking: expectedSmoking, expected_diet: expectedDiet,
         expected_family_values: expectedFamilyValues,
-        accepts_children: acceptsChildren,
+        accepts_partner_with_children: acceptsChildren,
         expected_religious_level: expectedReligiousLevel,
       }
       const res = await fetch('/api/update-profile', {
