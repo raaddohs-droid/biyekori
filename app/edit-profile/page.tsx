@@ -577,7 +577,9 @@ export default function EditProfilePage() {
                 <label className={labelClass}>Have Children</label>
                 <select value={hasChildren} onChange={e => setHasChildren(e.target.value)} className={inputClass}>
                   <option value="false">No</option>
-                  <option value="true">Yes</option>
+                  <option value="living_with">Yes, living with me</option>
+                  <option value="not_living_with">Yes, not living with me</option>
+                  <option value="sometimes">Yes, sometimes with me</option>
                 </select>
               </div>
               <div style={{ gridColumn: '1/-1', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
@@ -602,14 +604,14 @@ export default function EditProfilePage() {
                 <label className={labelClass}>Partner Min Age</label>
                 <select value={partnerAgeMin} onChange={e => setPartnerAgeMin(e.target.value)} className={inputClass}>
                   <option value="">Any</option>
-                  {Array.from({length: 35}, (_, i) => i + 18).map(a => <option key={a} value={a}>{a}</option>)}
+                  {Array.from({length: 48}, (_, i) => i + 18).map(a => <option key={a} value={a}>{a}</option>)}
                 </select>
               </div>
               <div>
                 <label className={labelClass}>Partner Max Age</label>
                 <select value={partnerAgeMax} onChange={e => setPartnerAgeMax(e.target.value)} className={inputClass}>
                   <option value="">Any</option>
-                  {Array.from({length: 35}, (_, i) => i + 18).map(a => <option key={a} value={a}>{a}</option>)}
+                  {Array.from({length: 48}, (_, i) => i + 18).map(a => <option key={a} value={a}>{a}</option>)}
                 </select>
               </div>
               <div>
@@ -641,11 +643,19 @@ export default function EditProfilePage() {
                 </select>
               </div>
               <div>
-                <label className={labelClass}>Expected Marital Status</label>
-                <select value={expectedMaritalStatus} onChange={e => setExpectedMaritalStatus(e.target.value)} className={inputClass}>
-                  <option value="">Any</option>
-                  {MARITAL_STATUSES.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
+                <label className={labelClass}>Accepted Marital Status <span style={{fontSize:'11px',color:'#9ca3af',fontWeight:400}}>(select all that apply)</span></label>
+                <div style={{display:'flex',flexWrap:'wrap',gap:'8px',marginTop:'4px'}}>
+                  {MARITAL_STATUSES.map(m => (
+                    <label key={m} style={{display:'flex',alignItems:'center',gap:'6px',padding:'6px 12px',border:`2px solid ${expectedMaritalStatus.includes(m) ? '#e11d48' : '#e5e7eb'}`,borderRadius:'8px',cursor:'pointer',background:expectedMaritalStatus.includes(m) ? '#fff1f2' : 'white',fontSize:'13px',fontWeight:expectedMaritalStatus.includes(m) ? 700 : 400,color:expectedMaritalStatus.includes(m) ? '#e11d48' : '#374151'}}>
+                      <input type="checkbox" checked={expectedMaritalStatus.includes(m)} onChange={e => {
+                        const current = expectedMaritalStatus ? expectedMaritalStatus.split(',').filter(Boolean) : []
+                        if (e.target.checked) setExpectedMaritalStatus([...current, m].join(','))
+                        else setExpectedMaritalStatus(current.filter(x => x !== m).join(','))
+                      }} style={{display:'none'}} />
+                      {m}
+                    </label>
+                  ))}
+                </div>
               </div>
               <div>
                 <label className={labelClass}>Expected Marriage Timeline</label>
