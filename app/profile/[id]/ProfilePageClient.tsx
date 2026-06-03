@@ -543,6 +543,17 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           </div>
         )}
 
+                {isLoggedIn && interestSent && (
+          <a href={`/game?with=${profile.id}`} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 20px', background: 'linear-gradient(135deg,#0d0521,#4A1A6B)', borderRadius: '14px', textDecoration: 'none', marginBottom: '16px' }}>
+            <span style={{ fontSize: '20px' }}>✦</span>
+            <div>
+              <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 800, color: '#FAD95A', fontFamily: 'Georgia, serif' }}>একটি দিন একসাথে · A Day Together</p>
+              <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>Play the compatibility journey — takes 5 minutes</p>
+            </div>
+            <span style={{ marginLeft: 'auto', fontSize: '16px', color: '#FAD95A' }}>→</span>
+          </a>
+        )}
+
         {isLoggedIn && viewerProfile && <BeforeYouConnect profile={profile} viewerProfile={viewerProfile} isLoggedIn={isLoggedIn} />}
 
         {showModal && <ScoreModal profile={profile} onClose={() => setShowModal(false)} isLoggedIn={isLoggedIn} />}

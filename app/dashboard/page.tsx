@@ -199,6 +199,21 @@ export default function Dashboard() {
               </div>
             )}
 
+                        {/* Game Card */}
+            <div style={{ background: 'linear-gradient(135deg,#0d0521,#4A1A6B)', borderRadius: '16px', padding: '20px', boxShadow: '0 4px 16px rgba(13,5,33,0.3)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                <span style={{ fontSize: '24px' }}>✦</span>
+                <div>
+                  <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 800, color: '#FAD95A', fontFamily: 'Georgia, serif' }}>একটি দিন একসাথে</p>
+                  <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>A Day Together · Compatibility Journey</p>
+                </div>
+              </div>
+              <p style={{ margin: '0 0 14px', fontSize: '12px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
+                Live the same day separately. See how your days align. A sealed game — no way to impress, only honest answers.
+              </p>
+              <p style={{ margin: 0, fontSize: '11px', color: 'rgba(250,217,90,0.5)', fontStyle: 'italic' }}>Open a profile with mutual interest to play →</p>
+            </div>
+
             {/* Suggested Matches */}
             <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
