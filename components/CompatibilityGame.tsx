@@ -280,6 +280,12 @@ export default function CompatibilityGame({ partnerId, partnerName }: { partnerI
     return (
       <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg, #0d0521 0%, #4A1A6B 50%, #8B1A4A 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
         <div style={{ maxWidth: '420px', width: '100%', textAlign: 'center' }}>
+          {/* Language toggle - top */}
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', width: '100%', marginBottom: '24px' }}>
+            <button onClick={() => setLang('bn')} style={{ padding: '8px 20px', background: lang === 'bn' ? '#FAD95A' : 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '20px', color: lang === 'bn' ? '#0d0521' : '#fff', fontSize: '14px', fontWeight: 700, cursor: 'pointer', fontFamily: 'Georgia, serif' }}>বাংলা</button>
+            <button onClick={() => setLang('en')} style={{ padding: '8px 20px', background: lang === 'en' ? '#FAD95A' : 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '20px', color: lang === 'en' ? '#0d0521' : '#fff', fontSize: '14px', fontWeight: 700, cursor: 'pointer', fontFamily: 'Georgia, serif' }}>English</button>
+          </div>
+
           {/* Stars */}
           <div style={{ fontSize: '32px', marginBottom: '24px', letterSpacing: '8px' }}>✦ ✦ ✦</div>
           <h1 style={{ margin: '0 0 8px', fontSize: '32px', fontWeight: 900, color: '#FAD95A', fontFamily: 'Georgia, serif' }}>
@@ -318,11 +324,7 @@ export default function CompatibilityGame({ partnerId, partnerName }: { partnerI
             {lang === 'bn' ? 'শুরু করুন →' : 'Begin the Journey →'}
           </button>
 
-          {/* Language toggle */}
-          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-            <button onClick={() => setLang('bn')} style={{ padding: '8px 20px', background: lang === 'bn' ? '#FAD95A' : 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '20px', color: lang === 'bn' ? '#0d0521' : '#fff', fontSize: '14px', fontWeight: 700, cursor: 'pointer', fontFamily: 'Georgia, serif' }}>বাংলা</button>
-            <button onClick={() => setLang('en')} style={{ padding: '8px 20px', background: lang === 'en' ? '#FAD95A' : 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '20px', color: lang === 'en' ? '#0d0521' : '#fff', fontSize: '14px', fontWeight: 700, cursor: 'pointer', fontFamily: 'Georgia, serif' }}>English</button>
-          </div>
+
         </div>
       </div>
     )
@@ -336,7 +338,7 @@ export default function CompatibilityGame({ partnerId, partnerName }: { partnerI
         {/* Header */}
         <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: '20px', padding: '6px 14px' }}>
-            <span style={{ fontSize: '14px', color: '#FAD95A', fontFamily: 'Georgia, serif', fontWeight: 700 }}>
+            <span style={{ fontSize: '16px', color: '#FAD95A', fontFamily: 'Georgia, serif', fontWeight: 700 }}>
               {lang === 'bn' ? moment.time : moment.timeEn}
             </span>
           </div>
@@ -373,7 +375,7 @@ export default function CompatibilityGame({ partnerId, partnerName }: { partnerI
         <div style={{ padding: '24px 20px 20px', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             {lines.map((line, i) => (
-              <p key={i} style={{ margin: i === 0 ? '0 0 8px' : '0', fontSize: i === 0 ? '24px' : '16px', fontWeight: i === 0 ? 900 : 400, color: i === 0 ? '#fff' : 'rgba(255,255,255,0.7)', fontFamily: 'Georgia, serif', lineHeight: 1.4 }}>
+              <p key={i} style={{ margin: i === 0 ? '0 0 8px' : '0', fontSize: i === 0 ? '28px' : '18px', fontWeight: i === 0 ? 900 : 600, color: '#fff', fontFamily: 'Georgia, serif', lineHeight: 1.4 }}>
                 {line}
               </p>
             ))}
@@ -401,8 +403,8 @@ export default function CompatibilityGame({ partnerId, partnerName }: { partnerI
                   gap: '8px',
                 }}
               >
-                <span style={{ fontSize: '32px' }}>{choice.icon}</span>
-                <span style={{ fontSize: '15px', fontWeight: 800, color: selectedChoice === idx ? '#0d0521' : '#fff', fontFamily: 'Georgia, serif', lineHeight: 1.3 }}>
+                <span style={{ fontSize: '40px' }}>{choice.icon}</span>
+                <span style={{ fontSize: '17px', fontWeight: 800, color: selectedChoice === idx ? '#0d0521' : '#fff', fontFamily: 'Georgia, serif', lineHeight: 1.3, textShadow: selectedChoice === idx ? 'none' : '0 1px 4px rgba(0,0,0,0.5)' }}>
                   {lang === 'bn' ? choice.bn : choice.en}
                 </span>
               </button>
