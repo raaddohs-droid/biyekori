@@ -278,9 +278,8 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
             {profile.gender === 'male' ? '?' : '?'}
           </div>
         )}
-        <div onClick={(e) => { e.stopPropagation(); alert('Login to see your AI match score') }} style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', background: getScoreColor(score), borderRadius: '20px', padding: '3px 10px', display: 'flex', alignItems: 'center', gap: '3px', boxShadow: '0 2px 6px rgba(0,0,0,0.25)', whiteSpace: 'nowrap', cursor: 'pointer' }}>
-          <span style={{ fontSize: '9px', color: 'white', fontWeight: 600, opacity: 0.85 }}>AI</span>
-          <span style={{ fontSize: '12px', fontWeight: 800, color: 'white' }}>{score}%</span>
+        <div onClick={(e) => { e.stopPropagation(); alert('Login to see your AI match score') }} style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', background: viewerProfile ? getScoreColor(score) : 'rgba(0,0,0,0.65)', borderRadius: '20px', padding: '3px 10px', display: 'flex', alignItems: 'center', gap: '3px', boxShadow: '0 2px 6px rgba(0,0,0,0.25)', whiteSpace: 'nowrap', cursor: 'pointer' }}>
+          <span style={{ fontSize: '9px', color: 'white', fontWeight: 700 }}>{viewerProfile ? 'AI ' + score + '%' : 'Login to see score'}</span>
           
         </div>
       </div>
