@@ -479,6 +479,70 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           </div>
         </div>
 
+        {/* Own profile selfie verification banner */}
+        {isLoggedIn && viewerProfile && Number(viewerProfile.id) === profile.id && profile.selfie_status === 'approved' && (
+          <div style={{ background: '#f0fdf4', borderRadius: '14px', padding: '14px 18px', marginBottom: '16px', border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            <div>
+              <p style={{ margin: '0 0 1px', fontSize: '13px', fontWeight: 700, color: '#15803d' }}>Selfie Verified</p>
+              <p style={{ margin: 0, fontSize: '11px', color: '#16a34a' }}>Your identity has been verified. Families can see this badge on your profile.</p>
+            </div>
+          </div>
+        )}
+        {isLoggedIn && viewerProfile && Number(viewerProfile.id) === profile.id && profile.selfie_status !== 'approved' && profile.selfie_status !== 'pending' && (
+          <div style={{ background: '#eff6ff', borderRadius: '14px', padding: '14px 18px', marginBottom: '16px', border: '1px solid #bfdbfe', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <div>
+                <p style={{ margin: '0 0 1px', fontSize: '13px', fontWeight: 700, color: '#1e40af' }}>Add Selfie Verification</p>
+                <p style={{ margin: 0, fontSize: '11px', color: '#3b82f6' }}>Takes 2 minutes · builds trust · free</p>
+              </div>
+            </div>
+            <a href="/verify-selfie" style={{ padding: '6px 14px', background: '#2563eb', color: 'white', borderRadius: '8px', fontSize: '12px', fontWeight: 700, textDecoration: 'none', flexShrink: 0 }}>Verify Now</a>
+          </div>
+        )}
+        {isLoggedIn && viewerProfile && Number(viewerProfile.id) === profile.id && profile.selfie_status === 'pending' && (
+          <div style={{ background: '#fffbeb', borderRadius: '14px', padding: '14px 18px', marginBottom: '16px', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <div>
+              <p style={{ margin: '0 0 1px', fontSize: '13px', fontWeight: 700, color: '#92400e' }}>Verification Under Review</p>
+              <p style={{ margin: 0, fontSize: '11px', color: '#b45309' }}>We will notify you within 24 hours.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Own profile selfie verification banner */}
+        {isLoggedIn && viewerProfile && Number(viewerProfile.id) === profile.id && profile.selfie_status === 'approved' && (
+          <div style={{ background: '#f0fdf4', borderRadius: '14px', padding: '14px 18px', marginBottom: '16px', border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            <div>
+              <p style={{ margin: '0 0 1px', fontSize: '13px', fontWeight: 700, color: '#15803d' }}>Selfie Verified</p>
+              <p style={{ margin: 0, fontSize: '11px', color: '#16a34a' }}>Your identity has been verified. Families can see this badge on your profile.</p>
+            </div>
+          </div>
+        )}
+        {isLoggedIn && viewerProfile && Number(viewerProfile.id) === profile.id && profile.selfie_status !== 'approved' && profile.selfie_status !== 'pending' && (
+          <div style={{ background: '#eff6ff', borderRadius: '14px', padding: '14px 18px', marginBottom: '16px', border: '1px solid #bfdbfe', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <div>
+                <p style={{ margin: '0 0 1px', fontSize: '13px', fontWeight: 700, color: '#1e40af' }}>Add Selfie Verification</p>
+                <p style={{ margin: 0, fontSize: '11px', color: '#3b82f6' }}>Takes 2 minutes · builds trust · free</p>
+              </div>
+            </div>
+            <a href="/verify-selfie" style={{ padding: '6px 14px', background: '#2563eb', color: 'white', borderRadius: '8px', fontSize: '12px', fontWeight: 700, textDecoration: 'none', flexShrink: 0 }}>Verify Now</a>
+          </div>
+        )}
+        {isLoggedIn && viewerProfile && Number(viewerProfile.id) === profile.id && profile.selfie_status === 'pending' && (
+          <div style={{ background: '#fffbeb', borderRadius: '14px', padding: '14px 18px', marginBottom: '16px', border: '1px solid #fde68a', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <div>
+              <p style={{ margin: '0 0 1px', fontSize: '13px', fontWeight: 700, color: '#92400e' }}>Verification Under Review</p>
+              <p style={{ margin: 0, fontSize: '11px', color: '#b45309' }}>We will notify you within 24 hours.</p>
+            </div>
+          </div>
+        )}
+
         {isLoggedIn && viewerProfile && <BeforeYouConnect profile={profile} viewerProfile={viewerProfile} isLoggedIn={isLoggedIn} />}
 
         {showModal && <ScoreModal profile={profile} onClose={() => setShowModal(false)} isLoggedIn={isLoggedIn} />}
