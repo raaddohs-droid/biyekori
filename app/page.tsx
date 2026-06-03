@@ -77,7 +77,7 @@ export default function Home() {
         <span style={{ fontSize: '18px', fontWeight: 700, color: '#F0C040', letterSpacing: '3px' }}>BIYEKORI</span>
         <span style={{ fontSize: '12px', color: 'rgba(253,246,238,0.2)' }}>2026 BIYEKORI - BANGLADESH AI MATRIMONY</span>
         <div style={{ display: 'flex', gap: '32px' }}>
-          {['Pricing','Profiles','Register','Login'].map(l => (
+          {['Pricing','Profiles','About','Safety','Privacy','Terms','FAQ'].map(l => (
             <Link key={l} href={`/${l.toLowerCase()}`} style={{ fontSize: '12px', color: 'rgba(253,246,238,0.25)', textDecoration: 'none' }}>{l.toUpperCase()}</Link>
           ))}
         </div>
