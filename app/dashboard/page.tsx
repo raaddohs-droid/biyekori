@@ -142,6 +142,30 @@ export default function Dashboard() {
               </div>
             )}
 
+            {/* Selfie Verification Card */}
+            {user && user.selfie_status !== 'approved' && (
+              <div style={{ background: 'white', borderRadius: '16px', padding: '16px 20px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid #e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0369a1" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                  </div>
+                  <div>
+                    <p style={{ margin: '0 0 1px', fontSize: '13px', fontWeight: 700, color: '#111827' }}>
+                      {user.selfie_status === 'pending' ? 'Selfie verification pending' : 'Verify your identity — Free'}
+                    </p>
+                    <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>
+                      {user.selfie_status === 'pending' ? 'Under review — we will notify you within 24 hours' : '2 minutes · live face check · builds trust with families'}
+                    </p>
+                  </div>
+                </div>
+                {user.selfie_status !== 'pending' && (
+                  <Link href="/verify-selfie" style={{ flexShrink: 0, padding: '7px 16px', background: '#0369a1', color: 'white', borderRadius: '8px', fontWeight: 700, fontSize: '12px', textDecoration: 'none' }}>
+                    Verify Now
+                  </Link>
+                )}
+              </div>
+            )}
+
             {/* Suggested Matches */}
             <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
