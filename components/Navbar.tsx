@@ -299,7 +299,7 @@ export default function Navbar() {
                       onMouseEnter={e => (e.currentTarget.style.background = '#fef2f2')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
-                      <span style={{ fontSize: '15px' }}>ðŸšª</span>Logout
+                      Logout
                     </button>
                   </div>
                 </div>

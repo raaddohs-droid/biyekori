@@ -143,6 +143,17 @@ export default function Dashboard() {
             )}
 
             {/* Selfie Verification Card */}
+            {user && user.selfie_status === 'approved' && (
+              <div style={{ background: '#f0fdf4', borderRadius: '16px', padding: '14px 20px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#dcfce7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ margin: '0 0 1px', fontSize: '13px', fontWeight: 700, color: '#15803d' }}>Selfie Verified</p>
+                  <p style={{ margin: 0, fontSize: '11px', color: '#16a34a' }}>Your identity is verified · families trust your profile more</p>
+                </div>
+              </div>
+            )}
             {user && user.selfie_status !== 'approved' && (
               <div style={{ background: 'white', borderRadius: '16px', padding: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', border: '1px solid #e0f2fe' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: user.selfie_status !== 'pending' ? '16px' : '0' }}>
