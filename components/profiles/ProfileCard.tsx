@@ -322,7 +322,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
           display: 'flex', alignItems: 'center', gap: '4px',
           boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
           cursor: 'pointer'
-        }} onClick={() => alert(viewerProfile ? 'AI Match Score: ' + score + '% - Personalized based on your preferences. Factors: Age, Religion, Education, Location, Family type, Income, Height, Lifestyle, Personality.' : 'AI Match Score: ' + score + '% - General compatibility score. Fill partner preferences for a personalized score.')}>
+        }} onClick={() => alert('Login to see your AI match score')}>
           <span style={{ fontSize: '9px', color: 'white', fontWeight: 600, opacity: 0.85 }}>AI</span>
           <span style={{ fontSize: '13px', fontWeight: 800, color: 'white' }}>{score}%</span>
         </div>
