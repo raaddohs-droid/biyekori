@@ -8,18 +8,16 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 type Stage = 'landing' | 'camera' | 'challenge' | 'preview' | 'uploading' | 'done' | 'failed'
-type Challenge = 'look-left' | 'look-right'
+type Challenge = 'open-eyes'
 
-const CHALLENGES: Challenge[] = ['look-left', 'look-right']
+const CHALLENGES: Challenge[] = ['open-eyes']
 
 const CHALLENGE_LABELS: Record<Challenge, string> = {
-  'look-left': 'Look LEFT',
-  'look-right': 'Look RIGHT',
+  'open-eyes': 'Look straight at the camera',
 }
 
 const CHALLENGE_LABELS_BN: Record<Challenge, string> = {
-  'look-left': 'বাম দিকে তাকান',
-  'look-right': 'ডান দিকে তাকান',
+  'open-eyes': 'সরাসরি ক্যামেরার দিকে তাকান',
 }
 
 export default function VerifySelfie() {
@@ -40,6 +38,7 @@ export default function VerifySelfie() {
   const animFrameRef = useRef<number>(0)
   const challengeCooldownRef = useRef(false)
   const currentChallengeIndexRef = useRef(0)
+  const eyesOpenCountRef = useRef(0)
   const streamRef = useRef<MediaStream | null>(null)
 
   useEffect(() => {
@@ -154,24 +153,31 @@ export default function VerifySelfie() {
         const updated = [...prev]
         const challenge = CHALLENGES[currentChallenge]
 
-        const threshold = 0.05
-        // Use absolute yaw to handle mirrored mobile front cameras
-        const absYaw = Math.abs(yaw)
-        const matched = absYaw > threshold
+        // Eye openness detection using blendshapes
+        const blendshapes = results.faceBlendshapes?.[0]?.categories || []
+        const leftEyeOpen = blendshapes.find((b: any) => b.categoryName === 'eyeBlinkLeft')
+        const rightEyeOpen = blendshapes.find((b: any) => b.categoryName === 'eyeBlinkRight')
+
+        // eyeBlink score: 0 = eyes open, 1 = eyes closed
+        // We want eyes OPEN (low blink score) while face is in oval
+        const leftBlink = leftEyeOpen?.score ?? 0
+        const rightBlink = rightEyeOpen?.score ?? 0
+        const eyesOpen = leftBlink < 0.3 && rightBlink < 0.3
+
+        // Hold eyes open for 2 seconds (20 frames at 10fps)
+        if (!eyesOpenCountRef.current) eyesOpenCountRef.current = 0
+        if (eyesOpen && inOval) {
+          eyesOpenCountRef.current += 1
+        } else {
+          eyesOpenCountRef.current = 0
+        }
+
+        const matched = eyesOpenCountRef.current >= 18
 
         if (matched && !challengeCooldownRef.current) {
           updated[currentChallengeIndexRef.current] = true
           challengeCooldownRef.current = true
-          const nextIdx = currentChallengeIndexRef.current + 1
-          setTimeout(() => {
-            challengeCooldownRef.current = false
-            if (nextIdx >= CHALLENGES.length) {
-              captureFrame()
-            } else {
-              currentChallengeIndexRef.current = nextIdx
-              setCurrentChallenge(nextIdx)
-            }
-          }, 1000)
+          captureFrame()
         }
 
         return updated
@@ -256,6 +262,7 @@ export default function VerifySelfie() {
     setFaceInOval(false)
     challengeCooldownRef.current = false
     currentChallengeIndexRef.current = 0
+    eyesOpenCountRef.current = 0
     setStage('landing')
   }
 
@@ -328,7 +335,7 @@ export default function VerifySelfie() {
             {[
               { step: '1', text: 'Allow camera access' },
               { step: '2', text: 'Place your face in the oval frame' },
-              { step: '3', text: 'Follow 2 simple head movement prompts' },
+              { step: '3', text: 'Look straight at camera and open your eyes slightly wider' },
               { step: '4', text: 'AI instantly verifies and adds your badge' },
             ].map((item, i) => (
               <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: i < 3 ? '12px' : 0 }}>
@@ -429,18 +436,16 @@ export default function VerifySelfie() {
             pointerEvents: 'none'
           }} />
 
-          {/* Challenge arrow indicator */}
+          {/* Eye challenge indicator */}
           {stage === 'challenge' && !allDone && faceInOval && (
             <div style={{
-              position: 'absolute',
-              top: '50%', transform: 'translateY(-50%)',
-              ...(challenge === 'look-left' ? { left: '-50px' } : { right: '-50px' }),
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px'
+              position: 'absolute', bottom: '10px', left: '50%',
+              transform: 'translateX(-50%)',
+              display: 'flex', alignItems: 'center', gap: '4px',
+              background: 'rgba(0,0,0,0.5)', borderRadius: '20px', padding: '4px 10px'
             }}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e11d48" strokeWidth="2.5"
-                style={{ transform: challenge === 'look-right' ? 'scaleX(-1)' : 'none' }}>
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-              </svg>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', animation: 'pulse 1s infinite' }} />
+              <span style={{ fontSize: '10px', color: 'white', fontWeight: 600 }}>Hold still...</span>
             </div>
           )}
 
