@@ -1,4 +1,5 @@
 "use client"
+import VerificationTab from '@/components/VerificationTab'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { FilesetResolver, FaceDetector } from '@mediapipe/tasks-vision'
@@ -320,6 +321,7 @@ export default function EditProfilePage() {
     { id: 'personal', label: 'Personal' },
     { id: 'lifestyle', label: 'Lifestyle' },
     { id: 'partner', label: 'Partner Prefs' },
+    { id: 'verification', label: 'Verification' },
     { id: 'privacy', label: 'Privacy' },
   ]
 
@@ -722,6 +724,11 @@ export default function EditProfilePage() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* VERIFICATION TAB */}
+        {activeTab === 'verification' && user && (
+          <VerificationTab user={user} profile={{ full_name: fullName, selfie_status: (user as any).selfie_status, education_verified: false, job_verified: false }} onUpdate={() => {}} />
         )}
 
         {/* PRIVACY TAB */}
