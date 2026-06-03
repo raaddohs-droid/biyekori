@@ -8,227 +8,300 @@ export default function PricingPage() {
   const plans = [
     {
       id: 'prottasha',
-      name: 'Prottasha',
-      bangla: 'প্রত্যাশা',
+      name: 'Free',
+      bangla: 'বিনামূল্যে',
       price: 0,
-      priceLabel: 'Free',
+      priceLabel: '৳0',
       period: 'Forever',
       color: '#6b7280',
-      bg: '#f9fafb',
+      accent: '#f3f4f6',
       border: '#e5e7eb',
       popular: false,
       features: [
-        { text: 'Create profile with photos', yes: true },
-        { text: 'Browse up to 5 pages of profiles', yes: true },
-        { text: 'Send 3 interests per month', yes: true },
-        { text: 'Download PDF Biodata', yes: true },
-        { text: 'AI Match Score', yes: true },
-        { text: 'View contact details', yes: false },
-        { text: 'Send messages', yes: false },
-        { text: 'Advanced search filters', yes: false },
-        { text: 'See who viewed you', yes: false },
+        'Create profile with photos',
+        'Browse up to 5 pages of profiles',
+        'Send 3 interests per month',
+        'AI Match Score on every profile',
+        'Download PDF Biodata',
+      ],
+      missing: [
+        'View contact details',
+        'Send messages',
+        'See who viewed you',
       ],
       cta: 'Get Started Free',
       ctaAction: '/register',
+      ctaStyle: 'outline',
     },
     {
       id: 'biswas',
-      name: 'Biswas',
-      bangla: 'বিশ্বাস',
+      name: 'Standard',
+      bangla: 'স্ট্যান্ডার্ড',
       price: 499,
       priceLabel: '৳499',
       period: 'per month',
-      yearly: 4999,
-      yearlySaving: 'Save ৳1,000/year',
+      yearly: '৳4,999/year',
+      yearlySave: 'Save ৳1,000',
       color: '#e11d48',
-      bg: '#fff1f2',
+      accent: '#fff1f2',
       border: '#fecdd3',
       popular: true,
       features: [
-        { text: 'Everything in Prottasha', yes: true },
-        { text: 'Browse unlimited profiles', yes: true },
-        { text: 'Unlimited interests', yes: true },
-        { text: 'View 10 contacts/month', yes: true, badge: '10/mo' },
-        { text: 'Send messages (accepted only)', yes: true },
-        { text: 'Advanced search filters', yes: true },
-        { text: 'See who viewed you', yes: true },
-        { text: 'Profile Spotlight (1x/month)', yes: true, badge: '1x' },
-        { text: 'Priority in search', yes: false },
+        'Everything in Free',
+        'Browse unlimited profiles',
+        'Unlimited interests',
+        'View 10 contact numbers/month',
+        'Message after interest accepted',
+        'See who viewed your profile',
+        '1 Profile Spotlight per month',
       ],
-      cta: 'Upgrade to Biswas',
-      ctaAction: 'mailto:support@biyekori.com?subject=Upgrade to Biswas&body=Please upgrade my account to Biswas plan. bKash: 01XXXXXXXXX',
+      missing: [],
+      cta: 'Upgrade to Standard',
+      ctaAction: 'mailto:support@biyekori.com?subject=Upgrade to Standard&body=Please upgrade my account to Standard plan.',
+      ctaStyle: 'solid',
     },
     {
       id: 'shopno',
-      name: 'Shopno',
-      bangla: 'স্বপ্ন',
+      name: 'Premium',
+      bangla: 'প্রিমিয়াম',
       price: 999,
       priceLabel: '৳999',
       period: 'per month',
-      yearly: 9999,
-      yearlySaving: 'Save ৳2,000/year',
+      yearly: '৳9,999/year',
+      yearlySave: 'Save ৳2,000',
       color: '#7c3aed',
-      bg: '#f5f3ff',
+      accent: '#f5f3ff',
       border: '#ddd6fe',
       popular: false,
       features: [
-        { text: 'Everything in Biswas', yes: true },
-        { text: 'Unlimited contact viewing', yes: true },
-        { text: 'Unlimited messages', yes: true },
-        { text: 'Top search placement', yes: true, badge: 'Top 10' },
-        { text: 'Profile Spotlight (3x/month)', yes: true, badge: '3x' },
-        { text: 'Featured gold badge', yes: true },
-        { text: 'AI weekly match suggestions', yes: true },
-        { text: 'Priority support', yes: true },
-        { text: 'Background check assistance', yes: true },
+        'Everything in Standard',
+        'Unlimited contact viewing',
+        'Unlimited messages',
+        'Top search placement',
+        '3 Profile Spotlights per month',
+        'Featured gold badge',
+        'Weekly AI match suggestions',
+        'Priority support',
       ],
-      cta: 'Upgrade to Shopno',
-      ctaAction: 'mailto:support@biyekori.com?subject=Upgrade to Shopno&body=Please upgrade my account to Shopno plan. bKash: 01XXXXXXXXX',
+      missing: [],
+      cta: 'Upgrade to Premium',
+      ctaAction: 'mailto:support@biyekori.com?subject=Upgrade to Premium&body=Please upgrade my account to Premium plan.',
+      ctaStyle: 'gradient',
     },
-  ];
+  ]
 
   const nrbPlan = {
-    name: 'NRB Plan',
+    name: 'Global',
     bangla: 'প্রবাসী',
     price: '$15',
     period: 'per month (USD)',
     features: [
-      'All Shopno features',
+      'All Premium features',
       'USD pricing — pay from anywhere',
-      'English-first interface',
       'Priority matching with NRB profiles',
-      'Dedicated support via WhatsApp',
-      'Family account (add 1 parent)',
+      'Dedicated WhatsApp support',
+      'English-first interface',
     ],
-  };
-
-  const addons = [
-    { name: 'NID Verification', price: '৳200', desc: 'One-time · Verified badge · 5x more views' },
-    { name: 'Profile Spotlight', price: '৳99', desc: '24 hours · Appear at top of browse' },
-    { name: 'Contact Unlock', price: '৳99', desc: 'Single profile · View phone number' },
-    { name: 'Profile Boost', price: '৳199', desc: '48 hours · Top 10 search placement' },
-  ];
+    cta: 'Contact for Global Plan',
+    ctaAction: 'mailto:support@biyekori.com?subject=Global NRB Plan',
+  }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg,#fff5f7,#fdf2f8,#f5f3ff)', paddingTop: '80px', paddingBottom: '60px' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: '80px', paddingBottom: '80px' }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 20px' }}>
 
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <h1 style={{ margin: '0 0 12px', fontSize: '36px', fontWeight: 900, color: '#111827' }}>
-            Find Your Perfect Match
+        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+          <p style={{ margin: '0 0 12px', fontSize: '12px', letterSpacing: '3px', color: '#e11d48', fontWeight: 700, textTransform: 'uppercase' }}>PRICING</p>
+          <h1 style={{ margin: '0 0 16px', fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 900, color: '#111827', lineHeight: 1.2 }}>
+            Simple, transparent pricing
           </h1>
-          <p style={{ margin: '0 0 24px', fontSize: '16px', color: '#6b7280', maxWidth: '500px', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.6 }}>
-            Simple, honest pricing. No hidden fees. Cancel anytime.
+          <p style={{ margin: '0 0 8px', fontSize: '18px', color: '#6b7280', lineHeight: 1.6 }}>
+            Start free. Upgrade when you're ready.
           </p>
-          <div style={{ display: 'inline-flex', gap: '8px', background: 'white', padding: '6px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-            <span style={{ padding: '6px 16px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', borderRadius: '8px', fontSize: '13px', fontWeight: 700 }}>Monthly</span>
-            <span style={{ padding: '6px 16px', color: '#6b7280', fontSize: '13px', fontWeight: 600 }}>Yearly — Save up to 20%</span>
-          </div>
+          <p style={{ margin: 0, fontSize: '15px', color: '#9ca3af' }}>
+            সহজ মূল্য, কোনো লুকানো চার্জ নেই
+          </p>
         </div>
 
-        {/* Main Plans */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '20px', marginBottom: '32px' }}>
+        {/* Plans grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginBottom: '40px' }}>
           {plans.map((plan) => (
             <div key={plan.id} style={{
-              background: 'white', borderRadius: '20px', padding: '28px 24px',
-              border: `2px solid ${plan.popular ? plan.color : plan.border}`,
-              boxShadow: plan.popular ? '0 8px 32px rgba(225,29,72,0.15)' : '0 2px 12px rgba(0,0,0,0.06)',
-              position: 'relative', transform: plan.popular ? 'scale(1.03)' : 'none'
+              background: 'white',
+              borderRadius: '20px',
+              border: plan.popular ? `2px solid ${plan.color}` : '1px solid #e5e7eb',
+              overflow: 'hidden',
+              boxShadow: plan.popular ? `0 8px 32px ${plan.color}20` : '0 2px 12px rgba(0,0,0,0.06)',
+              position: 'relative',
+              transition: 'transform 0.2s',
             }}>
+
+              {/* Popular badge */}
               {plan.popular && (
-                <div style={{ position: 'absolute', top: '-14px', left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', padding: '4px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 800, whiteSpace: 'nowrap' }}>
+                <div style={{
+                  background: `linear-gradient(135deg, ${plan.color}, #db2777)`,
+                  color: 'white', textAlign: 'center',
+                  padding: '8px', fontSize: '12px', fontWeight: 800,
+                  letterSpacing: '1px', textTransform: 'uppercase'
+                }}>
                   Most Popular
                 </div>
               )}
 
-              <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                <h3 style={{ margin: '0 0 2px', fontSize: '20px', fontWeight: 900, color: '#111827' }}>{plan.name}</h3>
-                <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#9ca3af' }}>{plan.bangla}</p>
-                <div style={{ fontSize: plan.price === 0 ? '32px' : '36px', fontWeight: 900, color: plan.color }}>
-                  {plan.priceLabel}
+              <div style={{ padding: '32px 28px' }}>
+                {/* Plan name */}
+                <div style={{ marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                    <h2 style={{ margin: 0, fontSize: '22px', fontWeight: 900, color: '#111827' }}>{plan.name}</h2>
+                    <span style={{ fontSize: '13px', color: plan.color, fontWeight: 700, background: plan.accent, padding: '2px 10px', borderRadius: '20px' }}>
+                      {plan.bangla}
+                    </span>
+                  </div>
+
+                  {/* Price */}
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', margin: '16px 0 4px' }}>
+                    <span style={{ fontSize: '42px', fontWeight: 900, color: '#111827', lineHeight: 1 }}>{plan.priceLabel}</span>
+                    <span style={{ fontSize: '14px', color: '#9ca3af' }}>{plan.period}</span>
+                  </div>
+
+                  {(plan as any).yearly && (
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <span style={{ fontSize: '13px', color: '#6b7280' }}>{(plan as any).yearly}</span>
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#10b981', background: '#f0fdf4', padding: '2px 8px', borderRadius: '20px' }}>
+                        {(plan as any).yearlySave}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <div style={{ fontSize: '13px', color: '#9ca3af', marginTop: '2px' }}>{plan.period}</div>
-                {plan.yearly && (
-                  <div style={{ fontSize: '11px', color: '#10b981', fontWeight: 700, marginTop: '4px' }}>{plan.yearlySaving}</div>
-                )}
+
+                {/* CTA Button */}
+                <Link href={plan.ctaAction} style={{
+                  display: 'block', width: '100%', padding: '14px',
+                  borderRadius: '12px', fontSize: '14px', fontWeight: 800,
+                  textAlign: 'center', textDecoration: 'none', marginBottom: '28px',
+                  background: plan.ctaStyle === 'gradient'
+                    ? `linear-gradient(135deg, ${plan.color}, #e11d48)`
+                    : plan.ctaStyle === 'solid'
+                    ? plan.color
+                    : 'white',
+                  color: plan.ctaStyle === 'outline' ? plan.color : 'white',
+                  border: plan.ctaStyle === 'outline' ? `2px solid ${plan.color}` : 'none',
+                  boxSizing: 'border-box',
+                }}>
+                  {plan.cta}
+                </Link>
+
+                {/* Divider */}
+                <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '20px' }}>
+                  <p style={{ margin: '0 0 12px', fontSize: '12px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    What's included
+                  </p>
+
+                  {/* Features */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {plan.features.map((f, i) => (
+                      <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: '1px' }}>
+                          <circle cx="12" cy="12" r="10" fill={plan.color} opacity="0.15"/>
+                          <path d="M8 12l3 3 5-5" stroke={plan.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span style={{ fontSize: '13px', color: '#374151', lineHeight: 1.4 }}>{f}</span>
+                      </div>
+                    ))}
+
+                    {/* Missing features */}
+                    {plan.missing.map((f, i) => (
+                      <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', opacity: 0.4 }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: '1px' }}>
+                          <circle cx="12" cy="12" r="10" fill="#9ca3af" opacity="0.2"/>
+                          <path d="M8 12h8" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                        <span style={{ fontSize: '13px', color: '#9ca3af', lineHeight: 1.4 }}>{f}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-
-              <ul style={{ listStyle: 'none', margin: '0 0 24px', padding: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {plan.features.map((f, i) => (
-                  <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                    <span style={{ width: '18px', height: '18px', borderRadius: '50%', background: f.yes ? '#ecfdf5' : '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: '1px' }}>
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={f.yes ? '#10b981' : '#d1d5db'} strokeWidth="3"><path d={f.yes ? "M20 6L9 17l-5-5" : "M18 6L6 18M6 6l12 12"}/></svg>
-                    </span>
-                    <span style={{ fontSize: '13px', color: f.yes ? '#374151' : '#9ca3af' }}>
-                      {f.text}
-                      {(f as any).badge && <span style={{ marginLeft: '6px', fontSize: '10px', background: plan.bg, color: plan.color, border: `1px solid ${plan.border}`, padding: '1px 6px', borderRadius: '10px', fontWeight: 700 }}>{(f as any).badge}</span>}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <a href={plan.ctaAction} style={{
-                display: 'block', textAlign: 'center', padding: '12px',
-                background: plan.popular ? `linear-gradient(135deg,${plan.color},#db2777)` : plan.price === 0 ? '#f3f4f6' : `linear-gradient(135deg,${plan.color},#9333ea)`,
-                color: plan.price === 0 ? '#6b7280' : 'white',
-                borderRadius: '12px', fontWeight: 700, fontSize: '14px',
-                textDecoration: 'none', border: 'none'
-              }}>
-                {plan.cta}
-              </a>
             </div>
           ))}
         </div>
 
-        {/* NRB Plan */}
-        <div style={{ background: 'linear-gradient(135deg,#0f172a,#1e1b4b)', borderRadius: '20px', padding: '32px', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '32px', flexWrap: 'wrap' }}>
-          <div style={{ flex: 1 }}>
+        {/* NRB/Global Plan */}
+        <div style={{
+          background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)',
+          borderRadius: '20px', padding: '36px 40px',
+          display: 'grid', gridTemplateColumns: '1fr auto',
+          gap: '32px', alignItems: 'center',
+          marginBottom: '60px'
+        }}>
+          <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <span style={{ background: 'rgba(255,255,255,0.1)', color: 'white', padding: '3px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: 700, letterSpacing: '1px' }}>NRB SPECIAL</span>
+              <h3 style={{ margin: 0, fontSize: '22px', fontWeight: 900, color: 'white' }}>{nrbPlan.name}</h3>
+              <span style={{ fontSize: '13px', color: '#a5b4fc', fontWeight: 700, background: 'rgba(165,180,252,0.15)', padding: '2px 10px', borderRadius: '20px' }}>
+                {nrbPlan.bangla}
+              </span>
+              <span style={{ fontSize: '11px', fontWeight: 700, color: '#fbbf24', background: 'rgba(251,191,36,0.15)', padding: '2px 8px', borderRadius: '20px' }}>
+                Overseas Bangladeshi
+              </span>
             </div>
-            <h3 style={{ margin: '0 0 4px', fontSize: '22px', fontWeight: 900, color: 'white' }}>{nrbPlan.name} — {nrbPlan.bangla}</h3>
-            <p style={{ margin: '0 0 16px', fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>For Bangladeshis living abroad</p>
+            <p style={{ margin: '0 0 16px', fontSize: '28px', fontWeight: 900, color: 'white' }}>
+              {nrbPlan.price} <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', fontWeight: 400 }}>{nrbPlan.period}</span>
+            </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {nrbPlan.features.map((f, i) => (
-                <span key={i} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', background: 'rgba(255,255,255,0.1)', padding: '4px 10px', borderRadius: '20px' }}>✓ {f}</span>
+                <span key={i} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', background: 'rgba(255,255,255,0.1)', padding: '4px 12px', borderRadius: '20px' }}>
+                  {f}
+                </span>
               ))}
             </div>
           </div>
-          <div style={{ textAlign: 'center', flexShrink: 0 }}>
-            <div style={{ fontSize: '40px', fontWeight: 900, color: '#fbbf24' }}>{nrbPlan.price}</div>
-            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginBottom: '16px' }}>{nrbPlan.period}</div>
-            <a href="mailto:support@biyekori.com?subject=NRB Plan Request&body=Please activate NRB plan for my account." style={{ display: 'block', padding: '12px 28px', background: 'linear-gradient(135deg,#f59e0b,#d97706)', color: 'white', borderRadius: '12px', fontWeight: 700, fontSize: '14px', textDecoration: 'none' }}>
-              Contact for NRB Plan
-            </a>
-          </div>
+          <Link href={nrbPlan.ctaAction} style={{
+            flexShrink: 0, padding: '14px 28px',
+            background: 'linear-gradient(135deg, #F0C040, #C07800)',
+            color: '#080604', borderRadius: '12px',
+            fontSize: '14px', fontWeight: 800,
+            textDecoration: 'none', whiteSpace: 'nowrap'
+          }}>
+            {nrbPlan.cta}
+          </Link>
         </div>
 
-        {/* Add-ons */}
-        <div style={{ background: 'white', borderRadius: '20px', padding: '28px', marginBottom: '32px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-          <h2 style={{ margin: '0 0 20px', fontSize: '20px', fontWeight: 800, color: '#111827' }}>Add-ons</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '12px' }}>
-            {addons.map((a, i) => (
-              <div key={i} style={{ border: '1.5px solid #f3f4f6', borderRadius: '14px', padding: '16px', textAlign: 'center' }}>
-                <div style={{ fontSize: '20px', fontWeight: 900, color: '#e11d48', marginBottom: '4px' }}>{a.price}</div>
-                <p style={{ margin: '0 0 4px', fontSize: '13px', fontWeight: 700, color: '#111827' }}>{a.name}</p>
-                <p style={{ margin: '0 0 12px', fontSize: '11px', color: '#9ca3af', lineHeight: 1.4 }}>{a.desc}</p>
-                <a href="mailto:support@biyekori.com" style={{ display: 'block', padding: '7px', background: '#fff1f2', color: '#e11d48', borderRadius: '8px', fontSize: '12px', fontWeight: 700, textDecoration: 'none' }}>
-                  Request
-                </a>
-              </div>
-            ))}
-          </div>
+        {/* FAQ / Reassurance */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '48px' }}>
+          {[
+            { icon: '🔒', title: 'No hidden charges', desc: 'Pay only what you see. Cancel anytime via email.' },
+            { icon: '📱', title: 'Pay via bKash', desc: 'Send payment to 01733577215 and email us your transaction ID.' },
+            { icon: '⚡', title: 'Instant activation', desc: 'Your plan is activated within 2 hours of payment confirmation.' },
+            { icon: '🤝', title: 'Satisfaction guaranteed', desc: 'Not happy? Contact us within 7 days for a full refund.' },
+          ].map((item, i) => (
+            <div key={i} style={{ background: 'white', borderRadius: '14px', padding: '20px', border: '1px solid #f1f5f9', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+              <span style={{ fontSize: '24px', display: 'block', marginBottom: '10px' }}>{item.icon}</span>
+              <p style={{ margin: '0 0 6px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>{item.title}</p>
+              <p style={{ margin: 0, fontSize: '13px', color: '#6b7280', lineHeight: 1.5 }}>{item.desc}</p>
+            </div>
+          ))}
         </div>
 
-        {/* Payment info */}
-        <div style={{ textAlign: 'center', padding: '20px', background: 'white', borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-          <p style={{ margin: '0 0 8px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>Payment via bKash</p>
-          <p style={{ margin: '0 0 4px', fontSize: '13px', color: '#6b7280' }}>Send payment to <strong>01733577215</strong> (Personal) · Include your registered phone number as reference</p>
-          <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af' }}>After payment email us at <a href="mailto:support@biyekori.com" style={{ color: '#e11d48', fontWeight: 600 }}>support@biyekori.com</a> with screenshot · Activation within 2 hours</p>
+        {/* Bottom CTA */}
+        <div style={{ textAlign: 'center', background: 'white', borderRadius: '20px', padding: '48px 32px', border: '1px solid #f1f5f9' }}>
+          <h3 style={{ margin: '0 0 12px', fontSize: '24px', fontWeight: 800, color: '#111827' }}>
+            Still not sure? Start free.
+          </h3>
+          <p style={{ margin: '0 0 24px', fontSize: '15px', color: '#6b7280' }}>
+            No credit card needed. Create your profile and explore for free — upgrade only when you find someone worth contacting.
+          </p>
+          <Link href="/register" style={{
+            display: 'inline-block', padding: '14px 40px',
+            background: 'linear-gradient(135deg, #e11d48, #db2777)',
+            color: 'white', borderRadius: '12px',
+            fontSize: '15px', fontWeight: 800, textDecoration: 'none'
+          }}>
+            Create Free Profile
+          </Link>
         </div>
 
       </div>
     </div>
-  );
+  )
 }
