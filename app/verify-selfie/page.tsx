@@ -153,39 +153,22 @@ export default function VerifySelfie() {
         const updated = [...prev]
         const challenge = CHALLENGES[currentChallenge]
 
-        if (challenge === 'look-left' && yaw < -0.04) {
-          if (!updated[currentChallenge]) {
-            updated[currentChallenge] = true
-            challengeCooldownRef.current = true
-            setTimeout(() => {
-              challengeCooldownRef.current = false
-              setCurrentChallenge(c => {
-                const next = c + 1
-                if (next >= CHALLENGES.length) {
-                  // All done - capture
-                  captureFrame()
-                }
-                return next
-              })
-            }, 800)
-          }
-        }
+        const threshold = 0.06
+        const matched = (challenge === 'look-left' && yaw < -threshold) ||
+                        (challenge === 'look-right' && yaw > threshold)
 
-        if (challenge === 'look-right' && yaw > 0.04) {
-          if (!updated[currentChallenge]) {
-            updated[currentChallenge] = true
-            challengeCooldownRef.current = true
-            setTimeout(() => {
-              challengeCooldownRef.current = false
-              setCurrentChallenge(c => {
-                const next = c + 1
-                if (next >= CHALLENGES.length) {
-                  captureFrame()
-                }
-                return next
-              })
-            }, 800)
-          }
+        if (matched && !updated[currentChallenge]) {
+          updated[currentChallenge] = true
+          challengeCooldownRef.current = true
+          const nextChallenge = currentChallenge + 1
+          setTimeout(() => {
+            challengeCooldownRef.current = false
+            if (nextChallenge >= CHALLENGES.length) {
+              captureFrame()
+            } else {
+              setCurrentChallenge(nextChallenge)
+            }
+          }, 1000)
         }
 
         return updated
