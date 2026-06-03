@@ -39,6 +39,7 @@ export default function VerifySelfie() {
   const faceLandmarkerRef = useRef<FaceLandmarker | null>(null)
   const animFrameRef = useRef<number>(0)
   const challengeCooldownRef = useRef(false)
+  const currentChallengeIndexRef = useRef(0)
   const streamRef = useRef<MediaStream | null>(null)
 
   useEffect(() => {
@@ -89,7 +90,7 @@ export default function VerifySelfie() {
 
   const initMediaPipe = async () => {
     const vision = await FilesetResolver.forVisionTasks(
-      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
+      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.8/wasm'
     )
     const faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
       baseOptions: {
@@ -252,6 +253,7 @@ export default function VerifySelfie() {
     setCompletedChallenges([false, false])
     setFaceInOval(false)
     challengeCooldownRef.current = false
+    currentChallengeIndexRef.current = 0
     setStage('landing')
   }
 
