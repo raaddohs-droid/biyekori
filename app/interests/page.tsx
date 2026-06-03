@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 
@@ -14,6 +14,7 @@ export default function InterestsPage() {
   const [messages, setMessages] = useState<any[]>([])
   const [msgInput, setMsgInput] = useState("")
   const [sendingMsg, setSendingMsg] = useState(false)
+  const [guardianWarningFor, setGuardianWarningFor] = useState<string | null>(null)
 
   useEffect(() => {
     let stored = null
@@ -54,12 +55,23 @@ export default function InterestsPage() {
     else alert("Error. Please try again.")
   }
 
-  async function openChat(person: any, profileId: string) {
+  function tryOpenChat(person: any, profileId: string) {
     const isPaid = userPackage && userPackage !== "prottasha"
     if (!isPaid) {
       alert("Upgrade to Premium to send messages.")
       return
     }
+    // If guardian managed, show warning first
+    if (person?.guardian_mode) {
+      setGuardianWarningFor(profileId)
+      setChatWith({ ...person, id: profileId })
+      return
+    }
+    openChat(person, profileId)
+  }
+
+  async function openChat(person: any, profileId: string) {
+    setGuardianWarningFor(null)
     setChatWith({ ...person, id: profileId })
     setShowChat(profileId)
     setMessages([])
@@ -141,57 +153,174 @@ export default function InterestsPage() {
               const person = tab === "received" ? interest.sender : interest.receiver
               const status = statusConfig[interest.status] || statusConfig.pending
               const profileId = tab === "received" ? interest.sender_id : interest.receiver_id
+              const isMutual = interest.status === "accepted"
+              const isGuardian = !!person?.guardian_mode
+
               return (
-                <div key={interest.id} style={{ background: "white", borderRadius: "20px", padding: "16px", display: "flex", gap: "14px", alignItems: "center", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", border: "1px solid #f3f4f6" }}>
-                  
-                  {/* Photo */}
-                  <div style={{ width: "64px", height: "64px", borderRadius: "50%", overflow: "hidden", flexShrink: 0, background: "#f3f4f6" }}>
-                    {person?.photo_url
-                      ? <img src={person.photo_url} alt={person?.full_name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                      : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px" }}>👤</div>
-                    }
-                  </div>
+                <div key={interest.id} style={{ background: "white", borderRadius: "20px", overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", border: isMutual ? "2px solid #d1fae5" : "1px solid #f3f4f6" }}>
 
-                  {/* Info */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <h3 style={{ margin: "0 0 2px", fontSize: "16px", fontWeight: 700, color: "#1a1a2e" }}>{person?.full_name || "Unknown"}</h3>
-                    <p style={{ margin: "0 0 6px", fontSize: "13px", color: "#6b7280" }}>
-                      {person?.age} yrs · {person?.district} · {person?.profession}
-                    </p>
-                    <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>
-                      {new Date(interest.created_at || interest.sent_at).toLocaleDateString("en-GB")}
-                    </p>
-                  </div>
+                  {/* Top row: photo + info + status */}
+                  <div style={{ padding: "16px", display: "flex", gap: "14px", alignItems: "center" }}>
 
-                  {/* Right side */}
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px", flexShrink: 0 }}>
-                    <span style={{ padding: "4px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: 700, background: status.bg, color: status.color }}>
-                      {status.label}
-                    </span>
+                    {/* Photo */}
+                    <div style={{ width: "64px", height: "64px", borderRadius: "50%", overflow: "hidden", flexShrink: 0, background: "#f3f4f6" }}>
+                      {person?.photo_url
+                        ? <img src={person.photo_url} alt={person?.full_name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px" }}>👤</div>
+                      }
+                    </div>
 
-                    {tab === "received" && interest.status === "pending" && (
-                      <div style={{ display: "flex", gap: "6px" }}>
-                        <button onClick={() => respond(interest.id, "accepted")} style={{ padding: "6px 14px", background: "#10b981", color: "white", border: "none", borderRadius: "8px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}>Accept</button>
-                        <button onClick={() => respond(interest.id, "declined")} style={{ padding: "6px 14px", background: "#f3f4f6", color: "#6b7280", border: "none", borderRadius: "8px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}>Decline</button>
+                    {/* Info */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                        <h3 style={{ margin: "0", fontSize: "16px", fontWeight: 700, color: "#1a1a2e" }}>{person?.full_name || "Unknown"}</h3>
+                        {isGuardian ? (
+                          <span style={{ fontSize: "10px", fontWeight: 700, color: "#7c3aed", background: "#ede9fe", padding: "2px 7px", borderRadius: "20px", border: "1px solid #c4b5fd" }}>
+                            👨‍👩‍👧 পরিবার পরিচালিত
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: "10px", fontWeight: 700, color: "#0369a1", background: "#e0f2fe", padding: "2px 7px", borderRadius: "20px", border: "1px solid #bae6fd" }}>
+                            👤 নিজে পরিচালিত
+                          </span>
+                        )}
                       </div>
-                    )}
+                      <p style={{ margin: "4px 0 6px", fontSize: "13px", color: "#6b7280" }}>
+                        {person?.age} yrs · {person?.district} · {person?.profession}
+                      </p>
+                      <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>
+                        {new Date(interest.created_at || interest.sent_at).toLocaleDateString("en-GB")}
+                      </p>
+                    </div>
 
-                    <Link href={"/profile/" + profileId} style={{ fontSize: "12px", color: "#e11d48", textDecoration: "none", fontWeight: 600 }}>
-                      View Profile →
-                    </Link>
+                    {/* Status + view */}
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px", flexShrink: 0 }}>
+                      <span style={{ padding: "4px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: 700, background: status.bg, color: status.color }}>
+                        {status.label}
+                      </span>
 
-                    {interest.status === "accepted" && (
-                      <button onClick={() => openChat(person, profileId)} style={{ padding: "6px 14px", background: "linear-gradient(135deg,#7c3aed,#db2777)", color: "white", border: "none", borderRadius: "8px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}>
-                        Send Message
-                      </button>
-                    )}
+                      {tab === "received" && interest.status === "pending" && (
+                        <div style={{ display: "flex", gap: "6px" }}>
+                          <button onClick={() => respond(interest.id, "accepted")} style={{ padding: "6px 14px", background: "#10b981", color: "white", border: "none", borderRadius: "8px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}>Accept</button>
+                          <button onClick={() => respond(interest.id, "declined")} style={{ padding: "6px 14px", background: "#f3f4f6", color: "#6b7280", border: "none", borderRadius: "8px", fontSize: "12px", fontWeight: 700, cursor: "pointer" }}>Decline</button>
+                        </div>
+                      )}
+
+                      <Link href={"/profile/" + profileId} style={{ fontSize: "12px", color: "#e11d48", textDecoration: "none", fontWeight: 600 }}>
+                        View Profile →
+                      </Link>
+                    </div>
                   </div>
+
+                  {/* ── MUTUAL ACCEPTANCE PANEL ── */}
+                  {isMutual && (
+                    <div style={{ borderTop: "1px solid #f0fdf4", background: "linear-gradient(135deg, #f0fdf4, #f5f3ff)", padding: "16px" }}>
+                      <p style={{ margin: "0 0 12px", fontSize: "13px", fontWeight: 700, color: "#065f46", display: "flex", alignItems: "center", gap: "6px" }}>
+                        <span style={{ fontSize: "16px" }}>🎉</span>
+                        Mutual interest! Choose how to connect:
+                      </p>
+
+                      {/* Guardian notice */}
+                      {isGuardian && (
+                        <div style={{ marginBottom: "12px", padding: "10px 14px", background: "#faf5ff", borderRadius: "10px", border: "1px solid #e9d5ff", display: "flex", alignItems: "flex-start", gap: "8px" }}>
+                          <span style={{ fontSize: "16px", flexShrink: 0 }}>👨‍👩‍👧</span>
+                          <p style={{ margin: 0, fontSize: "12px", color: "#7c3aed", lineHeight: "1.5" }}>
+                            <strong>পরিবার পরিচালিত প্রোফাইল</strong> — This profile is managed by a family guardian. Please keep your messages respectful and formal. Introduce yourself clearly.
+                          </p>
+                        </div>
+                      )}
+
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
+
+                        {/* Voice Call */}
+                        <a href={`/call?with=${profileId}`} style={{
+                          display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
+                          padding: "14px 8px", borderRadius: "12px", textDecoration: "none",
+                          background: "white", border: "1.5px solid #d1fae5",
+                          transition: "all 0.15s", cursor: "pointer"
+                        }}>
+                          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "linear-gradient(135deg,#10b981,#059669)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.39 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                          </div>
+                          <span style={{ fontSize: "11px", fontWeight: 700, color: "#065f46", textAlign: "center" }}>Voice Call</span>
+                        </a>
+
+                        {/* Message */}
+                        <button onClick={() => tryOpenChat(person, String(profileId))} style={{
+                          display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
+                          padding: "14px 8px", borderRadius: "12px",
+                          background: "white", border: "1.5px solid #e9d5ff",
+                          transition: "all 0.15s", cursor: "pointer"
+                        }}>
+                          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "linear-gradient(135deg,#7c3aed,#db2777)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                          </div>
+                          <span style={{ fontSize: "11px", fontWeight: 700, color: "#7c3aed", textAlign: "center" }}>Message</span>
+                        </button>
+
+                        {/* A Day Together game */}
+                        <a href={`/game?with=${profileId}`} style={{
+                          display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
+                          padding: "14px 8px", borderRadius: "12px", textDecoration: "none",
+                          background: "linear-gradient(135deg,#0d0521,#4A1A6B)", border: "1.5px solid #4A1A6B",
+                          transition: "all 0.15s", cursor: "pointer"
+                        }}>
+                          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "rgba(250,217,90,0.15)", display: "flex", alignItems: "center", justifyContent: "center", border: "1.5px solid rgba(250,217,90,0.4)" }}>
+                            <span style={{ fontSize: "16px" }}>✦</span>
+                          </div>
+                          <span style={{ fontSize: "11px", fontWeight: 700, color: "#FAD95A", textAlign: "center", fontFamily: "Georgia, serif" }}>একটি দিন</span>
+                        </a>
+                      </div>
+
+                      <p style={{ margin: "10px 0 0", fontSize: "11px", color: "#9ca3af", textAlign: "center" }}>
+                        Voice Call · Message (Premium) · A Day Together game
+                      </p>
+                    </div>
+                  )}
                 </div>
               )
             })}
           </div>
         )}
       </div>
+
+      {/* Guardian Warning Modal */}
+      {guardianWarningFor && chatWith && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 1100, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+          <div style={{ background: "white", borderRadius: "20px", padding: "28px 24px", maxWidth: "380px", width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
+            <div style={{ textAlign: "center", marginBottom: "20px" }}>
+              <div style={{ fontSize: "40px", marginBottom: "12px" }}>👨‍👩‍👧</div>
+              <h3 style={{ margin: "0 0 8px", fontSize: "18px", fontWeight: 800, color: "#111827" }}>পরিবার পরিচালিত প্রোফাইল</h3>
+              <p style={{ margin: 0, fontSize: "13px", color: "#6b7280", lineHeight: "1.6" }}>
+                This profile is managed by a family guardian, not the person themselves.
+              </p>
+            </div>
+
+            <div style={{ background: "#faf5ff", borderRadius: "12px", padding: "14px", marginBottom: "20px", border: "1px solid #e9d5ff" }}>
+              <p style={{ margin: "0 0 8px", fontSize: "13px", fontWeight: 700, color: "#7c3aed" }}>Please keep in mind:</p>
+              <ul style={{ margin: 0, paddingLeft: "16px", display: "flex", flexDirection: "column", gap: "6px" }}>
+                <li style={{ fontSize: "12px", color: "#6b7280", lineHeight: "1.5" }}>Introduce yourself clearly with your name and background</li>
+                <li style={{ fontSize: "12px", color: "#6b7280", lineHeight: "1.5" }}>Keep language respectful and formal</li>
+                <li style={{ fontSize: "12px", color: "#6b7280", lineHeight: "1.5" }}>A guardian may be reading — treat this like meeting the family</li>
+              </ul>
+            </div>
+
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                onClick={() => { setGuardianWarningFor(null); setChatWith(null) }}
+                style={{ flex: 1, padding: "12px", background: "#f3f4f6", color: "#6b7280", border: "none", borderRadius: "12px", fontSize: "14px", fontWeight: 700, cursor: "pointer" }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => openChat(chatWith, guardianWarningFor)}
+                style={{ flex: 1, padding: "12px", background: "linear-gradient(135deg,#7c3aed,#db2777)", color: "white", border: "none", borderRadius: "12px", fontSize: "14px", fontWeight: 700, cursor: "pointer" }}
+              >
+                I Understand
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Chat Modal */}
       {showChat && chatWith && (
@@ -204,17 +333,36 @@ export default function InterestsPage() {
                   {chatWith.photo_url ? <img src={chatWith.photo_url} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>👤</div>}
                 </div>
                 <div>
-                  <p style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#111827" }}>{chatWith.full_name || "Unknown"}</p>
-                  <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>Premium messaging</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    <p style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#111827" }}>{chatWith.full_name || "Unknown"}</p>
+                    {chatWith.guardian_mode && (
+                      <span style={{ fontSize: "10px", fontWeight: 700, color: "#7c3aed", background: "#ede9fe", padding: "1px 6px", borderRadius: "20px" }}>পরিবার পরিচালিত</span>
+                    )}
+                  </div>
+                  <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>
+                    {chatWith.guardian_mode ? "Family managed profile — be respectful" : "Premium messaging"}
+                  </p>
                 </div>
               </div>
               <button onClick={() => { setShowChat(null); setChatWith(null); setMessages([]) }} style={{ background: "none", border: "none", fontSize: "20px", cursor: "pointer", color: "#9ca3af" }}>×</button>
             </div>
 
+            {/* Guardian reminder banner inside chat */}
+            {chatWith.guardian_mode && (
+              <div style={{ padding: "8px 16px", background: "#faf5ff", borderBottom: "1px solid #e9d5ff", display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontSize: "14px" }}>👨‍👩‍👧</span>
+                <p style={{ margin: 0, fontSize: "11px", color: "#7c3aed" }}>This profile is family managed. Please introduce yourself and keep language respectful.</p>
+              </div>
+            )}
+
             {/* Messages */}
             <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
               {messages.length === 0 ? (
-                <div style={{ textAlign: "center", color: "#9ca3af", fontSize: "13px", marginTop: "40px" }}>No messages yet. Say hello!</div>
+                <div style={{ textAlign: "center", color: "#9ca3af", fontSize: "13px", marginTop: "40px" }}>
+                  {chatWith.guardian_mode
+                    ? "Start by introducing yourself — name, profession, and what you're looking for."
+                    : "No messages yet. Say hello!"}
+                </div>
               ) : messages.map((msg: any, i: number) => {
                 const isMine = String(msg.sender_id) === String(userId)
                 return (
@@ -233,7 +381,7 @@ export default function InterestsPage() {
                 value={msgInput}
                 onChange={e => setMsgInput(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
-                placeholder="Type a message..."
+                placeholder={chatWith.guardian_mode ? "Introduce yourself respectfully..." : "Type a message..."}
                 style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1.5px solid #e5e7eb", fontSize: "13px", outline: "none", color: "#111827", background: "white" }}
               />
               <button onClick={sendMessage} disabled={sendingMsg || !msgInput.trim()} style={{ padding: "10px 18px", background: "linear-gradient(135deg,#e11d48,#db2777)", color: "white", border: "none", borderRadius: "12px", fontWeight: 700, fontSize: "13px", cursor: "pointer" }}>
@@ -246,4 +394,3 @@ export default function InterestsPage() {
     </div>
   )
 }
-

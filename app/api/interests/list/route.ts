@@ -1,4 +1,4 @@
-﻿import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -10,13 +10,13 @@ export async function GET(req: Request) {
 
     const { data: sent } = await supabase
       .from("interests")
-      .select("*, receiver:profiles!receiver_id(id, full_name, photo_url, age, district, profession)")
+      .select("*, receiver:profiles!receiver_id(id, full_name, photo_url, age, district, profession, guardian_mode)")
       .eq("sender_id", parseInt(userId))
       .order("created_at", { ascending: false });
 
     const { data: received } = await supabase
       .from("interests")
-      .select("*, sender:profiles!sender_id(id, full_name, photo_url, age, district, profession)")
+      .select("*, sender:profiles!sender_id(id, full_name, photo_url, age, district, profession, guardian_mode)")
       .eq("receiver_id", parseInt(userId))
       .order("created_at", { ascending: false });
 
