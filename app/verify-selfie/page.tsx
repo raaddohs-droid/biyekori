@@ -70,9 +70,15 @@ export default function VerifySelfie() {
         videoRef.current.srcObject = stream
         videoRef.current.onloadedmetadata = async () => {
           await videoRef.current!.play()
-          await initMediaPipe()
           setStage('challenge')
-          startDetection()
+          try {
+            await initMediaPipe()
+            startDetection()
+          } catch (e) {
+            setErrorMsg('Failed to load face detection. Please check your internet connection and try again.')
+            stopCamera()
+            setStage('landing')
+          }
         }
       }
     } catch (e) {
