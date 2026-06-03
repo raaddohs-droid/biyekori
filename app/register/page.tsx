@@ -119,7 +119,7 @@ export default function RegisterPage() {
         })
       });
       const data = await response.json();
-      if (data.success) { alert('Registration successful! Please login.'); router.push('/login'); }
+      if (data.success) { setStep(4); }
       else {
         if (data.error && data.error.includes('duplicate') || data.error && data.error.includes('unique')) {
           alert('This phone number or email is already registered. Please login instead.');
@@ -372,6 +372,42 @@ export default function RegisterPage() {
                 {loading ? 'Registering...' : 'Complete Registration'}
               </button>
             </div>
+          </div>
+        )}
+
+      {/* STEP 4: Optional Verification */}
+        {step === 4 && (
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div style={{ fontSize: '48px', marginBottom: '8px' }}>🎉</div>
+              <h2 className="text-2xl font-black text-gray-900 mb-2">You're registered!</h2>
+              <p style={{ fontSize: '14px', color: '#6b7280' }}>Add verifications now to build trust — or skip and do it later from your profile.</p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+              {[
+                { icon: '🤳', title: 'Selfie Verification', desc: 'Live face check — 2 minutes — Free', href: '/verify-selfie', badge: 'Recommended' },
+                { icon: '🎓', title: 'Education Certificate', desc: 'Upload your degree or certificate', href: '/edit-profile?tab=verification', badge: 'Optional' },
+                { icon: '💼', title: 'Job / Business', desc: 'Upload trade license or employment letter', href: '/edit-profile?tab=verification', badge: 'Optional' },
+              ].map((item, i) => (
+                <a key={i} href={item.href} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb', textDecoration: 'none' }}>
+                  <span style={{ fontSize: '24px' }}>{item.icon}</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#111827' }}>{item.title}</p>
+                      <span style={{ fontSize: '10px', fontWeight: 700, color: i === 0 ? '#e11d48' : '#6b7280', background: i === 0 ? '#fff1f2' : '#f3f4f6', padding: '1px 6px', borderRadius: '20px' }}>{item.badge}</span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>{item.desc}</p>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                </a>
+              ))}
+            </div>
+
+            <button onClick={() => router.push('/login')} style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: 700, cursor: 'pointer', marginBottom: '10px' }}>
+              Go to Login
+            </button>
+            <p style={{ textAlign: 'center', fontSize: '12px', color: '#9ca3af', margin: 0 }}>You can complete verifications anytime from Edit Profile</p>
           </div>
         )}
 
