@@ -295,6 +295,11 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
         )}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '17px', fontWeight: 800, color: '#111827' }}>{name}</span>
+          {profile.guardian_mode ? (
+            <span style={{ fontSize: '10px', fontWeight: 700, color: '#7c3aed', background: '#ede9fe', padding: '2px 7px', borderRadius: '20px', border: '1px solid #c4b5fd' }}>👨‍👩‍👧 পরিবার পরিচালিত</span>
+          ) : (
+            <span style={{ fontSize: '10px', fontWeight: 700, color: '#0369a1', background: '#e0f2fe', padding: '2px 7px', borderRadius: '20px', border: '1px solid #bae6fd' }}>👤 নিজে পরিচালিত</span>
+          )}
               {relationshipStatus === 'none' && (
                 <span style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 600, background: '#f3f4f6', borderRadius: '6px', padding: '2px 6px' }}>
                   {(() => { const id = profile.id; const dt = new Date(profile.created_at || ''); const yy = String(dt.getFullYear()).slice(2); const mm = String(dt.getMonth()+1).padStart(2,'0'); const nnnn = (id*7+dt.getSeconds()*13+id*31)%9000+1000; return isNaN(nnnn) ? 'BK-'+id : `BK-${yy}${mm}-${nnnn}` })()}

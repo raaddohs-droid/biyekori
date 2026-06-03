@@ -146,7 +146,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const baseUrl = `/profiles?userGender=${userGender}&excludeId=${excludeId}`
 
   const buildUrl = (page: number) => {
-    let url = `${baseUrl}&page=${page}`
+    let url = `${baseUrl}&page=${page}&view=${viewMode}`
     if (districtFilter) url += `&district=${encodeURIComponent(districtFilter)}`
     if (minAge !== 18) url += `&minAge=${minAge}`
     if (maxAge !== 70) url += `&maxAge=${maxAge}`
