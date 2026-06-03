@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
-const MatchComparison = dynamic(() => import('@/components/MatchComparison'), { ssr: false })
+const BeforeYouConnect = dynamic(() => import('@/components/BeforeYouConnect'), { ssr: false })
 const CallButton = dynamic(() => import('@/components/CallButton'), { ssr: false })
 import { useState, useEffect } from 'react'
 
@@ -107,8 +107,8 @@ function calculateScores(profile: any) {
     tip: 'Shared hobbies make daily life more enjoyable together'
   })
 
-  let predictability = 0
-  const predBreakdown = [
+  let dataConfidence = 0
+  const confBreakdown = [
     { label: 'Profile Photo', icon: '📸', met: !!profile.photo_url, points: 15, tip: 'A photo builds trust and confidence' },
     { label: 'About Me written', icon: '✍️', met: (profile.about_me?.length || 0) > 30, points: 10, tip: 'Tells us who this person really is' },
     { label: 'Partner Preference', icon: '💕', met: (profile.partner_preference?.length || 0) > 20, points: 10, tip: 'Helps AI understand what they want' },
@@ -120,13 +120,13 @@ function calculateScores(profile: any) {
     { label: 'Height & Weight', icon: '📏', met: !!profile.height && !!profile.weight, points: 5, tip: 'Physical compatibility factor' },
     { label: 'Phone Verified', icon: '📱', met: !!profile.phone_verified, points: 5, tip: 'Confirms genuine registration' },
   ]
-  predBreakdown.forEach(c => { if (c.met) predictability += c.points })
+  confBreakdown.forEach(c => { if (c.met) dataConfidence += c.points })
 
   return {
     matchScore: Math.min(Math.round(totalScore), 100),
-    predictability: Math.min(predictability, 100),
+    dataConfidence: Math.min(dataConfidence, 100),
     breakdown,
-    predBreakdown
+    confBreakdown
   }
 }
 
@@ -137,7 +137,7 @@ function getMatchLabel(s: number) {
   if (s >= 40) return 'Possible Match 🔍'
   return 'Low Match ⚠️'
 }
-function getPredLabel(s: number) {
+function getConfLabel(s: number) {
   if (s >= 80) return 'High Confidence ✅'
   if (s >= 60) return 'Good Confidence 👍'
   if (s >= 40) return 'Moderate Confidence ⚠️'
@@ -147,7 +147,7 @@ function getPredLabel(s: number) {
 // ─── MODAL ────────────────────────────────────────────────────
 
 function ScoreModal({ profile, onClose, isLoggedIn }: { profile: any, onClose: () => void, isLoggedIn: boolean }) {
-  const { matchScore, predictability, breakdown, predBreakdown } = calculateScores(profile)
+  const { matchScore, dataConfidence, breakdown, confBreakdown } = calculateScores(profile)
   const [tab, setTab] = useState<'match' | 'predict'>('match')
 
   return (
@@ -167,9 +167,9 @@ function ScoreModal({ profile, onClose, isLoggedIn }: { profile: any, onClose: (
               <div className="text-xs text-purple-300 mt-1">Tap to see breakdown</div>
             </div>
             <div className={`rounded-xl p-3 text-center cursor-pointer transition ${tab === 'predict' ? 'bg-white/30 ring-2 ring-white' : 'bg-white/10'}`} onClick={() => setTab('predict')}>
-              <div className="text-3xl font-black" style={{ color: predictability >= 60 ? '#34d399' : '#fbbf24' }}>{predictability}%</div>
-              <div className="text-sm font-bold">Predictability</div>
-              <div className="text-xs text-purple-200">{getPredLabel(predictability)}</div>
+              <div className="text-3xl font-black" style={{ color: dataConfidence >= 60 ? '#34d399' : '#fbbf24' }}>{dataConfidence}%</div>
+              <div className="text-sm font-bold">Data Confidence</div>
+              <div className="text-xs text-purple-200">{getConfLabel(dataConfidence)}</div>
               <div className="text-xs text-purple-300 mt-1">Tap to see breakdown</div>
             </div>
           </div>
@@ -208,11 +208,11 @@ function ScoreModal({ profile, onClose, isLoggedIn }: { profile: any, onClose: (
           {tab === 'predict' && (
             <>
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-sm text-amber-800">
-                ℹ️ <strong>Predictability</strong> = how complete this profile is. More info = more accurate AI matching.
+                ℹ️ <strong>Data Confidence</strong> = how complete this profile is. More info = more accurate AI matching.
               </div>
               <h3 className="font-bold text-gray-800 mb-3">Profile Completeness</h3>
               <div className="space-y-2">
-                {predBreakdown.map((item: any, i: number) => (
+                {confBreakdown.map((item: any, i: number) => (
                   <div key={i} className={`flex items-center gap-3 p-3 rounded-xl ${item.met ? 'bg-green-50 border border-green-100' : 'bg-red-50 border border-red-100'}`}>
                     <span className="text-lg">{item.icon}</span>
                     <div className="flex-1">
@@ -252,7 +252,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [photoIndex, setPhotoIndex] = useState(0)
   const [contactRequest, setContactRequest] = useState<any>(null)
   const [loadingContact, setLoadingContact] = useState(false)
-  const { matchScore, predictability } = calculateScores(profile)
+  const { matchScore, dataConfidence } = calculateScores(profile)
   const [galleryPhotos, setGalleryPhotos] = useState<any[]>([])
   const profileCode = getProfileCode(profile.id, profile.created_at || '')
 
@@ -456,15 +456,15 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                 <svg width="128" height="128" style={{ transform: 'rotate(-90deg)' }}>
                   <circle cx="64" cy="64" r="54" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="12" />
                   <circle cx="64" cy="64" r="54" fill="none"
-                    stroke={predictability >= 60 ? '#34d399' : '#fbbf24'} strokeWidth="12"
-                    strokeDasharray={predCircle} strokeDashoffset={predCircle - (predictability / 100) * predCircle} strokeLinecap="round" />
+                    stroke={dataConfidence >= 60 ? '#34d399' : '#fbbf24'} strokeWidth="12"
+                    strokeDasharray={predCircle} strokeDashoffset={predCircle - (dataConfidence / 100) * predCircle} strokeLinecap="round" />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-3xl font-black" style={{ color: predictability >= 60 ? '#34d399' : '#fbbf24' }}>{predictability}%</span>
+                  <span className="text-3xl font-black" style={{ color: dataConfidence >= 60 ? '#34d399' : '#fbbf24' }}>{dataConfidence}%</span>
                 </div>
               </div>
-              <p className="font-bold text-white mt-2">Predictability</p>
-              <p className="text-purple-200 text-xs text-center mt-1">{getPredLabel(predictability)}</p>
+              <p className="font-bold text-white mt-2">Data Confidence</p>
+              <p className="text-purple-200 text-xs text-center mt-1">{getConfLabel(dataConfidence)}</p>
             </div>
           </div>
 
@@ -479,7 +479,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           </div>
         </div>
 
-        {isLoggedIn && viewerProfile && <MatchComparison profile={profile} viewerProfile={viewerProfile} />}
+        {isLoggedIn && viewerProfile && <BeforeYouConnect profile={profile} viewerProfile={viewerProfile} isLoggedIn={isLoggedIn} />}
 
         {showModal && <ScoreModal profile={profile} onClose={() => setShowModal(false)} isLoggedIn={isLoggedIn} />}
 
