@@ -178,18 +178,19 @@ export default function VerifySelfie() {
   }
 
   const captureFrame = () => {
-    stopCamera()
     if (!videoRef.current || !canvasRef.current) return
+    const video = videoRef.current
     const canvas = canvasRef.current
-    canvas.width = videoRef.current.videoWidth || 640
-    canvas.height = videoRef.current.videoHeight || 480
+    const w = video.videoWidth || 640
+    const h = video.videoHeight || 480
+    canvas.width = w
+    canvas.height = h
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    ctx.save()
-    ctx.scale(-1, 1) // mirror
-    ctx.drawImage(videoRef.current, -canvas.width, 0, canvas.width, canvas.height)
-    ctx.restore()
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.9)
+    // Draw without mirror for verification purposes
+    ctx.drawImage(video, 0, 0, w, h)
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92)
+    stopCamera()
     setCapturedImage(dataUrl)
     setStage('preview')
   }
