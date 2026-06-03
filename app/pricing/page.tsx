@@ -242,7 +242,7 @@ export default function PricingPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '48px' }}>
           {[
             { icon: '🔒', title: 'No hidden charges', desc: 'Cancel anytime via email.' },
-            { icon: '📱', title: 'Pay via bKash', desc: '01733577215 — send payment ID.' },
+            { icon: '📱', title: 'Pay via bKash', desc: '017XXXXXXXX — send payment ID.' },
             { icon: '⚡', title: 'Instant activation', desc: 'Within 2 hours of payment.' },
             { icon: '🤝', title: '30-day refund', desc: 'No interests? Full refund.' },
           ].map((item, i) => (

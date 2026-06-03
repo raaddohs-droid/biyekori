@@ -33,7 +33,7 @@ const FAQS = [
   },
   {
     q: 'How do I pay for a premium plan?',
-    a: 'Send payment via bKash to 01733577215 and email us your transaction ID at support@biyekori.com with your registered phone number. Your account will be upgraded within 2 hours.'
+    a: 'Send payment via bKash to 017XXXXXXXX and email us your transaction ID at support@biyekori.com with your registered phone number. Your account will be upgraded within 2 hours.'
   },
   {
     q: 'Can I get a refund?',
