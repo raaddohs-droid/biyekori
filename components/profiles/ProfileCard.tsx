@@ -364,6 +364,12 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
                   Premium
                 </span>
               )}
+              {profile.selfie_status === 'approved' && (
+                <span style={{ fontSize: '10px', fontWeight: 700, color: '#0369a1', background: '#e0f2fe', padding: '2px 6px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                  Verified
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
               <span className="text-sm text-gray-600">{profile.age} yrs</span>
