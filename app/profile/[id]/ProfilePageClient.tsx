@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+const MatchComparison = dynamic(() => import('@/components/MatchComparison'), { ssr: false })
 const CallButton = dynamic(() => import('@/components/CallButton'), { ssr: false })
 import { useState, useEffect } from 'react'
 
@@ -246,6 +247,7 @@ function ScoreModal({ profile, onClose, isLoggedIn }: { profile: any, onClose: (
 
 export default function ProfilePageClient({ profile }: { profile: any }) {
   const [showModal, setShowModal] = useState(false)
+  const [viewerProfile, setViewerProfile] = useState<any>(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [photoIndex, setPhotoIndex] = useState(0)
   const [contactRequest, setContactRequest] = useState<any>(null)
@@ -277,6 +279,16 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
     }).then(r => r.json()).then(data => {
       if (Array.isArray(data)) setGalleryPhotos(data)
     }).catch(() => {})
+
+    // Fetch viewer's own profile for match comparison
+    if (userData) {
+      const u = JSON.parse(userData)
+      fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${u.id}&select=*`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      }).then(r => r.json()).then(data => {
+        if (Array.isArray(data) && data[0]) setViewerProfile(data[0])
+      }).catch(() => {})
+    }
 
     // Check if interest already sent
     if (userData) {
@@ -466,6 +478,8 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             {!isLoggedIn && <p className="text-purple-200 text-xs mt-2">Score is based on general preferences • Log in for your personal match score</p>}
           </div>
         </div>
+
+        {isLoggedIn && viewerProfile && <MatchComparison profile={profile} viewerProfile={viewerProfile} />}
 
         {showModal && <ScoreModal profile={profile} onClose={() => setShowModal(false)} isLoggedIn={isLoggedIn} />}
 
