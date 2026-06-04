@@ -244,7 +244,7 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
   const infoRows = [
     [
       profile.age ? profile.age + ' yrs' + (profile.height ? ', ' + profile.height : '') : null,
-      profile.marital_status || null
+      (profile.marital_status && profile.marital_status !== 'Not specified') ? profile.marital_status : null
     ],
     [
       profile.religion ? profile.religion + religionLevel : null,
