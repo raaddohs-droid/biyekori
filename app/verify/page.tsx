@@ -83,8 +83,8 @@ export default function VerifyNIDPage() {
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-black text-gray-900">NID Verification</h1>
-              <p className="text-gray-600 mt-2">Get your verified badge and boost your profile!</p>
+              <h1 className="text-3xl font-black text-gray-900">Identity Verification</h1>
+              <p className="text-gray-600 mt-2">NID বা জন্ম নিবন্ধন — যেকোনো একটি দিয়ে যাচাই করুন</p>
             </div>
             <div className="text-right">
               <div className="text-4xl font-black text-rose-600">৳200</div>
@@ -138,9 +138,20 @@ export default function VerifyNIDPage() {
             </div>
           </div>
 
+          {/* Document type notice */}
+          <div style={{ marginBottom: '20px', padding: '14px 18px', background: '#fffbeb', borderRadius: '14px', border: '1.5px solid #fde68a', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+            <span style={{ fontSize: '20px', flexShrink: 0 }}>💡</span>
+            <div>
+              <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#92400e' }}>NID নেই? জন্ম নিবন্ধন সনদ ব্যবহার করুন</p>
+              <p style={{ margin: 0, fontSize: '13px', color: '#78350f', lineHeight: 1.6 }}>
+                If you do not have a National ID Card (NID), you can upload your <strong>জন্ম নিবন্ধন সনদ (Birth Registration Certificate)</strong> instead. Upload the front and back of whichever document you have.
+              </p>
+            </div>
+          </div>
+
           <div className="mb-6">
             <label className="block text-lg font-bold text-gray-900 mb-3">
-              📄 NID Front Side
+              📄 NID / জন্ম নিবন্ধন — Front Side
             </label>
             <div className="border-4 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-rose-500 transition">
               {frontImage ? (
@@ -171,7 +182,7 @@ export default function VerifyNIDPage() {
 
           <div className="mb-6">
             <label className="block text-lg font-bold text-gray-900 mb-3">
-              📄 NID Back Side
+              📄 NID / জন্ম নিবন্ধন — Back Side
             </label>
             <div className="border-4 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-rose-500 transition">
               {backImage ? (
