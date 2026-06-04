@@ -29,6 +29,8 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
   const pollRef = useRef<NodeJS.Timeout | null>(null)
   const callStartRef = useRef<number>(0)
   const sinceRef = useRef<string>(new Date().toISOString())
+  const processedSignalIds = useRef<Set<number>>(new Set())
+  const answerSetRef = useRef<boolean>(false)
 
   const isPremium = currentUser?.package && currentUser.package !== 'prottasha'
   const callLimit = isPremium ? PREMIUM_CALL_LIMIT : FREE_CALL_LIMIT
@@ -135,14 +137,20 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
       // Don't update sinceRef here — keep fetching from offer time
 
       for (const signal of signals) {
+        // Skip already processed signals
+        if (processedSignalIds.current.has(signal.id)) continue
+        processedSignalIds.current.add(signal.id)
+
         const data = JSON.parse(signal.data || '{}')
         if (signal.type === 'call-answer' && signal.from_id === targetProfile.id) {
-          clearInterval(pollRef.current!)
-          // Guard: only set remote description if not already set
-          if (pc.signalingState === 'have-local-offer') {
-            await pc.setRemoteDescription(new RTCSessionDescription(data.sdp))
-            setCallState('active')
-            startTimer()
+          if (!answerSetRef.current) {
+            answerSetRef.current = true
+            clearInterval(pollRef.current!)
+            try {
+              await pc.setRemoteDescription(new RTCSessionDescription(data.sdp))
+              setCallState('active')
+              startTimer()
+            } catch(e) { console.error('setRemoteDescription failed:', e) }
           }
         }
         if (signal.type === 'call-reject' && signal.from_id === targetProfile.id) {
