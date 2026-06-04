@@ -474,6 +474,62 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
         <Link href="/profiles" className="inline-flex items-center text-pink-600 hover:text-pink-700 mb-6 font-medium">← Back to Profiles</Link>
 
         {/* AI Score Card */}
+        {!isLoggedIn ? (
+          <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-xl p-6 mb-6 text-white" style={{ position: 'relative', overflow: 'hidden' }}>
+            {/* Blurred fake scores behind */}
+            <div style={{ filter: 'blur(6px)', pointerEvents: 'none', userSelect: 'none', opacity: 0.5 }}>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-2xl">🤖</span>
+                <div>
+                  <h2 className="text-xl font-bold">AI Compatibility Analysis</h2>
+                  <p className="text-purple-200 text-xs">Powered by Biyekori AI Matchmaker</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-6 bg-white/10 rounded-xl p-6 mt-4">
+                <div className="flex flex-col items-center">
+                  <div className="relative w-32 h-32">
+                    <svg width="128" height="128" style={{ transform: 'rotate(-90deg)' }}>
+                      <circle cx="64" cy="64" r="54" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="12" />
+                      <circle cx="64" cy="64" r="54" fill="none" stroke="white" strokeWidth="12" strokeDasharray="339" strokeDashoffset="120" strokeLinecap="round" />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-3xl font-black text-white">??%</span>
+                    </div>
+                  </div>
+                  <p className="font-bold text-white mt-2">AI Match Score</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="relative w-32 h-32">
+                    <svg width="128" height="128" style={{ transform: 'rotate(-90deg)' }}>
+                      <circle cx="64" cy="64" r="54" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="12" />
+                      <circle cx="64" cy="64" r="54" fill="none" stroke="#34d399" strokeWidth="12" strokeDasharray="339" strokeDashoffset="180" strokeLinecap="round" />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-3xl font-black text-green-300">??%</span>
+                    </div>
+                  </div>
+                  <p className="font-bold text-white mt-2">Data Confidence</p>
+                </div>
+              </div>
+            </div>
+            {/* Overlay CTA */}
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(88,28,135,0.75)', backdropFilter: 'blur(2px)', borderRadius: '16px', padding: '24px', textAlign: 'center' }}>
+              <div style={{ fontSize: '36px', marginBottom: '10px' }}>🤖</div>
+              <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 800, color: 'white' }}>
+                See your AI compatibility with {profile.full_name?.split(' ')[0] || 'this person'}
+              </h3>
+              <p style={{ margin: '0 0 20px', fontSize: '13px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
+                Login to get your personalized match score based on your preferences, religion, location and lifestyle.
+              </p>
+              <a href="/login" style={{ display: 'inline-block', padding: '12px 28px', background: 'white', color: '#7c3aed', borderRadius: '12px', fontWeight: 800, fontSize: '14px', textDecoration: 'none', marginBottom: '8px' }}>
+                Login to See Score
+              </a>
+              <a href="/register" style={{ display: 'inline-block', padding: '8px 20px', background: 'rgba(255,255,255,0.15)', color: 'white', borderRadius: '10px', fontWeight: 600, fontSize: '13px', textDecoration: 'none' }}>
+                Create Free Account
+              </a>
+            </div>
+          </div>
+        ) : (
         <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-xl p-6 mb-6 text-white">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-2xl">🤖</span>
@@ -526,6 +582,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             {!isLoggedIn && <p className="text-purple-200 text-xs mt-2">Score is based on general preferences • Log in for your personal match score</p>}
           </div>
         </div>
+        )}
 
         {/* Own profile selfie verification banner */}
         {isLoggedIn && viewerProfile && Number(viewerProfile.id) === profile.id && profile.selfie_status === 'approved' && (
