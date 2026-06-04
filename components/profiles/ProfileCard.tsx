@@ -247,7 +247,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
   const rawName = profile.full_name || profile.name || "Anonymous";
-  const isConnected = currentUserPackage === "bondhon" || currentUserPackage === "milon" || currentUserVerified;
+  const isConnected = !currentUserPackage || currentUserPackage === "bondhon" || currentUserPackage === "milon" || currentUserVerified;
   const name = maskName(rawName, isConnected);
   const location = profile.location || profile.city || profile.district || "Bangladesh";
   const maritalStatus = (profile.marital_status || profile.maritalStatus || "").trim();
