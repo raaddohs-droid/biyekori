@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const AGORA_APP_ID = 'c4513ff1afb74017b915fb18cd7312d8'
 
 const FREE_CALL_LIMIT = 5 * 60
 const PREMIUM_CALL_LIMIT = 15 * 60
@@ -22,22 +23,15 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
   const [isMuted, setIsMuted] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
-  const pcRef = useRef<RTCPeerConnection | null>(null)
-  const localStreamRef = useRef<MediaStream | null>(null)
-  const remoteAudioRef = useRef<HTMLAudioElement | null>(null)
+  const clientRef = useRef<any>(null)
+  const localTrackRef = useRef<any>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const channelRef = useRef<any>(null)
   const callStartRef = useRef<number>(0)
-  const answerSetRef = useRef(false)
-  const iceCandidateBuffer = useRef<any[]>([])
-  const remoteDescSet = useRef(false)
-  const callerIceBuffer = useRef<any[]>([])
-  const answerReceivedRef = useRef(false)
 
   const isPremium = currentUser?.package && currentUser.package !== 'prottasha'
   const callLimit = isPremium ? PREMIUM_CALL_LIMIT : FREE_CALL_LIMIT
 
-  // Send signal via API
   const sendSignal = useCallback(async (type: string, data: any) => {
     try {
       await fetch('/api/call/signal', {
@@ -48,13 +42,17 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
     } catch(e) {}
   }, [currentUser.id, targetProfile.id])
 
-  const endCall = useCallback((reason: 'ended' | 'rejected' | 'timeout' = 'ended') => {
+  const endCall = useCallback(async (reason: 'ended' | 'rejected' | 'timeout' = 'ended') => {
     if (timerRef.current) clearInterval(timerRef.current)
-    if (channelRef.current) channelRef.current.unsubscribe()
-    if (localStreamRef.current) localStreamRef.current.getTracks().forEach(t => t.stop())
-    if (pcRef.current) { pcRef.current.close(); pcRef.current = null }
+    if (channelRef.current) { try { channelRef.current.unsubscribe() } catch(e) {} }
+    if (localTrackRef.current) { try { localTrackRef.current.close() } catch(e) {} }
+    if (clientRef.current) {
+      try {
+        await clientRef.current.leave()
+      } catch(e) {}
+    }
     sendSignal('call-end', { reason })
-    setCallState(reason)
+    setCallState(reason === 'rejected' ? 'rejected' : reason === 'timeout' ? 'timeout' : 'ended')
     setTimeout(onClose, 2000)
   }, [sendSignal, onClose])
 
@@ -69,173 +67,128 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
     }, 1000)
   }, [callLimit, endCall])
 
-  const setupPeerConnection = useCallback(async () => {
+  const joinAgoraChannel = useCallback(async (channelName: string, isPublisher: boolean) => {
     try {
-      // Hardcoded TURN credentials from Metered
-      const iceServers: any[] = [
-        { urls: 'stun:stun.relay.metered.ca:80' },
-        { urls: 'turn:global.relay.metered.ca:80', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
-        { urls: 'turn:global.relay.metered.ca:80?transport=tcp', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
-        { urls: 'turn:global.relay.metered.ca:443', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
-        { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
-        { urls: 'stun:stun.l.google.com:19302' },
-      ]
-      console.log('Using hardcoded TURN servers:', iceServers.length)
+      setCallState('connecting')
 
-      const pc = new RTCPeerConnection({ iceServers })
-      pcRef.current = pc
+      // Dynamic import of Agora SDK
+      const AgoraRTC = (await import('agora-rtc-sdk-ng')).default
+      AgoraRTC.setLogLevel(3) // warnings only
 
-      // Get microphone
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true },
-        video: false
+      const client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
+      clientRef.current = client
+
+      // Get token from our API
+      const uid = parseInt(String(currentUser.id))
+      const tokenRes = await fetch('/api/agora-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channelName, uid })
       })
-      localStreamRef.current = stream
-      stream.getTracks().forEach(track => pc.addTrack(track, stream))
+      const { token } = await tokenRes.json()
 
-      // Remote audio via DOM element
-      pc.ontrack = (e) => {
-        console.log('ontrack:', e.track.kind, e.streams.length)
-        if (remoteAudioRef.current && e.streams[0]) {
-          remoteAudioRef.current.srcObject = e.streams[0]
-          remoteAudioRef.current.volume = 1.0
-          remoteAudioRef.current.play().catch(err => console.warn('Audio play:', err))
+      // Join the channel
+      await client.join(AGORA_APP_ID, channelName, token || null, uid)
+
+      // Create and publish local audio track
+      const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
+        encoderConfig: 'music_standard'
+      })
+      localTrackRef.current = localAudioTrack
+      await client.publish([localAudioTrack])
+
+      // Handle remote users
+      client.on('user-published', async (user: any, mediaType: string) => {
+        await client.subscribe(user, mediaType)
+        if (mediaType === 'audio') {
+          user.audioTrack?.play()
+          setCallState('active')
+          startTimer()
         }
-      }
+      })
 
-      pc.onicecandidate = (e) => {
-        if (e.candidate) {
-          if (answerReceivedRef.current) {
-            // Answer already received, send immediately
-            sendSignal('ice-candidate', { candidate: e.candidate })
-          } else {
-            // Buffer until answer received
-            callerIceBuffer.current.push(e.candidate)
+      client.on('user-unpublished', (user: any) => {
+        console.log('User unpublished:', user.uid)
+      })
+
+      client.on('user-left', () => {
+        endCall('ended')
+      })
+
+      setCallState('connecting')
+      console.log('Agora: joined channel', channelName)
+
+      // If outgoing, set a timeout for no answer
+      if (isPublisher) {
+        setTimeout(() => {
+          if (callState !== 'active') {
+            // Don't auto-end, let user decide
           }
-        }
+        }, 45000)
       }
 
-      pc.onconnectionstatechange = () => {
-        console.log('Connection state:', pc.connectionState)
-        if (pc.connectionState === 'failed') {
-          setErrorMsg('Connection failed. Please try again.')
-        }
-      }
-
-      return pc
     } catch(err: any) {
-      setErrorMsg('Microphone access denied. Please allow mic and try again.')
-      return null
+      console.error('Agora error:', err)
+      setErrorMsg('Could not connect. Please check mic permissions and try again.')
+      setCallState('ended')
+      setTimeout(onClose, 3000)
     }
-  }, [sendSignal])
+  }, [currentUser.id, startTimer, endCall, onClose])
 
-  // Subscribe to realtime signals via Supabase
-  const subscribeToSignals = useCallback((pc: RTCPeerConnection) => {
+  // Subscribe to realtime signals
+  const subscribeToSignals = useCallback(() => {
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } })
     const channel = supabase
-      .channel('call-signals-' + currentUser.id)
+      .channel('call-signals-' + currentUser.id + '-' + Date.now())
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
         table: 'call_signals',
         filter: `to_id=eq.${currentUser.id}`
-      }, async (payload: any) => {
+      }, (payload: any) => {
         const signal = payload.new
-        console.log('Received signal:', signal.type, 'from:', signal.from_id)
-        if (String(signal.from_id) !== String(targetProfile.id) && signal.type !== 'call-end') return
-
-        const data = JSON.parse(signal.data || '{}')
-
-        if (signal.type === 'call-answer' && !answerSetRef.current) {
-          answerSetRef.current = true
-          try {
-            await pc.setRemoteDescription(new RTCSessionDescription(data.sdp))
-            remoteDescSet.current = true
-            answerReceivedRef.current = true
-            // Flush remote ICE candidates buffered before answer
-            for (const candidate of iceCandidateBuffer.current) {
-              try { await pc.addIceCandidate(new RTCIceCandidate(candidate)) } catch(e) {}
-            }
-            iceCandidateBuffer.current = []
-            // Now send our buffered ICE candidates to callee
-            for (const candidate of callerIceBuffer.current) {
-              sendSignal('ice-candidate', { candidate })
-            }
-            callerIceBuffer.current = []
-            setCallState('active')
-            startTimer()
-          } catch(e) { console.error('setRemoteDescription error:', e) }
-        }
-
-        if (signal.type === 'ice-candidate') {
-          if (remoteDescSet.current) {
-            try { await pc.addIceCandidate(new RTCIceCandidate(data.candidate)) } catch(e) {}
-          } else {
-            iceCandidateBuffer.current.push(data.candidate)
-          }
-        }
-
-        if (signal.type === 'call-reject') {
-          endCall('rejected')
-        }
-
         if (signal.type === 'call-end') {
           endCall('ended')
         }
+        if (signal.type === 'call-reject') {
+          endCall('rejected')
+        }
       })
       .subscribe()
-
     channelRef.current = channel
-    return channel
-  }, [currentUser.id, targetProfile.id, endCall, startTimer])
+  }, [currentUser.id, endCall])
 
-  const makeCall = useCallback(async () => {
-    setCallState('connecting')
-    const pc = await setupPeerConnection()
-    if (!pc) return
-
-    subscribeToSignals(pc)
-
-    const offer = await pc.createOffer()
-    await pc.setLocalDescription(offer)
-    await sendSignal('call-offer', { sdp: offer })
-
-    // Timeout after 45s
-    setTimeout(() => {
-      if (callState !== 'active') endCall('timeout')
-    }, 45000)
-  }, [setupPeerConnection, subscribeToSignals, sendSignal, endCall, callState])
-
-  const answerCall = useCallback(async () => {
-    setCallState('connecting')
-    const pc = await setupPeerConnection()
-    if (!pc) return
-
-    subscribeToSignals(pc)
-
-    const offerData = JSON.parse(incomingSignal?.data || '{}')
-    await pc.setRemoteDescription(new RTCSessionDescription(offerData.sdp))
-    remoteDescSet.current = true
-    const answer = await pc.createAnswer()
-    await pc.setLocalDescription(answer)
-    await sendSignal('call-answer', { sdp: answer })
-    setCallState('active')
-    startTimer()
-  }, [setupPeerConnection, subscribeToSignals, incomingSignal, sendSignal, startTimer])
+  // Channel name is deterministic — same for both users
+  const getChannelName = useCallback(() => {
+    const ids = [parseInt(String(currentUser.id)), parseInt(String(targetProfile.id))].sort()
+    return `bk-${ids[0]}-${ids[1]}`
+  }, [currentUser.id, targetProfile.id])
 
   useEffect(() => {
-    if (mode === 'outgoing') makeCall()
+    subscribeToSignals()
+    if (mode === 'outgoing') {
+      sendSignal('call-offer', { channel: getChannelName() })
+      joinAgoraChannel(getChannelName(), true)
+    }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
-      if (channelRef.current) channelRef.current.unsubscribe()
-      if (localStreamRef.current) localStreamRef.current.getTracks().forEach(t => t.stop())
-      if (pcRef.current) pcRef.current.close()
+      if (channelRef.current) { try { channelRef.current.unsubscribe() } catch(e) {} }
+      if (localTrackRef.current) { try { localTrackRef.current.close() } catch(e) {} }
+      if (clientRef.current) { try { clientRef.current.leave() } catch(e) {} }
     }
   }, [])
 
+  const answerCall = useCallback(async () => {
+    await joinAgoraChannel(getChannelName(), false)
+  }, [joinAgoraChannel, getChannelName])
+
   const toggleMute = () => {
-    if (localStreamRef.current) {
-      localStreamRef.current.getAudioTracks().forEach(t => { t.enabled = isMuted })
+    if (localTrackRef.current) {
+      if (isMuted) {
+        localTrackRef.current.setEnabled(true)
+      } else {
+        localTrackRef.current.setEnabled(false)
+      }
       setIsMuted(!isMuted)
     }
   }
@@ -261,119 +214,116 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
   }
 
   return (
-    <div>
-      <audio ref={remoteAudioRef} autoPlay playsInline style={{ display: 'none' }} />
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9999,
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
+    }}>
       <div style={{
-        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9999,
-        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
+        background: 'linear-gradient(180deg, #1e1b4b 0%, #312e81 100%)',
+        borderRadius: '28px', width: '100%', maxWidth: '340px',
+        padding: '40px 24px 32px', textAlign: 'center',
+        boxShadow: '0 25px 60px rgba(0,0,0,0.5)'
       }}>
         <div style={{
-          background: 'linear-gradient(180deg, #1e1b4b 0%, #312e81 100%)',
-          borderRadius: '28px', width: '100%', maxWidth: '340px',
-          padding: '40px 24px 32px', textAlign: 'center',
-          boxShadow: '0 25px 60px rgba(0,0,0,0.5)'
+          display: 'inline-flex', alignItems: 'center', gap: '6px',
+          background: 'rgba(255,255,255,0.1)', borderRadius: '20px',
+          padding: '4px 14px', marginBottom: '28px'
         }}>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            background: 'rgba(255,255,255,0.1)', borderRadius: '20px',
-            padding: '4px 14px', marginBottom: '28px'
-          }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: stateColors[callState], display: 'inline-block' }} />
-            <span style={{ fontSize: '12px', color: 'white', fontWeight: 600 }}>{stateLabels[callState]}</span>
-          </div>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: stateColors[callState], display: 'inline-block' }} />
+          <span style={{ fontSize: '12px', color: 'white', fontWeight: 600 }}>{stateLabels[callState]}</span>
+        </div>
 
-          <div style={{ position: 'relative', display: 'inline-block', marginBottom: '16px' }}>
-            {photo
-              ? <img src={photo} alt={name} style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(255,255,255,0.3)' }} />
-              : <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>?</div>
-            }
-            {callState === 'active' && (
-              <div style={{ position: 'absolute', bottom: '2px', right: '2px', width: '20px', height: '20px', borderRadius: '50%', background: '#10b981', border: '2px solid #1e1b4b' }} />
-            )}
-          </div>
-
-          <h2 style={{ margin: '0 0 4px', fontSize: '22px', fontWeight: 800, color: 'white' }}>{name}</h2>
-          <p style={{ margin: '0 0 8px', fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>Biyekori Match</p>
-
+        <div style={{ position: 'relative', display: 'inline-block', marginBottom: '16px' }}>
+          {photo
+            ? <img src={photo} alt={name} style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(255,255,255,0.3)' }} />
+            : <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>?</div>
+          }
           {callState === 'active' && (
-            <div style={{ marginBottom: '8px' }}>
-              <span style={{ fontSize: '28px', fontWeight: 900, color: timeLeft <= 30 ? '#f87171' : '#34d399', fontVariantNumeric: 'tabular-nums' }}>
-                {formatTime(timeLeft)}
-              </span>
-              <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>
-                {isPremium ? '15 min limit · Premium' : '5 min limit · Free'}
-              </p>
-            </div>
+            <div style={{ position: 'absolute', bottom: '2px', right: '2px', width: '20px', height: '20px', borderRadius: '50%', background: '#10b981', border: '2px solid #1e1b4b' }} />
           )}
+        </div>
 
-          {errorMsg && (
-            <div style={{ background: 'rgba(239,68,68,0.2)', borderRadius: '10px', padding: '10px', marginBottom: '16px', fontSize: '12px', color: '#fca5a5' }}>
-              {errorMsg}
-            </div>
-          )}
+        <h2 style={{ margin: '0 0 4px', fontSize: '22px', fontWeight: 800, color: 'white' }}>{name}</h2>
+        <p style={{ margin: '0 0 8px', fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>Biyekori Match</p>
 
-          {/* Incoming call buttons */}
-          {mode === 'incoming' && callState === 'ringing' && (
-            <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', marginTop: '32px' }}>
-              <div style={{ textAlign: 'center' }}>
-                <button onClick={() => { sendSignal('call-reject', {}); setCallState('rejected'); setTimeout(onClose, 1500) }}
-                  style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#ef4444', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.4 12.4 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.42 19.42 0 0 1 4.26 9.84a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 3.18 1h3a2 2 0 0 1 2 1.72 12.4 12.4 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.16 8.84"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                </button>
-                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}>Decline</span>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <button onClick={answerCall}
-                  style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#10b981', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                </button>
-                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}>Answer</span>
-              </div>
-            </div>
-          )}
+        {callState === 'active' && (
+          <div style={{ marginBottom: '8px' }}>
+            <span style={{ fontSize: '28px', fontWeight: 900, color: timeLeft <= 30 ? '#f87171' : '#34d399', fontVariantNumeric: 'tabular-nums' }}>
+              {formatTime(timeLeft)}
+            </span>
+            <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>
+              {isPremium ? '15 min limit · Premium' : '5 min limit · Free'}
+            </p>
+          </div>
+        )}
 
-          {/* Active call buttons */}
-          {callState === 'active' && (
-            <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginTop: '28px' }}>
-              <div style={{ textAlign: 'center' }}>
-                <button onClick={toggleMute}
-                  style={{ width: '52px', height: '52px', borderRadius: '50%', background: isMuted ? '#ef4444' : 'rgba(255,255,255,0.15)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px' }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                    {isMuted
-                      ? <><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></>
-                      : <><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></>
-                    }
-                  </svg>
-                </button>
-                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>Mute</span>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <button onClick={() => endCall('ended')}
-                  style={{ width: '52px', height: '52px', borderRadius: '50%', background: '#ef4444', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px' }}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.4 12.4 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.42 19.42 0 0 1 4.26 9.84a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 3.18 1h3a2 2 0 0 1 2 1.72 12.4 12.4 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.16 8.84"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                </button>
-                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>End</span>
-              </div>
-            </div>
-          )}
+        {errorMsg && (
+          <div style={{ background: 'rgba(239,68,68,0.2)', borderRadius: '10px', padding: '10px', marginBottom: '16px', fontSize: '12px', color: '#fca5a5' }}>
+            {errorMsg}
+          </div>
+        )}
 
-          {/* Outgoing ringing / connecting cancel */}
-          {(callState === 'connecting' || callState === 'ringing') && mode === 'outgoing' && (
-            <div style={{ marginTop: '32px' }}>
-              <button onClick={() => endCall('ended')}
+        {/* Incoming call buttons */}
+        {mode === 'incoming' && callState === 'ringing' && (
+          <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', marginTop: '32px' }}>
+            <div style={{ textAlign: 'center' }}>
+              <button onClick={() => { sendSignal('call-reject', {}); setCallState('rejected'); setTimeout(onClose, 1500) }}
                 style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#ef4444', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.4 12.4 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.42 19.42 0 0 1 4.26 9.84a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 3.18 1h3a2 2 0 0 1 2 1.72 12.4 12.4 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.16 8.84"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
               </button>
-              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}>Cancel</span>
+              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}>Decline</span>
             </div>
-          )}
+            <div style={{ textAlign: 'center' }}>
+              <button onClick={answerCall}
+                style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#10b981', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </button>
+              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}>Answer</span>
+            </div>
+          </div>
+        )}
 
-          {(callState === 'ended' || callState === 'rejected' || callState === 'timeout') && (
-            <p style={{ marginTop: '20px', fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
-              {callState === 'rejected' ? 'Call was declined.' : callState === 'timeout' ? 'No answer. Try again later.' : 'Call ended.'}
-            </p>
-          )}
-        </div>
+        {/* Active call buttons */}
+        {callState === 'active' && (
+          <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginTop: '28px' }}>
+            <div style={{ textAlign: 'center' }}>
+              <button onClick={toggleMute}
+                style={{ width: '52px', height: '52px', borderRadius: '50%', background: isMuted ? '#ef4444' : 'rgba(255,255,255,0.15)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px' }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                  {isMuted
+                    ? <><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></>
+                    : <><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></>
+                  }
+                </svg>
+              </button>
+              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>{isMuted ? 'Unmute' : 'Mute'}</span>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <button onClick={() => endCall('ended')}
+                style={{ width: '52px', height: '52px', borderRadius: '50%', background: '#ef4444', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px' }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.4 12.4 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.42 19.42 0 0 1 4.26 9.84a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 3.18 1h3a2 2 0 0 1 2 1.72 12.4 12.4 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.16 8.84"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+              <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>End</span>
+            </div>
+          </div>
+        )}
+
+        {/* Outgoing ringing/connecting cancel */}
+        {(callState === 'connecting' || callState === 'ringing') && mode === 'outgoing' && (
+          <div style={{ marginTop: '32px' }}>
+            <button onClick={() => endCall('ended')}
+              style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#ef4444', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.4 12.4 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.42 19.42 0 0 1 4.26 9.84a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 3.18 1h3a2 2 0 0 1 2 1.72 12.4 12.4 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.16 8.84"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}>Cancel</span>
+          </div>
+        )}
+
+        {(callState === 'ended' || callState === 'rejected' || callState === 'timeout') && (
+          <p style={{ marginTop: '20px', fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
+            {callState === 'rejected' ? 'Call was declined.' : callState === 'timeout' ? 'No answer. Try again later.' : 'Call ended.'}
+          </p>
+        )}
       </div>
     </div>
   )
