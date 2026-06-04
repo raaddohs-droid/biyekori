@@ -2,6 +2,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
+import dynamic from 'next/dynamic'
+const CallModal = dynamic(() => import('./CallModal'), { ssr: false })
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -12,6 +14,10 @@ export default function Navbar() {
   const [unreadCount, setUnreadCount] = useState(0)
   const notifRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+  const [incomingCall, setIncomingCall] = useState<any>(null)
+  const [showIncomingCall, setShowIncomingCall] = useState(false)
+  const callPollRef = useRef<NodeJS.Timeout | null>(null)
+  const callSinceRef = useRef<string>(new Date().toISOString())
 
   useEffect(() => {
     try {
@@ -28,6 +34,29 @@ export default function Navbar() {
               setUnreadCount(data.unreadCount || 0)
             })
             .catch(() => {})
+
+          // Global incoming call polling
+          const SURL = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+          const SKEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+          callPollRef.current = setInterval(async () => {
+            try {
+              const res = await fetch('/api/call/signal?userId=' + u.id + '&since=' + callSinceRef.current)
+              const json = await res.json()
+              callSinceRef.current = new Date().toISOString()
+              for (const signal of (json.signals || [])) {
+                if (signal.type === 'call-offer') {
+                  const profileRes = await fetch(SURL + '/rest/v1/profiles?id=eq.' + signal.from_id + '&select=id,full_name,photo_url,age,package', {
+                    headers: { apikey: SKEY, Authorization: 'Bearer ' + SKEY }
+                  })
+                  const profiles = await profileRes.json()
+                  if (profiles && profiles[0]) {
+                    setIncomingCall({ signal, callerProfile: profiles[0] })
+                    setShowIncomingCall(true)
+                  }
+                }
+              }
+            } catch(e) {}
+          }, 2000)
         }
       }
     } catch(e) {}
@@ -331,7 +360,15 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
+      {/* Global incoming call modal */}
+      {showIncomingCall && incomingCall && user && (
+        <CallModal
+          currentUser={user}
+          targetProfile={incomingCall.callerProfile}
+          onClose={() => { setShowIncomingCall(false); setIncomingCall(null) }}
+          mode="incoming"
+          incomingSignal={incomingCall.signal}
+        />
+      )}
   )
 }
-
-
