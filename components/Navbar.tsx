@@ -35,28 +35,33 @@ export default function Navbar() {
             })
             .catch(() => {})
 
-          // Global incoming call polling
+          // Global incoming call detection via Supabase Realtime
           const SURL = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
           const SKEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-          callPollRef.current = setInterval(async () => {
-            try {
-              const res = await fetch('/api/call/signal?userId=' + u.id + '&since=' + callSinceRef.current)
-              const json = await res.json()
-              callSinceRef.current = new Date().toISOString()
-              for (const signal of (json.signals || [])) {
-                if (signal.type === 'call-offer') {
-                  const profileRes = await fetch(SURL + '/rest/v1/profiles?id=eq.' + signal.from_id + '&select=id,full_name,photo_url,age,package', {
-                    headers: { apikey: SKEY, Authorization: 'Bearer ' + SKEY }
-                  })
-                  const profiles = await profileRes.json()
-                  if (profiles && profiles[0]) {
-                    setIncomingCall({ signal, callerProfile: profiles[0] })
-                    setShowIncomingCall(true)
-                  }
+          const { createClient } = await import('@supabase/supabase-js')
+          const supabase = createClient(SURL, SKEY)
+          const channel = supabase
+            .channel('incoming-calls-' + u.id)
+            .on('postgres_changes', {
+              event: 'INSERT',
+              schema: 'public',
+              table: 'call_signals',
+              filter: 'to_id=eq.' + u.id
+            }, async (payload: any) => {
+              const signal = payload.new
+              if (signal.type === 'call-offer') {
+                const profileRes = await fetch(SURL + '/rest/v1/profiles?id=eq.' + signal.from_id + '&select=id,full_name,photo_url,age,package', {
+                  headers: { apikey: SKEY, Authorization: 'Bearer ' + SKEY }
+                })
+                const profiles = await profileRes.json()
+                if (profiles && profiles[0]) {
+                  setIncomingCall({ signal, callerProfile: profiles[0] })
+                  setShowIncomingCall(true)
                 }
               }
-            } catch(e) {}
-          }, 2000)
+            })
+            .subscribe()
+          callPollRef.current = channel as any
         }
       }
     } catch(e) {}
