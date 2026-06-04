@@ -97,13 +97,22 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
       localTrackRef.current = localAudioTrack
       await client.publish([localAudioTrack])
 
+      // Set active immediately after publishing (for outgoing caller)
+      if (isPublisher) {
+        setCallState('active')
+        startTimer()
+      }
+
       // Handle remote users
       client.on('user-published', async (user: any, mediaType: "audio" | "video" | "datachannel") => {
         await client.subscribe(user, mediaType)
         if (mediaType === 'audio') {
           user.audioTrack?.play()
-          setCallState('active')
-          startTimer()
+          // Set active for callee side
+          if (!isPublisher) {
+            setCallState('active')
+            startTimer()
+          }
         }
       })
 
