@@ -31,6 +31,8 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
   const answerSetRef = useRef(false)
   const iceCandidateBuffer = useRef<any[]>([])
   const remoteDescSet = useRef(false)
+  const callerIceBuffer = useRef<any[]>([])
+  const answerReceivedRef = useRef(false)
 
   const isPremium = currentUser?.package && currentUser.package !== 'prottasha'
   const callLimit = isPremium ? PREMIUM_CALL_LIMIT : FREE_CALL_LIMIT
@@ -69,17 +71,16 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
 
   const setupPeerConnection = useCallback(async () => {
     try {
-      // Hardcoded TURN credentials from Metered (verified working via trickle-ice test)
+      // Hardcoded TURN credentials from Metered
       const iceServers: any[] = [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun.relay.metered.ca:80' },
         { urls: 'turn:global.relay.metered.ca:80', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
         { urls: 'turn:global.relay.metered.ca:80?transport=tcp', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
-        { urls: 'turn:global.relay.metered.ca:443?transport=udp', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
-        { urls: 'turn:global.relay.metered.ca:443?transport=tcp', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
+        { urls: 'turn:global.relay.metered.ca:443', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
         { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
+        { urls: 'stun:stun.l.google.com:19302' },
       ]
-      console.log('ICE servers ready:', iceServers.length)
+      console.log('Using hardcoded TURN servers:', iceServers.length)
 
       const pc = new RTCPeerConnection({ iceServers })
       pcRef.current = pc
@@ -103,7 +104,15 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
       }
 
       pc.onicecandidate = (e) => {
-        if (e.candidate) sendSignal('ice-candidate', { candidate: e.candidate })
+        if (e.candidate) {
+          if (answerReceivedRef.current) {
+            // Answer already received, send immediately
+            sendSignal('ice-candidate', { candidate: e.candidate })
+          } else {
+            // Buffer until answer received
+            callerIceBuffer.current.push(e.candidate)
+          }
+        }
       }
 
       pc.onconnectionstatechange = () => {
@@ -142,10 +151,17 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
           try {
             await pc.setRemoteDescription(new RTCSessionDescription(data.sdp))
             remoteDescSet.current = true
+            answerReceivedRef.current = true
+            // Flush remote ICE candidates buffered before answer
             for (const candidate of iceCandidateBuffer.current) {
               try { await pc.addIceCandidate(new RTCIceCandidate(candidate)) } catch(e) {}
             }
             iceCandidateBuffer.current = []
+            // Now send our buffered ICE candidates to callee
+            for (const candidate of callerIceBuffer.current) {
+              sendSignal('ice-candidate', { candidate })
+            }
+            callerIceBuffer.current = []
             setCallState('active')
             startTimer()
           } catch(e) { console.error('setRemoteDescription error:', e) }
