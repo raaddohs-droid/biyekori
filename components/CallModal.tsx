@@ -98,8 +98,9 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
       await client.publish([localAudioTrack])
 
       // Set active for BOTH sides right after joining and publishing
-      setCallState('active')
+      setCallState("active")
       startTimer()
+      console.log("UI: set to active")
 
       // Handle remote users audio
       client.on('user-published', async (user: any, mediaType: "audio" | "video" | "datachannel") => {
@@ -119,6 +120,7 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
 
       setCallState('connecting')
       console.log('Agora: joined channel', channelName)
+      setTimeout(() => { setCallState("active"); startTimer() }, 500)
 
       // If outgoing, set a timeout for no answer
       if (isPublisher) {
