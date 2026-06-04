@@ -482,6 +482,29 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
     !['SSC', 'HSC'].includes(profile.education)
 
   return (
+    <>
+    {guestBlurred && (
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 998,
+        backdropFilter: 'blur(10px)',
+        background: 'rgba(0,0,0,0.15)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        paddingTop: '80px'
+      }}>
+        <div style={{
+          background: 'white', borderRadius: '24px',
+          padding: '40px 32px', maxWidth: '400px', width: '90%',
+          textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.2)'
+        }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>💌</div>
+          <h2 style={{ margin: '0 0 10px', fontSize: '22px', fontWeight: 800, color: '#111827' }}>Your free preview has ended</h2>
+          <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280', lineHeight: 1.6 }}>Login or create a free account to keep browsing profiles on Biyekori.</p>
+          <a href="/login" style={{ display: 'block', padding: '14px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', borderRadius: '12px', fontWeight: 700, fontSize: '15px', textDecoration: 'none', marginBottom: '10px' }}>Login</a>
+          <a href="/register" style={{ display: 'block', padding: '14px', background: '#f3f4f6', color: '#374151', borderRadius: '12px', fontWeight: 700, fontSize: '15px', textDecoration: 'none' }}>Create Free Account</a>
+          <p style={{ margin: '16px 0 0', fontSize: '11px', color: '#9ca3af' }}>Free forever · No credit card required</p>
+        </div>
+      </div>
+    )}
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 py-8 px-4" style={{colorScheme:"light"}}>
       <div className="max-w-5xl mx-auto">
 
