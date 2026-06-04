@@ -5,7 +5,8 @@ import AIPhotoCropper from '@/components/profiles/AIPhotoCropper';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
+  const [guardianMode, setGuardianMode] = useState(false);
 
   // Step 1
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
@@ -115,7 +116,8 @@ export default function RegisterPage() {
           additional_photos: additionalPhotoUrls,
           photo_privacy: photoPrivacy,
           package: 'prottasha',
-          phone_verified: true
+          phone_verified: true,
+          guardian_mode: guardianMode
         })
       });
       const data = await response.json();
@@ -135,8 +137,69 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-12 px-4" style={{ paddingTop: '80px' }}>
       <div className="max-w-2xl mx-auto">
 
-        {/* Progress */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
+        {/* Step 0 — Mode Selection */}
+        {step === 0 && (
+          <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+              <h1 style={{ fontSize: '28px', fontWeight: 900, color: '#111827', margin: '0 0 8px' }}>Welcome to Biyekori</h1>
+              <p style={{ fontSize: '15px', color: '#6b7280', margin: 0 }}>How will this profile be managed?</p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', width: '100%', maxWidth: '560px' }}>
+
+              {/* Self Mode */}
+              <button onClick={() => { setGuardianMode(false); setStep(1); }} style={{
+                padding: '28px 20px', borderRadius: '20px', border: '2px solid #e5e7eb',
+                background: 'white', cursor: 'pointer', textAlign: 'center',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.06)', transition: 'all 0.2s'
+              }}
+              onMouseOver={e => (e.currentTarget.style.borderColor = '#e11d48')}
+              onMouseOut={e => (e.currentTarget.style.borderColor = '#e5e7eb')}
+              >
+                <div style={{ fontSize: '48px', marginBottom: '12px' }}>👤</div>
+                <h3 style={{ margin: '0 0 8px', fontSize: '17px', fontWeight: 800, color: '#111827' }}>নিজে পরিচালিত</h3>
+                <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280', lineHeight: 1.5 }}>I am the bride or groom and will manage this profile myself</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {['Full profile control', 'Direct messaging', 'Voice calls', 'A Day Together game'].map(f => (
+                    <span key={f} style={{ fontSize: '11px', color: '#10b981', fontWeight: 600 }}>✓ {f}</span>
+                  ))}
+                </div>
+                <div style={{ marginTop: '16px', padding: '10px', background: 'linear-gradient(135deg,#e11d48,#db2777)', borderRadius: '10px', color: 'white', fontSize: '13px', fontWeight: 700 }}>
+                  Choose Self Mode
+                </div>
+              </button>
+
+              {/* Guardian Mode */}
+              <button onClick={() => { setGuardianMode(true); setStep(1); }} style={{
+                padding: '28px 20px', borderRadius: '20px', border: '2px solid #e5e7eb',
+                background: 'white', cursor: 'pointer', textAlign: 'center',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.06)', transition: 'all 0.2s'
+              }}
+              onMouseOver={e => (e.currentTarget.style.borderColor = '#7c3aed')}
+              onMouseOut={e => (e.currentTarget.style.borderColor = '#e5e7eb')}
+              >
+                <div style={{ fontSize: '48px', marginBottom: '12px' }}>👨‍👩‍👧</div>
+                <h3 style={{ margin: '0 0 8px', fontSize: '17px', fontWeight: 800, color: '#111827' }}>পরিবার পরিচালিত</h3>
+                <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280', lineHeight: 1.5 }}>A parent or family member is setting up this profile on behalf of the bride/groom</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {['Bengali interface', 'Formal messaging', 'Family-first approach', 'Guardian badge on profile'].map(f => (
+                    <span key={f} style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 600 }}>✓ {f}</span>
+                  ))}
+                </div>
+                <div style={{ marginTop: '16px', padding: '10px', background: 'linear-gradient(135deg,#7c3aed,#a855f7)', borderRadius: '10px', color: 'white', fontSize: '13px', fontWeight: 700 }}>
+                  Choose Guardian Mode
+                </div>
+              </button>
+            </div>
+
+            <p style={{ marginTop: '20px', fontSize: '11px', color: '#9ca3af', textAlign: 'center' }}>
+              You can switch modes later from Settings after OTP verification.
+            </p>
+          </div>
+        )}
+
+      {/* Progress */}
+        {step > 0 && <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
           <div className="flex items-center justify-between">
             {[1,2,3].map((s) => (
               <div key={s} className="flex items-center">
@@ -148,7 +211,7 @@ export default function RegisterPage() {
           <div className="flex justify-between mt-2 text-xs font-bold text-gray-600">
             <span>Photo & Info</span><span>Basic Details</span><span>Contact & Verify</span>
           </div>
-        </div>
+        </div>}
 
         {/* Step 1 */}
         {step === 1 && (
@@ -170,25 +233,16 @@ export default function RegisterPage() {
               </select>
             </div>
 
-            {/* Managed by */}
-            <div className="mb-5">
-              <label className="block text-sm font-bold text-gray-900 mb-2">This profile is managed by...</label>
-              <select
-                value={managedBy}
-                onChange={(e) => setManagedBy(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900"
-                required
-              >
-                <option value="">Select one</option>
-                <option value="Self">Myself</option>
-                <option value="Father">Father</option>
-                <option value="Mother">Mother</option>
-                <option value="Brother">Brother</option>
-                <option value="Sister">Sister</option>
-                <option value="Relative">Relative</option>
-                <option value="Friend">Friend</option>
-              </select>
-            </div>
+            {/* Mode badge */}
+            {guardianMode && (
+              <div style={{ marginBottom: '20px', padding: '12px 16px', background: '#ede9fe', borderRadius: '12px', border: '1.5px solid #c4b5fd', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '20px' }}>👨‍👩‍👧</span>
+                <div>
+                  <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#7c3aed' }}>পরিবার পরিচালিত মোড চালু আছে</p>
+                  <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>Profile will show "Family Managed" badge · <button onClick={() => setStep(0)} style={{ background: 'none', border: 'none', color: '#e11d48', fontSize: '11px', fontWeight: 700, cursor: 'pointer', padding: 0 }}>Change</button></p>
+                </div>
+              </div>
+            )}
 
             {/* Main Photo */}
             <div className="mb-5">
