@@ -197,12 +197,16 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
   const photoUrl = profile.photo_url || profile.photoUrl
   const isPremium = profile.package !== 'prottasha'
   const [interestSent, setInterestSent] = useState(false)
-  const [relationshipStatus, setRelationshipStatus] = useState<'none'|'sent'|'received'|'accepted'>('none')
+  const [relationshipStatus, setRelationshipStatus] = useState<'none'|'sent'|'received'|'accepted'>(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
+      const pkg = u.package || ''
+      if (pkg === 'bondhon' || pkg === 'milon') return 'accepted'
+    } catch(e) {}
+    return 'none'
+  })
   const rawName = profile.full_name || profile.name || 'Anonymous'
-  // Read package directly from localStorage to avoid flash
-  const userPkg = typeof window !== 'undefined' ? (() => { try { return JSON.parse(localStorage.getItem('biyekori_user') || '{}').package || '' } catch(e) { return '' } })() : ''
-  const isPremiumUser = userPkg === 'bondhon' || userPkg === 'milon'
-  const name = maskName(rawName, isPremiumUser ? 'accepted' : relationshipStatus)
+  const name = maskName(rawName, relationshipStatus)
 
   useEffect(() => {
     try {
