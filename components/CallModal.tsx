@@ -121,17 +121,18 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
     await pc.setLocalDescription(offer)
     await sendSignal('call-offer', { sdp: offer })
 
-    // Poll for answer
+    // Poll for answer — keep since fixed from offer time, don't advance it
+    const offerTime = new Date(Date.now() - 2000).toISOString()
     let attempts = 0
     pollRef.current = setInterval(async () => {
       attempts++
-      if (attempts > 30) { // 30 seconds timeout
+      if (attempts > 45) { // 45 seconds timeout
         endCall('timeout')
         return
       }
-      const res = await fetch(`/api/call/signal?userId=${currentUser.id}&since=${sinceRef.current}`)
+      const res = await fetch(`/api/call/signal?userId=${currentUser.id}&since=${offerTime}`)
       const { signals } = await res.json()
-      sinceRef.current = new Date().toISOString()
+      // Don't update sinceRef here — keep fetching from offer time
 
       for (const signal of signals) {
         const data = JSON.parse(signal.data || '{}')
@@ -165,7 +166,10 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
     await pc.setRemoteDescription(new RTCSessionDescription(offerData.sdp))
     const answer = await pc.createAnswer()
     await pc.setLocalDescription(answer)
+    // Send answer immediately — critical for caller to receive it
     await sendSignal('call-answer', { sdp: answer })
+    // Also send a second time after short delay as backup
+    setTimeout(() => sendSignal('call-answer', { sdp: answer }), 1500)
     setCallState('active')
     startTimer()
 
