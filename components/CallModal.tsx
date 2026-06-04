@@ -69,16 +69,19 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
 
   const setupPeerConnection = useCallback(async () => {
     try {
-      // Fetch TURN credentials
+      // Fetch TURN credentials directly from Metered (client-side, allowed host)
       let iceServers: any[] = [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
       ]
       try {
-        const turnRes = await fetch('/api/turn')
-        const turnData = await turnRes.json()
-        if (turnData.iceServers?.length > 0) iceServers = turnData.iceServers
-      } catch(e) {}
+        const turnRes = await fetch('https://biyekori.metered.live/api/v1/turn/credentials?apiKey=heZZD34NOwl3f39h38gzi0XpTgeaWtHEUijM8xQs2Dpe8GaK')
+        const servers = await turnRes.json()
+        if (Array.isArray(servers) && servers.length > 0) {
+          iceServers = servers
+          console.log('TURN credentials fetched:', servers.length, 'servers')
+        }
+      } catch(e) { console.warn('TURN fetch failed, using STUN only') }
 
       const pc = new RTCPeerConnection({ iceServers })
       pcRef.current = pc
