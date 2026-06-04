@@ -82,23 +82,32 @@ export default function Dashboard() {
   const isPremium = user?.package && user.package !== 'prottasha';
   const planLabel = !user.package || user.package === 'prottasha' ? 'Free' : user.package.charAt(0).toUpperCase() + user.package.slice(1);
   const firstName = user.full_name?.split(' ')[0] || 'there';
+  const gm = !!user.guardian_mode;
 
   return (
     <div style={{ minHeight: '100vh', background: '#f1f5f9', paddingTop: '80px' }}>
       <div style={{ maxWidth: '1120px', margin: '0 auto', padding: '0 20px 60px' }}>
 
         {/* Hero welcome bar */}
-        <div style={{ background: 'linear-gradient(135deg, #e11d48 0%, #9333ea 100%)', borderRadius: '20px', padding: '24px 32px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+        <div style={{ background: gm ? 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)' : 'linear-gradient(135deg, #e11d48 0%, #9333ea 100%)', borderRadius: '20px', padding: '24px 32px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
           <div>
-            <p style={{ margin: '0 0 4px', fontSize: '13px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>Dashboard</p>
-            <h1 style={{ margin: '0 0 6px', fontSize: '24px', fontWeight: 800, color: 'white' }}>Welcome back, {firstName}!</h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+              <p style={{ margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{gm ? 'পারিবারিক ড্যাশবোর্ড' : 'Dashboard'}</p>
+              {gm && <span style={{ fontSize: '11px', fontWeight: 700, color: '#7c3aed', background: 'rgba(255,255,255,0.9)', padding: '2px 8px', borderRadius: '20px' }}>👨‍👩‍👧 পরিবার পরিচালিত</span>}
+            </div>
+            <h1 style={{ margin: '0 0 6px', fontSize: '24px', fontWeight: 800, color: 'white' }}>
+              {gm ? `স্বাগতম, ${firstName}!` : `Welcome back, ${firstName}!`}
+            </h1>
             <p style={{ margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.75)' }}>
-              {interestsReceived > 0 ? `You have ${interestsReceived} new interest${interestsReceived > 1 ? 's' : ''} waiting` : 'Your perfect match could be one click away'}
+              {gm
+                ? (interestsReceived > 0 ? `${interestsReceived}টি নতুন আগ্রহ অপেক্ষা করছে` : 'আপনার সন্তানের জন্য উপযুক্ত পাত্র/পাত্রী খুঁজুন')
+                : (interestsReceived > 0 ? `You have ${interestsReceived} new interest${interestsReceived > 1 ? 's' : ''} waiting` : 'Your perfect match could be one click away')
+              }
             </p>
           </div>
           <div style={{ display: 'flex', gap: '10px', flexShrink: 0 }}>
-            <Link href={'/profiles?userGender=' + (user.gender || '')} style={{ padding: '10px 20px', background: 'white', color: '#e11d48', borderRadius: '10px', fontWeight: 700, fontSize: '13px', textDecoration: 'none' }}>
-              Browse Profiles
+            <Link href={'/profiles?userGender=' + (user.gender || '')} style={{ padding: '10px 20px', background: 'white', color: gm ? '#7c3aed' : '#e11d48', borderRadius: '10px', fontWeight: 700, fontSize: '13px', textDecoration: 'none' }}>
+              {gm ? 'প্রোফাইল দেখুন' : 'Browse Profiles'}
             </Link>
           </div>
         </div>
@@ -109,10 +118,10 @@ export default function Dashboard() {
             {/* Stats row - 4 compact cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '12px', marginBottom: '20px' }}>
               {[
-                { label: 'Interests Sent', value: interestsSent, color: '#e11d48', bg: '#fff1f2', border: '#fecdd3' },
-                { label: 'Received', value: interestsReceived, color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
-                { label: 'Profile Views', value: viewCount, color: '#0891b2', bg: '#ecfeff', border: '#a5f3fc' },
-                { label: 'Plan', value: planLabel, color: '#d97706', bg: '#fffbeb', border: '#fde68a' },
+                { label: gm ? 'আগ্রহ পাঠানো' : 'Interests Sent', value: interestsSent, color: '#e11d48', bg: '#fff1f2', border: '#fecdd3' },
+                { label: gm ? 'আগ্রহ পাওয়া' : 'Received', value: interestsReceived, color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
+                { label: gm ? 'প্রোফাইল দেখেছে' : 'Profile Views', value: viewCount, color: '#0891b2', bg: '#ecfeff', border: '#a5f3fc' },
+                { label: gm ? 'প্ল্যান' : 'Plan', value: planLabel, color: '#d97706', bg: '#fffbeb', border: '#fde68a' },
               ].map((s, i) => (
                 <div key={i} style={{ background: 'white', borderRadius: '14px', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid ' + s.border }}>
                   <div style={{ fontSize: '26px', fontWeight: 900, color: s.color, lineHeight: 1, marginBottom: '6px' }}>{s.value}</div>
@@ -199,7 +208,8 @@ export default function Dashboard() {
               </div>
             )}
 
-                        {/* Game Card */}
+                        {/* Game Card — hidden for Guardian Mode */}
+            {!gm && (
             <div style={{ background: 'linear-gradient(135deg,#0d0521,#4A1A6B)', borderRadius: '16px', padding: '20px', boxShadow: '0 4px 16px rgba(13,5,33,0.3)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                 <span style={{ fontSize: '24px' }}>✦</span>
@@ -213,13 +223,28 @@ export default function Dashboard() {
               </p>
               <p style={{ margin: 0, fontSize: '11px', color: 'rgba(250,217,90,0.5)', fontStyle: 'italic' }}>Open a profile with mutual interest to play →</p>
             </div>
+            )}
+            {gm && (
+            <div style={{ background: 'linear-gradient(135deg,#f5f3ff,#ede9fe)', borderRadius: '16px', padding: '20px', border: '1.5px solid #c4b5fd' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                <span style={{ fontSize: '22px' }}>🤲</span>
+                <p style={{ margin: 0, fontSize: '14px', fontWeight: 800, color: '#7c3aed' }}>পারিবারিক পরামর্শ</p>
+              </div>
+              <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#6b7280', lineHeight: 1.6 }}>
+                পাত্র/পাত্রীর সাথে যোগাযোগের আগে তাদের প্রোফাইল ভালোভাবে দেখুন এবং পরিবারের সাথে আলোচনা করুন।
+              </p>
+              <Link href="/interests" style={{ display: 'inline-block', padding: '8px 18px', background: '#7c3aed', color: 'white', borderRadius: '10px', fontSize: '13px', fontWeight: 700, textDecoration: 'none' }}>
+                আগ্রহ দেখুন →
+              </Link>
+            </div>
+            )}
 
             {/* Suggested Matches */}
             <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <div>
-                  <h2 style={{ margin: '0 0 2px', fontSize: '15px', fontWeight: 800, color: '#111827' }}>Suggested for You</h2>
-                  <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>Profiles that may interest you</p>
+                  <h2 style={{ margin: '0 0 2px', fontSize: '15px', fontWeight: 800, color: '#111827' }}>{gm ? 'উপযুক্ত প্রোফাইল' : 'Suggested for You'}</h2>
+                  <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{gm ? 'আপনার সন্তানের জন্য উপযুক্ত পাত্র/পাত্রী' : 'Profiles that may interest you'}</p>
                 </div>
                 <Link href={'/profiles?userGender=' + (user.gender || '')} style={{ fontSize: '12px', color: '#e11d48', fontWeight: 700, textDecoration: 'none' }}>See all</Link>
               </div>
@@ -254,7 +279,7 @@ export default function Dashboard() {
             <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                 <div>
-                  <h2 style={{ margin: '0 0 2px', fontSize: '15px', fontWeight: 800, color: '#111827' }}>Who Viewed My Profile</h2>
+                  <h2 style={{ margin: '0 0 2px', fontSize: '15px', fontWeight: 800, color: '#111827' }}>{gm ? 'কে প্রোফাইল দেখেছে' : 'Who Viewed My Profile'}</h2>
                   <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{viewCount} total views</p>
                 </div>
                 {isPremium && (
@@ -319,15 +344,20 @@ export default function Dashboard() {
             {/* Quick Actions - list style */}
             <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9' }}>
               <div style={{ padding: '16px 20px', borderBottom: '1px solid #f8fafc' }}>
-                <h2 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#111827' }}>Quick Actions</h2>
+                <h2 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#111827' }}>{gm ? 'দ্রুত কার্যক্রম' : 'Quick Actions'}</h2>
               </div>
-              {[
+              {(gm ? [
+                { href: '/profiles?userGender=' + (user.gender || ''), color: '#7c3aed', bg: '#f5f3ff', title: 'প্রোফাইল দেখুন', sub: 'উপযুক্ত পাত্র/পাত্রী খুঁজুন' },
+                { href: '/interests', color: '#e11d48', bg: '#fff1f2', title: 'আগ্রহ', sub: interestsReceived > 0 ? interestsReceived + 'টি নতুন আগ্রহ অপেক্ষা করছে' : 'পাঠানো ও পাওয়া আগ্রহ দেখুন' },
+                { href: '/edit-profile', color: '#0891b2', bg: '#ecfeff', title: 'প্রোফাইল সম্পাদনা', sub: 'তথ্য আপডেট করুন' },
+                { href: '/pricing', color: '#d97706', bg: '#fffbeb', title: isPremium ? 'প্ল্যান ব্যবস্থাপনা' : 'প্রিমিয়ামে আপগ্রেড', sub: isPremium ? 'বর্তমান: ' + planLabel : 'সব সুবিধা আনলক করুন' },
+              ] : [
                 { href: '/profiles?userGender=' + (user.gender || ''), color: '#e11d48', bg: '#fff1f2', title: 'Browse Profiles', sub: 'Find your perfect match' },
                 { href: '/interests', color: '#7c3aed', bg: '#f5f3ff', title: 'My Interests', sub: interestsReceived > 0 ? interestsReceived + ' new interest waiting' : 'View sent and received' },
                 { href: '/verify', color: '#d97706', bg: '#fffbeb', title: 'Verify NID', sub: user.is_verified ? 'Already verified' : 'Get your verified badge' },
                 { href: '/pricing', color: '#0891b2', bg: '#ecfeff', title: isPremium ? 'Manage Plan' : 'Upgrade to Premium', sub: isPremium ? 'Current: ' + planLabel : 'Unlock all features' },
                 { href: 'mailto:support@biyekori.com?subject=Spotlight Request - ' + (user.full_name || '') + '&body=Please activate Spotlight for my profile.%0A%0AName: ' + (user.full_name || '') + '%0AProfile ID: ' + (user.id || '') + '%0APhone: ' + (user.phone || '') + '%0A%0AI have sent ৳99 via bKash to: 017XXXXXXXX', color: '#f59e0b', bg: '#fffbeb', title: 'Get Spotlight', sub: 'Appear at top for 24hrs — ৳99' },
-              ].map((a, i) => (
+              ]).map((a, i) => (
                 <Link key={i} href={a.href} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 20px', borderBottom: i < 3 ? '1px solid #f8fafc' : 'none', background: 'white', transition: 'background 0.15s' }}>
                   <div style={{ width: '38px', height: '38px', background: a.bg, borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <div style={{ width: '16px', height: '16px', borderRadius: '4px', background: a.color, opacity: 0.8 }} />
