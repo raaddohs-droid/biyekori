@@ -69,16 +69,17 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
 
   const setupPeerConnection = useCallback(async () => {
     try {
-      // Hardcoded TURN credentials from Metered
+      // Hardcoded TURN credentials from Metered (verified working via trickle-ice test)
       const iceServers: any[] = [
-        { urls: 'stun:stun.relay.metered.ca:80' },
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
         { urls: 'turn:global.relay.metered.ca:80', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
         { urls: 'turn:global.relay.metered.ca:80?transport=tcp', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
-        { urls: 'turn:global.relay.metered.ca:443', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
+        { urls: 'turn:global.relay.metered.ca:443?transport=udp', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
+        { urls: 'turn:global.relay.metered.ca:443?transport=tcp', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
         { urls: 'turns:global.relay.metered.ca:443?transport=tcp', username: '79afb5cbdd5a93798dbf8629', credential: 'IxSBu1pxZ034OMZj' },
-        { urls: 'stun:stun.l.google.com:19302' },
       ]
-      console.log('Using hardcoded TURN servers:', iceServers.length)
+      console.log('ICE servers ready:', iceServers.length)
 
       const pc = new RTCPeerConnection({ iceServers })
       pcRef.current = pc
