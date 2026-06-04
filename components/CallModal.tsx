@@ -138,9 +138,12 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
         const data = JSON.parse(signal.data || '{}')
         if (signal.type === 'call-answer' && signal.from_id === targetProfile.id) {
           clearInterval(pollRef.current!)
-          await pc.setRemoteDescription(new RTCSessionDescription(data.sdp))
-          setCallState('active')
-          startTimer()
+          // Guard: only set remote description if not already set
+          if (pc.signalingState === 'have-local-offer') {
+            await pc.setRemoteDescription(new RTCSessionDescription(data.sdp))
+            setCallState('active')
+            startTimer()
+          }
         }
         if (signal.type === 'call-reject' && signal.from_id === targetProfile.id) {
           clearInterval(pollRef.current!)
@@ -166,10 +169,8 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
     await pc.setRemoteDescription(new RTCSessionDescription(offerData.sdp))
     const answer = await pc.createAnswer()
     await pc.setLocalDescription(answer)
-    // Send answer immediately — critical for caller to receive it
+    // Send answer signal
     await sendSignal('call-answer', { sdp: answer })
-    // Also send a second time after short delay as backup
-    setTimeout(() => sendSignal('call-answer', { sdp: answer }), 1500)
     setCallState('active')
     startTimer()
 
