@@ -247,7 +247,8 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
   const rawName = profile.full_name || profile.name || "Anonymous";
-  const isConnected = !currentUserPackage || currentUserPackage === "bondhon" || currentUserPackage === "milon" || currentUserVerified;
+  const pkg = currentUserPackage || (typeof window !== 'undefined' ? (() => { try { const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}'); return u.package || ''; } catch(e) { return ''; } })() : '');
+  const isConnected = pkg === "bondhon" || pkg === "milon" || currentUserVerified;
   const name = maskName(rawName, isConnected);
   const location = profile.location || profile.city || profile.district || "Bangladesh";
   const maritalStatus = (profile.marital_status || profile.maritalStatus || "").trim();
