@@ -172,6 +172,25 @@ function ScoreModal({ profile, onClose, isLoggedIn }: { profile: any, onClose: (
               <div className="text-xs text-purple-200">{getConfLabel(dataConfidence)}</div>
               <div className="text-xs text-purple-300 mt-1">Tap to see breakdown</div>
             </div>
+            {/* Block / Report */}
+            {isLoggedIn && (
+              <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                <button
+                  onClick={isBlocked ? handleUnblock : handleBlock}
+                  style={{ flex: 1, padding: '10px', background: isBlocked ? '#f3f4f6' : '#fff1f2', color: isBlocked ? '#6b7280' : '#e11d48', border: `1.5px solid ${isBlocked ? '#e5e7eb' : '#fecdd3'}`, borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                  {isBlocked ? 'Unblock' : 'Block'}
+                </button>
+                <button
+                  onClick={handleReportClick}
+                  style={{ flex: 1, padding: '10px', background: '#fffbeb', color: '#d97706', border: '1.5px solid #fde68a', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  Report
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -259,6 +278,14 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const profileCode = getProfileCode(profile.id, profile.created_at || '')
 
   const [interestSent, setInterestSent] = useState<boolean | null>(null)
+  const [isBlocked, setIsBlocked] = useState(false)
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportDetails, setReportDetails] = useState('')
+  const [reportProof, setReportProof] = useState('')
+  const [reportSubmitting, setReportSubmitting] = useState(false)
+  const [reportDone, setReportDone] = useState(false)
+  const [hasInteraction, setHasInteraction] = useState(false)
   const [actionMsg, setActionMsg] = useState<{text: string, type: 'info'|'success'|'upgrade'} | null>(null)
 
   useEffect(() => {
@@ -383,6 +410,61 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
     } catch {
       showMsg('Could not check interest status. Please try again.', 'info');
     }
+  }
+
+  const handleBlock = async () => {
+    if (!isLoggedIn) { window.location.href = '/login'; return }
+    const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
+    const isPremium = u.package && u.package !== 'prottasha'
+    if (!isPremium) { alert('Blocking is a Premium feature. Upgrade to use it.'); window.location.href = '/pricing'; return }
+    if (!confirm(`Block ${profile.full_name}? They will not be able to see your profile or contact you.`)) return
+    const res = await fetch('/api/block', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ blockerId: u.id, blockedId: profile.id })
+    })
+    const data = await res.json()
+    if (data.success) { setIsBlocked(true); showMsg('User blocked successfully.', 'success') }
+    else showMsg('Could not block. Please try again.', 'info')
+  }
+
+  const handleUnblock = async () => {
+    const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
+    await fetch('/api/block', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ blockerId: u.id, blockedId: profile.id })
+    })
+    setIsBlocked(false)
+    showMsg('User unblocked.', 'info')
+  }
+
+  const handleSubmitReport = async () => {
+    if (!reportReason) { alert('Please select a reason.'); return }
+    setReportSubmitting(true)
+    const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
+    const res = await fetch('/api/report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reporterId: u.id, reportedId: profile.id, reason: reportReason, details: reportDetails, proofUrl: reportProof })
+    })
+    const data = await res.json()
+    setReportSubmitting(false)
+    if (data.success) { setReportDone(true) }
+    else { alert('Could not submit report. Please try again.') }
+  }
+
+  const handleReportClick = () => {
+    if (!isLoggedIn) { window.location.href = '/login'; return }
+    const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
+    const isPremium = u.package && u.package !== 'prottasha'
+    if (!isPremium) { alert('Reporting is a Premium feature. Upgrade to use it.'); window.location.href = '/pricing'; return }
+    if (!hasInteraction) { alert('You can only report someone who has sent or received an interest with you.'); return }
+    setShowReportModal(true)
+    setReportDone(false)
+    setReportReason('')
+    setReportDetails('')
+    setReportProof('')
   }
 
   const handleDownloadBiodata = () => {
@@ -968,6 +1050,81 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
         </div>
       )}
     </div>
+      {/* Report Modal */}
+      {showReportModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: 'white', borderRadius: '20px', padding: '28px 24px', maxWidth: '420px', width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', maxHeight: '90vh', overflowY: 'auto' }}>
+            {reportDone ? (
+              <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
+                <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 800, color: '#111827' }}>Report Submitted</h3>
+                <p style={{ margin: '0 0 20px', fontSize: '13px', color: '#6b7280', lineHeight: 1.6 }}>Thank you. Our team will review this report within 24 hours.</p>
+                <button onClick={() => setShowReportModal(false)} style={{ padding: '12px 28px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>Close</button>
+              </div>
+            ) : (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#111827' }}>Report Profile</h3>
+                  <button onClick={() => setShowReportModal(false)} style={{ background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#9ca3af' }}>×</button>
+                </div>
+
+                <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#6b7280' }}>Select a reason for reporting <strong>{profile.full_name}</strong>:</p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
+                  {[
+                    { value: 'fake_profile', label: 'Fake profile / Impersonation', icon: '🎭' },
+                    { value: 'inappropriate_photos', label: 'Inappropriate or offensive photos', icon: '📷' },
+                    { value: 'harassment', label: 'Harassment or abusive messages', icon: '🚫' },
+                    { value: 'married_claiming_single', label: 'Married but claiming to be single', icon: '💍' },
+                    { value: 'scam', label: 'Scam or asking for money', icon: '💰' },
+                    { value: 'underage', label: 'Underage profile (under 18)', icon: '⚠️' },
+                    { value: 'other', label: 'Other reason', icon: '📝' },
+                  ].map(r => (
+                    <button key={r.value} onClick={() => setReportReason(r.value)} style={{
+                      padding: '12px 14px', borderRadius: '10px', border: `2px solid ${reportReason === r.value ? '#e11d48' : '#e5e7eb'}`,
+                      background: reportReason === r.value ? '#fff1f2' : 'white', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: '10px', textAlign: 'left'
+                    }}>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>{r.icon}</span>
+                      <span style={{ fontSize: '13px', fontWeight: reportReason === r.value ? 700 : 500, color: reportReason === r.value ? '#e11d48' : '#374151' }}>{r.label}</span>
+                      {reportReason === r.value && <span style={{ marginLeft: 'auto', color: '#e11d48', fontWeight: 800 }}>✓</span>}
+                    </button>
+                  ))}
+                </div>
+
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>Additional details (optional)</label>
+                  <textarea
+                    value={reportDetails}
+                    onChange={e => setReportDetails(e.target.value)}
+                    placeholder="Describe what happened..."
+                    rows={3}
+                    style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>Proof / Screenshot URL (optional)</label>
+                  <input
+                    value={reportProof}
+                    onChange={e => setReportProof(e.target.value)}
+                    placeholder="Paste an image link or leave blank"
+                    style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                  <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#9ca3af' }}>Upload your screenshot to imgur.com or any image host and paste the link here.</p>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button onClick={() => setShowReportModal(false)} style={{ flex: 1, padding: '12px', background: '#f3f4f6', color: '#6b7280', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
+                  <button onClick={handleSubmitReport} disabled={!reportReason || reportSubmitting} style={{ flex: 1, padding: '12px', background: !reportReason ? '#f3f4f6' : 'linear-gradient(135deg,#e11d48,#db2777)', color: !reportReason ? '#9ca3af' : 'white', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: !reportReason ? 'not-allowed' : 'pointer' }}>
+                    {reportSubmitting ? 'Submitting...' : 'Submit Report'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </>
   )
 }
