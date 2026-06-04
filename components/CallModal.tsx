@@ -66,11 +66,21 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
   }, [callLimit, endCall])
 
   const setupPeerConnection = useCallback(async () => {
+    // Fetch TURN credentials from Metered
+    let iceServers = [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+    ]
+    try {
+      const turnRes = await fetch('/api/turn')
+      const turnData = await turnRes.json()
+      if (turnData.iceServers && turnData.iceServers.length > 0) {
+        iceServers = turnData.iceServers
+      }
+    } catch(e) {}
+
     const pc = new RTCPeerConnection({
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' }
-      ]
+      iceServers
     })
     pcRef.current = pc
 
