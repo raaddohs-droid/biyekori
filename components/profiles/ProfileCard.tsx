@@ -233,14 +233,24 @@ const GIFTS: [string, number][] = [
   ["Rose", 50], ["Bouquet", 99], ["Chocolate", 49], ["Ring Hint", 199], ["Dua Card", 29]
 ];
 
+function maskName(n, ok) {
+  if (!n) return 'Anonymous';
+  const p = n.trim().split(' ');
+  if (ok) return n;
+  const m = p[0][0] + '*'.repeat(Math.max(2, p[0].length - 1));
+  return p.length > 1 ? m + ' ' + p.slice(1).map(x => x[0] + '****').join(' ') : m;
+}
+
 export default function ProfileCard({ profile, currentUserPackage = "prottasha", currentUserVerified = false, viewerProfile = null, ...rest }: { profile: any, currentUserPackage?: string, currentUserVerified?: boolean, viewerProfile?: any, [key: string]: any }) {
   const [showGiftMenu, setShowGiftMenu] = useState(false);
   const [interestSent, setInterestSent] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
-  const name = profile.full_name || profile.name || "Anonymous";
+  const rawName = profile.full_name || profile.name || "Anonymous";
+  const isConnected = currentUserPackage === "bondhon" || currentUserPackage === "milon" || currentUserVerified;
+  const name = maskName(rawName, isConnected);
   const location = profile.location || profile.city || profile.district || "Bangladesh";
-  const maritalStatus = profile.marital_status || profile.maritalStatus || "Not specified";
+  const maritalStatus = (profile.marital_status || profile.maritalStatus || "").trim();
   const photoUrl = profile.photo_url || profile.photoUrl;
   const additionalPhotos = profile.additional_photos || [];
   const allPhotos: string[] = photoUrl ? [photoUrl, ...additionalPhotos] : additionalPhotos;
@@ -387,7 +397,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
             <div className="flex items-center gap-2 mt-1 flex-wrap">
               <span className="text-sm text-gray-600">{profile.age} yrs</span>
               {profile.height && <span className="text-sm text-gray-600">· {profile.height}</span>}
-              <span className="px-2 py-0.5 bg-rose-100 text-rose-700 rounded-full text-xs font-bold">{maritalStatus}</span>
+              {maritalStatus && maritalStatus !== "Not specified" && <span className="px-2 py-0.5 bg-rose-100 text-rose-700 rounded-full text-xs font-bold">{maritalStatus}</span>}
             </div>
           </div>
         </div>
