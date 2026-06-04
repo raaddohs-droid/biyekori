@@ -333,8 +333,8 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           if (data.sent && data.sent.some((s: any) => String(s.receiver_id) === String(profile.id))) {
             setInterestSent(true);
           }
-          const sent = (data.sent||[]).some((i)=>String(i.receiver_id)===String(profile.id))
-          const received = (data.received||[]).some((i)=>String(i.sender_id)===String(profile.id))
+          const sent = (data.sent||[]).some((i:any)=>String(i.receiver_id)===String(profile.id))
+          const received = (data.received||[]).some((i:any)=>String(i.sender_id)===String(profile.id))
           setHasInteraction(sent||received)
         })
         .catch(()=>{});
