@@ -6,8 +6,8 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const AGORA_APP_ID = 'c4513ff1afb74017b915fb18cd7312d8'
 
-const FREE_CALL_LIMIT = 5 * 60
-const PREMIUM_CALL_LIMIT = 15 * 60
+const FREE_CALL_LIMIT = 7 * 60
+const PREMIUM_CALL_LIMIT = 7 * 60
 
 interface CallModalProps {
   currentUser: any
