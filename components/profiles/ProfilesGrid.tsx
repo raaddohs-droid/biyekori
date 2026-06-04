@@ -199,7 +199,10 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
   const [interestSent, setInterestSent] = useState(false)
   const [relationshipStatus, setRelationshipStatus] = useState<'none'|'sent'|'received'|'accepted'>('none')
   const rawName = profile.full_name || profile.name || 'Anonymous'
-  const name = maskName(rawName, relationshipStatus)
+  // Read package directly from localStorage to avoid flash
+  const userPkg = typeof window !== 'undefined' ? (() => { try { return JSON.parse(localStorage.getItem('biyekori_user') || '{}').package || '' } catch(e) { return '' } })() : ''
+  const isPremiumUser = userPkg === 'bondhon' || userPkg === 'milon'
+  const name = maskName(rawName, isPremiumUser ? 'accepted' : relationshipStatus)
 
   useEffect(() => {
     try {
