@@ -925,5 +925,6 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
         </div>
       )}
     </div>
+    </>
   )
 }
