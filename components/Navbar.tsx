@@ -1,4 +1,5 @@
 ﻿'use client'
+import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
@@ -38,7 +39,6 @@ export default function Navbar() {
           // Global incoming call detection via Supabase Realtime
           const SURL = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
           const SKEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-          const { createClient } = await import('@supabase/supabase-js')
           const supabase = createClient(SURL, SKEY)
           const channel = supabase
             .channel('incoming-calls-' + u.id)
