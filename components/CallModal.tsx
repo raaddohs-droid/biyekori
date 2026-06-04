@@ -29,6 +29,8 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
   const channelRef = useRef<any>(null)
   const callStartRef = useRef<number>(0)
   const answerSetRef = useRef(false)
+  const iceCandidateBuffer = useRef<any[]>([])
+  const remoteDescSet = useRef(false)
 
   const isPremium = currentUser?.package && currentUser.package !== 'prottasha'
   const callLimit = isPremium ? PREMIUM_CALL_LIMIT : FREE_CALL_LIMIT
@@ -119,7 +121,7 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
 
   // Subscribe to realtime signals via Supabase
   const subscribeToSignals = useCallback((pc: RTCPeerConnection) => {
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } })
     const channel = supabase
       .channel('call-signals-' + currentUser.id)
       .on('postgres_changes', {
@@ -138,13 +140,22 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
           answerSetRef.current = true
           try {
             await pc.setRemoteDescription(new RTCSessionDescription(data.sdp))
+            remoteDescSet.current = true
+            for (const candidate of iceCandidateBuffer.current) {
+              try { await pc.addIceCandidate(new RTCIceCandidate(candidate)) } catch(e) {}
+            }
+            iceCandidateBuffer.current = []
             setCallState('active')
             startTimer()
           } catch(e) { console.error('setRemoteDescription error:', e) }
         }
 
         if (signal.type === 'ice-candidate') {
-          try { await pc.addIceCandidate(new RTCIceCandidate(data.candidate)) } catch(e) {}
+          if (remoteDescSet.current) {
+            try { await pc.addIceCandidate(new RTCIceCandidate(data.candidate)) } catch(e) {}
+          } else {
+            iceCandidateBuffer.current.push(data.candidate)
+          }
         }
 
         if (signal.type === 'call-reject') {
@@ -187,6 +198,7 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
 
     const offerData = JSON.parse(incomingSignal?.data || '{}')
     await pc.setRemoteDescription(new RTCSessionDescription(offerData.sdp))
+    remoteDescSet.current = true
     const answer = await pc.createAnswer()
     await pc.setLocalDescription(answer)
     await sendSignal('call-answer', { sdp: answer })
