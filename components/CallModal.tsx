@@ -98,7 +98,7 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
       await client.publish([localAudioTrack])
 
       // Handle remote users
-      client.on('user-published', async (user: any, mediaType: string) => {
+      client.on('user-published', async (user: any, mediaType: "audio" | "video" | "datachannel") => {
         await client.subscribe(user, mediaType)
         if (mediaType === 'audio') {
           user.audioTrack?.play()
