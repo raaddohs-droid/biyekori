@@ -1,4 +1,5 @@
 import UpgradeNudge from '@/components/UpgradeNudge'
+import GuestGate from '@/components/GuestGate'
 import { getProfiles } from '@/lib/supabase-server'
 import ProfilesGrid from '@/components/profiles/ProfilesGrid'
 import Link from 'next/link'
@@ -156,6 +157,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #fff5f7 0%, #fdf2f8 50%, #f5f3ff 100%)', paddingTop: '120px' }}>
+      <GuestGate page={currentPage} />
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
 
         <div style={{ marginBottom: '24px' }}>
@@ -257,7 +259,9 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
 
         {paginatedProfiles.length > 0 ? (
           <>
-            <ProfilesGrid profiles={paginatedProfiles} view={viewMode} />
+            <div className="profiles-blurable">
+              <ProfilesGrid profiles={paginatedProfiles} view={viewMode} />
+            </div>
 
             {totalPages > 1 && (
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', flexWrap: 'wrap', paddingBottom: '48px' }}>
