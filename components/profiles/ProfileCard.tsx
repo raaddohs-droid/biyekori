@@ -233,7 +233,7 @@ const GIFTS: [string, number][] = [
   ["Rose", 50], ["Bouquet", 99], ["Chocolate", 49], ["Ring Hint", 199], ["Dua Card", 29]
 ];
 
-function maskName(n, ok) {
+function maskName(n: string, ok: boolean): string {
   if (!n) return 'Anonymous';
   const p = n.trim().split(' ');
   if (ok) return n;
