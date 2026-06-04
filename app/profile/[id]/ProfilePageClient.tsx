@@ -1110,14 +1110,35 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                 </div>
 
                 <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>Proof / Screenshot URL (optional)</label>
-                  <input
-                    value={reportProof}
-                    onChange={e => setReportProof(e.target.value)}
-                    placeholder="Paste an image link or leave blank"
-                    style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
-                  />
-                  <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#9ca3af' }}>Upload your screenshot to imgur.com or any image host and paste the link here.</p>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>Proof / Screenshot (optional)</label>
+                  {reportProof ? (
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                      <img src={reportProof} alt="Proof" style={{ maxWidth: '100%', maxHeight: '160px', borderRadius: '10px', border: '1.5px solid #e5e7eb' }} />
+                      <button onClick={() => setReportProof('')} style={{ position: 'absolute', top: '4px', right: '4px', width: '22px', height: '22px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', cursor: 'pointer', color: 'white', fontSize: '14px', lineHeight: 1 }}>×</button>
+                    </div>
+                  ) : (
+                    <label style={{ cursor: 'pointer', display: 'block' }}>
+                      <div style={{ border: '2px dashed #e5e7eb', borderRadius: '10px', padding: '20px', textAlign: 'center', background: '#f8fafc' }}>
+                        <div style={{ fontSize: '28px', marginBottom: '6px' }}>📸</div>
+                        <p style={{ margin: '0 0 4px', fontSize: '13px', fontWeight: 700, color: '#374151' }}>Upload screenshot</p>
+                        <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>JPG, PNG up to 5MB</p>
+                      </div>
+                      <input type="file" accept="image/*" style={{ display: 'none' }} onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
+                        const file = e.target.files?.[0]
+                        if (!file) return
+                        const SURL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+                        const SKEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+                        const fileName = 'reports/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.jpg'
+                        const res = await fetch(SURL + '/storage/v1/object/profile-photos/' + fileName, {
+                          method: 'POST',
+                          headers: { 'apikey': SKEY, 'Authorization': 'Bearer ' + SKEY, 'Content-Type': file.type, 'x-upsert': 'true' },
+                          body: file
+                        })
+                        if (res.ok) setReportProof(SURL + '/storage/v1/object/public/profile-photos/' + fileName)
+                        else alert('Upload failed. Please try again.')
+                      }} />
+                    </label>
+                  )}
                 </div>
 
                 <div style={{ display: 'flex', gap: '10px' }}>
