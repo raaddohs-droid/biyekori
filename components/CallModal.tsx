@@ -95,13 +95,12 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
       return null
     }
 
-    // Remote audio
-    const audio = new Audio()
-    audio.autoplay = true
-    remoteAudioRef.current = audio
-
+    // Remote audio — use DOM element via ref for autoplay policy compliance
     pc.ontrack = (e) => {
-      audio.srcObject = e.streams[0]
+      if (remoteAudioRef.current) {
+        remoteAudioRef.current.srcObject = e.streams[0]
+        remoteAudioRef.current.play().catch(() => {})
+      }
     }
 
     pc.onicecandidate = (e) => {
@@ -235,6 +234,8 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
   }
 
   return (
+    <div>
+      <audio ref={remoteAudioRef} autoPlay playsInline style={{ display: 'none' }} />
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9999,
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px'
@@ -351,6 +352,7 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
           </div>
         )}
       </div>
+    </div>
     </div>
   )
 }
