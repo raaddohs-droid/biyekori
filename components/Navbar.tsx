@@ -113,6 +113,7 @@ export default function Navbar() {
   const plan = planColors[user?.package] || planColors.prottasha
 
   return (
+    <>
     <nav style={{
       background: navBg,
       backdropFilter: isHome ? 'blur(20px)' : 'none',
@@ -360,7 +361,6 @@ export default function Navbar() {
         </div>
       </div>
     </nav>
-      {/* Global incoming call modal */}
       {showIncomingCall && incomingCall && user && (
         <CallModal
           currentUser={user}
@@ -370,5 +370,6 @@ export default function Navbar() {
           incomingSignal={incomingCall.signal}
         />
       )}
+    </>
   )
 }
