@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import ProfileCard from './ProfileCard'
 import Link from 'next/link'
 
@@ -360,6 +361,22 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
         </div>
       </div>
     </div>
+
+      {showUpgradeModal && typeof document !== 'undefined' && createPortal(
+        <div onClick={() => setShowUpgradeModal(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'white', borderRadius: '24px', padding: '36px 28px', maxWidth: '380px', width: '100%', textAlign: 'center', boxShadow: '0 24px 60px rgba(0,0,0,0.35)' }}>
+            <div style={{ fontSize: '52px', marginBottom: '14px' }}>🔒</div>
+            <h2 style={{ margin: '0 0 10px', fontSize: '22px', fontWeight: 900, color: '#111827' }}>Upgrade to Contact</h2>
+            <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280', lineHeight: 1.7 }}>View contact details and connect directly with <strong>{profile.full_name || 'this member'}</strong>.</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+              <a href="/pricing" style={{ display: 'block', padding: '15px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', borderRadius: '14px', fontWeight: 800, fontSize: '15px', textDecoration: 'none' }}>⭐ Upgrade to Silver — ৳499/mo</a>
+              <a href="/pricing" style={{ display: 'block', padding: '15px', background: 'linear-gradient(135deg,#7c3aed,#e11d48)', color: 'white', borderRadius: '14px', fontWeight: 800, fontSize: '15px', textDecoration: 'none' }}>👑 Upgrade to Gold — ৳999/mo</a>
+            </div>
+            <button onClick={() => setShowUpgradeModal(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', fontSize: '14px', cursor: 'pointer', padding: '8px 16px' }}>Maybe later</button>
+          </div>
+        </div>,
+        document.body
+      )}
   )
 }
 
