@@ -6,6 +6,7 @@ export default function InterestsPage() {
   const [tab, setTab] = useState("sent")
   const [received, setReceived] = useState<any[]>([])
   const [sent, setSent] = useState<any[]>([])
+  const [filtered, setFiltered] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [userId, setUserId] = useState("")
   const [userPackage, setUserPackage] = useState("")
@@ -41,6 +42,7 @@ export default function InterestsPage() {
       const data = await res.json()
       setReceived(data.received || [])
       setSent(data.sent || [])
+      setFiltered(data.filtered || [])
     } catch (e) { console.error(e) }
     setLoading(false)
   }
@@ -98,7 +100,7 @@ export default function InterestsPage() {
     setSendingMsg(false)
   }
 
-  const list = tab === "received" ? received : sent
+  const list = tab === "received" ? received : tab === "filtered" ? filtered : sent
 
   const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
     pending:  { label: "Waiting for Response",  bg: "#FEF3C7", color: "#92400E" },
@@ -118,13 +120,13 @@ export default function InterestsPage() {
 
         {/* Tabs */}
         <div style={{ display: "flex", gap: "8px", marginBottom: "24px", background: "white", padding: "6px", borderRadius: "16px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
-          {["sent", "received"].map(t => (
+          {["sent", "received", "filtered"].map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
-              flex: 1, padding: "12px", borderRadius: "12px", border: "none", cursor: "pointer", fontWeight: 700, fontSize: "14px", fontFamily: "Georgia, serif", transition: "all 0.2s",
-              background: tab === t ? "linear-gradient(135deg, #e11d48, #db2777)" : "transparent",
+              flex: 1, padding: "12px", borderRadius: "12px", border: "none", cursor: "pointer", fontWeight: 700, fontSize: "13px", fontFamily: "Georgia, serif", transition: "all 0.2s",
+              background: tab === t ? (t === "filtered" ? "linear-gradient(135deg, #f59e0b, #d97706)" : "linear-gradient(135deg, #e11d48, #db2777)") : "transparent",
               color: tab === t ? "white" : "#6b7280"
             }}>
-              {t === "sent" ? `Sent (${sent.length})` : `Received (${received.length})`}
+              {t === "sent" ? `Sent (${sent.length})` : t === "received" ? `Received (${received.length})` : `Filtered (${filtered.length})`}
             </button>
           ))}
         </div>
@@ -137,9 +139,9 @@ export default function InterestsPage() {
           </div>
         ) : list.length === 0 ? (
           <div style={{ background: "white", borderRadius: "20px", padding: "60px 24px", textAlign: "center", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
-            <div style={{ fontSize: "48px", marginBottom: "16px" }}>{tab === "received" ? "💌" : "📤"}</div>
+            <div style={{ fontSize: "48px", marginBottom: "16px" }}>{tab === "received" ? "💌" : tab === "filtered" ? "🔍" : "📤"}</div>
             <p style={{ color: "#6b7280", fontSize: "16px", margin: "0 0 20px" }}>
-              {tab === "received" ? "No interests received yet." : "You haven't sent any interests yet."}
+              {tab === "received" ? "No interests received yet." : tab === "filtered" ? "No filtered interests. Your contact filter criteria is not excluding anyone yet." : "You haven't sent any interests yet."}
             </p>
             {tab === "sent" && (
               <Link href="/profiles" style={{ display: "inline-block", padding: "12px 28px", background: "linear-gradient(135deg, #e11d48, #db2777)", color: "white", borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
@@ -191,6 +193,16 @@ export default function InterestsPage() {
                         {new Date(interest.created_at || interest.sent_at).toLocaleDateString("en-GB")}
                       </p>
                     </div>
+
+                    {/* Filter reason badge for filtered tab */}
+                    {tab === "filtered" && interest.filterReason && (
+                      <div style={{ padding: "8px 16px", background: "#fffbeb", borderTop: "1px solid #fde68a" }}>
+                        <p style={{ margin: 0, fontSize: "12px", color: "#92400e", display: "flex", alignItems: "center", gap: "6px" }}>
+                          <span>⚠️</span>
+                          <span><strong>Filtered:</strong> {interest.filterReason}. You can still accept this interest.</span>
+                        </p>
+                      </div>
+                    )}
 
                     {/* Status + view */}
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px", flexShrink: 0 }}>
