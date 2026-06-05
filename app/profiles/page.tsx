@@ -48,7 +48,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const nidOnly = params.nidOnly === '1'
   const neverMarriedOnly = params.neverMarried === '1'
   const discoverMode = params.discover === '1'
-  const religionFilter = typeof params.religion === 'string' ? params.religion : ''
+  const religionFilter = typeof params.religion === 'string' ? params.religion : 'Islam'
   const guardianOnly = params.guardianOnly === '1'
   const selfOnly = params.selfOnly === '1'
   const hideViewed = params.hideViewed === '1'
