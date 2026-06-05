@@ -48,6 +48,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const nidOnly = params.nidOnly === '1'
   const neverMarriedOnly = params.neverMarried === '1'
   const discoverMode = params.discover === '1'
+  const sortMode = typeof params.sort === 'string' ? params.sort : 'newest'
 
   if (currentPage > FREE_MAX_PAGES) {
     return (
@@ -121,13 +122,26 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
     })
   }
 
-  // Sort featured profiles to top
+  // Sort profiles
   filtered = [...filtered.sort((a: any, b: any) => {
+    // Featured always on top
     const aFeatured = a.is_featured && a.featured_until && new Date(a.featured_until) > new Date()
     const bFeatured = b.is_featured && b.featured_until && new Date(b.featured_until) > new Date()
     if (aFeatured && !bFeatured) return -1
     if (!aFeatured && bFeatured) return 1
-    return 0
+
+    if (sortMode === 'oldest') {
+      return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime()
+    }
+    if (sortMode === 'active') {
+      return new Date(b.last_active_at || b.updated_at || b.created_at || 0).getTime() -
+             new Date(a.last_active_at || a.updated_at || a.created_at || 0).getTime()
+    }
+    if (sortMode === 'completion') {
+      return (b.profile_completion || 0) - (a.profile_completion || 0)
+    }
+    // Default: newest first
+    return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
   })]
 
   // Count new profiles this week for discover badge
@@ -147,7 +161,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const baseUrl = `/profiles?userGender=${userGender}&excludeId=${excludeId}`
 
   const buildUrl = (page: number) => {
-    let url = `${baseUrl}&page=${page}&view=${viewMode}`
+    let url = `${baseUrl}&page=${page}&view=${viewMode}&sort=${sortMode}`
     if (districtFilter) url += `&district=${encodeURIComponent(districtFilter)}`
     if (minAge !== 18) url += `&minAge=${minAge}`
     if (maxAge !== 70) url += `&maxAge=${maxAge}`
@@ -240,6 +254,16 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
           <button type="submit" style={{ padding: '8px 20px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', borderRadius: '8px', fontSize: '13px', fontWeight: 700, border: 'none', cursor: 'pointer' }}>
             Search
           </button>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sort By</label>
+            <select name="sort" defaultValue={sortMode} style={{ padding: '8px 12px', borderRadius: '8px', border: '1.5px solid #e5e7eb', fontSize: '13px', color: '#1f2937', background: 'white', minWidth: '150px' }}>
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="active">Recently Active</option>
+              <option value="completion">Most Complete</option>
+            </select>
+          </div>
 
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '4px', alignItems: 'center' }}>
             <a href={'?userGender=' + userGender + '&excludeId=' + excludeId + '&view=list'} style={{ padding: '6px 8px', borderRadius: '7px', border: '2px solid', borderColor: viewMode === 'list' ? '#e11d48' : '#e5e7eb', background: viewMode === 'list' ? '#fff1f2' : 'white', display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
