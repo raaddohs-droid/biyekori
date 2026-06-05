@@ -303,12 +303,12 @@ export default function RegisterPage() {
             <h2 className="text-2xl font-black text-gray-900 mb-6">Basic Information</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">Full Name</label>
-                <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" placeholder="Enter your full name" required />
+                <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "Her Full Name" : "His Full Name") : "Full Name"}</label>
+                <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" placeholder={guardianMode ? (iAm === "bride" ? "Enter her full name" : "Enter his full name") : "Enter your full name"} required />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-2">Date of Birth</label>
+                  <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "Her Date of Birth" : "His Date of Birth") : "Date of Birth"}</label>
                   <div className="grid grid-cols-3 gap-2">
                     <select value={dobDay} onChange={(e) => setDobDay(e.target.value)} className="px-2 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 text-sm">
                       <option value="">Day</option>
@@ -336,7 +336,7 @@ export default function RegisterPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-2">District</label>
+                  <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "Her District" : "His District") : "District"}</label>
                   <select value={city} onChange={(e) => setCity(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" required>
                     <option value="">Select District</option>
                     {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
@@ -344,7 +344,7 @@ export default function RegisterPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">Education</label>
+                <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "Her Education" : "His Education") : "Education"}</label>
                 <select value={education} onChange={(e) => setEducation(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" required>
                   <option value="">Select Education</option>
                   <option value="SSC">SSC</option>
@@ -358,7 +358,7 @@ export default function RegisterPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">Profession</label>
+                <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "Her Profession" : "His Profession") : "Profession"}</label>
                 <select value={profession} onChange={(e) => setProfession(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" required>
                   <option value="">Select Profession</option>
                   <option value="Student">Student</option>
@@ -377,8 +377,8 @@ export default function RegisterPage() {
               </div>
             </div>
             <div className="mt-4">
-              <label className="block text-sm font-bold text-gray-900 mb-2">About Me <span className="text-gray-400 font-normal">(optional)</span></label>
-              <textarea value={aboutMe} onChange={(e) => setAboutMe(e.target.value)} rows={3} placeholder="Tell potential matches about yourself, your values, and what you are looking for..." className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 resize-none" />
+              <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "About Her" : "About Him") : "About Me"} <span className="text-gray-400 font-normal">(optional)</span></label>
+              <textarea value={aboutMe} onChange={(e) => setAboutMe(e.target.value)} rows={3} placeholder={guardianMode ? (iAm === "bride" ? "Describe her background, character and what the family is looking for in a groom..." : "Describe his background, character and what the family is looking for in a bride...") : "Tell potential matches about yourself, your values, and what you are looking for..."} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 resize-none" />
             </div>
             <div className="flex gap-4 mt-6">
               <button onClick={() => setStep(1)} className="flex-1 py-4 bg-gray-100 text-gray-900 rounded-xl font-bold hover:bg-gray-200">Back</button>
