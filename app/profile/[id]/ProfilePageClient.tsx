@@ -269,6 +269,10 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [reportDone, setReportDone] = useState(false)
   const [hasInteraction, setHasInteraction] = useState(false)
   const [actionMsg, setActionMsg] = useState<{text: string, type: 'info'|'success'|'upgrade'} | null>(null)
+  const [isMutual, setIsMutual] = useState(false)
+  const [dobRequestStatus, setDobRequestStatus] = useState<'none'|'pending'|'granted'|'declined'>('none')
+  const [dobGranted, setDobGranted] = useState<string | null>(null)
+  const [dobRequesting, setDobRequesting] = useState(false)
 
   useEffect(() => {
     // Guest blur timer for profile detail page
@@ -336,6 +340,21 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           const sent = (data.sent||[]).some((i:any)=>String(i.receiver_id)===String(profile.id))
           const received = (data.received||[]).some((i:any)=>String(i.sender_id)===String(profile.id))
           setHasInteraction(sent||received)
+          // Check mutual interest
+          const sentAccepted = (data.sent||[]).some((i:any)=>String(i.receiver_id)===String(profile.id) && i.status==='accepted')
+          const receivedAccepted = (data.received||[]).some((i:any)=>String(i.sender_id)===String(profile.id) && i.status==='accepted')
+          const mutual = sentAccepted || receivedAccepted
+          setIsMutual(mutual)
+          // If mutual and dob is hidden, check request status
+          if (mutual && profile.dob_privacy === 'hidden') {
+            fetch(`/api/dob-request?requesterId=${user.id}&profileId=${profile.id}`)
+              .then(r => r.json())
+              .then(d => {
+                setDobRequestStatus(d.status || 'none')
+                if (d.status === 'granted' && d.date_of_birth) setDobGranted(d.date_of_birth)
+              })
+              .catch(() => {})
+          }
         })
         .catch(()=>{});
       fetch(`/api/block?blockerId=${user.id}&blockedId=${profile.id}`).then(r=>r.json()).then(d=>{if(d.isBlocked)setIsBlocked(true)}).catch(()=>{})
@@ -363,6 +382,30 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
       else if (data.upgrade) { showMsg('You have reached your free limit. Upgrade to send more interests.', 'upgrade'); }
       else { showMsg(data.message || 'Could not send interest. Please try again.', 'info'); }
     } catch { showMsg('Something went wrong. Please try again.', 'info'); }
+  }
+
+  const handleDobRequest = async () => {
+    const userData = localStorage.getItem('biyekori_user')
+    if (!userData) return
+    const user = JSON.parse(userData)
+    setDobRequesting(true)
+    try {
+      const res = await fetch('/api/dob-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'request', requesterId: user.id, profileId: profile.id })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setDobRequestStatus('pending')
+        showMsg('DOB request sent. They will be notified.', 'success')
+      } else {
+        showMsg(data.error || 'Could not send request.', 'info')
+      }
+    } catch {
+      showMsg('Something went wrong. Please try again.', 'info')
+    }
+    setDobRequesting(false)
   }
 
   const handleSendMessage = async () => {
@@ -903,6 +946,32 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                   <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Monthly Income</span><span className="font-medium" style={{color:"#111827"}}>৳{Number(profile.monthly_income).toLocaleString()}</span></div>
                 )}
               </div>
+              {/* DOB request */}
+              {isMutual && profile.dob_privacy === 'hidden' && (
+                <div style={{ marginTop: '12px', padding: '12px 14px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
+                  <p style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 700, color: '#374151' }}>Date of Birth</p>
+                  {dobRequestStatus === 'none' && (
+                    <button onClick={handleDobRequest} disabled={dobRequesting} style={{ padding: '7px 16px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>
+                      {dobRequesting ? 'Sending...' : 'Request Date of Birth'}
+                    </button>
+                  )}
+                  {dobRequestStatus === 'pending' && (
+                    <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 600 }}>⏳ Request sent — waiting for response</span>
+                  )}
+                  {dobRequestStatus === 'granted' && dobGranted && (
+                    <span style={{ fontSize: '13px', color: '#10b981', fontWeight: 700 }}>✓ {new Date(dobGranted).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                  )}
+                  {dobRequestStatus === 'declined' && (
+                    <span style={{ fontSize: '12px', color: '#9ca3af' }}>Request was not accepted at this time.</span>
+                  )}
+                </div>
+              )}
+              {profile.dob_privacy === 'full' && profile.date_of_birth && (
+                <div style={{ marginTop: '12px', padding: '12px 14px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
+                  <p style={{ margin: '0 0 4px', fontSize: '13px', fontWeight: 700, color: '#374151' }}>Date of Birth</p>
+                  <p style={{ margin: 0, fontSize: '13px', color: '#111827' }}>{new Date(profile.date_of_birth).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                </div>
+              )}
             </div>
           )}
 

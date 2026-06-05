@@ -117,6 +117,25 @@ export default function Navbar() {
   }
   const plan = planColors[user?.package] || planColors.prottasha
 
+  const handleDobResponse = async (notif: any, action: 'grant' | 'decline') => {
+    try {
+      const userData = localStorage.getItem('biyekori_user')
+      if (!userData) return
+      const u = JSON.parse(userData)
+      await fetch('/api/dob-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action,
+          profileId: u.id,
+          requesterId: notif.related_user_id,
+          notificationId: notif.id
+        })
+      })
+      setNotifs((prev: any[]) => prev.map((n: any) => n.id === notif.id ? { ...n, is_read: true } : n))
+    } catch (e) {}
+  }
+
   return (
     <>
     <nav style={{
@@ -220,14 +239,30 @@ export default function Navbar() {
                         No notifications yet
                       </div>
                     ) : notifs.map((n: any, i: number) => (
-                      <a key={n.id || i} href={n.type === 'new_message' ? '/messages' : n.type === 'interest_received' || n.type === 'contact_request' || n.type === 'contact_approved' ? '/interests' : n.profile_id ? '/profile/' + n.profile_id : '/dashboard'} onClick={() => setShowNotifs(false)} style={{ padding: '12px 16px', borderBottom: '1px solid #f9fafb', background: n.is_read ? 'white' : '#fef2f8', display: 'flex', gap: '10px', alignItems: 'flex-start', textDecoration: 'none', cursor: 'pointer' }}>
-                        <span style={{ fontSize: '16px', flexShrink: 0 }}>{n.type === 'interest_received' ? '💗' : n.type === 'new_message' ? '💬' : n.type === 'contact_request' ? '📋' : '🔔'}</span>
-                        <div style={{ flex: 1 }}>
-                          <p style={{ margin: '0 0 2px', fontSize: '13px', color: '#111827', lineHeight: 1.4 }}>{n.message}</p>
-                          {n.created_at && <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{new Date(n.created_at).toLocaleDateString('en-GB')}</p>}
+                      {n.type === 'dob_request' && !n.is_read ? (
+                        <div key={n.id || i} style={{ padding: '12px 16px', borderBottom: '1px solid #f9fafb', background: '#fef2f8' }}>
+                          <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '10px' }}>
+                            <span style={{ fontSize: '16px', flexShrink: 0 }}>📅</span>
+                            <div style={{ flex: 1 }}>
+                              <p style={{ margin: '0 0 2px', fontSize: '13px', color: '#111827', lineHeight: 1.4 }}>{n.message}</p>
+                              {n.created_at && <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{new Date(n.created_at).toLocaleDateString('en-GB')}</p>}
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            <button onClick={() => handleDobResponse(n, 'grant')} style={{ flex: 1, padding: '6px', background: '#10b981', color: 'white', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>Share DOB</button>
+                            <button onClick={() => handleDobResponse(n, 'decline')} style={{ flex: 1, padding: '6px', background: '#f3f4f6', color: '#6b7280', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>Decline</button>
+                          </div>
                         </div>
-                        {!n.is_read && <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e11d48', flexShrink: 0, marginTop: '4px' }} />}
-                      </a>
+                      ) : (
+                        <a key={n.id || i} href={n.type === 'new_message' ? '/messages' : n.type === 'interest_received' || n.type === 'contact_request' || n.type === 'contact_approved' ? '/interests' : n.type === 'dob_granted' ? '/interests' : n.profile_id ? '/profile/' + n.profile_id : '/dashboard'} onClick={() => setShowNotifs(false)} style={{ padding: '12px 16px', borderBottom: '1px solid #f9fafb', background: n.is_read ? 'white' : '#fef2f8', display: 'flex', gap: '10px', alignItems: 'flex-start', textDecoration: 'none', cursor: 'pointer' }}>
+                          <span style={{ fontSize: '16px', flexShrink: 0 }}>{n.type === 'interest_received' ? '💗' : n.type === 'new_message' ? '💬' : n.type === 'contact_request' ? '📋' : n.type === 'dob_request' ? '📅' : n.type === 'dob_granted' ? '✅' : n.type === 'dob_declined' ? '❌' : '🔔'}</span>
+                          <div style={{ flex: 1 }}>
+                            <p style={{ margin: '0 0 2px', fontSize: '13px', color: '#111827', lineHeight: 1.4 }}>{n.message}</p>
+                            {n.created_at && <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{new Date(n.created_at).toLocaleDateString('en-GB')}</p>}
+                          </div>
+                          {!n.is_read && <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e11d48', flexShrink: 0, marginTop: '4px' }} />}
+                        </a>
+                      )}
                     ))}
                   </div>
                 </div>
