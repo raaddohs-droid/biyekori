@@ -7,21 +7,11 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-export async function getProfiles(sortMode: string = 'newest') {
-  let query = supabase.from('profiles').select('*')
-
-  if (sortMode === 'oldest') {
-    query = query.order('id', { ascending: true })
-  } else if (sortMode === 'active') {
-    query = query.order('updated_at', { ascending: false, nullsFirst: false })
-  } else if (sortMode === 'completion') {
-    query = query.order('profile_completion', { ascending: false, nullsFirst: false })
-  } else {
-    // newest = highest id first
-    query = query.order('id', { ascending: false })
-  }
-
-  const { data, error } = await query
+export async function getProfiles() {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('created_at', { ascending: false })
 
   if (error) {
     console.error('Error fetching profiles:', error)
