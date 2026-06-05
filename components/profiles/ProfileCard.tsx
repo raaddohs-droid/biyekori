@@ -278,7 +278,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
   const isVerified = profile.is_verified || profile.isVerified || false;
   const isPremium = profile.package !== "prottasha";
   const isFeatured = profile.is_featured && profile.featured_until && new Date(profile.featured_until) > new Date();
-  const canViewContact = currentUserVerified || currentUserPackage === "bondhon" || currentUserPackage === "milon";
+  const canViewContact = currentUserVerified || currentUserPackage === "silver" || currentUserPackage === "milon";
   const showDegree = profile.degree && profile.degree !== profile.education && !["SSC","HSC"].includes(profile.education);
   const activity = getActivityStatus(profile.id);
   const isGuardianManaged = !!profile.guardian_mode;
