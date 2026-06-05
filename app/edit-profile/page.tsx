@@ -388,7 +388,7 @@ export default function EditProfilePage() {
     { id: 'photos', label: gm ? 'ছবি' : 'Photos' },
     { id: 'personal', label: gm ? 'ব্যক্তিগত' : 'Personal' },
     { id: 'lifestyle', label: gm ? 'জীবনধারা' : 'Lifestyle' },
-    { id: 'partner', label: gm ? 'পাত্র/পাত্রী' : 'Partner Prefs' },
+    { id: 'partner', label: gm ? 'পাত্র/পাত্রী' : 'Partner Preferences' },
     { id: 'verification', label: gm ? 'যাচাই' : 'Verification' },
     { id: 'privacy', label: gm ? 'গোপনীয়তা' : 'Privacy' },
   ]
@@ -396,7 +396,7 @@ export default function EditProfilePage() {
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: '80px', paddingBottom: '60px' }}>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
-      <div style={{ maxWidth: '680px', margin: '0 auto', padding: '0 16px' }}>
+      <div style={{ maxWidth: '820px', margin: '0 auto', padding: '0 16px' }}>
 
         {/* Header */}
         <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
