@@ -601,6 +601,7 @@ export default function EditProfilePage() {
                   {FAMILY_VALUES_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
                 </select>
               </div>
+              {maritalStatus !== 'Never married' && (
               <div>
                 <label className={labelClass} style={gmFontStyle}>{gm ? 'সন্তান আছে?' : 'Have Children'}</label>
                 <select value={hasChildren} onChange={e => setHasChildren(e.target.value)} className={inputClass} style={gmFontStyle}>
@@ -610,6 +611,7 @@ export default function EditProfilePage() {
                   <option value="sometimes">{gm ? 'হ্যাঁ, মাঝে মাঝে' : 'Yes, sometimes with me'}</option>
                 </select>
               </div>
+              )}
               <div style={{ gridColumn: '1/-1', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
                 <div>
                   <p style={{ margin: '0 0 2px', fontSize: gm ? '16px' : '14px', fontWeight: 700, color: '#111827' }}>{gm ? 'স্থানান্তরে ইচ্ছুক' : 'Willing to Relocate'}</p>
