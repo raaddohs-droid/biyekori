@@ -220,7 +220,7 @@ export default function RegisterPage() {
 
             {/* I am a */}
             <div className="mb-5">
-              <label className="block text-sm font-bold text-gray-900 mb-2">I am a...</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? "Registering for a..." : "I am a..."}</label>
               <select
                 value={iAm}
                 onChange={(e) => setIAm(e.target.value)}
@@ -228,8 +228,8 @@ export default function RegisterPage() {
                 required
               >
                 <option value="">Select one</option>
-                <option value="bride">Bride (Patri) - I am a woman looking for a groom</option>
-                <option value="groom">Groom (Patro) - I am a man looking for a bride</option>
+                <option value="bride">{guardianMode ? "Bride (Patri) - Registering a bride" : "Bride (Patri) - I am a woman looking for a groom"}</option>
+                <option value="groom">{guardianMode ? "Groom (Patro) - Registering a groom" : "Groom (Patro) - I am a man looking for a bride"}</option>
               </select>
             </div>
 

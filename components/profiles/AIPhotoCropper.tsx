@@ -150,7 +150,7 @@ export default function AIPhotoCropper({ onPhotoSelect, uploadCount }: AIPhotoCr
               AI automatically crops to your face
             </p>
             <p className="text-xs text-orange-600 font-bold">
-              {uploadCount}/80 photos uploaded
+              {uploadCount}/8 photos uploaded
             </p>
           </div>
           <input
