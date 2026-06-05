@@ -48,6 +48,11 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const nidOnly = params.nidOnly === '1'
   const neverMarriedOnly = params.neverMarried === '1'
   const discoverMode = params.discover === '1'
+  const religionFilter = typeof params.religion === 'string' ? params.religion : ''
+  const guardianOnly = params.guardianOnly === '1'
+  const selfOnly = params.selfOnly === '1'
+  const hideViewed = params.hideViewed === '1'
+  const viewerIdForViewed = typeof params.excludeId === 'string' ? params.excludeId : ''
 
   if (currentPage > FREE_MAX_PAGES) {
     return (
@@ -107,6 +112,15 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   if (nidOnly) {
     filtered = filtered.filter((p: any) => p.nid_verified === true)
   }
+  if (religionFilter) {
+    filtered = filtered.filter((p: any) => p.religion === religionFilter)
+  }
+  if (guardianOnly) {
+    filtered = filtered.filter((p: any) => p.guardian_mode === true)
+  }
+  if (selfOnly) {
+    filtered = filtered.filter((p: any) => !p.guardian_mode)
+  }
   if (neverMarriedOnly) {
     filtered = filtered.filter((p: any) => p.marital_status === 'Never married')
   }
@@ -149,6 +163,10 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const buildUrl = (page: number) => {
     let url = `${baseUrl}&page=${page}&view=${viewMode}`
     if (districtFilter) url += `&district=${encodeURIComponent(districtFilter)}`
+    if (religionFilter) url += `&religion=${encodeURIComponent(religionFilter)}`
+    if (guardianOnly) url += `&guardianOnly=1`
+    if (selfOnly) url += `&selfOnly=1`
+    if (hideViewed) url += `&hideViewed=1`
     if (minAge !== 18) url += `&minAge=${minAge}`
     if (maxAge !== 70) url += `&maxAge=${maxAge}`
     if (maritalFilter) url += `&marital=${encodeURIComponent(maritalFilter)}`
@@ -237,6 +255,16 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
             </select>
           </div>
 
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Religion</label>
+            <select name="religion" defaultValue={religionFilter} style={{ padding: '8px 12px', borderRadius: '8px', border: '1.5px solid #e5e7eb', fontSize: '13px', color: '#1f2937', background: 'white' }}>
+              <option value="">Any</option>
+              <option value="Islam">Islam</option>
+              <option value="Hinduism">Hinduism</option>
+              <option value="Christianity">Christianity</option>
+            </select>
+          </div>
+
           <button type="submit" style={{ padding: '8px 20px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', borderRadius: '8px', fontSize: '13px', fontWeight: 700, border: 'none', cursor: 'pointer' }}>
             Search
           </button>
@@ -250,7 +278,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
             </a>
           </div>
 
-          {(districtFilter || minAge !== 18 || maxAge !== 70 || maritalFilter) && (
+          {(districtFilter || minAge !== 18 || maxAge !== 70 || maritalFilter || religionFilter) && (
             <Link href={`/profiles?userGender=${userGender}&excludeId=${excludeId}`} style={{ padding: '8px 16px', background: '#f3f4f6', color: '#6b7280', borderRadius: '8px', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}>
               Clear
             </Link>

@@ -17,6 +17,9 @@ export default function AdvancedSearch({ userGender, excludeId }: { userGender: 
   const [maxHeight, setMaxHeight] = useState('')
   const [nidOnly, setNidOnly] = useState(false)
   const [neverMarried, setNeverMarried] = useState(false)
+  const [guardianOnly, setGuardianOnly] = useState(false)
+  const [selfOnly, setSelfOnly] = useState(false)
+  const [hideViewed, setHideViewed] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -35,10 +38,13 @@ export default function AdvancedSearch({ userGender, excludeId }: { userGender: 
       setMaxHeight(searchParams.get('maxH') || '')
       setNidOnly(searchParams.get('nidOnly') === '1')
       setNeverMarried(searchParams.get('neverMarried') === '1')
+      setGuardianOnly(searchParams.get('guardianOnly') === '1')
+      setSelfOnly(searchParams.get('selfOnly') === '1')
+      setHideViewed(searchParams.get('hideViewed') === '1')
     } catch(e) {}
   }, [])
 
-  const hasAdvancedFilters = education || religionLevel || profession || minHeight || maxHeight || nidOnly || neverMarried
+  const hasAdvancedFilters = education || religionLevel || profession || minHeight || maxHeight || nidOnly || neverMarried || guardianOnly || selfOnly || hideViewed
 
   const handleApply = () => {
     const base = new URLSearchParams(searchParams.toString())
@@ -50,6 +56,9 @@ export default function AdvancedSearch({ userGender, excludeId }: { userGender: 
     if (maxHeight) base.set('maxH', maxHeight); else base.delete('maxH')
     if (nidOnly) base.set('nidOnly', '1'); else base.delete('nidOnly')
     if (neverMarried) base.set('neverMarried', '1'); else base.delete('neverMarried')
+    if (guardianOnly) base.set('guardianOnly', '1'); else base.delete('guardianOnly')
+    if (selfOnly) base.set('selfOnly', '1'); else base.delete('selfOnly')
+    if (hideViewed) base.set('hideViewed', '1'); else base.delete('hideViewed')
     router.push('/profiles?' + base.toString())
     setOpen(false)
   }
@@ -59,7 +68,7 @@ export default function AdvancedSearch({ userGender, excludeId }: { userGender: 
     setMinHeight(''); setMaxHeight(''); setNidOnly(false); setNeverMarried(false)
     const base = new URLSearchParams(searchParams.toString())
     base.delete('edu'); base.delete('relLevel'); base.delete('prof')
-    base.delete('minH'); base.delete('maxH'); base.delete('nidOnly'); base.delete('neverMarried')
+    base.delete('minH'); base.delete('maxH'); base.delete('nidOnly'); base.delete('neverMarried'); base.delete('guardianOnly'); base.delete('selfOnly'); base.delete('hideViewed')
     base.set('page', '1')
     router.push('/profiles?' + base.toString())
     setOpen(false)
@@ -97,7 +106,7 @@ export default function AdvancedSearch({ userGender, excludeId }: { userGender: 
         Advanced Search
         {hasAdvancedFilters && !open && (
           <span style={{ background: '#7c3aed', color: 'white', borderRadius: '50%', width: '18px', height: '18px', fontSize: '10px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {[education, religionLevel, profession, minHeight, maxHeight, nidOnly, neverMarried].filter(Boolean).length}
+            {[education, religionLevel, profession, minHeight, maxHeight, nidOnly, neverMarried, guardianOnly, selfOnly, hideViewed].filter(Boolean).length}
           </span>
         )}
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
@@ -208,6 +217,21 @@ export default function AdvancedSearch({ userGender, excludeId }: { userGender: 
                   <input type="checkbox" checked={neverMarried} onChange={e => setNeverMarried(e.target.checked)}
                     style={{ width: '16px', height: '16px', accentColor: '#7c3aed' }} />
                   <span style={{ fontSize: '13px', fontWeight: 600, color: '#374151' }}>Never Married Only</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={guardianOnly} onChange={e => { setGuardianOnly(e.target.checked); if (e.target.checked) setSelfOnly(false) }}
+                    style={{ width: '16px', height: '16px', accentColor: '#7c3aed' }} />
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#374151' }}>Family Managed Only</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={selfOnly} onChange={e => { setSelfOnly(e.target.checked); if (e.target.checked) setGuardianOnly(false) }}
+                    style={{ width: '16px', height: '16px', accentColor: '#7c3aed' }} />
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#374151' }}>Self Managed Only</span>
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={hideViewed} onChange={e => setHideViewed(e.target.checked)}
+                    style={{ width: '16px', height: '16px', accentColor: '#7c3aed' }} />
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#374151' }}>Hide Already Viewed</span>
                 </label>
               </div>
 
