@@ -74,7 +74,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
     )
   }
 
-  const allProfiles = await getProfiles()
+  const allProfiles = await getProfiles(sortMode)
   let filtered = allProfiles
 
   if (userGender) {
