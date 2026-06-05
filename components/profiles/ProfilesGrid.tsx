@@ -14,14 +14,8 @@ const EDU_RANK: Record<string, number> = {
 function maskName(fullName: string, relationship: 'none' | 'sent' | 'received' | 'accepted'): string {
   if (!fullName) return 'Anonymous'
   if (relationship === 'accepted') return fullName
+  // Mask all name parts for all other states
   const parts = fullName.trim().split(' ')
-  if (relationship === 'sent' || relationship === 'received') {
-    // Show first name only, mask rest
-    const first = parts[0]
-    const rest = parts.slice(1).map(p => p[0] + '*'.repeat(Math.max(p.length - 1, 3)))
-    return rest.length > 0 ? first + ' ' + rest.join(' ') : first
-  }
-  // No connection - mask everything including first name
   return parts.map(p => p[0] + '*'.repeat(Math.max(p.length - 1, 3))).join(' ')
 }
 
@@ -197,14 +191,7 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
   const photoUrl = profile.photo_url || profile.photoUrl
   const isPremium = profile.package !== 'prottasha'
   const [interestSent, setInterestSent] = useState(false)
-  const [relationshipStatus, setRelationshipStatus] = useState<'none'|'sent'|'received'|'accepted'>(() => {
-    try {
-      const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
-      const pkg = u.package || ''
-      if (pkg === 'bondhon' || pkg === 'milon') return 'accepted'
-    } catch(e) {}
-    return 'none'
-  })
+  const [relationshipStatus, setRelationshipStatus] = useState<'none'|'sent'|'received'|'accepted'>('none')
   const rawName = profile.full_name || profile.name || 'Anonymous'
   const name = maskName(rawName, relationshipStatus)
 

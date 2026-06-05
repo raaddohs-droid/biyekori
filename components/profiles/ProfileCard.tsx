@@ -235,10 +235,9 @@ const GIFTS: [string, number][] = [
 
 function maskName(n: string, ok: boolean): string {
   if (!n) return 'Anonymous';
-  const p = n.trim().split(' ');
   if (ok) return n;
-  const m = p[0][0] + '*'.repeat(Math.max(2, p[0].length - 1));
-  return p.length > 1 ? m + ' ' + p.slice(1).map(x => x[0] + '****').join(' ') : m;
+  const p = n.trim().split(' ');
+  return p.map(x => x[0] + '*'.repeat(Math.max(x.length - 1, 3))).join(' ');
 }
 
 export default function ProfileCard({ profile, currentUserPackage = "prottasha", currentUserVerified = false, viewerProfile = null, ...rest }: { profile: any, currentUserPackage?: string, currentUserVerified?: boolean, viewerProfile?: any, [key: string]: any }) {
@@ -247,8 +246,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
   const rawName = profile.full_name || profile.name || "Anonymous";
-  const pkg = currentUserPackage || (typeof window !== 'undefined' ? (() => { try { const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}'); return u.package || ''; } catch(e) { return ''; } })() : '');
-  const isConnected = pkg === "bondhon" || pkg === "milon" || currentUserVerified;
+
   const name = maskName(rawName, isConnected);
   const location = profile.location || profile.city || profile.district || "Bangladesh";
   const maritalStatus = (profile.marital_status || profile.maritalStatus || "").trim();
