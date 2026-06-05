@@ -13,7 +13,7 @@ export default function RegisterPage() {
   const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
   const [photoPrivacy, setPhotoPrivacy] = useState(false);
   const [iAm, setIAm] = useState(''); // 'bride' or 'groom'
-  const [managedBy, setManagedBy] = useState('');
+  const [managedBy, setManagedBy] = useState('Self');
 
   // Step 2
   const [fullName, setFullName] = useState('');
@@ -289,8 +289,8 @@ export default function RegisterPage() {
 
             <button
               onClick={() => setStep(2)}
-              disabled={!selectedPhoto || !iAm || !managedBy}
-              className={`w-full py-4 rounded-xl font-bold transition ${selectedPhoto && iAm && managedBy ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:shadow-xl' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+              disabled={!selectedPhoto || !iAm}
+              className={`w-full py-4 rounded-xl font-bold transition ${selectedPhoto && iAm ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:shadow-xl' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
             >
               Next
             </button>
