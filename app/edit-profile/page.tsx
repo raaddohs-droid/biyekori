@@ -78,6 +78,12 @@ export default function EditProfilePage() {
 
   // Privacy fields
   const [photoPrivacy, setPhotoPrivacy] = useState(false)
+  const [incomeHidden, setIncomeHidden] = useState(false)
+  const [dobPrivacy, setDobPrivacy] = useState('age_only')
+  const [contactMinAge, setContactMinAge] = useState(18)
+  const [contactMaxAge, setContactMaxAge] = useState(60)
+  const [contactReligion, setContactReligion] = useState('any')
+  const [smsOnMutual, setSmsOnMutual] = useState(true)
   const [deactivated, setDeactivated] = useState(false)
   const [guardianMode, setGuardianMode] = useState(false)
 
@@ -116,6 +122,12 @@ export default function EditProfilePage() {
         setAboutMe(p.about_me || '')
         setHobbies(p.hobbies || '')
         setPhotoPrivacy(p.photo_privacy || false)
+        setIncomeHidden(p.income_hidden || false)
+        setDobPrivacy(p.dob_privacy || 'age_only')
+        setContactMinAge(p.contact_min_age || 18)
+        setContactMaxAge(p.contact_max_age || 60)
+        setContactReligion(p.contact_religion || 'any')
+        setSmsOnMutual(p.sms_on_mutual !== false)
         setDeactivated(p.is_deactivated || false)
         setGuardianMode(p.guardian_mode || false)
         setCurrentMainPhoto(p.photo_url || '')
@@ -166,6 +178,9 @@ export default function EditProfilePage() {
         full_name: fullName, city, district: city, education, profession,
         religion, religious_level: religionLevel, marital_status: maritalStatus,
         height, about_me: aboutMe, photo_privacy: photoPrivacy,
+        income_hidden: incomeHidden, dob_privacy: dobPrivacy,
+        contact_min_age: contactMinAge, contact_max_age: contactMaxAge,
+        contact_religion: contactReligion, sms_on_mutual: smsOnMutual,
         hobbies, family_values: familyValues,
         guardian_mode: guardianMode,
         // Lifestyle
@@ -829,6 +844,66 @@ export default function EditProfilePage() {
               </div>
               <button onClick={() => setPhotoPrivacy(!photoPrivacy)} style={{ width: '48px', height: '26px', borderRadius: '13px', border: 'none', cursor: 'pointer', background: photoPrivacy ? '#e11d48' : '#d1d5db', position: 'relative', transition: 'background 0.2s' }}>
                 <span style={{ position: 'absolute', top: '3px', left: photoPrivacy ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+              </button>
+            </div>
+
+            {/* Income Privacy */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+              <div>
+                <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>Income Privacy</p>
+                <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>Show "Not disclosed" instead of your income on your profile</p>
+              </div>
+              <button onClick={() => setIncomeHidden(!incomeHidden)} style={{ width: '48px', height: '26px', borderRadius: '13px', border: 'none', cursor: 'pointer', background: incomeHidden ? '#e11d48' : '#d1d5db', position: 'relative', transition: 'background 0.2s' }}>
+                <span style={{ position: 'absolute', top: '3px', left: incomeHidden ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+              </button>
+            </div>
+
+            {/* DOB Privacy */}
+            <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+              <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>Date of Birth Visibility</p>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280' }}>Control who can see your date of birth. Age is always visible. After mutual interest, your match can request to see your full DOB.</p>
+              <select value={dobPrivacy} onChange={e => setDobPrivacy(e.target.value)} style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', background: 'white', color: '#111827' }}>
+                <option value="age_only">Show age only (recommended)</option>
+                <option value="full">Show full date of birth</option>
+                <option value="hidden">Hide completely (requestable after mutual interest)</option>
+              </select>
+            </div>
+
+            {/* Contact Filter */}
+            <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+              <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>Contact Filter</p>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280' }}>Interests from people outside these criteria go to your Filtered folder. You can still view them.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', minWidth: '80px' }}>Age Range</label>
+                  <select value={contactMinAge} onChange={e => setContactMinAge(parseInt(e.target.value))} style={{ padding: '8px', border: '1.5px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', background: 'white' }}>
+                    {Array.from({length: 43}, (_, i) => i + 18).map(a => <option key={a} value={a}>{a}</option>)}
+                  </select>
+                  <span style={{ fontSize: '12px', color: '#6b7280' }}>to</span>
+                  <select value={contactMaxAge} onChange={e => setContactMaxAge(parseInt(e.target.value))} style={{ padding: '8px', border: '1.5px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', background: 'white' }}>
+                    {Array.from({length: 43}, (_, i) => i + 18).map(a => <option key={a} value={a}>{a}</option>)}
+                  </select>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', minWidth: '80px' }}>Religion</label>
+                  <select value={contactReligion} onChange={e => setContactReligion(e.target.value)} style={{ padding: '8px', border: '1.5px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', background: 'white' }}>
+                    <option value="any">Any religion</option>
+                    <option value="Islam">Islam only</option>
+                    <option value="Hinduism">Hinduism only</option>
+                    <option value="Christianity">Christianity only</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* SMS Notification */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+              <div>
+                <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>SMS Notification</p>
+                <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>Receive an SMS when you and someone else mutually accept each other's interest</p>
+              </div>
+              <button onClick={() => setSmsOnMutual(!smsOnMutual)} style={{ width: '48px', height: '26px', borderRadius: '13px', border: 'none', cursor: 'pointer', background: smsOnMutual ? '#e11d48' : '#d1d5db', position: 'relative', transition: 'background 0.2s' }}>
+                <span style={{ position: 'absolute', top: '3px', left: smsOnMutual ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
               </button>
             </div>
 
