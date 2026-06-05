@@ -43,6 +43,7 @@ export default function Dashboard() {
   const [interestsSent, setInterestsSent] = useState(0);
   const [interestsReceived, setInterestsReceived] = useState(0);
   const [suggestedProfiles, setSuggestedProfiles] = useState<any[]>([]);
+  const [mutualIds, setMutualIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const userData = localStorage.getItem('biyekori_user');
@@ -60,6 +61,15 @@ export default function Dashboard() {
       if (parsed.gender) {
         fetchSuggestedProfiles(parsed.gender, parsed.id)
           .then(data => setSuggestedProfiles(Array.isArray(data) ? data : []))
+        // Fetch mutual accepted interests for name masking
+        fetch('/api/interests/list?userId=' + parsed.id)
+          .then(r => r.json())
+          .then(data => {
+            const ids = new Set<string>()
+            ;(data.sent || []).forEach((s: any) => { if (s.status === 'accepted') ids.add(String(s.receiver_id)) })
+            ;(data.received || []).forEach((r: any) => { if (r.status === 'accepted') ids.add(String(r.sender_id)) })
+            setMutualIds(ids)
+          }).catch(() => {})
           .catch(() => {});
       }
     }
@@ -261,7 +271,7 @@ export default function Dashboard() {
                           )}
                         </div>
                         <div style={{ padding: '8px' }}>
-                          <p style={{ margin: '0 0 1px', fontSize: '12px', fontWeight: 700, color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.full_name || 'Anonymous'}</p>
+                          <p style={{ margin: '0 0 1px', fontSize: '12px', fontWeight: 700, color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{dashMaskName(p.full_name || 'Anonymous', mutualIds.has(String(p.id)))}</p>
                           <p style={{ margin: 0, fontSize: '10px', color: '#9ca3af' }}>{p.age} yrs{p.city || p.district ? ' · ' + (p.city || p.district) : ''}</p>
                         </div>
                       </div>
