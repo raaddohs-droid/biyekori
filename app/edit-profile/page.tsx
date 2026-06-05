@@ -23,6 +23,48 @@ const FAMILY_VALUES_OPTIONS = ['Conservative','Moderate','Liberal','Very Liberal
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
+type Priority = 'flexible' | 'prefer' | 'must'
+
+function PrioritySelector({ value, onChange, mustMatchCount, currentField }: {
+  value: Priority
+  onChange: (v: Priority) => void
+  mustMatchCount: number
+  currentField: string
+}) {
+  const options: { val: Priority; label: string; color: string; bg: string }[] = [
+    { val: 'flexible', label: 'Flexible', color: '#6b7280', bg: '#f3f4f6' },
+    { val: 'prefer', label: 'Prefer', color: '#0ea5e9', bg: '#e0f2fe' },
+    { val: 'must', label: 'Must Match', color: '#e11d48', bg: '#fff1f2' },
+  ]
+  return (
+    <div style={{ display: 'flex', gap: '4px' }}>
+      {options.map(opt => {
+        const active = value === opt.val
+        const disabled = opt.val === 'must' && value !== 'must' && mustMatchCount >= 5
+        return (
+          <button
+            key={opt.val}
+            type="button"
+            onClick={() => !disabled && onChange(opt.val)}
+            title={disabled ? 'Maximum 5 Must Match selections allowed' : ''}
+            style={{
+              padding: '4px 8px', borderRadius: '6px', border: 'none', cursor: disabled ? 'not-allowed' : 'pointer',
+              background: active ? opt.bg : 'transparent',
+              color: active ? opt.color : '#9ca3af',
+              fontSize: '10px', fontWeight: active ? 700 : 500,
+              outline: active ? `1.5px solid ${opt.color}` : '1.5px solid transparent',
+              opacity: disabled ? 0.4 : 1,
+              transition: 'all 0.15s'
+            }}
+          >
+            {opt.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function EditProfilePage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
@@ -73,11 +115,28 @@ export default function EditProfilePage() {
   const [expectedSmoking, setExpectedSmoking] = useState('')
   const [expectedDiet, setExpectedDiet] = useState('')
   const [expectedFamilyValues, setExpectedFamilyValues] = useState('')
-  const [acceptsChildren, setAcceptsChildren] = useState(true)
+  const [acceptsChildren, setAcceptsChildren] = useState<any>(true)
   const [expectedReligiousLevel, setExpectedReligiousLevel] = useState('')
+
+  // Priority selectors (UI only, not saved to DB)
+  const [priorityReligion, setPriorityReligion] = useState<Priority>('flexible')
+  const [priorityLocation, setPriorityLocation] = useState<Priority>('flexible')
+  const [priorityChildren, setPriorityChildren] = useState<Priority>('flexible')
+  const [priorityLiving, setPriorityLiving] = useState<Priority>('flexible')
+  const [prioritySmoking, setPrioritySmoking] = useState<Priority>('flexible')
+  const [priorityCareer, setPriorityCareer] = useState<Priority>('flexible')
+  const [showOptional, setShowOptional] = useState(false)
+
+  const mustMatchCount = [priorityReligion, priorityLocation, priorityChildren, priorityLiving, prioritySmoking, priorityCareer].filter(p => p === 'must').length
 
   // Privacy fields
   const [photoPrivacy, setPhotoPrivacy] = useState(false)
+  const [incomeHidden, setIncomeHidden] = useState(false)
+  const [dobPrivacy, setDobPrivacy] = useState('age_only')
+  const [contactMinAge, setContactMinAge] = useState(18)
+  const [contactMaxAge, setContactMaxAge] = useState(60)
+  const [contactReligion, setContactReligion] = useState('any')
+  const [smsOnMutual, setSmsOnMutual] = useState(true)
   const [deactivated, setDeactivated] = useState(false)
   const [guardianMode, setGuardianMode] = useState(false)
 
@@ -116,10 +175,15 @@ export default function EditProfilePage() {
         setAboutMe(p.about_me || '')
         setHobbies(p.hobbies || '')
         setPhotoPrivacy(p.photo_privacy || false)
+        setIncomeHidden(p.income_hidden || false)
+        setDobPrivacy(p.dob_privacy || 'age_only')
+        setContactMinAge(p.contact_min_age || 18)
+        setContactMaxAge(p.contact_max_age || 60)
+        setContactReligion(p.contact_religion || 'any')
+        setSmsOnMutual(p.sms_on_mutual !== false)
         setDeactivated(p.is_deactivated || false)
         setGuardianMode(p.guardian_mode || false)
         setCurrentMainPhoto(p.photo_url || '')
-        // Lifestyle
         setMarriageTimeline(p.marriage_timeline || '')
         setLivingArrangement(p.living_arrangement || '')
         setWorkAfterMarriage(p.work_after_marriage || '')
@@ -132,7 +196,6 @@ export default function EditProfilePage() {
         setFamilyValues(p.family_values || '')
         setHasChildren(p.has_children || 'false')
         setWillingToRelocate(p.willing_to_relocate || false)
-        // Partner prefs
         setPartnerAgeMin(p.expected_age_min ? String(p.expected_age_min) : '')
         setPartnerAgeMax(p.expected_age_max ? String(p.expected_age_max) : '')
         setPartnerDistrict(p.expected_districts || '')
@@ -166,15 +229,16 @@ export default function EditProfilePage() {
         full_name: fullName, city, district: city, education, profession,
         religion, religious_level: religionLevel, marital_status: maritalStatus,
         height, about_me: aboutMe, photo_privacy: photoPrivacy,
+        income_hidden: incomeHidden, dob_privacy: dobPrivacy,
+        contact_min_age: contactMinAge, contact_max_age: contactMaxAge,
+        contact_religion: contactReligion, sms_on_mutual: smsOnMutual,
         hobbies, family_values: familyValues,
         guardian_mode: guardianMode,
-        // Lifestyle
         marriage_timeline: marriageTimeline, living_arrangement: livingArrangement,
         work_after_marriage: workAfterMarriage, contact_preference: contactPreference,
         mother_tongue: motherTongue, english_comfort: englishComfort,
         smoking, drinking, diet, has_children: hasChildren,
         willing_to_relocate: willingToRelocate,
-        // Partner prefs
         expected_age_min: partnerAgeMin ? parseInt(partnerAgeMin) : null,
         expected_age_max: partnerAgeMax ? parseInt(partnerAgeMax) : null,
         expected_districts: partnerDistrict, expected_education: partnerEducation,
@@ -185,7 +249,7 @@ export default function EditProfilePage() {
         expected_contact_preference: expectedContactPreference,
         expected_smoking: expectedSmoking, expected_diet: expectedDiet,
         expected_family_values: expectedFamilyValues,
-        accepts_partner_with_children: acceptsChildren,
+        accepts_partner_with_children: acceptsChildren === 'discussion' ? true : acceptsChildren,
         expected_religious_level: expectedReligiousLevel,
       }
       const res = await fetch('/api/update-profile', {
@@ -207,7 +271,6 @@ export default function EditProfilePage() {
     setSaving(false)
   }
 
-  // Main photo AI crop
   const handleMainPhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -317,9 +380,8 @@ export default function EditProfilePage() {
 
   const inputClass = "w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 text-sm"
   const labelClass = "block text-sm font-bold text-gray-700 mb-2"
-
-  // Guardian Mode: simplified labels
   const gm = guardianMode
+  const gmFontStyle = gm ? { fontSize: '16px', lineHeight: '1.6' } : {}
 
   const tabs = [
     { id: 'basic', label: gm ? 'মূল তথ্য' : 'Basic Info' },
@@ -330,9 +392,6 @@ export default function EditProfilePage() {
     { id: 'verification', label: gm ? 'যাচাই' : 'Verification' },
     { id: 'privacy', label: gm ? 'গোপনীয়তা' : 'Privacy' },
   ]
-
-  // Guardian Mode font size modifier
-  const gmFontStyle = gm ? { fontSize: '16px', lineHeight: '1.6' } : {}
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: '80px', paddingBottom: '60px' }}>
@@ -347,13 +406,7 @@ export default function EditProfilePage() {
                 {gm ? 'প্রোফাইল সম্পাদনা' : 'Edit Profile'}
               </h1>
               {guardianMode && (
-                <span style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '5px',
-                  background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
-                  color: 'white', fontSize: '11px', fontWeight: 700,
-                  padding: '3px 10px', borderRadius: '20px',
-                  boxShadow: '0 2px 8px rgba(124,58,237,0.35)'
-                }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: 'white', fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '20px', boxShadow: '0 2px 8px rgba(124,58,237,0.35)' }}>
                   পরিবার পরিচালিত
                 </span>
               )}
@@ -363,7 +416,7 @@ export default function EditProfilePage() {
             </p>
           </div>
           <button onClick={handleSave} disabled={saving} style={{ padding: '10px 24px', background: saved ? '#10b981' : 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>
-            {saving ? (gm ? 'সংরক্ষণ হচ্ছে...' : 'Saving...') : saved ? (gm ? 'সংরক্ষিত!' : 'Saved!') : (gm ? 'সংরক্ষণ করুন' : 'Save Changes')}
+            {saving ? (gm ? 'সংরক্ষণ হচ্ছে...' : 'Saving...') : saved ? (gm ? 'সংরক্ষিত!' : 'Saved!') : (gm ? 'সংরক্ষণ করুন' : 'Save')}
           </button>
         </div>
 
@@ -418,8 +471,8 @@ export default function EditProfilePage() {
                 </select>
               </div>
               <div style={{ gridColumn: '1/-1' }}>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'নিজের সম্পর্কে' : 'About Me'}</label>
-                <textarea value={aboutMe} onChange={e => setAboutMe(e.target.value)} className={inputClass} rows={4} placeholder={gm ? 'নিজের সম্পর্কে কিছু লিখুন...' : 'Write something about yourself...'} style={{ resize: 'vertical', ...gmFontStyle }} />
+                <label className={labelClass} style={gmFontStyle}>{gm ? (user?.gender === 'Male' ? 'তার সম্পর্কে' : 'তার সম্পর্কে') : (user?.gender === 'Male' ? 'About Him' : 'About Her')}</label>
+                <textarea value={aboutMe} onChange={e => setAboutMe(e.target.value)} className={inputClass} rows={4} placeholder={gm ? 'তার চরিত্র ও পারিবারিক পটভূমি বর্ণনা করুন...' : (user?.gender === 'Male' ? 'Describe his character, background and family...' : 'Describe her character, background and family...')} style={{ resize: 'vertical', ...gmFontStyle }} />
               </div>
             </div>
           </div>
@@ -548,6 +601,7 @@ export default function EditProfilePage() {
                   {LIVING_ARRANGEMENTS.map(l => <option key={l} value={l}>{l}</option>)}
                 </select>
               </div>
+              {user?.gender !== 'Male' && (
               <div>
                 <label className={labelClass} style={gmFontStyle}>{gm ? 'বিয়ের পর কাজ' : 'Work After Marriage'}</label>
                 <select value={workAfterMarriage} onChange={e => setWorkAfterMarriage(e.target.value)} className={inputClass} style={gmFontStyle}>
@@ -555,6 +609,7 @@ export default function EditProfilePage() {
                   {WORK_AFTER_MARRIAGE.map(w => <option key={w} value={w}>{w}</option>)}
                 </select>
               </div>
+              )}
               <div>
                 <label className={labelClass} style={gmFontStyle}>{gm ? 'যোগাযোগের পছন্দ' : 'Contact Preference'}</label>
                 <select value={contactPreference} onChange={e => setContactPreference(e.target.value)} className={inputClass} style={gmFontStyle}>
@@ -601,6 +656,7 @@ export default function EditProfilePage() {
                   {FAMILY_VALUES_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
                 </select>
               </div>
+              {maritalStatus !== 'Never married' && (
               <div>
                 <label className={labelClass} style={gmFontStyle}>{gm ? 'সন্তান আছে?' : 'Have Children'}</label>
                 <select value={hasChildren} onChange={e => setHasChildren(e.target.value)} className={inputClass} style={gmFontStyle}>
@@ -610,6 +666,7 @@ export default function EditProfilePage() {
                   <option value="sometimes">{gm ? 'হ্যাঁ, মাঝে মাঝে' : 'Yes, sometimes with me'}</option>
                 </select>
               </div>
+              )}
               <div style={{ gridColumn: '1/-1', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
                 <div>
                   <p style={{ margin: '0 0 2px', fontSize: gm ? '16px' : '14px', fontWeight: 700, color: '#111827' }}>{gm ? 'স্থানান্তরে ইচ্ছুক' : 'Willing to Relocate'}</p>
@@ -625,130 +682,314 @@ export default function EditProfilePage() {
 
         {/* PARTNER PREFS TAB */}
         {activeTab === 'partner' && (
-          <div style={{ background: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-            <p style={{ margin: '0 0 20px', fontSize: gm ? '14px' : '13px', color: '#6b7280' }}>{gm ? 'এই তথ্যগুলো AI ম্যাচ স্কোর উন্নত করে। সব ঐচ্ছিক।' : 'These preferences improve your AI Match Score. All optional.'}</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
               <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'পাত্র/পাত্রীর ন্যূনতম বয়স' : 'Partner Min Age'}</label>
-                <select value={partnerAgeMin} onChange={e => setPartnerAgeMin(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'যেকোনো' : 'Any'}</option>
-                  {Array.from({length: 48}, (_, i) => i + 18).map(a => <option key={a} value={a}>{a}</option>)}
-                </select>
+                <h2 style={{ margin: '0 0 4px', fontSize: '18px', fontWeight: 800, color: '#111827' }}>Partner Preferences</h2>
+                <p style={{ margin: 0, fontSize: '13px', color: '#6b7280' }}>Tell us what matters to you. Choose your priorities so we can show more compatible matches.</p>
               </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'পাত্র/পাত্রীর সর্বোচ্চ বয়স' : 'Partner Max Age'}</label>
-                <select value={partnerAgeMax} onChange={e => setPartnerAgeMax(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'যেকোনো' : 'Any'}</option>
-                  {Array.from({length: 48}, (_, i) => i + 18).map(a => <option key={a} value={a}>{a}</option>)}
-                </select>
+              <button
+                type="button"
+                onClick={() => {
+                  setPartnerAgeMin(''); setPartnerAgeMax(''); setPartnerDistrict('');
+                  setPartnerEducation(''); setExpectedReligion(''); setExpectedMaritalStatus('');
+                  setExpectedMarriageTimeline(''); setExpectedLivingArrangement('');
+                  setExpectedWorkAfterMarriage(''); setExpectedContactPreference('');
+                  setExpectedSmoking(''); setExpectedDiet(''); setExpectedFamilyValues('');
+                  setAcceptsChildren(true); setExpectedReligiousLevel('');
+                  setPriorityReligion('flexible'); setPriorityLocation('flexible');
+                  setPriorityChildren('flexible'); setPriorityLiving('flexible');
+                  setPrioritySmoking('flexible'); setPriorityCareer('flexible');
+                }}
+                style={{ fontSize: '12px', color: '#e11d48', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, textDecoration: 'underline' }}
+              >
+                Clear all preferences
+              </button>
+            </div>
+
+            {/* Must Match warning */}
+            {mustMatchCount >= 4 && (
+              <div style={{ padding: '12px 16px', background: '#fffbeb', border: '1.5px solid #fde68a', borderRadius: '12px', fontSize: '13px', color: '#92400e', lineHeight: '1.5' }}>
+                Your preferences may significantly reduce compatible profiles. Consider changing one or two <strong>Must Match</strong> items to <strong>Prefer</strong>.
               </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'পছন্দের জেলা' : 'Preferred District'}</label>
-                <select value={partnerDistrict} onChange={e => setPartnerDistrict(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'যেকোনো জেলা' : 'Any District'}</option>
-                  {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
-                </select>
+            )}
+
+            {/* SECTION 1: Essential Preferences */}
+            <div style={{ background: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                <div style={{ width: '4px', height: '20px', background: 'linear-gradient(135deg,#e11d48,#db2777)', borderRadius: '2px' }} />
+                <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#111827' }}>Essential Preferences</h3>
               </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'ন্যূনতম শিক্ষাগত যোগ্যতা' : 'Minimum Education'}</label>
-                <select value={partnerEducation} onChange={e => setPartnerEducation(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'যেকোনো' : 'Any'}</option>
-                  {EDUCATIONS.map(e => <option key={e} value={e}>{e}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'পছন্দের ধর্ম' : 'Expected Religion'}</label>
-                <select value={expectedReligion} onChange={e => setExpectedReligion(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'যেকোনো' : 'Any'}</option>
-                  {RELIGIONS.map(r => <option key={r} value={r}>{r}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'পছন্দের ধার্মিকতা' : 'Expected Religiosity'}</label>
-                <select value={expectedReligiousLevel} onChange={e => setExpectedReligiousLevel(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'যেকোনো' : 'Any'}</option>
-                  {RELIGION_LEVELS.map(r => <option key={r} value={r}>{r}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'গৃহীত বৈবাহিক অবস্থা' : 'Accepted Marital Status'} <span style={{fontSize:'11px',color:'#9ca3af',fontWeight:400}}>{gm ? '(একাধিক বেছে নিন)' : '(select all that apply)'}</span></label>
-                <div style={{display:'flex',flexWrap:'wrap',gap:'8px',marginTop:'4px'}}>
-                  {MARITAL_STATUSES.map(m => (
-                    <label key={m} style={{display:'flex',alignItems:'center',gap:'6px',padding:'6px 12px',border:`2px solid ${expectedMaritalStatus.includes(m) ? '#e11d48' : '#e5e7eb'}`,borderRadius:'8px',cursor:'pointer',background:expectedMaritalStatus.includes(m) ? '#fff1f2' : 'white',fontSize: gm ? '14px' : '13px',fontWeight:expectedMaritalStatus.includes(m) ? 700 : 400,color:expectedMaritalStatus.includes(m) ? '#e11d48' : '#374151'}}>
-                      <input type="checkbox" checked={expectedMaritalStatus.includes(m)} onChange={e => {
-                        const current = expectedMaritalStatus ? expectedMaritalStatus.split(',').filter(Boolean) : []
-                        if (e.target.checked) setExpectedMaritalStatus([...current, m].join(','))
-                        else setExpectedMaritalStatus(current.filter(x => x !== m).join(','))
-                      }} style={{display:'none'}} />
-                      {m}
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'পছন্দের বিয়ের সময়সীমা' : 'Expected Marriage Timeline'}</label>
-                <select value={expectedMarriageTimeline} onChange={e => setExpectedMarriageTimeline(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'যেকোনো' : 'Any'}</option>
-                  {MARRIAGE_TIMELINES.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'পছন্দের বাসস্থান' : 'Expected Living Arrangement'}</label>
-                <select value={expectedLivingArrangement} onChange={e => setExpectedLivingArrangement(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'যেকোনো' : 'Any'}</option>
-                  {LIVING_ARRANGEMENTS.map(l => <option key={l} value={l}>{l}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'বিয়ের পর কাজ (পাত্র/পাত্রী)' : 'Partner Work After Marriage'}</label>
-                <select value={expectedWorkAfterMarriage} onChange={e => setExpectedWorkAfterMarriage(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'যেকোনো' : 'Any'}</option>
-                  {WORK_AFTER_MARRIAGE.map(w => <option key={w} value={w}>{w}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'যোগাযোগের পছন্দ' : 'Contact Preference'}</label>
-                <select value={expectedContactPreference} onChange={e => setExpectedContactPreference(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'যেকোনো' : 'Any'}</option>
-                  {CONTACT_PREFERENCES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'ধূমপানের পছন্দ' : 'Smoking Preference'}</label>
-                <select value={expectedSmoking} onChange={e => setExpectedSmoking(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'কোনো পছন্দ নেই' : 'No preference'}</option>
-                  <option value="no">{gm ? 'অধূমপায়ী চাই' : 'Non-smoker only'}</option>
-                  <option value="occasionally">{gm ? 'মাঝে মাঝে চলবে' : 'Occasionally OK'}</option>
-                  <option value="any">{gm ? 'যেকোনো' : 'Any'}</option>
-                </select>
-              </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'খাদ্যাভ্যাসের পছন্দ' : 'Food Preference'}</label>
-                <select value={expectedDiet} onChange={e => setExpectedDiet(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'কোনো পছন্দ নেই' : 'No preference'}</option>
-                  <option value="Halal only">Halal only</option>
-                  <option value="Vegetarian">Vegetarian</option>
-                  <option value="Non-Vegetarian">Non-Vegetarian</option>
-                  <option value="No restriction">No restriction</option>
-                </select>
-              </div>
-              <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'পারিবারিক মূল্যবোধ' : 'Family Values'}</label>
-                <select value={expectedFamilyValues} onChange={e => setExpectedFamilyValues(e.target.value)} className={inputClass} style={gmFontStyle}>
-                  <option value="">{gm ? 'যেকোনো' : 'Any'}</option>
-                  {FAMILY_VALUES_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
-                </select>
-              </div>
-              <div style={{ gridColumn: '1/-1', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+                {/* Age Range Slider */}
                 <div>
-                  <p style={{ margin: '0 0 2px', fontSize: gm ? '16px' : '14px', fontWeight: 700, color: '#111827' }}>{gm ? 'সন্তানসহ পাত্র/পাত্রী গ্রহণযোগ্য' : 'Accepts Partner With Children'}</p>
-                  <p style={{ margin: 0, fontSize: gm ? '13px' : '12px', color: '#6b7280' }}>{gm ? 'সন্তান আছে এমন পাত্র/পাত্রী গ্রহণযোগ্য' : 'Open to partners who have children'}</p>
+                  <label className={labelClass}>Preferred Age Range</label>
+                  <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                      <span style={{ fontSize: '13px', color: '#6b7280' }}>Min age</span>
+                      <span style={{ fontSize: '15px', fontWeight: 800, color: '#e11d48' }}>
+                        {partnerAgeMin || '18'} – {partnerAgeMax || '65'}
+                      </span>
+                      <span style={{ fontSize: '13px', color: '#6b7280' }}>Max age</span>
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div>
+                        <input type="range" min="18" max="65" value={partnerAgeMin || 18} onChange={e => setPartnerAgeMin(e.target.value)} style={{ width: '100%', accentColor: '#e11d48' }} />
+                        <div style={{ fontSize: '11px', color: '#9ca3af', textAlign: 'center' }}>Min: {partnerAgeMin || 18}</div>
+                      </div>
+                      <div>
+                        <input type="range" min="18" max="65" value={partnerAgeMax || 65} onChange={e => setPartnerAgeMax(e.target.value)} style={{ width: '100%', accentColor: '#e11d48' }} />
+                        <div style={{ fontSize: '11px', color: '#9ca3af', textAlign: 'center' }}>Max: {partnerAgeMax || 65}</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <button onClick={() => setAcceptsChildren(!acceptsChildren)} style={{ width: '48px', height: '26px', borderRadius: '13px', border: 'none', cursor: 'pointer', background: acceptsChildren ? '#e11d48' : '#d1d5db', position: 'relative', transition: 'background 0.2s' }}>
-                  <span style={{ position: 'absolute', top: '3px', left: acceptsChildren ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
-                </button>
+
+                {/* Location */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <label className={labelClass} style={{ margin: 0 }}>Preferred Location</label>
+                    <PrioritySelector value={priorityLocation} onChange={setPriorityLocation} mustMatchCount={mustMatchCount} currentField="location" />
+                  </div>
+                  <select value={partnerDistrict} onChange={e => setPartnerDistrict(e.target.value)} className={inputClass}>
+                    <option value="">Any location</option>
+                    <option value="same_district">Same district preferred</option>
+                    <option value="anywhere_bangladesh">Anywhere in Bangladesh</option>
+                    <option value="abroad">Abroad preferred</option>
+                    <option value="bangladesh_or_abroad">Bangladesh or abroad</option>
+                    {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                </div>
+
+                {/* Religion */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <label className={labelClass} style={{ margin: 0 }}>Religion</label>
+                    <PrioritySelector value={priorityReligion} onChange={setPriorityReligion} mustMatchCount={mustMatchCount} currentField="religion" />
+                  </div>
+                  <select value={expectedReligion} onChange={e => setExpectedReligion(e.target.value)} className={inputClass}>
+                    <option value="">Any</option>
+                    {RELIGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+                  </select>
+                </div>
+
+                {/* Religious Practice */}
+                <div>
+                  <label className={labelClass}>Religious Practice Preference</label>
+                  <select value={expectedReligiousLevel} onChange={e => setExpectedReligiousLevel(e.target.value)} className={inputClass}>
+                    <option value="">Any</option>
+                    <option value="Very Religious">Practising</option>
+                    <option value="Religious">Moderately practising</option>
+                    <option value="Moderate">Cultural</option>
+                    <option value="Liberal">Open to discussion</option>
+                  </select>
+                </div>
+
+                {/* Marital Status - checkbox cards */}
+                <div>
+                  <label className={labelClass}>Accepted Marital Status <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>(select all that apply)</span></label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {MARITAL_STATUSES.map(m => {
+                      const selected = expectedMaritalStatus.includes(m)
+                      return (
+                        <button key={m} type="button"
+                          onClick={() => {
+                            const current = expectedMaritalStatus ? expectedMaritalStatus.split(',').filter(Boolean) : []
+                            if (selected) setExpectedMaritalStatus(current.filter(x => x !== m).join(','))
+                            else setExpectedMaritalStatus([...current, m].join(','))
+                          }}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: '6px',
+                            padding: '8px 14px', borderRadius: '10px', cursor: 'pointer', border: 'none',
+                            background: selected ? '#e11d48' : '#f3f4f6',
+                            color: selected ? 'white' : '#374151',
+                            fontSize: '13px', fontWeight: selected ? 700 : 500,
+                            transition: 'all 0.15s'
+                          }}
+                        >
+                          <span style={{ fontSize: '12px' }}>{selected ? '✓' : '○'}</span>
+                          {m}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Marriage Timeline */}
+                <div>
+                  <label className={labelClass}>Expected Marriage Timeline</label>
+                  <select value={expectedMarriageTimeline} onChange={e => setExpectedMarriageTimeline(e.target.value)} className={inputClass}>
+                    <option value="">Any</option>
+                    <option value="Within 3 months">Within 3 months</option>
+                    <option value="Within 6 months">3–6 months</option>
+                    <option value="Within 1 year">6–12 months</option>
+                    <option value="Within 2 years">Within 2 years</option>
+                    <option value="Not decided yet">Flexible</option>
+                  </select>
+                </div>
+
               </div>
             </div>
+
+            {/* SECTION 2: Marriage & Family Plans */}
+            <div style={{ background: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                <div style={{ width: '4px', height: '20px', background: 'linear-gradient(135deg,#7c3aed,#a855f7)', borderRadius: '2px' }} />
+                <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#111827' }}>Marriage & Family Plans</h3>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+                {/* Accepts Children - 3 options */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <label className={labelClass} style={{ margin: 0 }}>Open to a Partner Who Has Children</label>
+                    <PrioritySelector value={priorityChildren} onChange={setPriorityChildren} mustMatchCount={mustMatchCount} currentField="children" />
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {[
+                      { value: true, label: 'Yes', activeColor: '#16a34a', activeBg: '#f0fdf4' },
+                      { value: 'discussion', label: 'Open to discussion', activeColor: '#0ea5e9', activeBg: '#e0f2fe' },
+                      { value: false, label: 'No', activeColor: '#e11d48', activeBg: '#fef2f2' },
+                    ].map(opt => {
+                      const selected = acceptsChildren === opt.value
+                      return (
+                        <button key={String(opt.value)} type="button"
+                          onClick={() => setAcceptsChildren(opt.value as any)}
+                          style={{
+                            flex: 1, padding: '10px', borderRadius: '10px', cursor: 'pointer',
+                            background: selected ? opt.activeBg : '#f3f4f6',
+                            color: selected ? opt.activeColor : '#374151',
+                            fontSize: '12px', fontWeight: selected ? 700 : 500,
+                            border: selected ? `2px solid ${opt.activeColor}` : '2px solid transparent',
+                            transition: 'all 0.15s'
+                          }}
+                        >
+                          {opt.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Family Setup */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <label className={labelClass} style={{ margin: 0 }}>Preferred Family Setup</label>
+                    <PrioritySelector value={priorityLiving} onChange={setPriorityLiving} mustMatchCount={mustMatchCount} currentField="living" />
+                  </div>
+                  <select value={expectedLivingArrangement} onChange={e => setExpectedLivingArrangement(e.target.value)} className={inputClass}>
+                    <option value="">Any</option>
+                    <option value="Nuclear family">Nuclear family</option>
+                    <option value="With in-laws">Joint family</option>
+                    <option value="Flexible">Separate home near parents</option>
+                    <option value="Depends on partner">Flexible</option>
+                  </select>
+                </div>
+
+                {/* Relocation */}
+                <div>
+                  <label className={labelClass}>Relocation Preference</label>
+                  <select value={expectedFamilyValues} onChange={e => setExpectedFamilyValues(e.target.value)} className={inputClass}>
+                    <option value="">Any</option>
+                    <option value="Conservative">Same city preferred</option>
+                    <option value="Moderate">Anywhere in Bangladesh</option>
+                    <option value="Liberal">Open to moving abroad</option>
+                    <option value="Very Liberal">Depends on partner</option>
+                  </select>
+                </div>
+
+              </div>
+            </div>
+
+            {/* SECTION 3: Career & Lifestyle */}
+            <div style={{ background: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                <div style={{ width: '4px', height: '20px', background: 'linear-gradient(135deg,#0ea5e9,#38bdf8)', borderRadius: '2px' }} />
+                <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#111827' }}>Career & Lifestyle</h3>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+                {/* Career/Study Plan */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <label className={labelClass} style={{ margin: 0 }}>Partner Career or Study Plan After Marriage</label>
+                    <PrioritySelector value={priorityCareer} onChange={setPriorityCareer} mustMatchCount={mustMatchCount} currentField="career" />
+                  </div>
+                  <select value={expectedWorkAfterMarriage} onChange={e => setExpectedWorkAfterMarriage(e.target.value)} className={inputClass}>
+                    <option value="">Any</option>
+                    <option value="Will continue working">Continue working</option>
+                    <option value="Will stop working">Prefer homemaking</option>
+                    <option value="Depends on situation">Either is acceptable</option>
+                    <option value="Not decided">Open to discussion</option>
+                  </select>
+                </div>
+
+                {/* Tobacco Use */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <label className={labelClass} style={{ margin: 0 }}>Tobacco Use Preference</label>
+                    <PrioritySelector value={prioritySmoking} onChange={setPrioritySmoking} mustMatchCount={mustMatchCount} currentField="smoking" />
+                  </div>
+                  <select value={expectedSmoking} onChange={e => setExpectedSmoking(e.target.value)} className={inputClass}>
+                    <option value="">No preference</option>
+                    <option value="no">Non-smoker only</option>
+                    <option value="occasionally">Occasionally OK</option>
+                    <option value="any">Any</option>
+                  </select>
+                </div>
+
+                {/* Food Preference */}
+                <div>
+                  <label className={labelClass}>Food Preference</label>
+                  <select value={expectedDiet} onChange={e => setExpectedDiet(e.target.value)} className={inputClass}>
+                    <option value="">No preference</option>
+                    <option value="Halal only">Halal only</option>
+                    <option value="Vegetarian">Vegetarian</option>
+                    <option value="Non-Vegetarian">Non-Vegetarian</option>
+                    <option value="No restriction">No restriction</option>
+                  </select>
+                </div>
+
+                {/* Contact Preference */}
+                <div>
+                  <label className={labelClass}>Contact Preference</label>
+                  <select value={expectedContactPreference} onChange={e => setExpectedContactPreference(e.target.value)} className={inputClass}>
+                    <option value="">Any</option>
+                    {CONTACT_PREFERENCES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+
+              </div>
+            </div>
+
+            {/* SECTION 4: Optional */}
+            <div style={{ background: 'white', borderRadius: '16px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
+              <button type="button" onClick={() => setShowOptional(!showOptional)} style={{ width: '100%', padding: '18px 24px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '4px', height: '20px', background: '#d1d5db', borderRadius: '2px' }} />
+                  <span style={{ fontSize: '15px', fontWeight: 800, color: '#111827' }}>More Optional Preferences</span>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5" style={{ transform: showOptional ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </button>
+              {showOptional && (
+                <div style={{ padding: '0 24px 24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <p style={{ margin: '0 0 4px', fontSize: '12px', color: '#9ca3af' }}>All fields below are optional and will not significantly reduce your matches.</p>
+                  <div>
+                    <label className={labelClass}>Minimum Education</label>
+                    <select value={partnerEducation} onChange={e => setPartnerEducation(e.target.value)} className={inputClass}>
+                      <option value="">Any</option>
+                      {EDUCATIONS.map(e => <option key={e} value={e}>{e}</option>)}
+                    </select>
+                  </div>
+                </div>
+              )}
+            </div>
+
           </div>
         )}
 
@@ -760,64 +1001,30 @@ export default function EditProfilePage() {
         {/* PRIVACY TAB */}
         {activeTab === 'privacy' && (
           <div style={{ background: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-
-            {/* Guardian Mode — top of privacy, most prominent */}
-            <div style={{
-              padding: '20px',
-              background: guardianMode
-                ? 'linear-gradient(135deg, rgba(124,58,237,0.08), rgba(168,85,247,0.08))'
-                : '#f8fafc',
-              borderRadius: '14px',
-              border: `2px solid ${guardianMode ? '#a855f7' : '#e5e7eb'}`,
-              transition: 'all 0.2s'
-            }}>
+            <div style={{ padding: '20px', background: guardianMode ? 'linear-gradient(135deg, rgba(124,58,237,0.08), rgba(168,85,247,0.08))' : '#f8fafc', borderRadius: '14px', border: `2px solid ${guardianMode ? '#a855f7' : '#e5e7eb'}`, transition: 'all 0.2s' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                     <span style={{ fontSize: '18px' }}>👨‍👩‍👧</span>
-                    <p style={{ margin: 0, fontSize: gm ? '17px' : '15px', fontWeight: 800, color: '#111827' }}>
-                      {gm ? 'পরিবার পরিচালিত মোড' : 'Guardian Mode'}
-                    </p>
-                    {guardianMode && (
-                      <span style={{
-                        fontSize: '10px', fontWeight: 700, color: '#7c3aed',
-                        background: '#ede9fe', padding: '2px 8px', borderRadius: '20px'
-                      }}>চালু</span>
-                    )}
+                    <p style={{ margin: 0, fontSize: gm ? '17px' : '15px', fontWeight: 800, color: '#111827' }}>{gm ? 'পরিবার পরিচালিত মোড' : 'Guardian Mode'}</p>
+                    {guardianMode && <span style={{ fontSize: '10px', fontWeight: 700, color: '#7c3aed', background: '#ede9fe', padding: '2px 8px', borderRadius: '20px' }}>চালু</span>}
                   </div>
                   <p style={{ margin: '0 0 8px', fontSize: gm ? '14px' : '13px', color: '#6b7280', lineHeight: '1.5' }}>
-                    {gm
-                      ? 'এই প্রোফাইলটি পরিবারের পক্ষ থেকে পরিচালিত হচ্ছে। প্রোফাইল কার্ডে "পরিবার পরিচালিত" ব্যাজ দেখাবে।'
-                      : 'This profile is managed by a family member or guardian. A "Family Managed" badge will appear on your profile card.'}
+                    {gm ? 'এই প্রোফাইলটি পরিবারের পক্ষ থেকে পরিচালিত হচ্ছে।' : 'This profile is managed by a family member or guardian. A "Family Managed" badge will appear on your profile card.'}
                   </p>
                   {guardianMode && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '10px', padding: '8px 12px', background: 'white', borderRadius: '8px', border: '1px solid #e9d5ff', width: 'fit-content' }}>
                       <span style={{ fontSize: '13px' }}>👨‍👩‍👧</span>
                       <span style={{ fontSize: '12px', fontWeight: 700, color: '#7c3aed' }}>পরিবার পরিচালিত</span>
-                      <span style={{ fontSize: '11px', color: '#9ca3af' }}>{gm ? '— ব্যাজটি এভাবে দেখাবে' : '— badge preview'}</span>
+                      <span style={{ fontSize: '11px', color: '#9ca3af' }}>— badge preview</span>
                     </div>
                   )}
                 </div>
-                <button
-                  onClick={() => setGuardianMode(!guardianMode)}
-                  style={{
-                    width: '52px', height: '28px', borderRadius: '14px', border: 'none', cursor: 'pointer',
-                    background: guardianMode ? '#7c3aed' : '#d1d5db',
-                    position: 'relative', transition: 'background 0.2s', flexShrink: 0
-                  }}
-                >
-                  <span style={{
-                    position: 'absolute', top: '4px',
-                    left: guardianMode ? '27px' : '4px',
-                    width: '20px', height: '20px', borderRadius: '50%',
-                    background: 'white', transition: 'left 0.2s',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
-                  }} />
+                <button onClick={() => setGuardianMode(!guardianMode)} style={{ width: '52px', height: '28px', borderRadius: '14px', border: 'none', cursor: 'pointer', background: guardianMode ? '#7c3aed' : '#d1d5db', position: 'relative', transition: 'background 0.2s', flexShrink: 0 }}>
+                  <span style={{ position: 'absolute', top: '4px', left: guardianMode ? '27px' : '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
                 </button>
               </div>
             </div>
-
-            {/* Photo Privacy */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
               <div>
                 <p style={{ margin: '0 0 4px', fontSize: gm ? '16px' : '14px', fontWeight: 700, color: '#111827' }}>{gm ? 'ছবির গোপনীয়তা' : 'Photo Privacy'}</p>
@@ -827,8 +1034,58 @@ export default function EditProfilePage() {
                 <span style={{ position: 'absolute', top: '3px', left: photoPrivacy ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
               </button>
             </div>
-
-            {/* Deactivate */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+              <div>
+                <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>Income Privacy</p>
+                <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>Show "Not disclosed" instead of your income on your profile</p>
+              </div>
+              <button onClick={() => setIncomeHidden(!incomeHidden)} style={{ width: '48px', height: '26px', borderRadius: '13px', border: 'none', cursor: 'pointer', background: incomeHidden ? '#e11d48' : '#d1d5db', position: 'relative', transition: 'background 0.2s' }}>
+                <span style={{ position: 'absolute', top: '3px', left: incomeHidden ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+              </button>
+            </div>
+            <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+              <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>Date of Birth Visibility</p>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280' }}>Control who can see your date of birth. Age is always visible.</p>
+              <select value={dobPrivacy} onChange={e => setDobPrivacy(e.target.value)} style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', background: 'white', color: '#111827' }}>
+                <option value="age_only">Show age only (recommended)</option>
+                <option value="full">Show full date of birth</option>
+                <option value="hidden">Hide completely (requestable after mutual interest)</option>
+              </select>
+            </div>
+            <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+              <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>Contact Filter</p>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280' }}>Interests from people outside these criteria go to your Filtered folder.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', minWidth: '80px' }}>Age Range</label>
+                  <select value={contactMinAge} onChange={e => setContactMinAge(parseInt(e.target.value))} style={{ padding: '8px', border: '1.5px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', background: 'white' }}>
+                    {Array.from({length: 43}, (_, i) => i + 18).map(a => <option key={a} value={a}>{a}</option>)}
+                  </select>
+                  <span style={{ fontSize: '12px', color: '#6b7280' }}>to</span>
+                  <select value={contactMaxAge} onChange={e => setContactMaxAge(parseInt(e.target.value))} style={{ padding: '8px', border: '1.5px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', background: 'white' }}>
+                    {Array.from({length: 43}, (_, i) => i + 18).map(a => <option key={a} value={a}>{a}</option>)}
+                  </select>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', minWidth: '80px' }}>Religion</label>
+                  <select value={contactReligion} onChange={e => setContactReligion(e.target.value)} style={{ padding: '8px', border: '1.5px solid #e5e7eb', borderRadius: '8px', fontSize: '13px', background: 'white' }}>
+                    <option value="any">Any religion</option>
+                    <option value="Islam">Islam only</option>
+                    <option value="Hinduism">Hinduism only</option>
+                    <option value="Christianity">Christianity only</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+              <div>
+                <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>SMS Notification</p>
+                <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>Receive an SMS when you and someone else mutually accept each other's interest</p>
+              </div>
+              <button onClick={() => setSmsOnMutual(!smsOnMutual)} style={{ width: '48px', height: '26px', borderRadius: '13px', border: 'none', cursor: 'pointer', background: smsOnMutual ? '#e11d48' : '#d1d5db', position: 'relative', transition: 'background 0.2s' }}>
+                <span style={{ position: 'absolute', top: '3px', left: smsOnMutual ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+              </button>
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', background: deactivated ? '#fff1f2' : '#f8fafc', borderRadius: '12px', border: `1px solid ${deactivated ? '#fecdd3' : '#e5e7eb'}` }}>
               <div>
                 <p style={{ margin: '0 0 4px', fontSize: gm ? '16px' : '14px', fontWeight: 700, color: '#111827' }}>{gm ? 'প্রোফাইল নিষ্ক্রিয় করুন' : 'Deactivate Profile'}</p>
@@ -838,11 +1095,9 @@ export default function EditProfilePage() {
                 <span style={{ position: 'absolute', top: '3px', left: deactivated ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
               </button>
             </div>
-
-            {/* Delete account */}
             <div style={{ padding: '16px', background: '#fffbeb', borderRadius: '12px', border: '1px solid #fde68a' }}>
               <p style={{ margin: '0 0 4px', fontSize: gm ? '16px' : '14px', fontWeight: 700, color: '#92400e' }}>{gm ? 'অ্যাকাউন্ট মুছে ফেলতে চান?' : 'Want to delete your account?'}</p>
-              <p style={{ margin: '0 0 12px', fontSize: gm ? '13px' : '12px', color: '#92400e' }}>{gm ? 'support@biyekori.com-এ ইমেইল করুন। ৪৮ ঘণ্টার মধ্যে আপনার সব তথ্য মুছে ফেলা হবে।' : 'Email us at support@biyekori.com and we will delete all your data within 48 hours.'}</p>
+              <p style={{ margin: '0 0 12px', fontSize: gm ? '13px' : '12px', color: '#92400e' }}>{gm ? 'support@biyekori.com-এ ইমেইল করুন।' : 'Email us at support@biyekori.com and we will delete all your data within 48 hours.'}</p>
               <a href="mailto:support@biyekori.com?subject=Account Deletion Request" style={{ fontSize: gm ? '14px' : '13px', color: '#e11d48', fontWeight: 700 }}>{gm ? 'অ্যাকাউন্ট মুছে ফেলার অনুরোধ করুন' : 'Request Account Deletion'}</a>
             </div>
           </div>
@@ -852,7 +1107,7 @@ export default function EditProfilePage() {
         {activeTab !== 'photos' && (
           <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
             <button onClick={handleSave} disabled={saving} style={{ flex: 1, padding: '14px', background: saved ? '#10b981' : 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', border: 'none', borderRadius: '12px', fontSize: gm ? '16px' : '15px', fontWeight: 700, cursor: 'pointer' }}>
-              {saving ? (gm ? 'সংরক্ষণ হচ্ছে...' : 'Saving...') : saved ? (gm ? 'সংরক্ষিত!' : 'Saved!') : (gm ? 'সংরক্ষণ করুন' : 'Save Changes')}
+              {saving ? (gm ? 'সংরক্ষণ হচ্ছে...' : 'Saving...') : saved ? (gm ? 'সংরক্ষিত!' : 'Saved!') : (gm ? 'সংরক্ষণ করুন' : 'Save')}
             </button>
             <button onClick={() => router.push('/dashboard')} style={{ padding: '14px 24px', background: 'white', color: '#6b7280', border: '2px solid #e5e7eb', borderRadius: '12px', fontSize: gm ? '15px' : '14px', fontWeight: 600, cursor: 'pointer' }}>
               {gm ? 'বাতিল' : 'Cancel'}
