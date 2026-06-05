@@ -418,8 +418,8 @@ export default function EditProfilePage() {
                 </select>
               </div>
               <div style={{ gridColumn: '1/-1' }}>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'নিজের সম্পর্কে' : 'About Me'}</label>
-                <textarea value={aboutMe} onChange={e => setAboutMe(e.target.value)} className={inputClass} rows={4} placeholder={gm ? 'নিজের সম্পর্কে কিছু লিখুন...' : 'Write something about yourself...'} style={{ resize: 'vertical', ...gmFontStyle }} />
+                <label className={labelClass} style={gmFontStyle}>{gm ? (user?.gender === 'Male' ? 'তার সম্পর্কে' : 'তার সম্পর্কে') : (user?.gender === 'Male' ? 'About Him' : 'About Her')}</label>
+                <textarea value={aboutMe} onChange={e => setAboutMe(e.target.value)} className={inputClass} rows={4} placeholder={gm ? (user?.gender === 'Male' ? 'তার চরিত্র ও পারিবারিক পটভূমি বর্ণনা করুন...' : 'তার চরিত্র ও পারিবারিক পটভূমি বর্ণনা করুন...') : (user?.gender === 'Male' ? 'Describe his character, background and family...' : 'Describe her character, background and family...')} style={{ resize: 'vertical', ...gmFontStyle }} />
               </div>
             </div>
           </div>
