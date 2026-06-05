@@ -131,17 +131,17 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
     if (!aFeatured && bFeatured) return 1
 
     if (sortMode === 'oldest') {
-      return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime()
+      return (parseInt(a.id) || 0) - (parseInt(b.id) || 0)
     }
     if (sortMode === 'active') {
-      return new Date(b.last_active_at || b.updated_at || b.created_at || 0).getTime() -
-             new Date(a.last_active_at || a.updated_at || a.created_at || 0).getTime()
+      return new Date(b.updated_at || b.created_at || 0).getTime() -
+             new Date(a.updated_at || a.created_at || 0).getTime()
     }
     if (sortMode === 'completion') {
       return (b.profile_completion || 0) - (a.profile_completion || 0)
     }
-    // Default: newest first
-    return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+    // Default: newest = highest id first
+    return (parseInt(b.id) || 0) - (parseInt(a.id) || 0)
   })]
 
   // Count new profiles this week for discover badge
