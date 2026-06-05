@@ -548,6 +548,7 @@ export default function EditProfilePage() {
                   {LIVING_ARRANGEMENTS.map(l => <option key={l} value={l}>{l}</option>)}
                 </select>
               </div>
+              {user?.gender !== 'Male' && (
               <div>
                 <label className={labelClass} style={gmFontStyle}>{gm ? 'বিয়ের পর কাজ' : 'Work After Marriage'}</label>
                 <select value={workAfterMarriage} onChange={e => setWorkAfterMarriage(e.target.value)} className={inputClass} style={gmFontStyle}>
@@ -555,6 +556,7 @@ export default function EditProfilePage() {
                   {WORK_AFTER_MARRIAGE.map(w => <option key={w} value={w}>{w}</option>)}
                 </select>
               </div>
+              )}
               <div>
                 <label className={labelClass} style={gmFontStyle}>{gm ? 'যোগাযোগের পছন্দ' : 'Contact Preference'}</label>
                 <select value={contactPreference} onChange={e => setContactPreference(e.target.value)} className={inputClass} style={gmFontStyle}>
