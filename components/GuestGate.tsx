@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 const GUEST_KEY = "bk_guest_first_visit"
-const BLUR_AFTER_MS = 5 * 60 * 1000 // 5 minutes
+const BLUR_AFTER_MS = 3 * 60 * 1000 // 5 minutes
 const BLOCK_RETURN_MS = 24 * 60 * 60 * 1000 // 24 hours
 
 export default function GuestGate({ page }: { page: number }) {
