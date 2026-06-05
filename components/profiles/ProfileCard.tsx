@@ -247,7 +247,28 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
 
   const rawName = profile.full_name || profile.name || "Anonymous";
 
-  const isMutual = false;
+  const [isMutual, setIsMutual] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('biyekori_user');
+      if (!stored) return;
+      const user = JSON.parse(stored);
+      if (!user?.id) return;
+      fetch('/api/interests/list?userId=' + user.id)
+        .then(r => r.json())
+        .then(data => {
+          const sent = (data.sent || []).find((s: any) =>
+            String(s.receiver_id) === String(profile.id) && s.status === 'accepted'
+          );
+          const recv = (data.received || []).find((r: any) =>
+            String(r.sender_id) === String(profile.id) && r.status === 'accepted'
+          );
+          if (sent || recv) setIsMutual(true);
+        }).catch(() => {});
+    } catch(e) {}
+  }, [profile.id]);
+
   const name = maskName(rawName, isMutual);
   const location = profile.location || profile.city || profile.district || "Bangladesh";
   const maritalStatus = (profile.marital_status || profile.maritalStatus || "").trim();
