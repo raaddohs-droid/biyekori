@@ -297,7 +297,7 @@ export default function Navbar() {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'rgba(240,192,64,0.08)', borderRadius: '8px', border: '1px solid rgba(240,192,64,0.15)' }}>
                       <div>
                         <p style={{ margin: 0, fontSize: '10px', color: 'rgba(253,246,238,0.4)', letterSpacing: '1px' }}>CURRENT PLAN</p>
-                        <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#F0C040', textTransform: 'capitalize' }}>{user.package || 'Prottasha'}</p>
+                        <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#F0C040', textTransform: 'capitalize' }}>{user.package === 'prottasha' ? 'Free' : user.package === 'silver' ? 'Silver' : user.package === 'gold' ? 'Gold' : user.package === 'milon' ? 'NRB Gold' : 'Free'}</p>
                       </div>
                       {user.package === 'prottasha' && (
                         <Link href="/pricing" onClick={() => setShowMenu(false)} style={{ padding: '5px 14px', background: 'linear-gradient(135deg,#F0C040,#C07800)', color: '#080604', borderRadius: '6px', fontSize: '11px', fontWeight: 700, textDecoration: 'none', letterSpacing: '0.5px' }}>
