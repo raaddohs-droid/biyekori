@@ -1,4 +1,5 @@
 "use client";
+function dashMaskName(n,ok){if(!n)return "Anonymous";if(ok)return n;return n.trim().split(" ").map(function(p){return p[0]+"*".repeat(Math.max(p.length-1,3))}).join(" ")}
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
