@@ -248,6 +248,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
   const rawName = profile.full_name || profile.name || "Anonymous";
 
   const [isMutual, setIsMutual] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   useEffect(() => {
     try {
@@ -450,9 +451,23 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
             ) : (
               <>
                 <p className="text-sm text-gray-700 mb-2">Phone: {maskPhone(profile.phone)}</p>
-                <Link href="/pricing" className="block w-full py-2 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-lg font-bold text-center text-xs">
+                <button onClick={() => setShowUpgradeModal(true)} className="block w-full py-2 bg-gradient-to-r from-rose-500 to-pink-600 text-white rounded-lg font-bold text-center text-xs" style={{ border: 'none', cursor: 'pointer' }}>
                   Upgrade to View Contact
-                </Link>
+                </button>
+                {showUpgradeModal && (
+                  <div onClick={() => setShowUpgradeModal(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+                    <div onClick={e => e.stopPropagation()} style={{ background: 'white', borderRadius: '24px', padding: '32px 24px', maxWidth: '380px', width: '100%', textAlign: 'center', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
+                      <div style={{ fontSize: '48px', marginBottom: '12px' }}>🔒</div>
+                      <h2 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 900, color: '#111827' }}>Upgrade to Contact</h2>
+                      <p style={{ margin: '0 0 20px', fontSize: '14px', color: '#6b7280', lineHeight: 1.6 }}>View contact details and connect with <strong>{name}</strong>.</p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
+                        <a href="/pricing" style={{ display: 'block', padding: '14px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', borderRadius: '12px', fontWeight: 800, fontSize: '15px', textDecoration: 'none' }}>⭐ Upgrade to Silver — ৳499/mo</a>
+                        <a href="/pricing" style={{ display: 'block', padding: '14px', background: 'linear-gradient(135deg,#7c3aed,#db2777)', color: 'white', borderRadius: '12px', fontWeight: 800, fontSize: '15px', textDecoration: 'none' }}>👑 Upgrade to Gold — ৳999/mo</a>
+                      </div>
+                      <button onClick={() => setShowUpgradeModal(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', fontSize: '13px', cursor: 'pointer' }}>Maybe later</button>
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </div>
