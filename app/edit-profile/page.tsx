@@ -727,49 +727,7 @@ export default function EditProfilePage() {
               </button>
               {showMoreLifestyle && (
                 <div style={{ padding: '0 24px 24px' }}>
-                  <p style={{ margin: '0 0 16px', fontSize: '12px', color: '#9ca3af' }}>These details help us find more compatible matches.</p>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                    <div>
-                      <label className={labelClass}>Family Involvement Preference</label>
-                      <select className={inputClass}>
-                        <option value="">Select</option>
-                        <option value="from_beginning">Family involved from the beginning</option>
-                        <option value="talk_first">Talk first, involve family shortly after</option>
-                        <option value="after_mutual">Family involvement after mutual interest</option>
-                        <option value="guardian_to_guardian">Prefer guardian-to-guardian communication</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className={labelClass}>Social Lifestyle</label>
-                      <select className={inputClass}>
-                        <option value="">Select</option>
-                        <option value="quiet">Quiet and home-oriented</option>
-                        <option value="balanced">Balanced</option>
-                        <option value="social">Social and outgoing</option>
-                        <option value="depends">Depends on occasion</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className={labelClass}>Dowry Stance</label>
-                      <select className={inputClass}>
-                        <option value="">Select</option>
-                        <option value="against">Strictly against dowry</option>
-                        <option value="gifts_only">No dowry; voluntary gifts only</option>
-                        <option value="discussion">Open to discussion</option>
-                        <option value="prefer_not">Prefer not to say</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className={labelClass}>Preferred Wedding Style</label>
-                      <select className={inputClass}>
-                        <option value="">Select</option>
-                        <option value="simple">Simple and intimate</option>
-                        <option value="traditional">Traditional family wedding</option>
-                        <option value="large">Large celebration</option>
-                        <option value="discussion">Open to discussion</option>
-                      </select>
-                    </div>
-                  </div>
+                  <p style={{ fontSize: '13px', color: '#9ca3af' }}>More detailed lifestyle fields coming soon.</p>
                 </div>
               )}
             </div>

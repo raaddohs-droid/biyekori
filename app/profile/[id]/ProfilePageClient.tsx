@@ -899,7 +899,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               <h3 className="text-xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>💼 Career & Income</h3>
               <div className="space-y-3">
                 <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Profession</span><span className="font-medium" style={{color:"#111827"}}>{profile.profession}</span></div>
-                {hasValue(profile.monthly_income) && profile.monthly_income > 0 && (
+                {hasValue(profile.monthly_income) && profile.monthly_income > 0 && !profile.income_hidden && (
                   <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Monthly Income</span><span className="font-medium" style={{color:"#111827"}}>৳{Number(profile.monthly_income).toLocaleString()}</span></div>
                 )}
               </div>
