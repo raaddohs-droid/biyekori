@@ -585,7 +585,7 @@ export default function EditProfilePage() {
                 </select>
               </div>
               <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'খাদ্যাভ্যাস' : 'Diet'}</label>
+                <label className={labelClass} style={gmFontStyle}>{gm ? 'খাদ্যাভ্যাস' : 'Foods'}</label>
                 <select value={diet} onChange={e => setDiet(e.target.value)} className={inputClass} style={gmFontStyle}>
                   <option value="">{gm ? 'বেছে নিন' : 'Select'}</option>
                   <option value="Vegetarian">Vegetarian</option>
@@ -723,7 +723,7 @@ export default function EditProfilePage() {
                 </select>
               </div>
               <div>
-                <label className={labelClass} style={gmFontStyle}>{gm ? 'খাদ্যাভ্যাসের পছন্দ' : 'Diet Preference'}</label>
+                <label className={labelClass} style={gmFontStyle}>{gm ? 'খাদ্যাভ্যাসের পছন্দ' : 'Food Preference'}</label>
                 <select value={expectedDiet} onChange={e => setExpectedDiet(e.target.value)} className={inputClass} style={gmFontStyle}>
                   <option value="">{gm ? 'কোনো পছন্দ নেই' : 'No preference'}</option>
                   <option value="Halal only">Halal only</option>
