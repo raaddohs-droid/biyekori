@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AIPhotoCropper from '@/components/profiles/AIPhotoCropper';
@@ -160,7 +160,7 @@ export default function RegisterPage() {
                 <h3 style={{ margin: '0 0 8px', fontSize: '17px', fontWeight: 800, color: '#111827' }}>নিজে পরিচালিত</h3>
                 <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280', lineHeight: 1.5 }}>I am the bride or groom and will manage this profile myself</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  {['Full profile control', 'Direct messaging', 'Voice calls', 'A Day Together game'].map(f => (
+                  {['Full profile control', 'Direct messaging', 'Voice calls', 'Porichiti game'].map(f => (
                     <span key={f} style={{ fontSize: '11px', color: '#10b981', fontWeight: 600 }}>✓ {f}</span>
                   ))}
                 </div>
@@ -469,4 +469,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-
