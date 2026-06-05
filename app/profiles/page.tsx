@@ -122,27 +122,10 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
     })
   }
 
-  // Sort profiles
-  filtered = [...filtered.sort((a: any, b: any) => {
-    // Featured always on top
-    const aFeatured = a.is_featured && a.featured_until && new Date(a.featured_until) > new Date()
-    const bFeatured = b.is_featured && b.featured_until && new Date(b.featured_until) > new Date()
-    if (aFeatured && !bFeatured) return -1
-    if (!aFeatured && bFeatured) return 1
-
-    if (sortMode === 'oldest') {
-      return (parseInt(a.id) || 0) - (parseInt(b.id) || 0)
-    }
-    if (sortMode === 'active') {
-      return new Date(b.updated_at || b.created_at || 0).getTime() -
-             new Date(a.updated_at || a.created_at || 0).getTime()
-    }
-    if (sortMode === 'completion') {
-      return (b.profile_completion || 0) - (a.profile_completion || 0)
-    }
-    // Default: newest = highest id first
-    return (parseInt(b.id) || 0) - (parseInt(a.id) || 0)
-  })]
+  // Only sort featured to top — Supabase handles the rest
+  const featuredProfiles = filtered.filter((p: any) => p.is_featured && p.featured_until && new Date(p.featured_until) > new Date())
+  const nonFeatured = filtered.filter((p: any) => !(p.is_featured && p.featured_until && new Date(p.featured_until) > new Date()))
+  filtered = [...featuredProfiles, ...nonFeatured]
 
   // Count new profiles this week for discover badge
   const oneWeekAgoDate = new Date()
