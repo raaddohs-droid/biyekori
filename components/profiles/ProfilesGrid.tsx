@@ -252,6 +252,7 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
   ]
 
   return (
+    <>
     <div
       onClick={() => window.location.href = '/profile/' + profile.id}
       style={{
@@ -373,6 +374,7 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
         </div>
       </div>
     )}
+    </>
   )
 }
 
