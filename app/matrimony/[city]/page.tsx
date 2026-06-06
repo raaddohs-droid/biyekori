@@ -90,6 +90,32 @@ const CITY_DATA: Record<string, {
   },
 }
 
+const CITY_SEARCH_TERMS: Record<string, string[]> = {
+  dhaka: ['Dhaka','Mirpur','Dhanmondi','Gulshan','Banani','Uttara','Mohammadpur',
+    'Bashundhara','Motijheel','Wari','Lalbagh','Tejgaon','Rampura','Khilgaon',
+    'Mugda','Badda','Demra','Jatrabari','Keraniganj','Savar','Pallabi','Hazaribagh','Cantonment'],
+  chittagong: ['Chittagong','Agrabad','Nasirabad','Halishahar','Panchlaish','Khulshi',
+    'Bayazid','Chandgaon','Pahartali','Kotwali','Double Mooring','Bakalia',
+    'Bandar','Karnaphuli','Sitakunda','Fatikchhari','Rangunia','Patiya','Boalkhali'],
+  sylhet: ['Sylhet','Zindabazar','Amberkhana','Shibganj','Beanibazar','Golapganj',
+    'Jaintiapur','Companiganj','Zakiganj','Kanaighat','Bishwanath','Fenchuganj',
+    'Balagonj','Osmaninagar','Sunamganj','Habiganj','Moulvibazar'],
+  rajshahi: ['Rajshahi','Bogura','Bogra','Pabna','Naogaon','Natore','Sirajganj',
+    'Chapainawabganj','Joypurhat','Boalia','Matihar','Rajpara'],
+  khulna: ['Khulna','Jessore','Satkhira','Bagerhat','Narail','Chuadanga',
+    'Kushtia','Magura','Jhenaidah','Meherpur','Sonadanga','Khalishpur','Rupsha','Dumuria'],
+  barisal: ['Barisal','Bhola','Patuakhali','Barguna','Jhalokathi','Pirojpur',
+    'Bakerganj','Gournadi','Agailjhara','Mehendiganj','Muladi','Babuganj','Hizla'],
+  rangpur: ['Rangpur','Dinajpur','Kurigram','Gaibandha','Nilphamari',
+    'Lalmonirhat','Panchagarh','Thakurgaon','Badarganj','Mithapukur','Kaunia'],
+  mymensingh: ['Mymensingh','Netrokona','Kishoreganj','Jamalpur','Sherpur',
+    'Muktagacha','Trishal','Bhaluka','Phulpur','Gaffargaon'],
+  comilla: ['Comilla','Chandpur','Brahmanbaria','Lakshmipur','Feni','Noakhali',
+    'Burichang','Homna','Daudkandi','Chauddagram','Laksam','Barura','Debidwar'],
+  gazipur: ['Gazipur','Tongi','Kaliakair','Kapasia','Sreepur','Kaliganj'],
+  narayanganj: ['Narayanganj','Fatullah','Siddhirganj','Rupganj','Araihazar','Sonargaon'],
+}
+
 export async function generateStaticParams() {
   return Object.keys(CITY_DATA).map(city => ({ city }))
 }
