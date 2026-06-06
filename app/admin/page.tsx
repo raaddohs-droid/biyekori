@@ -594,7 +594,7 @@ export default function AdminDashboard() {
                 <div style={{ marginBottom: '16px' }}>
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Send To</label>
                   <select value={emailTarget} onChange={e => setEmailTarget(e.target.value)}
-                    style={{ width: '100%', padding: '10px 14px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px' }}>
+                    style={{ width: '100%', padding: '10px 14px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', color: '#111827', background: 'white' }}>
                     <option value="all">All users with email</option>
                     <option value="premium">Premium users only</option>
                     <option value="free">Free users only</option>
@@ -605,13 +605,13 @@ export default function AdminDashboard() {
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Subject</label>
                   <input value={emailSubject} onChange={e => setEmailSubject(e.target.value)}
                     placeholder="e.g. You have new matches on Biyekori!"
-                    style={{ width: '100%', padding: '10px 14px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', boxSizing: 'border-box' }} />
+                    style={{ width: '100%', padding: '10px 14px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', boxSizing: 'border-box', color: '#111827', background: 'white' }} />
                 </div>
                 <div style={{ marginBottom: '20px' }}>
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Body (HTML supported)</label>
                   <textarea value={emailBody} onChange={e => setEmailBody(e.target.value)} rows={8}
                     placeholder="<p>Dear {name},</p><p>You have new matches waiting...</p>"
-                    style={{ width: '100%', padding: '12px 14px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'monospace' }} />
+                    style={{ width: '100%', padding: '12px 14px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'monospace', color: '#111827', background: 'white' }} />
                 </div>
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
                   {[
@@ -712,12 +712,12 @@ export default function AdminDashboard() {
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>User ID</label>
                 <input value={upgradeUserId} onChange={e => setUpgradeUserId(e.target.value)}
                   placeholder="Profile ID number"
-                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', boxSizing: 'border-box' }} />
+                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', boxSizing: 'border-box', color: '#111827', background: 'white' }} />
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>New Plan</label>
                 <select value={upgradePkg} onChange={e => setUpgradePkg(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px' }}>
+                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', color: '#111827', background: 'white' }}>
                   {PACKAGES.map(p => <option key={p} value={p}>{PACKAGE_LABELS[p]} — {PACKAGE_PRICES[p]}</option>)}
                 </select>
               </div>
@@ -736,13 +736,13 @@ export default function AdminDashboard() {
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>Amount Received (৳ or $)</label>
                 <input value={upgradeAmount} onChange={e => setUpgradeAmount(e.target.value)}
                   placeholder="e.g. ৳799 or $39"
-                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', boxSizing: 'border-box' }} />
+                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', boxSizing: 'border-box', color: '#111827', background: 'white' }} />
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>Note (optional)</label>
                 <input value={upgradeNote} onChange={e => setUpgradeNote(e.target.value)}
                   placeholder="e.g. bKash 01711XXXXX, ref: TX123"
-                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', boxSizing: 'border-box' }} />
+                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', boxSizing: 'border-box', color: '#111827', background: 'white' }} />
               </div>
             </div>
             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
