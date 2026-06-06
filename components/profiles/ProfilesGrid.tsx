@@ -266,9 +266,9 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)' }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'none' }}
     >
-      <div style={{ position: 'relative', flexShrink: 0, width: '160px', paddingBottom: '14px', overflow: 'visible', borderRadius: '16px 0 0 16px', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', flexShrink: 0, width: '160px', paddingBottom: '14px', borderRadius: '16px 0 0 16px' }}>
         {photoUrl ? (
-          <img src={photoUrl} alt={name} style={{ width: '160px', height: 'calc(100% - 14px)', minHeight: '180px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block', borderRadius: '16px 0 0 0' }} />
+          <img src={photoUrl} alt={name} style={{ width: '160px', height: 'calc(100% - 14px)', minHeight: '180px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
         ) : (
           <div style={{ width: '160px', minHeight: '180px', background: 'linear-gradient(135deg,#fce7f3,#ede9fe)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>
             {profile.gender === 'male' ? '👤' : '👤'}
