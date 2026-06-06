@@ -25,12 +25,18 @@ async function sbDelete(path: string) {
   return fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method: 'DELETE', headers })
 }
 
-const PACKAGES = ['prottasha', 'bondhon', 'milon', 'biswas']
+const PACKAGES = ['prottasha', 'silver', 'gold', 'milon']
 const PACKAGE_LABELS: Record<string, string> = {
-  prottasha: 'Free', bondhon: 'Bondhon', milon: 'Milon', biswas: 'Biswas'
+  prottasha: 'Free', silver: 'Silver', gold: 'Gold', milon: 'NRB Gold'
 }
 const PACKAGE_COLORS: Record<string, string> = {
-  prottasha: '#9ca3af', bondhon: '#3b82f6', milon: '#7c3aed', biswas: '#f59e0b'
+  prottasha: '#9ca3af', silver: '#3b82f6', gold: '#f59e0b', milon: '#7c3aed'
+}
+const PACKAGE_DURATIONS: Record<string, number> = {
+  silver: 30, gold: 30, milon: 30
+}
+const PACKAGE_PRICES: Record<string, string> = {
+  prottasha: 'Free', silver: '৳799/mo', gold: '৳1499/mo', milon: '$39/mo'
 }
 
 export default function AdminDashboard() {
@@ -60,6 +66,26 @@ export default function AdminDashboard() {
 
   // Reports tab
   const [reports, setReports] = useState<any[]>([])
+
+  // Revenue/upgrade log
+  const [upgradeLog, setUpgradeLog] = useState<any[]>([])
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [upgradeUserId, setUpgradeUserId] = useState('')
+  const [upgradePkg, setUpgradePkg] = useState('silver')
+  const [upgradeDays, setUpgradeDays] = useState(30)
+  const [upgradeNote, setUpgradeNote] = useState('')
+  const [upgradeAmount, setUpgradeAmount] = useState('')
+
+  // Email
+  const [emailTarget, setEmailTarget] = useState('all')
+  const [emailSubject, setEmailSubject] = useState('')
+  const [emailBody, setEmailBody] = useState('')
+  const [emailSending, setEmailSending] = useState(false)
+  const [emailResult, setEmailResult] = useState('')
+
+  // SMS rate limit
+  const [smsRateLimit, setSmsRateLimit] = useState(2)
+  const [smsRatePeriod, setSmsRatePeriod] = useState('week')
 
   // Action feedback
   const [actionMsg, setActionMsg] = useState('')
@@ -194,9 +220,44 @@ export default function AdminDashboard() {
     { id: 'overview', label: 'Overview', icon: '📊' },
     { id: 'users', label: 'Users', icon: '👥' },
     { id: 'verifications', label: 'Verifications', icon: '🛡️' },
-    { id: 'packages', label: 'Packages', icon: '💎' },
+    { id: 'upgrades', label: 'Upgrades', icon: '💎' },
+    { id: 'revenue', label: 'Revenue', icon: '💰' },
     { id: 'sms', label: 'SMS Broadcast', icon: '📱' },
+    { id: 'email', label: 'Email', icon: '📧' },
   ]
+
+  const logUpgrade = async (userId: string, pkg: string, days: number, amount: string, note: string) => {
+    try {
+      const expiry = new Date(Date.now() + days * 86400000).toISOString()
+      await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${userId}`, {
+        method: 'PATCH', headers: { ...headers, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ package: pkg, package_expiry: expiry })
+      })
+      // Log to upgrade_logs table (create if not exists)
+      await fetch(`${SUPABASE_URL}/rest/v1/upgrade_logs`, {
+        method: 'POST', headers: { ...headers, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ user_id: parseInt(userId), package: pkg, amount_bdt: amount || '0', days, note: note || '', upgraded_at: new Date().toISOString(), upgraded_by: user?.id })
+      }).catch(() => {}) // table may not exist yet
+      showMsg(`User upgraded to ${PACKAGE_LABELS[pkg]} for ${days} days`)
+      setShowUpgradeModal(false)
+      loadUsers()
+    } catch(e) { showMsg('Upgrade failed') }
+  }
+
+  const sendEmail = async () => {
+    if (!emailSubject.trim() || !emailBody.trim()) { showMsg('Subject and body required'); return }
+    if (!confirm('Send email to selected users?')) return
+    setEmailSending(true)
+    try {
+      const res = await fetch('/api/send-email', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target: emailTarget, subject: emailSubject, body: emailBody })
+      })
+      const data = await res.json()
+      setEmailResult(data.message || `Email sent to ${data.count || 0} users`)
+    } catch(e) { setEmailResult('Email sending failed') }
+    setEmailSending(false)
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#f1f5f9' }}>
@@ -357,6 +418,10 @@ export default function AdminDashboard() {
                                 style={{ padding: '4px 8px', background: u.is_banned ? '#dcfce7' : '#fff1f2', color: u.is_banned ? '#15803d' : '#e11d48', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}>
                                 {u.is_banned ? 'Unban' : 'Ban'}
                               </button>
+                              <button onClick={() => { setUpgradeUserId(String(u.id)); setShowUpgradeModal(true) }}
+                                style={{ padding: '4px 8px', background: '#f5f3ff', color: '#7c3aed', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}>
+                                Upgrade
+                              </button>
                               <button onClick={() => deleteUser(u.id, u.full_name)}
                                 style={{ padding: '4px 8px', background: '#fef2f2', color: '#dc2626', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}>
                                 Del
@@ -416,33 +481,155 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* PACKAGES TAB */}
-          {tab === 'packages' && (
+          {/* UPGRADES TAB */}
+          {tab === 'upgrades' && (
             <div>
-              <h1 style={{ margin: '0 0 20px', fontSize: '22px', fontWeight: 800, color: '#111827' }}>Package Management</h1>
+              <h1 style={{ margin: '0 0 20px', fontSize: '22px', fontWeight: 800, color: '#111827' }}>Manual Upgrade</h1>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '24px' }}>
-                {PACKAGES.map(pkg => (
+                {PACKAGES.filter(p => p !== 'prottasha').map(pkg => (
                   <div key={pkg} style={{ background: 'white', borderRadius: '14px', padding: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', borderLeft: `4px solid ${PACKAGE_COLORS[pkg]}` }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                       <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: PACKAGE_COLORS[pkg] }}>{PACKAGE_LABELS[pkg]}</h3>
-                      <span style={{ fontSize: '11px', background: '#f3f4f6', color: '#6b7280', padding: '2px 8px', borderRadius: '20px', fontWeight: 600 }}>{pkg}</span>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: PACKAGE_COLORS[pkg] }}>{PACKAGE_PRICES[pkg]}</span>
                     </div>
-                    <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af' }}>
-                      {pkg === 'prottasha' && 'Free plan — pages 1-5, 3 interests/month'}
-                      {pkg === 'bondhon' && 'Basic paid — unlimited browse, contact view'}
-                      {pkg === 'milon' && 'Mid tier — messaging, 15min calls'}
-                      {pkg === 'biswas' && 'Premium — all features, priority listing'}
+                    <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#9ca3af' }}>
+                      {pkg === 'silver' && 'Full browse, contact details, block/report'}
+                      {pkg === 'gold' && 'All Silver + priority listing, advanced filters'}
+                      {pkg === 'milon' && 'NRB Gold — international users, USD pricing'}
                     </p>
+                    <button onClick={() => { setUpgradePkg(pkg); setShowUpgradeModal(true) }}
+                      style={{ width: '100%', padding: '8px', background: PACKAGE_COLORS[pkg], color: 'white', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>
+                      Upgrade a User to {PACKAGE_LABELS[pkg]}
+                    </button>
                   </div>
                 ))}
               </div>
+              <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '12px', padding: '16px', fontSize: '13px', color: '#92400e' }}>
+                <strong>SMS Rate Limiting</strong>
+                <p style={{ margin: '8px 0 0' }}>Mutual interest SMS: limit to
+                  <select value={smsRateLimit} onChange={e => setSmsRateLimit(parseInt(e.target.value))}
+                    style={{ margin: '0 6px', padding: '2px 6px', border: '1px solid #fde68a', borderRadius: '4px', fontSize: '13px' }}>
+                    {[1,2,3,5,10].map(n => <option key={n} value={n}>{n}</option>)}
+                  </select>
+                  per
+                  <select value={smsRatePeriod} onChange={e => setSmsRatePeriod(e.target.value)}
+                    style={{ margin: '0 6px', padding: '2px 6px', border: '1px solid #fde68a', borderRadius: '4px', fontSize: '13px' }}>
+                    <option value="day">day</option>
+                    <option value="week">week</option>
+                    <option value="month">month</option>
+                  </select>
+                  per user. (Note: enforced in /api/interests/respond)
+                </p>
+              </div>
+            </div>
+          )}
 
-              <div style={{ background: 'white', borderRadius: '14px', padding: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-                <h3 style={{ margin: '0 0 12px', fontSize: '15px', fontWeight: 800, color: '#111827' }}>Manually Assign Package</h3>
-                <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#6b7280' }}>Search for a user in the Users tab and use the package dropdown to change their plan directly.</p>
-                <button onClick={() => setTab('users')} style={{ padding: '10px 20px', background: '#7c3aed', color: 'white', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>
-                  Go to Users
+          {/* REVENUE TAB */}
+          {tab === 'revenue' && (
+            <div>
+              <h1 style={{ margin: '0 0 20px', fontSize: '22px', fontWeight: 800, color: '#111827' }}>Revenue Log</h1>
+              <div style={{ background: 'white', borderRadius: '14px', padding: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', marginBottom: '16px' }}>
+                <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#6b7280' }}>
+                  All manual upgrades logged here. To add a new upgrade, go to Users tab and click "Upgrade" on any user.
+                </p>
+                <button onClick={async () => {
+                  const data = await fetch(`${SUPABASE_URL}/rest/v1/upgrade_logs?select=*,profile:user_id(full_name,phone)&order=upgraded_at.desc&limit=50`, { headers }).then(r => r.json())
+                  setUpgradeLog(Array.isArray(data) ? data : [])
+                }} style={{ padding: '10px 20px', background: '#e11d48', color: 'white', border: 'none', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', marginBottom: '16px' }}>
+                  Load Revenue Log
                 </button>
+                {upgradeLog.length > 0 && (
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                    <thead>
+                      <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e5e7eb' }}>
+                        {['User', 'Plan', 'Amount', 'Days', 'Date', 'Note'].map(h => (
+                          <th key={h} style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 700, color: '#6b7280', fontSize: '11px', textTransform: 'uppercase' }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {upgradeLog.map((log: any, i: number) => (
+                        <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                          <td style={{ padding: '10px 12px' }}>
+                            <div style={{ fontWeight: 700 }}>{log.profile?.full_name || 'ID: ' + log.user_id}</div>
+                            <div style={{ fontSize: '11px', color: '#9ca3af' }}>{log.profile?.phone}</div>
+                          </td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <span style={{ background: '#f5f3ff', color: '#7c3aed', padding: '2px 8px', borderRadius: '20px', fontSize: '11px', fontWeight: 700 }}>{PACKAGE_LABELS[log.package] || log.package}</span>
+                          </td>
+                          <td style={{ padding: '10px 12px', fontWeight: 700, color: '#059669' }}>{log.amount_bdt}</td>
+                          <td style={{ padding: '10px 12px', color: '#6b7280' }}>{log.days}d</td>
+                          <td style={{ padding: '10px 12px', color: '#9ca3af', fontSize: '12px' }}>{new Date(log.upgraded_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' })}</td>
+                          <td style={{ padding: '10px 12px', color: '#6b7280', fontSize: '12px' }}>{log.note || '—'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+                {upgradeLog.length === 0 && <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af', fontSize: '13px' }}>Click "Load Revenue Log" to view records</div>}
+              </div>
+              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '16px', fontSize: '13px', color: '#15803d' }}>
+                <strong>Note:</strong> First run this SQL in Supabase to create the upgrade_logs table:
+                <pre style={{ margin: '8px 0 0', fontSize: '11px', background: '#dcfce7', padding: '10px', borderRadius: '8px', overflow: 'auto' }}>{`CREATE TABLE IF NOT EXISTS upgrade_logs (
+  id bigint generated always as identity primary key,
+  user_id bigint references profiles(id),
+  package text, amount_bdt text, days int,
+  note text, upgraded_at timestamptz default now(),
+  upgraded_by bigint
+);`}</pre>
+              </div>
+            </div>
+          )}
+
+          {/* EMAIL TAB */}
+          {tab === 'email' && (
+            <div>
+              <h1 style={{ margin: '0 0 20px', fontSize: '22px', fontWeight: 800, color: '#111827' }}>Email Broadcast</h1>
+              <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '12px', padding: '16px', marginBottom: '20px', fontSize: '13px', color: '#9f1239' }}>
+                <strong>Setup required:</strong> Add <code>RESEND_API_KEY</code> to Vercel environment variables.
+                Get a free key at <a href="https://resend.com" target="_blank" style={{ color: '#e11d48' }}>resend.com</a> (3,000 emails/month free).
+                Also add <code>EMAIL_FROM=noreply@biyekori.com</code> after verifying your domain with Resend.
+              </div>
+              <div style={{ background: 'white', borderRadius: '14px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Send To</label>
+                  <select value={emailTarget} onChange={e => setEmailTarget(e.target.value)}
+                    style={{ width: '100%', padding: '10px 14px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px' }}>
+                    <option value="all">All users with email</option>
+                    <option value="premium">Premium users only</option>
+                    <option value="free">Free users only</option>
+                    <option value="inactive">Inactive 7+ days</option>
+                  </select>
+                </div>
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Subject</label>
+                  <input value={emailSubject} onChange={e => setEmailSubject(e.target.value)}
+                    placeholder="e.g. You have new matches on Biyekori!"
+                    style={{ width: '100%', padding: '10px 14px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', boxSizing: 'border-box' }} />
+                </div>
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>Body (HTML supported)</label>
+                  <textarea value={emailBody} onChange={e => setEmailBody(e.target.value)} rows={8}
+                    placeholder="<p>Dear {name},</p><p>You have new matches waiting...</p>"
+                    style={{ width: '100%', padding: '12px 14px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', resize: 'vertical', boxSizing: 'border-box', fontFamily: 'monospace' }} />
+                </div>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                  {[
+                    { label: 'New Matches', subject: 'নতুন ম্যাচ আপনার জন্য অপেক্ষা করছে', body: '<p>প্রিয় সদস্য,</p><p>আজকে Biyekori-তে আপনার জন্য নতুন ম্যাচ রয়েছে। এখনই দেখুন!</p><p><a href="https://biyekori.com/profiles">ম্যাচ দেখুন</a></p>' },
+                    { label: 'Complete Profile', subject: 'আপনার প্রোফাইল সম্পূর্ণ করুন', body: '<p>প্রিয় সদস্য,</p><p>আপনার প্রোফাইল এখনও অসম্পূর্ণ। প্রোফাইল সম্পূর্ণ করলে ৫গুণ বেশি ম্যাচ পাবেন!</p><p><a href="https://biyekori.com/edit-profile">প্রোফাইল সম্পূর্ণ করুন</a></p>' },
+                    { label: 'Premium Offer', subject: 'বিশেষ অফার — আজই আপগ্রেড করুন', body: '<p>প্রিয় সদস্য,</p><p>Silver plan মাত্র ৳৭৯৯/মাসে। আজই আপগ্রেড করুন এবং সরাসরি যোগাযোগ করুন!</p><p><a href="https://biyekori.com/pricing">অফার দেখুন</a></p>' },
+                  ].map((t, i) => (
+                    <button key={i} onClick={() => { setEmailSubject(t.subject); setEmailBody(t.body) }}
+                      style={{ padding: '8px 12px', background: '#f8fafc', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '12px', cursor: 'pointer' }}>
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={sendEmail} disabled={emailSending}
+                  style={{ width: '100%', padding: '14px', background: emailSending ? '#9ca3af' : 'linear-gradient(135deg,#3b82f6,#1d4ed8)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: 700, cursor: emailSending ? 'not-allowed' : 'pointer' }}>
+                  {emailSending ? 'Sending...' : 'Send Email'}
+                </button>
+                {emailResult && <div style={{ marginTop: '12px', padding: '12px', background: '#f0fdf4', borderRadius: '10px', fontSize: '13px', color: '#15803d', fontWeight: 600 }}>{emailResult}</div>}
               </div>
             </div>
           )}
@@ -514,6 +701,64 @@ export default function AdminDashboard() {
 
         </div>
       </div>
+
+      {/* Upgrade Modal */}
+      {showUpgradeModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ background: 'white', borderRadius: '20px', padding: '32px', maxWidth: '440px', width: '100%', boxShadow: '0 25px 50px rgba(0,0,0,0.2)' }}>
+            <h2 style={{ margin: '0 0 20px', fontSize: '18px', fontWeight: 800, color: '#111827' }}>Manual Upgrade</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>User ID</label>
+                <input value={upgradeUserId} onChange={e => setUpgradeUserId(e.target.value)}
+                  placeholder="Profile ID number"
+                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>New Plan</label>
+                <select value={upgradePkg} onChange={e => setUpgradePkg(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px' }}>
+                  {PACKAGES.map(p => <option key={p} value={p}>{PACKAGE_LABELS[p]} — {PACKAGE_PRICES[p]}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>Duration (days)</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {[30, 60, 90, 180, 365].map(d => (
+                    <button key={d} onClick={() => setUpgradeDays(d)}
+                      style={{ flex: 1, padding: '8px 4px', background: upgradeDays === d ? '#7c3aed' : '#f3f4f6', color: upgradeDays === d ? 'white' : '#374151', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>
+                      {d}d
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>Amount Received (৳ or $)</label>
+                <input value={upgradeAmount} onChange={e => setUpgradeAmount(e.target.value)}
+                  placeholder="e.g. ৳799 or $39"
+                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>Note (optional)</label>
+                <input value={upgradeNote} onChange={e => setUpgradeNote(e.target.value)}
+                  placeholder="e.g. bKash 01711XXXXX, ref: TX123"
+                  style={{ width: '100%', padding: '10px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', boxSizing: 'border-box' }} />
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              <button onClick={() => setShowUpgradeModal(false)}
+                style={{ flex: 1, padding: '12px', background: '#f3f4f6', color: '#374151', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>
+                Cancel
+              </button>
+              <button onClick={() => logUpgrade(upgradeUserId, upgradePkg, upgradeDays, upgradeAmount, upgradeNote)}
+                disabled={!upgradeUserId}
+                style={{ flex: 2, padding: '12px', background: upgradeUserId ? 'linear-gradient(135deg,#7c3aed,#6d28d9)' : '#9ca3af', color: 'white', border: 'none', borderRadius: '10px', fontSize: '14px', fontWeight: 700, cursor: upgradeUserId ? 'pointer' : 'not-allowed' }}>
+                Upgrade & Log
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
