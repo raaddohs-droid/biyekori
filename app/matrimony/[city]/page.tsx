@@ -128,9 +128,11 @@ async function getCityProfiles(cityName: string, area?: string) {
     .neq('is_banned', true)
 
   if (area) {
-    query = query.or(`city.ilike.%${area}%,district.ilike.%${area}%`)
+    query = query.or(`city.ilike.%${area}%,district.ilike.%${area}%,location_detail.ilike.%${area}%`)
   } else {
-    query = query.or(`city.ilike.%${cityName}%,district.ilike.%${cityName}%`)
+    const terms = CITY_SEARCH_TERMS[cityName] || [cityName]
+    const orClause = terms.map((t: string) => `city.ilike.%${t}%`).join(',')
+    query = query.or(orClause)
   }
 
   const { data } = await query.order('profile_completion', { ascending: false }).limit(60)
@@ -147,7 +149,7 @@ export default async function CityMatrimonyPage({ params, searchParams }: {
   const cityInfo = CITY_DATA[city]
   if (!cityInfo) notFound()
 
-  const profiles = await getCityProfiles(cityInfo.name, area)
+  const profiles = await getCityProfiles(city, area)
   const filtered = gender
     ? profiles.filter((p: any) => p.gender?.toLowerCase() === gender.toLowerCase())
     : profiles
