@@ -393,6 +393,12 @@ export function ViewToggle({ view, onToggle }: { view: 'grid' | 'list', onToggle
 
 export default function ProfilesGrid({ profiles, view }: { profiles: any[], view: 'grid' | 'list' }) {
   const [viewerProfile, setViewerProfile] = useState<any>(null)
+  const [sortedProfiles, setSortedProfiles] = useState<any[]>(profiles)
+
+  useEffect(() => {
+    // Default order when no viewer — keep as-is
+    setSortedProfiles(profiles)
+  }, [profiles])
 
   useEffect(() => {
     try {
@@ -405,23 +411,31 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
       })
         .then(r => r.json())
         .then(data => {
-          if (Array.isArray(data) && data[0]) setViewerProfile(data[0])
+          if (Array.isArray(data) && data[0]) {
+            const vp = data[0]
+            setViewerProfile(vp)
+            // Sort profiles by match score descending
+            const ranked = [...profiles].sort((a, b) =>
+              computeMatchScore(b, vp) - computeMatchScore(a, vp)
+            )
+            setSortedProfiles(ranked)
+          }
         })
         .catch(() => {})
     } catch(e) {}
-  }, [])
+  }, [profiles])
 
   return (
     <div>
       {view === 'list' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
-          {profiles.map((profile: any) => (
+          {sortedProfiles.map((profile: any) => (
             <ListRow key={profile.id} profile={profile} viewerProfile={viewerProfile} />
           ))}
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px', marginBottom: '32px' }}>
-          {profiles.map((profile: any) => (
+          {sortedProfiles.map((profile: any) => (
             <ProfileCard key={profile.id} profile={profile} viewerProfile={viewerProfile} />
           ))}
         </div>
