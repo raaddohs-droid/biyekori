@@ -918,9 +918,10 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>📍 Location</h3>
               <div className="space-y-3">
-                {hasValue(profile.city) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>City</span><span className="font-medium" style={{color:"#111827"}}>{profile.city}</span></div>}
-                {hasValue(profile.district) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>District</span><span className="font-medium" style={{color:"#111827"}}>{profile.district}</span></div>}
+                {hasValue(profile.city) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>City / District</span><span className="font-medium" style={{color:"#111827"}}>{profile.city}</span></div>}
                 {hasValue(profile.country) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Country</span><span className="font-medium" style={{color:"#111827"}}>{profile.country}</span></div>}
+                {hasValue(profile.residency_status) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Residency Status</span><span className="font-medium" style={{color:"#111827"}}>{profile.residency_status}</span></div>}
+                {hasValue(profile.grew_up_in) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Grew Up In</span><span className="font-medium" style={{color:"#111827"}}>{profile.grew_up_in}</span></div>}
                 {hasValue(profile.willing_to_relocate) && <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Willing to Relocate</span><span className="font-medium" style={{color:"#111827"}}>{profile.willing_to_relocate ? 'Yes' : 'No'}</span></div>}
               </div>
             </div>
@@ -932,6 +933,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               <div className="space-y-3">
                 <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Education Level</span><span className="font-medium" style={{color:"#111827"}}>{profile.education}</span></div>
                 {showDegree && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Degree</span><span className="font-medium" style={{color:"#111827"}}>{profile.degree}</span></div>}
+                {hasValue(profile.college_attended) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>College / University</span><span className="font-medium" style={{color:"#111827"}}>{profile.college_attended}</span></div>}
                 {hasValue(profile.institution) && <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Institution</span><span className="font-medium" style={{color:"#111827"}}>{profile.institution}</span></div>}
               </div>
             </div>
@@ -942,6 +944,9 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               <h3 className="text-xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>💼 Career & Income</h3>
               <div className="space-y-3">
                 <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Profession</span><span className="font-medium" style={{color:"#111827"}}>{profile.profession}</span></div>
+                {hasValue(profile.working_with) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Working With</span><span className="font-medium" style={{color:"#111827"}}>{profile.working_with}</span></div>}
+                {hasValue(profile.working_as) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Working As</span><span className="font-medium" style={{color:"#111827"}}>{profile.working_as}</span></div>}
+                {hasValue(profile.employer_name) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Employer</span><span className="font-medium" style={{color:"#111827"}}>{profile.employer_name}</span></div>}
                 {hasValue(profile.monthly_income) && profile.monthly_income > 0 && !profile.income_hidden && (
                   <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Monthly Income</span><span className="font-medium" style={{color:"#111827"}}>৳{Number(profile.monthly_income).toLocaleString()}</span></div>
                 )}
@@ -975,24 +980,29 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             </div>
           )}
 
-          {hasValue(profile.religious_level) && (
+          {(hasValue(profile.religious_level) || hasValue(profile.religion)) && (
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>🕌 Religious Background</h3>
               <div className="space-y-3">
                 {hasValue(profile.religion) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Religion</span><span className="font-medium" style={{color:"#111827"}}>{profile.religion}</span></div>}
+                {hasValue(profile.community) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Community / Sect</span><span className="font-medium" style={{color:"#111827"}}>{profile.community}</span></div>}
                 {hasValue(profile.sect) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Sect</span><span className="font-medium" style={{color:"#111827"}}>{profile.sect}</span></div>}
-                {hasValue(profile.religious_level) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Religious Level</span><span className="font-medium" style={{color:"#111827"}}>{profile.religious_level}</span></div>}
+                {hasValue(profile.religious_level) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Religious Practice</span><span className="font-medium" style={{color:"#111827"}}>{profile.religious_level}</span></div>}
                 {hasValue(profile.prayer_habit) && <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Prayer Habit</span><span className="font-medium" style={{color:"#111827"}}>{profile.prayer_habit}</span></div>}
               </div>
             </div>
           )}
 
-          {hasValue(profile.father_profession) && (
+          {(hasValue(profile.father_profession) || hasValue(profile.mother_profession) || profile.num_sisters !== null || profile.num_brothers !== null || hasValue(profile.family_financial_status)) && (
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>👨‍👩‍👧‍👦 Family Background</h3>
               <div className="space-y-3">
                 {hasValue(profile.father_profession) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Father's Profession</span><span className="font-medium" style={{color:"#111827"}}>{profile.father_profession}</span></div>}
                 {hasValue(profile.mother_profession) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Mother's Profession</span><span className="font-medium" style={{color:"#111827"}}>{profile.mother_profession}</span></div>}
+                {profile.num_sisters !== null && profile.num_sisters !== undefined && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>No. of Sisters</span><span className="font-medium" style={{color:"#111827"}}>{profile.num_sisters === 0 ? 'None' : profile.num_sisters}</span></div>}
+                {profile.num_brothers !== null && profile.num_brothers !== undefined && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>No. of Brothers</span><span className="font-medium" style={{color:"#111827"}}>{profile.num_brothers === 0 ? 'None' : profile.num_brothers}</span></div>}
+                {hasValue(profile.family_financial_status) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Financial Status</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_financial_status}</span></div>}
+                {hasValue(profile.family_location) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Location</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_location}</span></div>}
                 {hasValue(profile.total_siblings) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Total Siblings</span><span className="font-medium" style={{color:"#111827"}}>{profile.total_siblings}</span></div>}
                 {hasValue(profile.family_type) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Type</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_type}</span></div>}
                 {hasValue(profile.family_values) && <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Values</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_values}</span></div>}

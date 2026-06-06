@@ -85,10 +85,26 @@ export default function EditProfilePage() {
   // Personal fields
   const [religion, setReligion] = useState('')
   const [religionLevel, setReligionLevel] = useState('')
+  const [community, setCommunity] = useState('')
   const [height, setHeight] = useState('')
   const [income, setIncome] = useState('')
   const [hobbies, setHobbies] = useState('')
   const [hasChildren, setHasChildren] = useState('false')
+  // Career fields
+  const [collegeAttended, setCollegeAttended] = useState('')
+  const [workingWith, setWorkingWith] = useState('')
+  const [workingAs, setWorkingAs] = useState('')
+  const [employerName, setEmployerName] = useState('')
+  // Location fields
+  const [residencyStatus, setResidencyStatus] = useState('')
+  const [grewUpIn, setGrewUpIn] = useState('')
+  // Family fields
+  const [fatherProfession, setFatherProfession] = useState('')
+  const [motherProfession, setMotherProfession] = useState('')
+  const [numSisters, setNumSisters] = useState('')
+  const [numBrothers, setNumBrothers] = useState('')
+  const [familyFinancialStatus, setFamilyFinancialStatus] = useState('')
+  const [familyLocation, setFamilyLocation] = useState('')
 
   // Lifestyle fields
   const [marriageTimeline, setMarriageTimeline] = useState('')
@@ -177,6 +193,19 @@ export default function EditProfilePage() {
         setMotherTongue(p.mother_tongue || '')
         setEnglishComfort(p.english_comfort || '')
         setHasChildren(p.has_children || 'false')
+        setCommunity(p.community || '')
+        setCollegeAttended(p.college_attended || '')
+        setWorkingWith(p.working_with || '')
+        setWorkingAs(p.working_as || '')
+        setEmployerName(p.employer_name || '')
+        setResidencyStatus(p.residency_status || '')
+        setGrewUpIn(p.grew_up_in || '')
+        setFatherProfession(p.father_profession || '')
+        setMotherProfession(p.mother_profession || '')
+        setNumSisters(p.num_sisters !== undefined && p.num_sisters !== null ? String(p.num_sisters) : '')
+        setNumBrothers(p.num_brothers !== undefined && p.num_brothers !== null ? String(p.num_brothers) : '')
+        setFamilyFinancialStatus(p.family_financial_status || '')
+        setFamilyLocation(p.family_location || '')
         setPhotoPrivacy(p.photo_privacy || false)
         setIncomeHidden(p.income_hidden || false)
         setDobPrivacy(p.dob_privacy || 'age_only')
@@ -234,6 +263,13 @@ export default function EditProfilePage() {
         hobbies, family_values: familyValues, guardian_mode: guardianMode,
         mother_tongue: motherTongue, english_comfort: englishComfort,
         has_children: hasChildren, contact_preference: contactPreference,
+        community, college_attended: collegeAttended,
+        working_with: workingWith, working_as: workingAs, employer_name: employerName,
+        residency_status: residencyStatus, grew_up_in: grewUpIn,
+        father_profession: fatherProfession, mother_profession: motherProfession,
+        num_sisters: numSisters !== '' ? parseInt(numSisters) : null,
+        num_brothers: numBrothers !== '' ? parseInt(numBrothers) : null,
+        family_financial_status: familyFinancialStatus, family_location: familyLocation,
         marriage_timeline: marriageTimeline, living_arrangement: livingArrangement,
         work_after_marriage: workAfterMarriage, smoking, drinking, diet,
         willing_to_relocate: willingToRelocate,
@@ -478,6 +514,35 @@ export default function EditProfilePage() {
                   {ENGLISH_COMFORTS.map(e => <option key={e} value={e}>{e}</option>)}
                 </select>
               </div>
+              <div>
+                <label className={labelClass} style={gmFontStyle}>Residency Status</label>
+                <select value={residencyStatus} onChange={e => setResidencyStatus(e.target.value)} className={inputClass} style={gmFontStyle}>
+                  <option value="">Select</option>
+                  <option value="Citizen">Citizen</option>
+                  <option value="Permanent Resident">Permanent Resident</option>
+                  <option value="Work Permit">Work Permit</option>
+                  <option value="Student Visa">Student Visa</option>
+                  <option value="Temporary Visa">Temporary Visa</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelClass} style={gmFontStyle}>Grew Up In</label>
+                <select value={grewUpIn} onChange={e => setGrewUpIn(e.target.value)} className={inputClass} style={gmFontStyle}>
+                  <option value="">Select</option>
+                  <option value="Bangladesh">Bangladesh</option>
+                  <option value="UK">UK</option>
+                  <option value="USA">USA</option>
+                  <option value="Canada">Canada</option>
+                  <option value="Australia">Australia</option>
+                  <option value="Middle East">Middle East</option>
+                  <option value="Europe">Europe</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div style={{ gridColumn: '1/-1' }}>
+                <label className={labelClass} style={gmFontStyle}>College / University Attended <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>(optional)</span></label>
+                <input value={collegeAttended} onChange={e => setCollegeAttended(e.target.value)} className={inputClass} style={gmFontStyle} placeholder="e.g. University of Dhaka, BUET, NSU" />
+              </div>
               <div style={{ gridColumn: '1/-1' }}>
                 <label className={labelClass} style={gmFontStyle}>{gm ? (user?.gender === 'Male' ? 'তার সম্পর্কে' : 'তার সম্পর্কে') : (user?.gender === 'Male' ? 'About Him' : 'About Her')}</label>
                 <textarea value={aboutMe} onChange={e => setAboutMe(e.target.value)} className={inputClass} rows={4} placeholder={gm ? 'তার চরিত্র ও পারিবারিক পটভূমি বর্ণনা করুন...' : (user?.gender === 'Male' ? 'Describe his character, background and family...' : 'Describe her character, background and family...')} style={{ resize: 'vertical', ...gmFontStyle }} />
@@ -596,11 +661,124 @@ export default function EditProfilePage() {
                   </select>
                 </div>
               )}
+              <div>
+                <label className={labelClass} style={gmFontStyle}>Community / Sect <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>(optional)</span></label>
+                <select value={community} onChange={e => setCommunity(e.target.value)} className={inputClass} style={gmFontStyle}>
+                  <option value="">Select</option>
+                  <option value="Sunni">Sunni</option>
+                  <option value="Shia">Shia</option>
+                  <option value="Ahmadi">Ahmadi</option>
+                  <option value="Sufi">Sufi</option>
+                  <option value="Hindu - Brahmin">Hindu - Brahmin</option>
+                  <option value="Hindu - Other">Hindu - Other</option>
+                  <option value="Christian - Catholic">Christian - Catholic</option>
+                  <option value="Christian - Protestant">Christian - Protestant</option>
+                  <option value="Other">Other</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+              </div>
               <div style={{ gridColumn: '1/-1' }}>
                 <label className={labelClass} style={gmFontStyle}>{gm ? 'শখ ও আগ্রহ' : 'Hobbies & Interests'}</label>
                 <input value={hobbies} onChange={e => setHobbies(e.target.value)} className={inputClass} style={gmFontStyle} placeholder={gm ? 'যেমন: পড়া, রান্না, ভ্রমণ, ক্রিকেট' : 'e.g. Reading, Cooking, Travel, Cricket'} />
               </div>
             </div>
+
+            {/* Career details section */}
+            <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #f3f4f6' }}>
+              <p style={{ margin: '0 0 16px', fontSize: '13px', fontWeight: 700, color: '#374151' }}>Career Details <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>— optional but builds trust</span></p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label className={labelClass} style={gmFontStyle}>Working With</label>
+                  <select value={workingWith} onChange={e => setWorkingWith(e.target.value)} className={inputClass} style={gmFontStyle}>
+                    <option value="">Select</option>
+                    <option value="Private Company">Private Company</option>
+                    <option value="Government / Public Sector">Government / Public Sector</option>
+                    <option value="Defense / Civil Services">Defense / Civil Services</option>
+                    <option value="Business / Self Employed">Business / Self Employed</option>
+                    <option value="NGO / Non-profit">NGO / Non-profit</option>
+                    <option value="Not Working">Not Working</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass} style={gmFontStyle}>Working As <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>(role/title)</span></label>
+                  <input value={workingAs} onChange={e => setWorkingAs(e.target.value)} className={inputClass} style={gmFontStyle} placeholder="e.g. Software Engineer, Manager" />
+                </div>
+                <div style={{ gridColumn: '1/-1' }}>
+                  <label className={labelClass} style={gmFontStyle}>Employer Name <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>(optional)</span></label>
+                  <input value={employerName} onChange={e => setEmployerName(e.target.value)} className={inputClass} style={gmFontStyle} placeholder="e.g. Grameenphone, BRAC, Google" />
+                </div>
+              </div>
+            </div>
+
+            {/* Family background section */}
+            <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #f3f4f6' }}>
+              <p style={{ margin: '0 0 16px', fontSize: '13px', fontWeight: 700, color: '#374151' }}>Family Background <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>— helps families make informed decisions</span></p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label className={labelClass} style={gmFontStyle}>Father's Profession</label>
+                  <select value={fatherProfession} onChange={e => setFatherProfession(e.target.value)} className={inputClass} style={gmFontStyle}>
+                    <option value="">Select</option>
+                    <option value="Business">Business</option>
+                    <option value="Government Service">Government Service</option>
+                    <option value="Private Service">Private Service</option>
+                    <option value="Doctor">Doctor</option>
+                    <option value="Engineer">Engineer</option>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Farmer">Farmer</option>
+                    <option value="Retired">Retired</option>
+                    <option value="Deceased">Deceased</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass} style={gmFontStyle}>Mother's Profession</label>
+                  <select value={motherProfession} onChange={e => setMotherProfession(e.target.value)} className={inputClass} style={gmFontStyle}>
+                    <option value="">Select</option>
+                    <option value="Homemaker">Homemaker</option>
+                    <option value="Business">Business</option>
+                    <option value="Government Service">Government Service</option>
+                    <option value="Private Service">Private Service</option>
+                    <option value="Doctor">Doctor</option>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Retired">Retired</option>
+                    <option value="Deceased">Deceased</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass} style={gmFontStyle}>No. of Sisters</label>
+                  <select value={numSisters} onChange={e => setNumSisters(e.target.value)} className={inputClass} style={gmFontStyle}>
+                    <option value="">Select</option>
+                    {Array.from({length: 11}, (_, i) => <option key={i} value={i}>{i === 0 ? 'None' : i}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass} style={gmFontStyle}>No. of Brothers</label>
+                  <select value={numBrothers} onChange={e => setNumBrothers(e.target.value)} className={inputClass} style={gmFontStyle}>
+                    <option value="">Select</option>
+                    {Array.from({length: 11}, (_, i) => <option key={i} value={i}>{i === 0 ? 'None' : i}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass} style={gmFontStyle}>Family Financial Status</label>
+                  <select value={familyFinancialStatus} onChange={e => setFamilyFinancialStatus(e.target.value)} className={inputClass} style={gmFontStyle}>
+                    <option value="">Select</option>
+                    <option value="Lower">Lower</option>
+                    <option value="Middle">Middle</option>
+                    <option value="Upper Middle">Upper Middle</option>
+                    <option value="Affluent">Affluent</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass} style={gmFontStyle}>Family Location</label>
+                  <select value={familyLocation} onChange={e => setFamilyLocation(e.target.value)} className={inputClass} style={gmFontStyle}>
+                    <option value="">Select</option>
+                    {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                </div>
+              </div>
+            </div>
+
           </div>
         )}
 
