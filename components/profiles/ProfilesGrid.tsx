@@ -188,38 +188,21 @@ function getActivityStatus(profile: any): { label: string; color: string; isOnli
   return { label: 'Recently active', color: '#9ca3af', isOnline: false }
 }
 
-function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any }) {
+function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewerProfile: any, interestMap: Record<string, 'sent'|'received'|'accepted'> }) {
   const score = computeMatchScore(profile, viewerProfile)
   const activity = getActivityStatus(profile)
   const creationBadge = getCreationBadge(profile)
   const photoUrl = profile.photo_url || profile.photoUrl
   const isPremium = profile.package !== 'prottasha'
   const [interestSent, setInterestSent] = useState(false)
-  const [relationshipStatus, setRelationshipStatus] = useState<'none'|'sent'|'received'|'accepted'>('none')
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const relationshipStatus: 'none'|'sent'|'received'|'accepted' = interestMap[String(profile.id)] || 'none'
   const rawName = profile.full_name || profile.name || 'Anonymous'
   const name = maskName(rawName, relationshipStatus)
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('biyekori_user')
-      if (stored) {
-        const user = JSON.parse(stored)
-        fetch('/api/interests/list?userId=' + user.id)
-          .then(r => r.json())
-          .then(data => {
-            const sentMatch = data.sent?.find((s: any) => String(s.receiver_id) === String(profile.id))
-            const recvMatch = data.received?.find((r: any) => String(r.sender_id) === String(profile.id))
-            if (sentMatch) {
-              setInterestSent(true)
-              setRelationshipStatus(sentMatch.status === 'accepted' ? 'accepted' : 'sent')
-            } else if (recvMatch) {
-              setRelationshipStatus(recvMatch.status === 'accepted' ? 'accepted' : 'received')
-            }
-          }).catch(() => {})
-      }
-    } catch(e) {}
-  }, [profile.id])
+    if (relationshipStatus === 'sent' || relationshipStatus === 'accepted') setInterestSent(true)
+  }, [relationshipStatus])
 
   const handleSendInterest = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -417,9 +400,9 @@ export function ViewToggle({ view, onToggle }: { view: 'grid' | 'list', onToggle
 export default function ProfilesGrid({ profiles, view }: { profiles: any[], view: 'grid' | 'list' }) {
   const [viewerProfile, setViewerProfile] = useState<any>(null)
   const [sortedProfiles, setSortedProfiles] = useState<any[]>(profiles)
+  const [interestMap, setInterestMap] = useState<Record<string, 'sent'|'received'|'accepted'>>({})
 
   useEffect(() => {
-    // Default order when no viewer — keep as-is
     setSortedProfiles(profiles)
   }, [profiles])
 
@@ -429,6 +412,8 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
       if (!stored) return
       const user = JSON.parse(stored)
       if (!user.id) return
+
+      // Fetch viewer profile
       fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=*`, {
         headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
       })
@@ -437,12 +422,29 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
           if (Array.isArray(data) && data[0]) {
             const vp = data[0]
             setViewerProfile(vp)
-            // Sort profiles by match score descending
             const ranked = [...profiles].sort((a, b) =>
               computeMatchScore(b, vp) - computeMatchScore(a, vp)
             )
             setSortedProfiles(ranked)
           }
+        })
+        .catch(() => {})
+
+      // Fetch all interests ONCE and build a map
+      fetch('/api/interests/list?userId=' + user.id)
+        .then(r => r.json())
+        .then(data => {
+          const map: Record<string, 'sent'|'received'|'accepted'> = {}
+          ;(data.sent || []).forEach((s: any) => {
+            const id = String(s.receiver_id)
+            map[id] = s.status === 'accepted' ? 'accepted' : 'sent'
+          })
+          ;(data.received || []).forEach((r: any) => {
+            const id = String(r.sender_id)
+            if (!map[id]) map[id] = r.status === 'accepted' ? 'accepted' : 'received'
+            else if (r.status === 'accepted') map[id] = 'accepted'
+          })
+          setInterestMap(map)
         })
         .catch(() => {})
     } catch(e) {}
@@ -453,7 +455,7 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
       {view === 'list' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
           {sortedProfiles.map((profile: any) => (
-            <ListRow key={profile.id} profile={profile} viewerProfile={viewerProfile} />
+            <ListRow key={profile.id} profile={profile} viewerProfile={viewerProfile} interestMap={interestMap} />
           ))}
         </div>
       ) : (
