@@ -151,6 +151,43 @@ function ScoreModal({ profile, onClose, isLoggedIn }: { profile: any, onClose: (
   const [tab, setTab] = useState<'match' | 'predict'>('match')
 
   return (
+    <>
+    {guestBlurred && (
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 998,
+        backdropFilter: 'blur(10px)',
+        background: 'rgba(0,0,0,0.15)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        paddingTop: '80px'
+      }}>
+        <div style={{
+          background: 'white', borderRadius: '24px',
+          padding: '40px 32px', maxWidth: '400px', width: '90%',
+          textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.2)'
+        }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>💌</div>
+          <h2 style={{ margin: '0 0 10px', fontSize: '22px', fontWeight: 800, color: '#111827' }}>
+            Your free preview has ended
+          </h2>
+          <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280', lineHeight: 1.6 }}>
+            Login or create a free account to keep browsing profiles on Biyekori.
+          </p>
+          <a href="/login" style={{
+            display: 'block', padding: '14px',
+            background: 'linear-gradient(135deg,#e11d48,#db2777)',
+            color: 'white', borderRadius: '12px', fontWeight: 700,
+            fontSize: '15px', textDecoration: 'none', marginBottom: '10px'
+          }}>Login</a>
+          <a href="/register" style={{
+            display: 'block', padding: '14px',
+            background: '#f3f4f6', color: '#374151',
+            borderRadius: '12px', fontWeight: 700,
+            fontSize: '15px', textDecoration: 'none'
+          }}>Create Free Account</a>
+          <p style={{ margin: '16px 0 0', fontSize: '11px', color: '#9ca3af' }}>Free forever · No credit card required</p>
+        </div>
+      </div>
+    )}
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
 
@@ -172,7 +209,6 @@ function ScoreModal({ profile, onClose, isLoggedIn }: { profile: any, onClose: (
               <div className="text-xs text-purple-200">{getConfLabel(dataConfidence)}</div>
               <div className="text-xs text-purple-300 mt-1">Tap to see breakdown</div>
             </div>
-
           </div>
         </div>
 
@@ -260,19 +296,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const profileCode = getProfileCode(profile.id, profile.created_at || '')
 
   const [interestSent, setInterestSent] = useState<boolean | null>(null)
-  const [isBlocked, setIsBlocked] = useState(false)
-  const [showReportModal, setShowReportModal] = useState(false)
-  const [reportReason, setReportReason] = useState('')
-  const [reportDetails, setReportDetails] = useState('')
-  const [reportProof, setReportProof] = useState('')
-  const [reportSubmitting, setReportSubmitting] = useState(false)
-  const [reportDone, setReportDone] = useState(false)
-  const [hasInteraction, setHasInteraction] = useState(false)
   const [actionMsg, setActionMsg] = useState<{text: string, type: 'info'|'success'|'upgrade'} | null>(null)
-  const [isMutual, setIsMutual] = useState(false)
-  const [dobRequestStatus, setDobRequestStatus] = useState<'none'|'pending'|'granted'|'declined'>('none')
-  const [dobGranted, setDobGranted] = useState<string | null>(null)
-  const [dobRequesting, setDobRequesting] = useState(false)
 
   useEffect(() => {
     // Guest blur timer for profile detail page
@@ -337,27 +361,8 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           if (data.sent && data.sent.some((s: any) => String(s.receiver_id) === String(profile.id))) {
             setInterestSent(true);
           }
-          const sent = (data.sent||[]).some((i:any)=>String(i.receiver_id)===String(profile.id))
-          const received = (data.received||[]).some((i:any)=>String(i.sender_id)===String(profile.id))
-          setHasInteraction(sent||received)
-          // Check mutual interest
-          const sentAccepted = (data.sent||[]).some((i:any)=>String(i.receiver_id)===String(profile.id) && i.status==='accepted')
-          const receivedAccepted = (data.received||[]).some((i:any)=>String(i.sender_id)===String(profile.id) && i.status==='accepted')
-          const mutual = sentAccepted || receivedAccepted
-          setIsMutual(mutual)
-          // If mutual and dob is hidden, check request status
-          if (mutual && profile.dob_privacy === 'hidden') {
-            fetch(`/api/dob-request?requesterId=${user.id}&profileId=${profile.id}`)
-              .then(r => r.json())
-              .then(d => {
-                setDobRequestStatus(d.status || 'none')
-                if (d.status === 'granted' && d.date_of_birth) setDobGranted(d.date_of_birth)
-              })
-              .catch(() => {})
-          }
         })
-        .catch(()=>{});
-      fetch(`/api/block?blockerId=${user.id}&blockedId=${profile.id}`).then(r=>r.json()).then(d=>{if(d.isBlocked)setIsBlocked(true)}).catch(()=>{})
+        .catch(() => {});
     }
   }, [profile?.id])
 
@@ -382,30 +387,6 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
       else if (data.upgrade) { showMsg('You have reached your free limit. Upgrade to send more interests.', 'upgrade'); }
       else { showMsg(data.message || 'Could not send interest. Please try again.', 'info'); }
     } catch { showMsg('Something went wrong. Please try again.', 'info'); }
-  }
-
-  const handleDobRequest = async () => {
-    const userData = localStorage.getItem('biyekori_user')
-    if (!userData) return
-    const user = JSON.parse(userData)
-    setDobRequesting(true)
-    try {
-      const res = await fetch('/api/dob-request', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'request', requesterId: user.id, profileId: profile.id })
-      })
-      const data = await res.json()
-      if (data.success) {
-        setDobRequestStatus('pending')
-        showMsg('DOB request sent. They will be notified.', 'success')
-      } else {
-        showMsg(data.error || 'Could not send request.', 'info')
-      }
-    } catch {
-      showMsg('Something went wrong. Please try again.', 'info')
-    }
-    setDobRequesting(false)
   }
 
   const handleSendMessage = async () => {
@@ -439,61 +420,6 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
     } catch {
       showMsg('Could not check interest status. Please try again.', 'info');
     }
-  }
-
-  const handleBlock = async () => {
-    if (!isLoggedIn) { window.location.href = '/login'; return }
-    const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
-    const isPremium = u.package && u.package !== 'prottasha'
-    if (!isPremium) { alert('Blocking is a Premium feature. Upgrade to use it.'); window.location.href = '/pricing'; return }
-    if (!confirm(`Block ${profile.full_name}? They will not be able to see your profile or contact you.`)) return
-    const res = await fetch('/api/block', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ blockerId: u.id, blockedId: profile.id })
-    })
-    const data = await res.json()
-    if (data.success) { setIsBlocked(true); showMsg('User blocked successfully.', 'success') }
-    else showMsg('Could not block. Please try again.', 'info')
-  }
-
-  const handleUnblock = async () => {
-    const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
-    await fetch('/api/block', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ blockerId: u.id, blockedId: profile.id })
-    })
-    setIsBlocked(false)
-    showMsg('User unblocked.', 'info')
-  }
-
-  const handleSubmitReport = async () => {
-    if (!reportReason) { alert('Please select a reason.'); return }
-    setReportSubmitting(true)
-    const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
-    const res = await fetch('/api/report', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reporterId: u.id, reportedId: profile.id, reason: reportReason, details: reportDetails, proofUrl: reportProof })
-    })
-    const data = await res.json()
-    setReportSubmitting(false)
-    if (data.success) { setReportDone(true) }
-    else { alert('Could not submit report. Please try again.') }
-  }
-
-  const handleReportClick = () => {
-    if (!isLoggedIn) { window.location.href = '/login'; return }
-    const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
-    const isPremium = u.package && u.package !== 'prottasha'
-    if (!isPremium) { alert('Reporting is a Premium feature. Upgrade to use it.'); window.location.href = '/pricing'; return }
-    if (!hasInteraction) { alert('You can only report someone who has sent or received an interest with you.'); return }
-    setShowReportModal(true)
-    setReportDone(false)
-    setReportReason('')
-    setReportDetails('')
-    setReportProof('')
   }
 
   const handleDownloadBiodata = () => {
@@ -556,91 +482,12 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
     !['SSC', 'HSC'].includes(profile.education)
 
   return (
-    <>
-    {guestBlurred && (
-      <div style={{
-        position: 'fixed', inset: 0, zIndex: 998,
-        backdropFilter: 'blur(10px)',
-        background: 'rgba(0,0,0,0.15)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        paddingTop: '80px'
-      }}>
-        <div style={{
-          background: 'white', borderRadius: '24px',
-          padding: '40px 32px', maxWidth: '400px', width: '90%',
-          textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.2)'
-        }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>💌</div>
-          <h2 style={{ margin: '0 0 10px', fontSize: '22px', fontWeight: 800, color: '#111827' }}>Your free preview has ended</h2>
-          <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280', lineHeight: 1.6 }}>Login or create a free account to keep browsing profiles on Biyekori.</p>
-          <a href="/login" style={{ display: 'block', padding: '14px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', borderRadius: '12px', fontWeight: 700, fontSize: '15px', textDecoration: 'none', marginBottom: '10px' }}>Login</a>
-          <a href="/register" style={{ display: 'block', padding: '14px', background: '#f3f4f6', color: '#374151', borderRadius: '12px', fontWeight: 700, fontSize: '15px', textDecoration: 'none' }}>Create Free Account</a>
-          <p style={{ margin: '16px 0 0', fontSize: '11px', color: '#9ca3af' }}>Free forever · No credit card required</p>
-        </div>
-      </div>
-    )}
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 py-8 px-4" style={{colorScheme:"light"}}>
       <div className="max-w-5xl mx-auto">
 
         <Link href="/profiles" className="inline-flex items-center text-pink-600 hover:text-pink-700 mb-6 font-medium">← Back to Profiles</Link>
 
         {/* AI Score Card */}
-        {!isLoggedIn ? (
-          <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-xl p-6 mb-6 text-white" style={{ position: 'relative', overflow: 'hidden' }}>
-            {/* Blurred fake scores behind */}
-            <div style={{ filter: 'blur(6px)', pointerEvents: 'none', userSelect: 'none', opacity: 0.5 }}>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-2xl">🤖</span>
-                <div>
-                  <h2 className="text-xl font-bold">AI Compatibility Analysis</h2>
-                  <p className="text-purple-200 text-xs">Powered by Biyekori AI Matchmaker</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-6 bg-white/10 rounded-xl p-6 mt-4">
-                <div className="flex flex-col items-center">
-                  <div className="relative w-32 h-32">
-                    <svg width="128" height="128" style={{ transform: 'rotate(-90deg)' }}>
-                      <circle cx="64" cy="64" r="54" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="12" />
-                      <circle cx="64" cy="64" r="54" fill="none" stroke="white" strokeWidth="12" strokeDasharray="339" strokeDashoffset="120" strokeLinecap="round" />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-3xl font-black text-white">??%</span>
-                    </div>
-                  </div>
-                  <p className="font-bold text-white mt-2">AI Match Score</p>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="relative w-32 h-32">
-                    <svg width="128" height="128" style={{ transform: 'rotate(-90deg)' }}>
-                      <circle cx="64" cy="64" r="54" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="12" />
-                      <circle cx="64" cy="64" r="54" fill="none" stroke="#34d399" strokeWidth="12" strokeDasharray="339" strokeDashoffset="180" strokeLinecap="round" />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-3xl font-black text-green-300">??%</span>
-                    </div>
-                  </div>
-                  <p className="font-bold text-white mt-2">Data Confidence</p>
-                </div>
-              </div>
-            </div>
-            {/* Overlay CTA */}
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(88,28,135,0.75)', backdropFilter: 'blur(2px)', borderRadius: '16px', padding: '24px', textAlign: 'center' }}>
-              <div style={{ fontSize: '36px', marginBottom: '10px' }}>🤖</div>
-              <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 800, color: 'white' }}>
-                See your AI compatibility with {profile.full_name?.split(' ')[0] || 'this person'}
-              </h3>
-              <p style={{ margin: '0 0 20px', fontSize: '13px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
-                Login to get your personalized match score based on your preferences, religion, location and lifestyle.
-              </p>
-              <a href="/login" style={{ display: 'inline-block', padding: '12px 28px', background: 'white', color: '#7c3aed', borderRadius: '12px', fontWeight: 800, fontSize: '14px', textDecoration: 'none', marginBottom: '8px' }}>
-                Login to See Score
-              </a>
-              <a href="/register" style={{ display: 'inline-block', padding: '8px 20px', background: 'rgba(255,255,255,0.15)', color: 'white', borderRadius: '10px', fontWeight: 600, fontSize: '13px', textDecoration: 'none' }}>
-                Create Free Account
-              </a>
-            </div>
-          </div>
-        ) : (
         <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-xl p-6 mb-6 text-white">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-2xl">🤖</span>
@@ -693,7 +540,6 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             {!isLoggedIn && <p className="text-purple-200 text-xs mt-2">Score is based on general preferences • Log in for your personal match score</p>}
           </div>
         </div>
-        )}
 
         {/* Own profile selfie verification banner */}
         {isLoggedIn && viewerProfile && Number(viewerProfile.id) === profile.id && profile.selfie_status === 'approved' && (
@@ -918,10 +764,9 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>📍 Location</h3>
               <div className="space-y-3">
-                {hasValue(profile.city) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>City / District</span><span className="font-medium" style={{color:"#111827"}}>{profile.city}</span></div>}
+                {hasValue(profile.city) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>City</span><span className="font-medium" style={{color:"#111827"}}>{profile.city}</span></div>}
+                {hasValue(profile.district) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>District</span><span className="font-medium" style={{color:"#111827"}}>{profile.district}</span></div>}
                 {hasValue(profile.country) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Country</span><span className="font-medium" style={{color:"#111827"}}>{profile.country}</span></div>}
-                {hasValue(profile.residency_status) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Residency Status</span><span className="font-medium" style={{color:"#111827"}}>{profile.residency_status}</span></div>}
-                {hasValue(profile.grew_up_in) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Grew Up In</span><span className="font-medium" style={{color:"#111827"}}>{profile.grew_up_in}</span></div>}
                 {hasValue(profile.willing_to_relocate) && <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Willing to Relocate</span><span className="font-medium" style={{color:"#111827"}}>{profile.willing_to_relocate ? 'Yes' : 'No'}</span></div>}
               </div>
             </div>
@@ -933,7 +778,6 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               <div className="space-y-3">
                 <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Education Level</span><span className="font-medium" style={{color:"#111827"}}>{profile.education}</span></div>
                 {showDegree && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Degree</span><span className="font-medium" style={{color:"#111827"}}>{profile.degree}</span></div>}
-                {hasValue(profile.college_attended) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>College / University</span><span className="font-medium" style={{color:"#111827"}}>{profile.college_attended}</span></div>}
                 {hasValue(profile.institution) && <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Institution</span><span className="font-medium" style={{color:"#111827"}}>{profile.institution}</span></div>}
               </div>
             </div>
@@ -944,65 +788,31 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               <h3 className="text-xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>💼 Career & Income</h3>
               <div className="space-y-3">
                 <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Profession</span><span className="font-medium" style={{color:"#111827"}}>{profile.profession}</span></div>
-                {hasValue(profile.working_with) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Working With</span><span className="font-medium" style={{color:"#111827"}}>{profile.working_with}</span></div>}
-                {hasValue(profile.working_as) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Working As</span><span className="font-medium" style={{color:"#111827"}}>{profile.working_as}</span></div>}
-                {hasValue(profile.employer_name) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Employer</span><span className="font-medium" style={{color:"#111827"}}>{profile.employer_name}</span></div>}
-                {hasValue(profile.monthly_income) && profile.monthly_income > 0 && !profile.income_hidden && (
+                {hasValue(profile.monthly_income) && profile.monthly_income > 0 && (
                   <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Monthly Income</span><span className="font-medium" style={{color:"#111827"}}>৳{Number(profile.monthly_income).toLocaleString()}</span></div>
                 )}
               </div>
-              {/* DOB request */}
-              {isMutual && profile.dob_privacy === 'hidden' && (
-                <div style={{ marginTop: '12px', padding: '12px 14px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
-                  <p style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 700, color: '#374151' }}>Date of Birth</p>
-                  {dobRequestStatus === 'none' && (
-                    <button onClick={handleDobRequest} disabled={dobRequesting} style={{ padding: '7px 16px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>
-                      {dobRequesting ? 'Sending...' : 'Request Date of Birth'}
-                    </button>
-                  )}
-                  {dobRequestStatus === 'pending' && (
-                    <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 600 }}>⏳ Request sent — waiting for response</span>
-                  )}
-                  {dobRequestStatus === 'granted' && dobGranted && (
-                    <span style={{ fontSize: '13px', color: '#10b981', fontWeight: 700 }}>✓ {new Date(dobGranted).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                  )}
-                  {dobRequestStatus === 'declined' && (
-                    <span style={{ fontSize: '12px', color: '#9ca3af' }}>Request was not accepted at this time.</span>
-                  )}
-                </div>
-              )}
-              {profile.dob_privacy === 'full' && profile.date_of_birth && (
-                <div style={{ marginTop: '12px', padding: '12px 14px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
-                  <p style={{ margin: '0 0 4px', fontSize: '13px', fontWeight: 700, color: '#374151' }}>Date of Birth</p>
-                  <p style={{ margin: 0, fontSize: '13px', color: '#111827' }}>{new Date(profile.date_of_birth).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                </div>
-              )}
             </div>
           )}
 
-          {(hasValue(profile.religious_level) || hasValue(profile.religion)) && (
+          {hasValue(profile.religious_level) && (
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>🕌 Religious Background</h3>
               <div className="space-y-3">
                 {hasValue(profile.religion) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Religion</span><span className="font-medium" style={{color:"#111827"}}>{profile.religion}</span></div>}
-                {hasValue(profile.community) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Community / Sect</span><span className="font-medium" style={{color:"#111827"}}>{profile.community}</span></div>}
                 {hasValue(profile.sect) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Sect</span><span className="font-medium" style={{color:"#111827"}}>{profile.sect}</span></div>}
-                {hasValue(profile.religious_level) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Religious Practice</span><span className="font-medium" style={{color:"#111827"}}>{profile.religious_level}</span></div>}
+                {hasValue(profile.religious_level) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Religious Level</span><span className="font-medium" style={{color:"#111827"}}>{profile.religious_level}</span></div>}
                 {hasValue(profile.prayer_habit) && <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Prayer Habit</span><span className="font-medium" style={{color:"#111827"}}>{profile.prayer_habit}</span></div>}
               </div>
             </div>
           )}
 
-          {(hasValue(profile.father_profession) || hasValue(profile.mother_profession) || profile.num_sisters !== null || profile.num_brothers !== null || hasValue(profile.family_financial_status)) && (
+          {hasValue(profile.father_profession) && (
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>👨‍👩‍👧‍👦 Family Background</h3>
               <div className="space-y-3">
                 {hasValue(profile.father_profession) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Father's Profession</span><span className="font-medium" style={{color:"#111827"}}>{profile.father_profession}</span></div>}
                 {hasValue(profile.mother_profession) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Mother's Profession</span><span className="font-medium" style={{color:"#111827"}}>{profile.mother_profession}</span></div>}
-                {profile.num_sisters !== null && profile.num_sisters !== undefined && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>No. of Sisters</span><span className="font-medium" style={{color:"#111827"}}>{profile.num_sisters === 0 ? 'None' : profile.num_sisters}</span></div>}
-                {profile.num_brothers !== null && profile.num_brothers !== undefined && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>No. of Brothers</span><span className="font-medium" style={{color:"#111827"}}>{profile.num_brothers === 0 ? 'None' : profile.num_brothers}</span></div>}
-                {hasValue(profile.family_financial_status) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Financial Status</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_financial_status}</span></div>}
-                {hasValue(profile.family_location) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Location</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_location}</span></div>}
                 {hasValue(profile.total_siblings) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Total Siblings</span><span className="font-medium" style={{color:"#111827"}}>{profile.total_siblings}</span></div>}
                 {hasValue(profile.family_type) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Type</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_type}</span></div>}
                 {hasValue(profile.family_values) && <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Values</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_values}</span></div>}
@@ -1088,26 +898,6 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               Share on WhatsApp
             </a>
           </div>
-
-          {/* Block / Report — premium only */}
-          {isLoggedIn && (
-            <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-              <button
-                onClick={isBlocked ? handleUnblock : handleBlock}
-                style={{ flex: 1, padding: '10px', background: isBlocked ? '#f3f4f6' : '#fff1f2', color: isBlocked ? '#6b7280' : '#e11d48', border: `1.5px solid ${isBlocked ? '#e5e7eb' : '#fecdd3'}`, borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-                {isBlocked ? 'Unblock' : 'Block'}
-              </button>
-              <button
-                onClick={handleReportClick}
-                style={{ flex: 1, padding: '10px', background: '#fffbeb', color: '#d97706', border: '1.5px solid #fde68a', borderRadius: '10px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                Report
-              </button>
-            </div>
-          )}
         </div>
 
       </div>
@@ -1135,102 +925,6 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
         </div>
       )}
     </div>
-      {/* Report Modal */}
-      {showReportModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: 'white', borderRadius: '20px', padding: '28px 24px', maxWidth: '420px', width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', maxHeight: '90vh', overflowY: 'auto' }}>
-            {reportDone ? (
-              <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>✅</div>
-                <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 800, color: '#111827' }}>Report Submitted</h3>
-                <p style={{ margin: '0 0 20px', fontSize: '13px', color: '#6b7280', lineHeight: 1.6 }}>Thank you. Our team will review this report within 24 hours.</p>
-                <button onClick={() => setShowReportModal(false)} style={{ padding: '12px 28px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>Close</button>
-              </div>
-            ) : (
-              <>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-                  <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#111827' }}>Report Profile</h3>
-                  <button onClick={() => setShowReportModal(false)} style={{ background: 'none', border: 'none', fontSize: '22px', cursor: 'pointer', color: '#9ca3af' }}>×</button>
-                </div>
-
-                <p style={{ margin: '0 0 16px', fontSize: '13px', color: '#6b7280' }}>Select a reason for reporting <strong>{profile.full_name}</strong>:</p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
-                  {[
-                    { value: 'fake_profile', label: 'Fake profile / Impersonation', icon: '🎭' },
-                    { value: 'inappropriate_photos', label: 'Inappropriate or offensive photos', icon: '📷' },
-                    { value: 'harassment', label: 'Harassment or abusive messages', icon: '🚫' },
-                    { value: 'married_claiming_single', label: 'Married but claiming to be single', icon: '💍' },
-                    { value: 'scam', label: 'Scam or asking for money', icon: '💰' },
-                    { value: 'underage', label: 'Underage profile (under 18)', icon: '⚠️' },
-                    { value: 'other', label: 'Other reason', icon: '📝' },
-                  ].map(r => (
-                    <button key={r.value} onClick={() => setReportReason(r.value)} style={{
-                      padding: '12px 14px', borderRadius: '10px', border: `2px solid ${reportReason === r.value ? '#e11d48' : '#e5e7eb'}`,
-                      background: reportReason === r.value ? '#fff1f2' : 'white', cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', gap: '10px', textAlign: 'left'
-                    }}>
-                      <span style={{ fontSize: '18px', flexShrink: 0 }}>{r.icon}</span>
-                      <span style={{ fontSize: '13px', fontWeight: reportReason === r.value ? 700 : 500, color: reportReason === r.value ? '#e11d48' : '#374151' }}>{r.label}</span>
-                      {reportReason === r.value && <span style={{ marginLeft: 'auto', color: '#e11d48', fontWeight: 800 }}>✓</span>}
-                    </button>
-                  ))}
-                </div>
-
-                <div style={{ marginBottom: '14px' }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>Additional details (optional)</label>
-                  <textarea
-                    value={reportDetails}
-                    onChange={e => setReportDetails(e.target.value)}
-                    placeholder="Describe what happened..."
-                    rows={3}
-                    style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
-                  />
-                </div>
-
-                <div style={{ marginBottom: '20px' }}>
-                  <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>Proof / Screenshot (optional)</label>
-                  {reportProof ? (
-                    <div style={{ position: 'relative', display: 'inline-block' }}>
-                      <img src={reportProof} alt="Proof" style={{ maxWidth: '100%', maxHeight: '160px', borderRadius: '10px', border: '1.5px solid #e5e7eb' }} />
-                      <button onClick={() => setReportProof('')} style={{ position: 'absolute', top: '4px', right: '4px', width: '22px', height: '22px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', cursor: 'pointer', color: 'white', fontSize: '14px', lineHeight: 1 }}>×</button>
-                    </div>
-                  ) : (
-                    <label style={{ cursor: 'pointer', display: 'block' }}>
-                      <div style={{ border: '2px dashed #e5e7eb', borderRadius: '10px', padding: '20px', textAlign: 'center', background: '#f8fafc' }}>
-                        <div style={{ fontSize: '28px', marginBottom: '6px' }}>📸</div>
-                        <p style={{ margin: '0 0 4px', fontSize: '13px', fontWeight: 700, color: '#374151' }}>Upload screenshot</p>
-                        <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>JPG, PNG up to 5MB</p>
-                      </div>
-                      <input type="file" accept="image/*" style={{ display: 'none' }} onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
-                        const file = e.target.files?.[0]
-                        if (!file) return
-                        const SURL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-                        const SKEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-                        const fileName = 'reports/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.jpg'
-                        const res = await fetch(SURL + '/storage/v1/object/profile-photos/' + fileName, {
-                          method: 'POST',
-                          headers: { 'apikey': SKEY, 'Authorization': 'Bearer ' + SKEY, 'Content-Type': file.type, 'x-upsert': 'true' },
-                          body: file
-                        })
-                        if (res.ok) setReportProof(SURL + '/storage/v1/object/public/profile-photos/' + fileName)
-                        else alert('Upload failed. Please try again.')
-                      }} />
-                    </label>
-                  )}
-                </div>
-
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button onClick={() => setShowReportModal(false)} style={{ flex: 1, padding: '12px', background: '#f3f4f6', color: '#6b7280', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}>Cancel</button>
-                  <button onClick={handleSubmitReport} disabled={!reportReason || reportSubmitting} style={{ flex: 1, padding: '12px', background: !reportReason ? '#f3f4f6' : 'linear-gradient(135deg,#e11d48,#db2777)', color: !reportReason ? '#9ca3af' : 'white', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: 700, cursor: !reportReason ? 'not-allowed' : 'pointer' }}>
-                    {reportSubmitting ? 'Submitting...' : 'Submit Report'}
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
     </>
   )
 }
