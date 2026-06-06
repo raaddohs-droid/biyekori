@@ -8,6 +8,7 @@ const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 export default function MessagesPage() {
   const [user, setUser] = useState<any>(null)
   const [isPremium, setIsPremium] = useState(false)
+  const [hasMutualMatches, setHasMutualMatches] = useState(false)
   const [conversations, setConversations] = useState<any[]>([])
   const [activeConvo, setActiveConvo] = useState<any>(null)
   const [messages, setMessages] = useState<any[]>([])
