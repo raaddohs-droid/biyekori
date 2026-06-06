@@ -3,10 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+
 
 // All supported city slugs
 const CITY_DATA: Record<string, {
@@ -121,6 +118,10 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
 }
 
 async function getCityProfiles(cityName: string, area?: string) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   let query = supabase
     .from('profiles')
     .select('id, full_name, age, gender, city, district, profession, education, photo_url, is_verified, package, profile_completion, selfie_status')
@@ -214,23 +215,18 @@ export default async function CityMatrimonyPage({ params, searchParams }: {
           {cityInfo.areas && cityInfo.areas.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
               <label style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', whiteSpace: 'nowrap' }}>Area / এলাকা:</label>
-              <select
-                defaultValue={area || ''}
-                onChange={undefined}
-                style={{ padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '10px', fontSize: '13px', color: '#111827', background: 'white', minWidth: '160px' }}
-                onChangeCapture={(e: any) => {
-                  const val = e.target.value
-                  const url = val
-                    ? `/matrimony/${city}?area=${encodeURIComponent(val)}${gender ? `&gender=${gender}` : ''}`
-                    : `/matrimony/${city}${gender ? `?gender=${gender}` : ''}`
-                  window.location.href = url
-                }}
-              >
-                <option value="">All of {cityInfo.name}</option>
-                {cityInfo.areas.map(a => (
-                  <option key={a} value={a} selected={area === a}>{a}</option>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', maxWidth: '400px' }}>
+                <Link href={`/matrimony/${city}${gender ? `?gender=${gender}` : ''}`}
+                  style={{ padding: '6px 12px', borderRadius: '16px', fontSize: '12px', fontWeight: 600, textDecoration: 'none', background: !area ? '#e11d48' : '#f3f4f6', color: !area ? 'white' : '#6b7280' }}>
+                  All
+                </Link>
+                {cityInfo.areas.slice(0, 6).map((a: string) => (
+                  <Link key={a} href={`/matrimony/${city}?area=${encodeURIComponent(a)}${gender ? `&gender=${gender}` : ''}`}
+                    style={{ padding: '6px 12px', borderRadius: '16px', fontSize: '12px', fontWeight: 600, textDecoration: 'none', background: area === a ? '#e11d48' : '#f3f4f6', color: area === a ? 'white' : '#6b7280' }}>
+                    {a}
+                  </Link>
                 ))}
-              </select>
+              </div>
             </div>
           )}
         </div>
