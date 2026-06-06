@@ -188,7 +188,7 @@ function getActivityStatus(profile: any): { label: string; color: string; isOnli
   return { label: 'Recently active', color: '#9ca3af', isOnline: false }
 }
 
-function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewerProfile: any, interestMap: Record<string, 'sent'|'received'|'accepted'> }) {
+function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewerProfile: any, interestMap?: Record<string, string> }) {
   const score = computeMatchScore(profile, viewerProfile)
   const activity = getActivityStatus(profile)
   const creationBadge = getCreationBadge(profile)
@@ -196,7 +196,7 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
   const isPremium = profile.package !== 'prottasha'
   const [interestSent, setInterestSent] = useState(false)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
-  const relationshipStatus: 'none'|'sent'|'received'|'accepted' = interestMap[String(profile.id)] || 'none'
+  const relationshipStatus = (interestMap?.[String(profile.id)] ?? 'none') as 'none'|'sent'|'received'|'accepted'
   const rawName = profile.full_name || profile.name || 'Anonymous'
   const name = maskName(rawName, relationshipStatus)
 
@@ -400,9 +400,10 @@ export function ViewToggle({ view, onToggle }: { view: 'grid' | 'list', onToggle
 export default function ProfilesGrid({ profiles, view }: { profiles: any[], view: 'grid' | 'list' }) {
   const [viewerProfile, setViewerProfile] = useState<any>(null)
   const [sortedProfiles, setSortedProfiles] = useState<any[]>(profiles)
-  const [interestMap, setInterestMap] = useState<Record<string, 'sent'|'received'|'accepted'>>({})
+  const [interestMap, setInterestMap] = useState<Record<string, string>>({})
 
   useEffect(() => {
+    // Default order when no viewer — keep as-is
     setSortedProfiles(profiles)
   }, [profiles])
 
@@ -412,8 +413,6 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
       if (!stored) return
       const user = JSON.parse(stored)
       if (!user.id) return
-
-      // Fetch viewer profile
       fetch(`${SUPABASE_URL}/rest/v1/profiles?id=eq.${user.id}&select=*`, {
         headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
       })
@@ -422,6 +421,7 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
           if (Array.isArray(data) && data[0]) {
             const vp = data[0]
             setViewerProfile(vp)
+            // Sort profiles by match score descending
             const ranked = [...profiles].sort((a, b) =>
               computeMatchScore(b, vp) - computeMatchScore(a, vp)
             )
@@ -430,14 +430,13 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
         })
         .catch(() => {})
 
-      // Fetch all interests ONCE and build a map
+      // Fetch all interests once and build lookup map
       fetch('/api/interests/list?userId=' + user.id)
         .then(r => r.json())
         .then(data => {
-          const map: Record<string, 'sent'|'received'|'accepted'> = {}
+          const map: Record<string, string> = {}
           ;(data.sent || []).forEach((s: any) => {
-            const id = String(s.receiver_id)
-            map[id] = s.status === 'accepted' ? 'accepted' : 'sent'
+            map[String(s.receiver_id)] = s.status === 'accepted' ? 'accepted' : 'sent'
           })
           ;(data.received || []).forEach((r: any) => {
             const id = String(r.sender_id)
