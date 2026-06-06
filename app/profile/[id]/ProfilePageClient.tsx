@@ -267,17 +267,17 @@ function ScoreModal({ profile, onClose, isLoggedIn }: { profile: any, onClose: (
           )}
 
           {!isLoggedIn && (
-          <div className="mt-6 pt-4 border-t border-gray-100 text-center">
-            <p className="text-xs text-gray-500 mb-3">Want YOUR match score with this person?</p>
-            <Link href="/login" className="block w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl text-sm hover:shadow-lg transition">
-              Log In for Personal Match Score
-            </Link>
-          </div>
-        </div>
+            <div className="mt-6 pt-4 border-t border-gray-100 text-center">
+              <p className="text-xs text-gray-500 mb-3">Want YOUR match score with this person?</p>
+              <Link href="/login" className="block w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl text-sm hover:shadow-lg transition">
+                Log In for Personal Match Score
+              </Link>
+            </div>
           )}
         </div>
       </div>
     </div>
+    </>
   )
 }
 
@@ -826,10 +826,10 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               <h3 className="text-xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>🎨 Lifestyle & Preferences</h3>
               <div className="space-y-3">
                 {hasValue(profile.diet) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Dietary Preference</span><span className="font-medium" style={{color:"#111827"}}>{profile.diet}</span></div>}
-                {hasValue(profile.social_lifestyle) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Social Lifestyle</span><span className="font-medium" style={{color:"#111827"}}>{(['quiet','balanced','social','depends'] as const).includes(profile.social_lifestyle) ? {quiet:'Quiet and home-oriented',balanced:'Balanced',social:'Social and outgoing',depends:'Depends on occasion'}[profile.social_lifestyle as 'quiet'|'balanced'|'social'|'depends'] : profile.social_lifestyle}</span></div>}
-                {hasValue(profile.family_involvement) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Involvement</span><span className="font-medium" style={{color:"#111827"}}>{(['from_beginning','talk_first','after_mutual','guardian_to_guardian'] as const).includes(profile.family_involvement) ? {from_beginning:'Family involved from the beginning',talk_first:'Talk first, involve family shortly after',after_mutual:'After mutual interest',guardian_to_guardian:'Guardian-to-guardian preferred'}[profile.family_involvement as 'from_beginning'|'talk_first'|'after_mutual'|'guardian_to_guardian'] : profile.family_involvement}</span></div>}
-                {hasValue(profile.dowry_stance) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Dowry Stance</span><span className="font-medium" style={{color:"#111827"}}>{(['against','gifts_only','discussion','prefer_not'] as const).includes(profile.dowry_stance) ? {against:'Strictly against dowry',gifts_only:'No dowry; voluntary gifts only',discussion:'Open to discussion',prefer_not:'Prefer not to say'}[profile.dowry_stance as 'against'|'gifts_only'|'discussion'|'prefer_not'] : profile.dowry_stance}</span></div>}
-                {hasValue(profile.wedding_style) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Wedding Style</span><span className="font-medium" style={{color:"#111827"}}>{(['simple','traditional','large','discussion'] as const).includes(profile.wedding_style) ? {simple:'Simple and intimate',traditional:'Traditional family wedding',large:'Large celebration',discussion:'Open to discussion'}[profile.wedding_style as 'simple'|'traditional'|'large'|'discussion'] : profile.wedding_style}</span></div>}
+                {hasValue(profile.social_lifestyle) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Social Lifestyle</span><span className="font-medium" style={{color:"#111827"}}>{profile.social_lifestyle === 'quiet' ? 'Quiet and home-oriented' : profile.social_lifestyle === 'balanced' ? 'Balanced' : profile.social_lifestyle === 'social' ? 'Social and outgoing' : profile.social_lifestyle === 'depends' ? 'Depends on occasion' : profile.social_lifestyle}</span></div>}
+                {hasValue(profile.family_involvement) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Involvement</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_involvement === 'from_beginning' ? 'Family involved from the beginning' : profile.family_involvement === 'talk_first' ? 'Talk first, involve family shortly after' : profile.family_involvement === 'after_mutual' ? 'After mutual interest' : profile.family_involvement === 'guardian_to_guardian' ? 'Guardian-to-guardian preferred' : profile.family_involvement}</span></div>}
+                {hasValue(profile.dowry_stance) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Dowry Stance</span><span className="font-medium" style={{color:"#111827"}}>{profile.dowry_stance === 'against' ? 'Strictly against dowry' : profile.dowry_stance === 'gifts_only' ? 'No dowry; voluntary gifts only' : profile.dowry_stance === 'discussion' ? 'Open to discussion' : profile.dowry_stance === 'prefer_not' ? 'Prefer not to say' : profile.dowry_stance}</span></div>}
+                {hasValue(profile.wedding_style) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Wedding Style</span><span className="font-medium" style={{color:"#111827"}}>{profile.wedding_style === 'simple' ? 'Simple and intimate' : profile.wedding_style === 'traditional' ? 'Traditional family wedding' : profile.wedding_style === 'large' ? 'Large celebration' : profile.wedding_style === 'discussion' ? 'Open to discussion' : profile.wedding_style}</span></div>}
                 {hasValue(profile.personality_type) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Personality</span><span className="font-medium" style={{color:"#111827"}}>{profile.personality_type}</span></div>}
                 {hasValue(profile.hobbies) && <div className="py-2 border-b border-gray-100"><span className="text-gray-600 block mb-1" style={{color:"#4b5563"}}>Hobbies</span><span className="font-medium text-sm" style={{color:"#111827"}}>{profile.hobbies}</span></div>}
                 {hasValue(profile.interests) && <div className="py-2"><span className="text-gray-600 block mb-1" style={{color:"#4b5563"}}>Interests</span><span className="font-medium text-sm" style={{color:"#111827"}}>{profile.interests}</span></div>}
