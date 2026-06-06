@@ -16,8 +16,10 @@ export default function CityProfileCard({ profile: p, cityName }: { profile: any
     ? (p.full_name || (p.gender === 'Female' ? 'Bride' : 'Groom'))
     : (() => {
         const name = p.full_name || (p.gender === 'Female' ? 'Bride' : 'Groom')
-        const parts = name.split(' ')
-        return parts[0] + (parts.length > 1 ? ' ' + parts[parts.length - 1][0] + '.' : '')
+        const parts = name.trim().split(' ')
+        const first = parts[0]
+        const last = parts.length > 1 ? parts[parts.length - 1][0] + '.' : '***'
+        return first + ' ' + last
       })()
 
   const displayLocation = isLoggedIn
