@@ -25,18 +25,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
-    const { data: profiles, error } = await supabase
-      .from('profiles')
-      .select('id, updated_at')
-      .order('id', { ascending: true })
-      .limit(2000)
+    // Fetch all profiles in batches of 1000
+    let allProfiles: { id: number; updated_at: string }[] = []
+    let from = 0
+    const batchSize = 1000
 
-    if (error || !profiles) {
-      console.log('Sitemap: Supabase error:', error?.message)
-      return staticPages
+    while (true) {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, updated_at')
+        .order('id', { ascending: true })
+        .range(from, from + batchSize - 1)
+
+      if (error || !data || data.length === 0) break
+
+      allProfiles = [...allProfiles, ...data]
+      if (data.length < batchSize) break
+      from += batchSize
     }
 
-    const profilePages: MetadataRoute.Sitemap = profiles.map(profile => ({
+    const profilePages: MetadataRoute.Sitemap = allProfiles.map(profile => ({
       url: `${BASE_URL}/profile/${profile.id}`,
       lastModified: profile.updated_at ? new Date(profile.updated_at) : new Date(),
       changeFrequency: 'weekly' as const,
