@@ -296,8 +296,8 @@ export default async function CityMatrimonyPage({ params, searchParams }: {
               <CityProfileCard key={p.id} profile={p} cityName={cityInfo.name} />
             ))}
           </div>
-          <GuestGate page={1} />
         )}
+        <GuestGate page={1} />
 
         {/* CTA */}
         <div style={{ background: 'linear-gradient(135deg,#1e1b4b,#e11d48)', borderRadius: '20px', padding: '40px 24px', textAlign: 'center', marginBottom: '32px' }}>
