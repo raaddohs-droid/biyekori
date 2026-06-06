@@ -75,16 +75,7 @@ export default function Navbar() {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) setShowNotifs(false)
     }
     document.addEventListener('mousedown', handleClick)
-    const handleIdSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    const id = searchId.trim()
-    if (!id) return
-    if (!/^\d+$/.test(id)) { setSearchError(true); setTimeout(() => setSearchError(false), 2000); return }
-    setSearchId('')
-    window.location.href = `/profile/${id}`
-  }
-
-  return () => document.removeEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
   const handleLogout = () => {
@@ -147,6 +138,15 @@ export default function Navbar() {
     } catch (e) {}
   }
 
+  const handleIdSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    const id = searchId.trim()
+    if (!id) return
+    if (!/^\d+$/.test(id)) { setSearchError(true); setTimeout(() => setSearchError(false), 2000); return }
+    setSearchId('')
+    window.location.href = `/profile/${id}`
+  }
+
   return (
     <>
     <nav style={{
@@ -207,7 +207,6 @@ export default function Navbar() {
         </div>
 
         {/* Right */}
-        {/* Profile ID Search */}
         {user && (
           <form onSubmit={handleIdSearch} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <input
@@ -215,18 +214,17 @@ export default function Navbar() {
               onChange={e => setSearchId(e.target.value)}
               placeholder="Profile ID..."
               style={{
-                width: '100px', padding: '6px 10px',
+                width: '90px', padding: '5px 10px',
                 border: `1px solid ${searchError ? '#e11d48' : '#e5e7eb'}`,
                 borderRadius: '20px', fontSize: '12px', outline: 'none',
                 background: isHome ? 'rgba(255,255,255,0.1)' : '#f9fafb',
-                color: isHome ? 'white' : '#111827',
-                transition: 'all 0.2s'
+                color: isHome ? 'white' : '#111827'
               }}
             />
             <button type="submit" style={{
-              padding: '6px 10px', background: 'linear-gradient(135deg,#e11d48,#db2777)',
+              padding: '5px 8px', background: 'linear-gradient(135deg,#e11d48,#db2777)',
               border: 'none', borderRadius: '20px', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
+              display: 'flex', alignItems: 'center'
             }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
                 <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
