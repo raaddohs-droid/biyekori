@@ -18,49 +18,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/login`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
   ]
 
-  // Use service role key for server-side fetch, fall back to anon key
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!supabaseUrl || !supabaseKey) {
-    console.log('Sitemap: missing Supabase env vars, returning static pages only')
-    return staticPages
-  }
-
   try {
-    let allProfiles: { id: number; updated_at: string }[] = []
-    let offset = 0
-    const batchSize = 1000
+    // Use our own API endpoint which already has Supabase access
+    const res = await fetch(`${BASE_URL}/api/profiles`, {
+      cache: 'no-store',
+    })
 
-    while (true) {
-      const res = await fetch(
-        `${supabaseUrl}/rest/v1/profiles?select=id,updated_at&order=id.asc&limit=${batchSize}&offset=${offset}`,
-        {
-          headers: {
-            'apikey': supabaseKey,
-            'Authorization': `Bearer ${supabaseKey}`,
-            'Content-Type': 'application/json',
-          },
-          cache: 'no-store',
-        }
-      )
-
-      if (!res.ok) {
-        console.log(`Sitemap: fetch failed with status ${res.status}`)
-        break
-      }
-
-      const batch = await res.json()
-      if (!Array.isArray(batch) || batch.length === 0) break
-
-      allProfiles = [...allProfiles, ...batch]
-      if (batch.length < batchSize) break
-      offset += batchSize
+    if (!res.ok) {
+      console.log(`Sitemap: API fetch failed with status ${res.status}`)
+      return staticPages
     }
 
-    const profilePages: MetadataRoute.Sitemap = allProfiles.map(profile => ({
+    const data = await res.json()
+    const profiles: { id: number }[] = data.profiles || []
+
+    const profilePages: MetadataRoute.Sitemap = profiles.map(profile => ({
       url: `${BASE_URL}/profile/${profile.id}`,
-      lastModified: profile.updated_at ? new Date(profile.updated_at) : new Date(),
+      lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     }))
