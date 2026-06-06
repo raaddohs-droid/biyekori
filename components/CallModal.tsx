@@ -46,11 +46,30 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
     if (channelRef.current) { try { channelRef.current.unsubscribe() } catch(e) {} }
     if (localTrackRef.current) { try { localTrackRef.current.close() } catch(e) {} }
     if (clientRef.current) { try { await clientRef.current.leave() } catch(e) {} }
+
+    // Save call record as a message if call was active
+    if (isActiveRef.current && reason === 'ended') {
+      const elapsed = callStartRef.current ? Math.floor((Date.now() - callStartRef.current) / 1000) : 0
+      const mins = Math.floor(elapsed / 60)
+      const secs = elapsed % 60
+      const duration = elapsed > 0 ? ` · ${mins}:${secs.toString().padStart(2,'0')}` : ''
+      const callMsg = mode === 'outgoing'
+        ? `📞 Voice call${duration}`
+        : `📞 Incoming call${duration}`
+      try {
+        await fetch('/api/messages/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ senderId: currentUser.id, receiverId: targetProfile.id, content: callMsg })
+        })
+      } catch(e) {}
+    }
+
     isActiveRef.current = false
     sendSignal('call-end', { reason })
     setCallState(reason === 'rejected' ? 'rejected' : reason === 'timeout' ? 'timeout' : 'ended')
     setTimeout(onClose, 2000)
-  }, [sendSignal, onClose])
+  }, [sendSignal, onClose, mode, currentUser.id, targetProfile.id])
 
   const startTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current) // prevent double timer

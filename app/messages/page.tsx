@@ -197,18 +197,42 @@ export default function MessagesPage() {
                     <div style={{ textAlign: "center", color: "#9ca3af", fontSize: "13px", marginTop: "40px" }}>No messages yet. Say hello!</div>
                   ) : messages.map((msg: any, i: number) => {
                     const isMine = String(msg.sender_id) === String(user.id)
+                    const msgDate = new Date(msg.created_at).toDateString()
+                    const prevMsgDate = i > 0 ? new Date(messages[i-1].created_at).toDateString() : null
+                    const showDateSep = msgDate !== prevMsgDate
+                    const today = new Date().toDateString()
+                    const yesterday = new Date(Date.now() - 86400000).toDateString()
+                    const dateLabel = msgDate === today ? 'Today' : msgDate === yesterday ? 'Yesterday' : new Date(msg.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })
                     return (
-                      <div key={i} style={{ display: "flex", justifyContent: isMine ? "flex-end" : "flex-start" }}>
+                      <div key={i}>
+                        {showDateSep && (
+                          <div style={{ textAlign: 'center', margin: '8px 0' }}>
+                            <span style={{ fontSize: '11px', color: '#9ca3af', background: '#f8fafc', padding: '2px 10px', borderRadius: '20px' }}>{dateLabel}</span>
+                          </div>
+                        )}
+                        <div style={{ display: "flex", justifyContent: isMine ? "flex-end" : "flex-start" }}>
                         <div style={{
                           maxWidth: "65%", padding: "10px 14px",
                           borderRadius: isMine ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
                           background: isMine ? "linear-gradient(135deg,#e11d48,#db2777)" : "#f3f4f6",
                           color: isMine ? "white" : "#111827", fontSize: "13px", lineHeight: 1.5
                         }}>
-                          {msg.content}
+                          {msg.content?.startsWith('📞') ? (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>{msg.content}</span>
+                          ) : msg.content}
                           <p style={{ margin: "4px 0 0", fontSize: "10px", opacity: 0.7, textAlign: "right" }}>
-                            {new Date(msg.created_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+                            {(() => {
+                              const d = new Date(msg.created_at)
+                              const today = new Date()
+                              const yesterday = new Date(today)
+                              yesterday.setDate(yesterday.getDate() - 1)
+                              const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+                              if (d.toDateString() === today.toDateString()) return time
+                              if (d.toDateString() === yesterday.toDateString()) return `Yesterday ${time}`
+                              return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }) + " " + time
+                            })()}
                           </p>
+                        </div>
                         </div>
                       </div>
                     )
