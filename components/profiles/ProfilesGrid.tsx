@@ -261,14 +261,14 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
         boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
         display: 'flex', gap: '0', alignItems: 'stretch',
         transition: 'box-shadow 0.2s, transform 0.1s', cursor: 'pointer',
-        overflow: 'hidden'
+        overflow: 'visible'
       }}
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)' }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'none' }}
     >
-      <div style={{ position: 'relative', flexShrink: 0, width: '160px' }}>
+      <div style={{ position: 'relative', flexShrink: 0, width: '160px', paddingBottom: '14px', overflow: 'visible', borderRadius: '16px 0 0 16px', overflow: 'hidden' }}>
         {photoUrl ? (
-          <img src={photoUrl} alt={name} style={{ width: '160px', height: '100%', minHeight: '180px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
+          <img src={photoUrl} alt={name} style={{ width: '160px', height: 'calc(100% - 14px)', minHeight: '180px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block', borderRadius: '16px 0 0 0' }} />
         ) : (
           <div style={{ width: '160px', minHeight: '180px', background: 'linear-gradient(135deg,#fce7f3,#ede9fe)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>
             {profile.gender === 'male' ? '👤' : '👤'}
