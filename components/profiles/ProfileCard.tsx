@@ -382,7 +382,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
           boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
           cursor: 'pointer'
         }} onClick={() => alert('Login to see your AI match score')}>
-          <span style={{ fontSize: '9px', color: 'white', fontWeight: 700 }}>{viewerProfile ? 'AI ' + score + '%' : 'Login to see score'}</span>
+          <span style={{ fontSize: '9px', color: 'white', fontWeight: 700 }}>{viewerProfile ? 'Match ' + score + '%' : 'Login to see score'}</span>
         </div>
 
         <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5">
