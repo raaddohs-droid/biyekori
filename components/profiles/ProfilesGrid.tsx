@@ -317,9 +317,28 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
             <span style={{ fontSize: '10px', fontWeight: 700, color: '#059669', background: '#ecfdf5', border: '1px solid #6ee7b7', borderRadius: '6px', padding: '2px 7px' }}>NID Verified</span>
           )}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '10px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: activity.color, display: 'inline-block', flexShrink: 0, boxShadow: activity.isOnline ? '0 0 0 2px rgba(16,185,129,0.25)' : 'none' }} />
-          <span style={{ fontSize: '11px', color: activity.color, fontWeight: 700 }}>{activity.label}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: activity.color, display: 'inline-block', flexShrink: 0, boxShadow: activity.isOnline ? '0 0 0 2px rgba(16,185,129,0.25)' : 'none' }} />
+            <span style={{ fontSize: '11px', color: activity.color, fontWeight: 700 }}>{activity.label}</span>
+          </div>
+          {relationshipStatus === 'received' && (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '11px', fontWeight: 700, color: '#7c3aed', background: '#f5f3ff', border: '1px solid #c4b5fd', borderRadius: '20px', padding: '2px 8px' }}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="#7c3aed"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Likes you
+            </span>
+          )}
+          {relationshipStatus === 'accepted' && (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '11px', fontWeight: 700, color: '#059669', background: '#ecfdf5', border: '1px solid #6ee7b7', borderRadius: '20px', padding: '2px 8px' }}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              You &amp; {profile.gender === 'Male' ? 'Him' : 'Her'}
+            </span>
+          )}
+          {relationshipStatus === 'sent' && (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '11px', fontWeight: 600, color: '#6b7280', background: '#f3f4f6', borderRadius: '20px', padding: '2px 8px' }}>
+              ✓ Interest Sent
+            </span>
+          )}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 20px', marginBottom: '8px' }}>
           {infoRows.map((row, i) => row.some(Boolean) && (
