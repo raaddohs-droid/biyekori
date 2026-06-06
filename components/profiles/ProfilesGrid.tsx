@@ -173,15 +173,19 @@ function getCreationBadge(profile: any): { label: string; bg: string; color: str
   return null
 }
 
-function getActivityStatus(profile: any): { label: string; color: string } {
-  if (profile.last_active) {
-    const mins = (Date.now() - new Date(profile.last_active).getTime()) / 60000
-    if (mins < 30) return { label: 'Online now', color: '#10b981' }
-    if (mins < 240) return { label: 'Active today', color: '#f59e0b' }
-    if (mins < 4320) return { label: 'Active this week', color: '#3b82f6' }
-    if (mins < 10080) return { label: 'Active recently', color: '#6b7280' }
+function getActivityStatus(profile: any): { label: string; color: string; isOnline: boolean } {
+  const lastActive = profile.last_active_at || profile.last_active
+  if (lastActive) {
+    const mins = (Date.now() - new Date(lastActive).getTime()) / 60000
+    if (mins < 30) return { label: 'Online now', color: '#10b981', isOnline: true }
+    if (mins < 240) return { label: 'Active today', color: '#f59e0b', isOnline: false }
+    if (mins < 1440) return { label: 'Active yesterday', color: '#f59e0b', isOnline: false }
+    if (mins < 4320) return { label: 'Active this week', color: '#3b82f6', isOnline: false }
+    if (mins < 10080) return { label: 'Active recently', color: '#6b7280', isOnline: false }
+    const days = Math.floor(mins / 1440)
+    return { label: `Active ${days}d ago`, color: '#d1d5db', isOnline: false }
   }
-  return { label: 'Recently active', color: '#9ca3af' }
+  return { label: 'Recently active', color: '#9ca3af', isOnline: false }
 }
 
 function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any }) {
@@ -314,8 +318,8 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
           )}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '10px' }}>
-          <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: activity.color, display: 'inline-block', flexShrink: 0 }} />
-          <span style={{ fontSize: '11px', color: activity.color, fontWeight: 600 }}>{activity.label}</span>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: activity.color, display: 'inline-block', flexShrink: 0, boxShadow: activity.isOnline ? '0 0 0 2px rgba(16,185,129,0.25)' : 'none' }} />
+          <span style={{ fontSize: '11px', color: activity.color, fontWeight: 700 }}>{activity.label}</span>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 20px', marginBottom: '8px' }}>
           {infoRows.map((row, i) => row.some(Boolean) && (

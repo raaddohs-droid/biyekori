@@ -81,6 +81,12 @@ export default function Dashboard() {
     const parsed = JSON.parse(userData);
     setUser(parsed);
     if (parsed.id) {
+      // Update last active timestamp
+      fetch('/api/update-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: parsed.id, updates: { last_active_at: new Date().toISOString() } })
+      }).catch(() => {});
       fetchViewCount(parsed.id).then(setViewCount);
       fetch('/api/interests/list?userId=' + parsed.id)
         .then(r => r.json())
