@@ -6,8 +6,7 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const AGORA_APP_ID = 'c4513ff1afb74017b915fb18cd7312d8'
 
-const FREE_CALL_LIMIT = 5 * 60
-const PREMIUM_CALL_LIMIT = 5 * 60
+const CALL_LIMIT = 5 * 60 // 5 minutes for everyone
 
 interface CallModalProps {
   currentUser: any
@@ -19,7 +18,7 @@ interface CallModalProps {
 
 export default function CallModal({ currentUser, targetProfile, onClose, mode, incomingSignal }: CallModalProps) {
   const [callState, setCallState] = useState<'ringing' | 'connecting' | 'active' | 'ended' | 'rejected' | 'timeout'>('ringing')
-  const [timeLeft, setTimeLeft] = useState(0)
+  const [timeLeft, setTimeLeft] = useState(CALL_LIMIT)
   const [isMuted, setIsMuted] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -28,9 +27,9 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const channelRef = useRef<any>(null)
   const callStartRef = useRef<number>(0)
+  const isActiveRef = useRef(false) // use ref to avoid stale closure
 
   const isPremium = currentUser?.package && currentUser.package !== 'prottasha'
-  const callLimit = isPremium ? PREMIUM_CALL_LIMIT : FREE_CALL_LIMIT
 
   const sendSignal = useCallback(async (type: string, data: any) => {
     try {
@@ -46,39 +45,60 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
     if (timerRef.current) clearInterval(timerRef.current)
     if (channelRef.current) { try { channelRef.current.unsubscribe() } catch(e) {} }
     if (localTrackRef.current) { try { localTrackRef.current.close() } catch(e) {} }
-    if (clientRef.current) {
-      try {
-        await clientRef.current.leave()
-      } catch(e) {}
-    }
+    if (clientRef.current) { try { await clientRef.current.leave() } catch(e) {} }
+    isActiveRef.current = false
     sendSignal('call-end', { reason })
     setCallState(reason === 'rejected' ? 'rejected' : reason === 'timeout' ? 'timeout' : 'ended')
     setTimeout(onClose, 2000)
   }, [sendSignal, onClose])
 
   const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current) // prevent double timer
     callStartRef.current = Date.now()
-    setTimeLeft(callLimit)
+    setTimeLeft(CALL_LIMIT)
     timerRef.current = setInterval(() => {
       const elapsed = Math.floor((Date.now() - callStartRef.current) / 1000)
-      const remaining = callLimit - elapsed
+      const remaining = CALL_LIMIT - elapsed
       if (remaining <= 0) { endCall('timeout'); return }
       setTimeLeft(remaining)
     }, 1000)
-  }, [callLimit, endCall])
+  }, [endCall])
 
-  const joinAgoraChannel = useCallback(async (channelName: string, isPublisher: boolean) => {
+  const activateCall = useCallback(() => {
+    if (isActiveRef.current) return // prevent double activation
+    isActiveRef.current = true
+    setCallState('active')
+    startTimer()
+  }, [startTimer])
+
+  const joinAgoraChannel = useCallback(async (channelName: string) => {
     try {
       setCallState('connecting')
 
-      // Dynamic import of Agora SDK
       const AgoraRTC = (await import('agora-rtc-sdk-ng')).default
-      AgoraRTC.setLogLevel(3) // warnings only
+      AgoraRTC.setLogLevel(3)
 
       const client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
       clientRef.current = client
 
-      // Get token from our API
+      // Register event handlers BEFORE joining to avoid missing events
+      client.on('user-published', async (user: any, mediaType: 'audio' | 'video' | 'datachannel') => {
+        await client.subscribe(user, mediaType)
+        if (mediaType === 'audio') {
+          user.audioTrack?.play()
+          activateCall() // safe to call multiple times — ref guards it
+        }
+      })
+
+      client.on('user-unpublished', () => {
+        console.log('Remote user unpublished')
+      })
+
+      client.on('user-left', () => {
+        endCall('ended')
+      })
+
+      // Now join
       const uid = parseInt(String(currentUser.id))
       const tokenRes = await fetch('/api/agora-token', {
         method: 'POST',
@@ -86,60 +106,29 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
         body: JSON.stringify({ channelName, uid })
       })
       const { token } = await tokenRes.json()
-
-      // Join the channel
       await client.join(AGORA_APP_ID, channelName, token || null, uid)
 
-      // Create and publish local audio track
-      const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({
-        encoderConfig: 'music_standard'
-      })
+      // Publish local audio
+      const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack({ encoderConfig: 'music_standard' })
       localTrackRef.current = localAudioTrack
       await client.publish([localAudioTrack])
 
-      // Stay in connecting state until remote user joins
-      setCallState('connecting')
-      console.log('Agora: joined channel', channelName)
-
-      // Handle remote users audio — set active ONLY when other person joins
-      client.on('user-published', async (user: any, mediaType: "audio" | "video" | "datachannel") => {
-        await client.subscribe(user, mediaType)
-        if (mediaType === 'audio') {
-          user.audioTrack?.play()
-          // Only set active and start timer when remote audio arrives
-          if (callState !== 'active') {
-            setCallState('active')
-            startTimer()
-          }
-        }
-      })
-
-      client.on('user-unpublished', (user: any) => {
-        console.log('User unpublished:', user.uid)
-      })
-
-      client.on('user-left', () => {
-        endCall('ended')
-      })
-
-      // If outgoing, set a timeout for no answer
-      if (isPublisher) {
-        setTimeout(() => {
-          if (callState !== 'active') {
-            // Don't auto-end, let user decide
-          }
-        }, 45000)
+      // For outgoing: if receiver already in channel (user-published may have fired),
+      // check remote users and activate if any are present
+      const remoteUsers = client.remoteUsers
+      if (remoteUsers.length > 0) {
+        activateCall()
       }
 
+      console.log('Agora: joined channel', channelName)
     } catch(err: any) {
       console.error('Agora error:', err)
-      setErrorMsg('Could not connect. Please check mic permissions and try again.')
+      setErrorMsg('Could not connect. Check mic permissions and try again.')
       setCallState('ended')
       setTimeout(onClose, 3000)
     }
-  }, [currentUser.id, startTimer, endCall, onClose])
+  }, [currentUser.id, activateCall, endCall, onClose])
 
-  // Subscribe to realtime signals
   const subscribeToSignals = useCallback(() => {
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } })
     const channel = supabase
@@ -151,18 +140,13 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
         filter: `to_id=eq.${currentUser.id}`
       }, (payload: any) => {
         const signal = payload.new
-        if (signal.type === 'call-end') {
-          endCall('ended')
-        }
-        if (signal.type === 'call-reject') {
-          endCall('rejected')
-        }
+        if (signal.type === 'call-end') endCall('ended')
+        if (signal.type === 'call-reject') endCall('rejected')
       })
       .subscribe()
     channelRef.current = channel
   }, [currentUser.id, endCall])
 
-  // Channel name is deterministic — same for both users
   const getChannelName = useCallback(() => {
     const ids = [parseInt(String(currentUser.id)), parseInt(String(targetProfile.id))].sort()
     return `bk-${ids[0]}-${ids[1]}`
@@ -172,7 +156,7 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
     subscribeToSignals()
     if (mode === 'outgoing') {
       sendSignal('call-offer', { channel: getChannelName() })
-      joinAgoraChannel(getChannelName(), true)
+      joinAgoraChannel(getChannelName())
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
@@ -183,16 +167,12 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
   }, [])
 
   const answerCall = useCallback(async () => {
-    await joinAgoraChannel(getChannelName(), false)
+    await joinAgoraChannel(getChannelName())
   }, [joinAgoraChannel, getChannelName])
 
   const toggleMute = () => {
     if (localTrackRef.current) {
-      if (isMuted) {
-        localTrackRef.current.setEnabled(true)
-      } else {
-        localTrackRef.current.setEnabled(false)
-      }
+      localTrackRef.current.setEnabled(isMuted)
       setIsMuted(!isMuted)
     }
   }
@@ -213,8 +193,7 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
   const stateLabels: Record<string, string> = {
     ringing: mode === 'outgoing' ? 'Calling...' : 'Incoming Call',
     connecting: 'Connecting...', active: 'Connected',
-    ended: 'Call Ended', rejected: 'Call Declined',
-    timeout: 'No Answer'
+    ended: 'Call Ended', rejected: 'Call Declined', timeout: 'No Answer'
   }
 
   return (
@@ -256,7 +235,7 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
               {formatTime(timeLeft)}
             </span>
             <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>
-              {isPremium ? '15 min limit · Premium' : '5 min limit · Free'}
+              {isPremium ? '5 min limit · Premium' : '5 min limit · Free'}
             </p>
           </div>
         )}
@@ -267,7 +246,6 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
           </div>
         )}
 
-        {/* Incoming call buttons */}
         {mode === 'incoming' && callState === 'ringing' && (
           <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', marginTop: '32px' }}>
             <div style={{ textAlign: 'center' }}>
@@ -287,7 +265,6 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
           </div>
         )}
 
-        {/* Active call buttons */}
         {callState === 'active' && (
           <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginTop: '28px' }}>
             <div style={{ textAlign: 'center' }}>
@@ -312,7 +289,6 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
           </div>
         )}
 
-        {/* Outgoing ringing/connecting cancel */}
         {(callState === 'connecting' || callState === 'ringing') && mode === 'outgoing' && (
           <div style={{ marginTop: '32px' }}>
             <button onClick={() => endCall('ended')}
