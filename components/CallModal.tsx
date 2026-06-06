@@ -6,8 +6,8 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const AGORA_APP_ID = 'c4513ff1afb74017b915fb18cd7312d8'
 
-const FREE_CALL_LIMIT = 7 * 60
-const PREMIUM_CALL_LIMIT = 7 * 60
+const FREE_CALL_LIMIT = 5 * 60
+const PREMIUM_CALL_LIMIT = 5 * 60
 
 interface CallModalProps {
   currentUser: any
@@ -97,16 +97,20 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
       localTrackRef.current = localAudioTrack
       await client.publish([localAudioTrack])
 
-      // Set active for BOTH sides right after joining and publishing
-      setCallState("active")
-      startTimer()
-      console.log("UI: set to active")
+      // Stay in connecting state until remote user joins
+      setCallState('connecting')
+      console.log('Agora: joined channel', channelName)
 
-      // Handle remote users audio
+      // Handle remote users audio — set active ONLY when other person joins
       client.on('user-published', async (user: any, mediaType: "audio" | "video" | "datachannel") => {
         await client.subscribe(user, mediaType)
         if (mediaType === 'audio') {
           user.audioTrack?.play()
+          // Only set active and start timer when remote audio arrives
+          if (callState !== 'active') {
+            setCallState('active')
+            startTimer()
+          }
         }
       })
 
@@ -117,10 +121,6 @@ export default function CallModal({ currentUser, targetProfile, onClose, mode, i
       client.on('user-left', () => {
         endCall('ended')
       })
-
-      setCallState('connecting')
-      console.log('Agora: joined channel', channelName)
-      setTimeout(() => { setCallState("active"); startTimer() }, 500)
 
       // If outgoing, set a timeout for no answer
       if (isPublisher) {
