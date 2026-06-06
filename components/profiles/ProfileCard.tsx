@@ -189,6 +189,29 @@ function computeMatchScore(profile: any, viewer: any): number {
   if (profile.is_verified) total += 5
   else if (profile.phone_verified) total += 2
 
+  // 14. CAREER & EMPLOYER (5 pts) — new field
+  maxTotal += 5
+  if (profile.working_with || profile.employer_name) {
+    const stableWork = ['Government / Public Sector', 'Defense / Civil Services']
+    total += stableWork.includes(profile.working_with || '') ? 5 : 3
+  } else if (profile.profession) {
+    total += 2
+  }
+
+  // 15. FAMILY BACKGROUND (5 pts) — new field
+  maxTotal += 5
+  if (profile.father_profession && profile.mother_profession) total += 5
+  else if (profile.father_profession || profile.mother_profession) total += 3
+  else if (profile.family_financial_status) total += 2
+
+  // 16. MARRIAGE TIMELINE (4 pts) — new field
+  maxTotal += 4
+  if (viewer.marriage_timeline && profile.marriage_timeline) {
+    total += viewer.marriage_timeline === profile.marriage_timeline ? 4 : 2
+  } else if (profile.marriage_timeline) {
+    total += 2
+  }
+
   // Normalize to 100
   const raw = Math.round((total / maxTotal) * 100)
   return Math.max(30, Math.min(99, raw))
@@ -198,6 +221,10 @@ function computeMatchScore(profile: any, viewer: any): number {
 function getGenericScore(profile: any): number {
   let score = 0
   score += profile.religion ? 12 : 4
+  score += (profile.working_with || profile.employer_name) ? 5 : 0
+  score += (profile.father_profession || profile.mother_profession) ? 4 : 0
+  score += profile.marriage_timeline ? 3 : 0
+  score += profile.college_attended ? 3 : 0
   const age = profile.age || 0
   if (age >= 20 && age <= 35) score += 12
   else if (age >= 18 && age <= 40) score += 7
