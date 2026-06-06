@@ -125,11 +125,10 @@ async function getCityProfiles(cityName: string, area?: string) {
   let query = supabase
     .from('profiles')
     .select('id, full_name, age, gender, city, district, profession, education, photo_url, is_verified, package, profile_completion, selfie_status')
-    .eq('is_banned', false)
-    .not('photo_url', 'is', null)
+    .neq('is_banned', true)
 
   if (area) {
-    query = query.ilike('city', `%${area}%`)
+    query = query.or(`city.ilike.%${area}%,district.ilike.%${area}%`)
   } else {
     query = query.or(`city.ilike.%${cityName}%,district.ilike.%${cityName}%`)
   }
