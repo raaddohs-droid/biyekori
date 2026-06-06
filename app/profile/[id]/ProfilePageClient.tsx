@@ -277,7 +277,6 @@ function ScoreModal({ profile, onClose, isLoggedIn }: { profile: any, onClose: (
         </div>
       </div>
     </div>
-    </>
   )
 }
 
@@ -930,6 +929,5 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
         </div>
       )}
     </div>
-    </>
   )
 }
