@@ -1,9 +1,12 @@
 "use client"
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import CallModal from "@/components/CallModal"
 
 export default function InterestsPage() {
   const [tab, setTab] = useState("sent")
+  const [callTarget, setCallTarget] = useState<any>(null)
+  const [showCallModal, setShowCallModal] = useState(false)
   const [received, setReceived] = useState<any[]>([])
   const [sent, setSent] = useState<any[]>([])
   const [filtered, setFiltered] = useState<any[]>([])
@@ -244,9 +247,9 @@ export default function InterestsPage() {
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
 
                         {/* Voice Call */}
-                        <a href={`/call?with=${profileId}`} style={{
+                        <button onClick={() => { setCallTarget({ id: profileId, full_name: person?.full_name, photo_url: person?.photo_url }); setShowCallModal(true); }} style={{
                           display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
-                          padding: "14px 8px", borderRadius: "12px", textDecoration: "none",
+                          padding: "14px 8px", borderRadius: "12px",
                           background: "white", border: "1.5px solid #d1fae5",
                           transition: "all 0.15s", cursor: "pointer"
                         }}>
@@ -254,7 +257,7 @@ export default function InterestsPage() {
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.39 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                           </div>
                           <span style={{ fontSize: "11px", fontWeight: 700, color: "#065f46", textAlign: "center" }}>Voice Call</span>
-                        </a>
+                        </button>
 
                         {/* Message */}
                         <button onClick={() => tryOpenChat(person, String(profileId), true)} style={{
@@ -402,6 +405,16 @@ export default function InterestsPage() {
             </div>
           </div>
         </div>
+      )}
+    </div>
+      {/* Call Modal */}
+      {showCallModal && callTarget && user && (
+        <CallModal
+          currentUser={user}
+          targetProfile={callTarget}
+          mode="outgoing"
+          onClose={() => { setShowCallModal(false); setCallTarget(null); }}
+        />
       )}
     </div>
   )
