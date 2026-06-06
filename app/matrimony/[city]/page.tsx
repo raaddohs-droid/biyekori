@@ -2,6 +2,8 @@ import { Metadata } from 'next'
 import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import GuestGate from '@/components/GuestGate'
+import CityProfileCard from '@/components/profiles/CityProfileCard'
 
 
 
@@ -291,47 +293,10 @@ export default async function CityMatrimonyPage({ params, searchParams }: {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
             {filtered.map((p: any) => (
-              <Link key={p.id} href={`/profile/${p.id}`} style={{ textDecoration: 'none' }}>
-                <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', transition: 'transform 0.15s', cursor: 'pointer' }}>
-                  <div style={{ position: 'relative', aspectRatio: '3/4', background: '#f3f4f6' }}>
-                    {p.photo_url
-                      ? <img src={p.photo_url} alt="Profile"
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(6px)', transform: 'scale(1.05)' }} />
-                      : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px' }}>
-                          {p.gender === 'Female' ? '👩' : '👨'}
-                        </div>
-                    }
-                    {/* Login to view overlay */}
-                    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.15)' }}>
-                      <div style={{ background: 'rgba(0,0,0,0.6)', borderRadius: '10px', padding: '6px 10px', textAlign: 'center' }}>
-                        <p style={{ margin: 0, fontSize: '10px', color: 'white', fontWeight: 700 }}>Login to view</p>
-                      </div>
-                    </div>
-                    {(p.is_verified || p.selfie_status === 'approved') && (
-                      <div style={{ position: 'absolute', top: '8px', right: '8px', background: '#10b981', borderRadius: '20px', padding: '2px 8px', fontSize: '10px', fontWeight: 700, color: 'white' }}>
-                        Verified
-                      </div>
-                    )}
-                  </div>
-                  <div style={{ padding: '12px' }}>
-                    <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 800, color: '#111827' }}>
-                      {(() => {
-                        const name = p.full_name || (p.gender === 'Female' ? 'Bride' : 'Groom')
-                        const parts = name.split(' ')
-                        return parts[0] + (parts.length > 1 ? ' ' + parts[parts.length - 1][0] + '.' : '')
-                      })()}
-                    </p>
-                    <p style={{ margin: '0 0 4px', fontSize: '12px', color: '#6b7280' }}>
-                      {p.age ? `${p.age} yrs` : ''}{p.age && cityInfo.name ? ' · ' : ''}{cityInfo.name}
-                    </p>
-                    {p.profession && <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {p.profession.split(' ').slice(0, 2).join(' ')}
-                    </p>}
-                  </div>
-                </div>
-              </Link>
+              <CityProfileCard key={p.id} profile={p} cityName={cityInfo.name} />
             ))}
           </div>
+          <GuestGate page={1} />
         )}
 
         {/* CTA */}
