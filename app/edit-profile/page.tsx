@@ -303,7 +303,7 @@ export default function EditProfilePage() {
       const result = await res.json()
       if (result.success) {
         const stored = localStorage.getItem('biyekori_user')
-        if (stored) { const u = JSON.parse(stored); u.full_name = fullName; localStorage.setItem('biyekori_user', JSON.stringify(u)) }
+        if (stored) { const u = JSON.parse(stored); u.full_name = fullName; if (result.profile_completion) u.profile_completion = result.profile_completion; localStorage.setItem('biyekori_user', JSON.stringify(u)) }
         setSaved(true)
         setTimeout(() => setSaved(false), 3000)
       }
