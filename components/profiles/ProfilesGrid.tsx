@@ -271,16 +271,16 @@ function ListRow({ profile, viewerProfile }: { profile: any, viewerProfile: any 
           <img src={photoUrl} alt={name} style={{ width: '160px', height: '100%', minHeight: '180px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
         ) : (
           <div style={{ width: '160px', minHeight: '180px', background: 'linear-gradient(135deg,#fce7f3,#ede9fe)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>
-            {profile.gender === 'male' ? '?' : '?'}
+            {profile.gender === 'male' ? '👤' : '👤'}
           </div>
         )}
-        <div onClick={(e) => { e.stopPropagation(); alert('Login to see your AI match score') }} style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', background: viewerProfile ? getScoreColor(score) : 'rgba(0,0,0,0.65)', borderRadius: '20px', padding: '3px 10px', display: 'flex', alignItems: 'center', gap: '3px', boxShadow: '0 2px 6px rgba(0,0,0,0.25)', whiteSpace: 'nowrap', cursor: 'pointer' }}>
-          <span style={{ fontSize: '9px', color: 'white', fontWeight: 700 }}>{viewerProfile ? 'Match ' + score + '%' : 'Login to see score'}</span>
-          
+        {/* Score badge - outside photo, at bottom edge */}
+        <div onClick={(e) => { e.stopPropagation() }} style={{ position: 'absolute', bottom: '-14px', left: '50%', transform: 'translateX(-50%)', background: viewerProfile ? getScoreColor(score) : '#6b7280', borderRadius: '20px', padding: '4px 12px', display: 'flex', alignItems: 'center', gap: '3px', boxShadow: '0 2px 8px rgba(0,0,0,0.2), 0 0 0 2px white', whiteSpace: 'nowrap', zIndex: 10 }}>
+          <span style={{ fontSize: '11px', color: 'white', fontWeight: 800, letterSpacing: '0.2px' }}>{viewerProfile ? '♥ ' + score + '%' : '🔒'}</span>
         </div>
       </div>
 
-      <div style={{ flex: 1, padding: '16px 20px', minWidth: 0 }}>
+      <div style={{ flex: 1, padding: '20px 20px 16px', minWidth: 0 }}>
         {creationBadge && (
           <div style={{ marginBottom: '4px' }}>
             <span style={{ fontSize: '10px', fontWeight: 700, color: creationBadge.color, background: creationBadge.bg, borderRadius: '20px', padding: '2px 10px', letterSpacing: '0.3px' }}>
