@@ -179,8 +179,9 @@ export default function BiodataPage() {
             <h2>📍 Location</h2>
             <div className="grid2">
               <div>
-                {has(profile.city) && <div className="row"><span className="lbl">City</span><span className="val">{profile.city}</span></div>}
-                {has(profile.district) && <div className="row"><span className="lbl">District</span><span className="val">{profile.district}</span></div>}
+                {has(profile.city) && <div className="row"><span className="lbl">City / District</span><span className="val">{profile.city}</span></div>}
+                {has(profile.residency_status) && <div className="row"><span className="lbl">Residency Status</span><span className="val">{profile.residency_status}</span></div>}
+                {has(profile.grew_up_in) && <div className="row"><span className="lbl">Grew Up In</span><span className="val">{profile.grew_up_in}</span></div>}
               </div>
               <div>
                 {has(profile.country) && <div className="row"><span className="lbl">Country</span><span className="val">{profile.country}</span></div>}
@@ -195,10 +196,14 @@ export default function BiodataPage() {
               <div>
                 {has(profile.education) && <div className="row"><span className="lbl">Education</span><span className="val">{profile.education}</span></div>}
                 {showDegree && <div className="row"><span className="lbl">Degree</span><span className="val">{profile.degree}</span></div>}
+                {has(profile.college_attended) && <div className="row"><span className="lbl">College / University</span><span className="val">{profile.college_attended}</span></div>}
                 {has(profile.institution) && <div className="row"><span className="lbl">Institution</span><span className="val">{profile.institution}</span></div>}
               </div>
               <div>
                 {has(profile.profession) && <div className="row"><span className="lbl">Profession</span><span className="val">{profile.profession}</span></div>}
+                {has(profile.working_with) && <div className="row"><span className="lbl">Working With</span><span className="val">{profile.working_with}</span></div>}
+                {has(profile.working_as) && <div className="row"><span className="lbl">Working As</span><span className="val">{profile.working_as}</span></div>}
+                {has(profile.employer_name) && <div className="row"><span className="lbl">Employer</span><span className="val">{profile.employer_name}</span></div>}
                 {has(profile.monthly_income) && profile.monthly_income > 0 && <div className="row"><span className="lbl">Monthly Income</span><span className="val">৳{Number(profile.monthly_income).toLocaleString()}</span></div>}
               </div>
             </div>
@@ -208,7 +213,8 @@ export default function BiodataPage() {
             <h2>🕌 Religious Background</h2>
             <div className="grid2">
               <div>
-                {has(profile.religious_level) && <div className="row"><span className="lbl">Religious Level</span><span className="val">{profile.religious_level}</span></div>}
+                {has(profile.religious_level) && <div className="row"><span className="lbl">Religious Practice</span><span className="val">{profile.religious_level}</span></div>}
+                {has(profile.community) && <div className="row"><span className="lbl">Community / Sect</span><span className="val">{profile.community}</span></div>}
                 {has(profile.prayer_habit) && <div className="row"><span className="lbl">Prayer Habit</span><span className="val">{profile.prayer_habit}</span></div>}
               </div>
               <div>
@@ -224,9 +230,13 @@ export default function BiodataPage() {
               <div>
                 {has(profile.father_profession) && <div className="row"><span className="lbl">Father's Profession</span><span className="val">{profile.father_profession}</span></div>}
                 {has(profile.mother_profession) && <div className="row"><span className="lbl">Mother's Profession</span><span className="val">{profile.mother_profession}</span></div>}
+                {profile.num_sisters !== null && profile.num_sisters !== undefined && <div className="row"><span className="lbl">No. of Sisters</span><span className="val">{profile.num_sisters === 0 ? 'None' : profile.num_sisters}</span></div>}
+                {profile.num_brothers !== null && profile.num_brothers !== undefined && <div className="row"><span className="lbl">No. of Brothers</span><span className="val">{profile.num_brothers === 0 ? 'None' : profile.num_brothers}</span></div>}
                 {has(profile.total_siblings) && <div className="row"><span className="lbl">Total Siblings</span><span className="val">{profile.total_siblings}</span></div>}
               </div>
               <div>
+                {has(profile.family_financial_status) && <div className="row"><span className="lbl">Family Financial Status</span><span className="val">{profile.family_financial_status}</span></div>}
+                {has(profile.family_location) && <div className="row"><span className="lbl">Family Location</span><span className="val">{profile.family_location}</span></div>}
                 {has(profile.family_type) && <div className="row"><span className="lbl">Family Type</span><span className="val">{profile.family_type}</span></div>}
                 {has(profile.family_values) && <div className="row"><span className="lbl">Family Values</span><span className="val">{profile.family_values}</span></div>}
                 {has(profile.family_status) && <div className="row"><span className="lbl">Family Status</span><span className="val">{profile.family_status}</span></div>}
@@ -246,6 +256,10 @@ export default function BiodataPage() {
                   <div className="row"><span className="lbl">Drinking</span><span className="val">{profile.drinking ? 'Yes' : 'No'}</span></div>
                 </div>
               </div>
+              {has(profile.social_lifestyle) && <div className="row"><span className="lbl">Social Lifestyle</span><span className="val">{profile.social_lifestyle === 'quiet' ? 'Quiet and home-oriented' : profile.social_lifestyle === 'balanced' ? 'Balanced' : profile.social_lifestyle === 'social' ? 'Social and outgoing' : profile.social_lifestyle === 'depends' ? 'Depends on occasion' : profile.social_lifestyle}</span></div>}
+              {has(profile.family_involvement) && <div className="row"><span className="lbl">Family Involvement</span><span className="val">{profile.family_involvement === 'from_beginning' ? 'Family involved from the beginning' : profile.family_involvement === 'talk_first' ? 'Talk first, involve family shortly after' : profile.family_involvement === 'after_mutual' ? 'After mutual interest' : profile.family_involvement === 'guardian_to_guardian' ? 'Guardian-to-guardian preferred' : profile.family_involvement}</span></div>}
+              {has(profile.dowry_stance) && <div className="row"><span className="lbl">Dowry Stance</span><span className="val">{profile.dowry_stance === 'against' ? 'Strictly against dowry' : profile.dowry_stance === 'gifts_only' ? 'No dowry; voluntary gifts only' : profile.dowry_stance === 'discussion' ? 'Open to discussion' : profile.dowry_stance === 'prefer_not' ? 'Prefer not to say' : profile.dowry_stance}</span></div>}
+              {has(profile.wedding_style) && <div className="row"><span className="lbl">Wedding Style</span><span className="val">{profile.wedding_style === 'simple' ? 'Simple and intimate' : profile.wedding_style === 'traditional' ? 'Traditional family wedding' : profile.wedding_style === 'large' ? 'Large celebration' : profile.wedding_style === 'discussion' ? 'Open to discussion' : profile.wedding_style}</span></div>}
               {has(profile.hobbies) && <div style={{marginTop:'8px'}}><span className="lbl">Hobbies: </span><span style={{fontSize:'12px',fontWeight:600}}>{profile.hobbies}</span></div>}
             </div>
           )}
