@@ -406,7 +406,6 @@ export default function InterestsPage() {
           </div>
         </div>
       )}
-    </div>
       {/* Call Modal */}
       {showCallModal && callTarget && user && (
         <CallModal
