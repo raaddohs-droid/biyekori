@@ -20,38 +20,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   try {
+    // Use same pattern as working /api/profiles route
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    // Fetch all profiles in batches of 1000
-    let allProfiles: { id: number; updated_at: string }[] = []
-    let from = 0
-    const batchSize = 1000
+    const { data: profiles, error } = await supabase
+      .from('profiles')
+      .select('id, updated_at')
+      .order('id', { ascending: true })
 
-    while (true) {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, updated_at')
-        .order('id', { ascending: true })
-        .range(from, from + batchSize - 1)
-
-      if (error || !data || data.length === 0) break
-
-      allProfiles = [...allProfiles, ...data]
-      if (data.length < batchSize) break
-      from += batchSize
+    if (error || !profiles) {
+      console.log('Sitemap Supabase error:', error?.message)
+      return staticPages
     }
 
-    const profilePages: MetadataRoute.Sitemap = allProfiles.map(profile => ({
+    const profilePages: MetadataRoute.Sitemap = profiles.map(profile => ({
       url: `${BASE_URL}/profile/${profile.id}`,
       lastModified: profile.updated_at ? new Date(profile.updated_at) : new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     }))
 
-    console.log(`Sitemap: generated ${profilePages.length} profile URLs`)
+    console.log(`Sitemap: ${profilePages.length} profiles`)
     return [...staticPages, ...profilePages]
   } catch (err) {
     console.error('Sitemap error:', err)
