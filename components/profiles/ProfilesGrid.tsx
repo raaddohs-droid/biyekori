@@ -306,15 +306,15 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
             <span style={{ fontSize: '11px', color: activity.color, fontWeight: 700 }}>{activity.label}</span>
           </div>
           {relationshipStatus === 'received' && (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '11px', fontWeight: 700, color: '#7c3aed', background: '#f5f3ff', border: '1px solid #c4b5fd', borderRadius: '20px', padding: '2px 8px' }}>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="#7c3aed"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-              Likes you
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '13px', fontWeight: 800, color: 'white', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', borderRadius: '20px', padding: '5px 14px', boxShadow: '0 2px 8px rgba(124,58,237,0.4)' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Likes You!
             </span>
           )}
           {relationshipStatus === 'accepted' && (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '11px', fontWeight: 700, color: '#059669', background: '#ecfdf5', border: '1px solid #6ee7b7', borderRadius: '20px', padding: '2px 8px' }}>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              You &amp; {profile.gender === 'Male' ? 'Him' : 'Her'}
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '13px', fontWeight: 800, color: 'white', background: 'linear-gradient(135deg, #059669, #10b981)', borderRadius: '20px', padding: '5px 14px', boxShadow: '0 2px 8px rgba(16,185,129,0.4)' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              You &amp; {profile.gender === 'Male' ? 'Him' : 'Her'} ✓
             </span>
           )}
           {relationshipStatus === 'sent' && (
@@ -426,6 +426,7 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
               computeMatchScore(b, vp) - computeMatchScore(a, vp)
             )
             setSortedProfiles(ranked)
+            // Will re-sort with mutuals on top once interestMap loads
           }
         })
         .catch(() => {})
@@ -444,6 +445,16 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
             else if (r.status === 'accepted') map[id] = 'accepted'
           })
           setInterestMap(map)
+          // Re-sort: mutuals first, then by score
+          setSortedProfiles(prev => [...prev].sort((a, b) => {
+            const aStatus = map[String(a.id)] || 'none'
+            const bStatus = map[String(b.id)] || 'none'
+            const aIsMutual = aStatus === 'accepted'
+            const bIsMutual = bStatus === 'accepted'
+            if (aIsMutual && !bIsMutual) return -1
+            if (!aIsMutual && bIsMutual) return 1
+            return 0
+          }))
         })
         .catch(() => {})
     } catch(e) {}
