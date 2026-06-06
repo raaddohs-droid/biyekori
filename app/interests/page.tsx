@@ -57,10 +57,10 @@ export default function InterestsPage() {
     else alert("Error. Please try again.")
   }
 
-  function tryOpenChat(person: any, profileId: string) {
+  function tryOpenChat(person: any, profileId: string, isMutual?: boolean) {
     const isPaid = userPackage && userPackage !== "prottasha"
-    if (!isPaid) {
-      alert("Upgrade to Premium to send messages.")
+    if (!isPaid && !isMutual) {
+      alert("Messaging is free for mutual matches. Upgrade to Premium to message anyone.")
       return
     }
     // If guardian managed, show warning first
@@ -244,7 +244,7 @@ export default function InterestsPage() {
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
 
                         {/* Voice Call */}
-                        <a href={`/call?with=${profileId}`} style={{
+                        <a href="/messages" style={{
                           display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
                           padding: "14px 8px", borderRadius: "12px", textDecoration: "none",
                           background: "white", border: "1.5px solid #d1fae5",
@@ -257,7 +257,7 @@ export default function InterestsPage() {
                         </a>
 
                         {/* Message */}
-                        <button onClick={() => tryOpenChat(person, String(profileId))} style={{
+                        <button onClick={() => tryOpenChat(person, String(profileId), true)} style={{
                           display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
                           padding: "14px 8px", borderRadius: "12px",
                           background: "white", border: "1.5px solid #e9d5ff",
