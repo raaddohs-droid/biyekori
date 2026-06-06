@@ -28,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const { data: profiles, error } = await supabase
       .from('profiles')
-      .select('id, updated_at')
+      .select('id')
       .order('id', { ascending: true })
 
     if (error || !profiles) {
@@ -38,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const profilePages: MetadataRoute.Sitemap = profiles.map(profile => ({
       url: `${BASE_URL}/profile/${profile.id}`,
-      lastModified: profile.updated_at ? new Date(profile.updated_at) : new Date(),
+      lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     }))
