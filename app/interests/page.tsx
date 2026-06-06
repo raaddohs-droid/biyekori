@@ -244,7 +244,7 @@ export default function InterestsPage() {
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
 
                         {/* Voice Call */}
-                        <a href="/messages" style={{
+                        <a href={`/call?with=${profileId}`} style={{
                           display: "flex", flexDirection: "column", alignItems: "center", gap: "6px",
                           padding: "14px 8px", borderRadius: "12px", textDecoration: "none",
                           background: "white", border: "1.5px solid #d1fae5",
