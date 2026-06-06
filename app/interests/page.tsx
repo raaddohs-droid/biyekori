@@ -12,6 +12,7 @@ export default function InterestsPage() {
   const [filtered, setFiltered] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [userId, setUserId] = useState("")
+  const [currentUser, setCurrentUser] = useState<any>(null)
   const [userPackage, setUserPackage] = useState("")
   const [showChat, setShowChat] = useState<string | null>(null)
   const [chatWith, setChatWith] = useState<any>(null)
@@ -24,6 +25,7 @@ export default function InterestsPage() {
     let stored = null
     try {
       const userStr = localStorage.getItem("biyekori_user")
+      if (userStr) { try { setCurrentUser(JSON.parse(userStr)) } catch(e) {} }
       const parsed = userStr ? JSON.parse(userStr) : null
       stored = parsed ? String(parsed.id) : null
     } catch(e) {}
@@ -407,9 +409,9 @@ export default function InterestsPage() {
         </div>
       )}
       {/* Call Modal */}
-      {showCallModal && callTarget && user && (
+      {showCallModal && callTarget && currentUser && (
         <CallModal
-          currentUser={user}
+          currentUser={currentUser}
           targetProfile={callTarget}
           mode="outgoing"
           onClose={() => { setShowCallModal(false); setCallTarget(null); }}
