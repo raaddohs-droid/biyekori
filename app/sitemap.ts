@@ -1,8 +1,9 @@
 import { MetadataRoute } from 'next'
+import { createClient } from '@supabase/supabase-js'
 
 const BASE_URL = 'https://biyekori.com'
 
-export const revalidate = 86400
+export const dynamic = 'force-dynamic'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
@@ -19,22 +20,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   try {
-    // Use our own API endpoint which already has Supabase access
-    const res = await fetch(`${BASE_URL}/api/profiles`, {
-      cache: 'no-store',
-    })
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
 
-    if (!res.ok) {
-      console.log(`Sitemap: API fetch failed with status ${res.status}`)
+    const { data: profiles, error } = await supabase
+      .from('profiles')
+      .select('id, updated_at')
+      .order('id', { ascending: true })
+      .limit(2000)
+
+    if (error || !profiles) {
+      console.log('Sitemap: Supabase error:', error?.message)
       return staticPages
     }
 
-    const data = await res.json()
-    const profiles: { id: number }[] = data.profiles || []
-
     const profilePages: MetadataRoute.Sitemap = profiles.map(profile => ({
       url: `${BASE_URL}/profile/${profile.id}`,
-      lastModified: new Date(),
+      lastModified: profile.updated_at ? new Date(profile.updated_at) : new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.7,
     }))
