@@ -157,8 +157,10 @@ async function getCityProfiles(cityName: string, area?: string) {
     query = query.or(`city.ilike.%${area}%,district.ilike.%${area}%,location_detail.ilike.%${area}%`)
   } else {
     const terms = CITY_SEARCH_TERMS[cityName] || [cityName]
-    const orClause = terms.map((t: string) => `city.ilike.%${t}%`).join(',')
-    query = query.or(orClause)
+    const cityOrClause = terms.map((t: string) => `city.ilike.%${t}%`).join(',')
+    const districtOrClause = terms.map((t: string) => `district.ilike.%${t}%`).join(',')
+    const locationOrClause = terms.map((t: string) => `location_detail.ilike.%${t}%`).join(',')
+    query = query.or(`${cityOrClause},${districtOrClause},${locationOrClause}`)
   }
 
   const { data } = await query.order('profile_completion', { ascending: false }).limit(60)
