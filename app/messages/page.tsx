@@ -100,18 +100,24 @@ export default function MessagesPage() {
 
   if (!user) return null
 
-  if (!isPremium) {
+  if (!isPremium && !hasMutualMatches && !loading) {
     return (
       <div style={{ minHeight: "100vh", background: "#f8fafc", paddingTop: "80px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ background: "white", borderRadius: "20px", padding: "48px 32px", textAlign: "center", maxWidth: "400px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
+        <div style={{ background: "white", borderRadius: "20px", padding: "48px 32px", textAlign: "center", maxWidth: "420px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
           <div style={{ width: "64px", height: "64px", background: "#f5f3ff", borderRadius: "20px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
-          <h2 style={{ margin: "0 0 8px", fontSize: "20px", fontWeight: 800, color: "#111827" }}>Premium Feature</h2>
-          <p style={{ margin: "0 0 24px", fontSize: "14px", color: "#6b7280", lineHeight: 1.6 }}>Upgrade to Premium to message your connections and find your perfect match faster.</p>
-          <Link href="/pricing" style={{ display: "inline-block", padding: "12px 28px", background: "linear-gradient(135deg,#7c3aed,#e11d48)", color: "white", borderRadius: "12px", fontWeight: 700, fontSize: "14px", textDecoration: "none" }}>
-            Upgrade Now
-          </Link>
+          <h2 style={{ margin: "0 0 8px", fontSize: "20px", fontWeight: 800, color: "#111827" }}>No Mutual Matches Yet</h2>
+          <p style={{ margin: "0 0 8px", fontSize: "14px", color: "#6b7280", lineHeight: 1.6 }}>Messaging is free once you have a mutual match — when both of you accept each other's interest.</p>
+          <p style={{ margin: "0 0 24px", fontSize: "13px", color: "#9ca3af" }}>Premium members can message anyone directly.</p>
+          <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
+            <Link href="/profiles" style={{ display: "inline-block", padding: "12px 24px", background: "linear-gradient(135deg,#e11d48,#be185d)", color: "white", borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
+              Browse Profiles
+            </Link>
+            <Link href="/pricing" style={{ display: "inline-block", padding: "12px 24px", background: "linear-gradient(135deg,#7c3aed,#6d28d9)", color: "white", borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
+              Upgrade to Premium
+            </Link>
+          </div>
         </div>
       </div>
     )
