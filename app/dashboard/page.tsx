@@ -28,10 +28,35 @@ async function fetchViewCount(profileId: string) {
 async function fetchSuggestedProfiles(gender: string, excludeId: string) {
   const showGender = gender === 'male' ? 'female' : 'male';
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/profiles?gender=eq.${showGender}&id=neq.${excludeId}&select=id,full_name,photo_url,age,city,district,profession&order=created_at.desc&limit=4`,
+    `${SUPABASE_URL}/rest/v1/profiles?gender=eq.${showGender}&id=neq.${excludeId}&select=id,full_name,photo_url,age,city,district,profession&order=id.desc&limit=4`,
     { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
   );
   return res.json();
+}
+
+async function fetchMutualMatches(userId: string) {
+  const res = await fetch(`/api/interests/list?userId=${userId}`);
+  const data = await res.json();
+  const sent = (data.sent || []).filter((s: any) => s.status === 'accepted');
+  const received = (data.received || []).filter((r: any) => r.status === 'accepted');
+  const sentIds = new Set(sent.map((s: any) => String(s.receiver_id)));
+  const receivedIds = new Set(received.map((r: any) => String(r.sender_id)));
+  const mutualIds = [...sentIds].filter(id => receivedIds.has(id));
+  // Fetch profile details for mutual matches
+  if (mutualIds.length === 0) return [];
+  const idList = mutualIds.slice(0, 6).join(',');
+  const profileRes = await fetch(
+    `${SUPABASE_URL}/rest/v1/profiles?id=in.(${idList})&select=id,full_name,photo_url,age,city,profession`,
+    { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+  );
+  return profileRes.json();
+}
+
+async function fetchRecentMessages(userId: string) {
+  const res = await fetch(`/api/messages/list?userId=${userId}&limit=3`);
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.conversations || data.messages || [];
 }
 
 export default function Dashboard() {
@@ -45,6 +70,10 @@ export default function Dashboard() {
   const [interestsReceived, setInterestsReceived] = useState(0);
   const [suggestedProfiles, setSuggestedProfiles] = useState<any[]>([]);
   const [mutualIds, setMutualIds] = useState<Set<string>>(new Set());
+  const [mutualMatches, setMutualMatches] = useState<any[]>([]);
+  const [recentMessages, setRecentMessages] = useState<any[]>([]);
+  const [filteredCount, setFilteredCount] = useState(0);
+  const [mutualCount, setMutualCount] = useState(0);
 
   useEffect(() => {
     const userData = localStorage.getItem('biyekori_user');
@@ -58,19 +87,23 @@ export default function Dashboard() {
         .then(data => {
           setInterestsSent((data.sent || []).length);
           setInterestsReceived((data.received || []).length);
+          setFilteredCount((data.filtered || []).length);
+          // Calculate mutuals
+          const sentAccepted = new Set<string>((data.sent || []).filter((s: any) => s.status === 'accepted').map((s: any) => String(s.receiver_id)));
+          const receivedAccepted = new Set<string>((data.received || []).filter((r: any) => r.status === 'accepted').map((r: any) => String(r.sender_id)));
+          const mutuals = [...sentAccepted].filter(id => receivedAccepted.has(id));
+          setMutualCount(mutuals.length);
+          setMutualIds(new Set([...sentAccepted, ...receivedAccepted]));
         }).catch(() => {});
       if (parsed.gender) {
         fetchSuggestedProfiles(parsed.gender, parsed.id)
           .then(data => setSuggestedProfiles(Array.isArray(data) ? data : []))
-        // Fetch mutual accepted interests for name masking
-        fetch('/api/interests/list?userId=' + parsed.id)
-          .then(r => r.json())
-          .then(data => {
-            const ids = new Set<string>()
-            ;(data.sent || []).forEach((s: any) => { if (s.status === 'accepted') ids.add(String(s.receiver_id)) })
-            ;(data.received || []).forEach((r: any) => { if (r.status === 'accepted') ids.add(String(r.sender_id)) })
-            setMutualIds(ids)
-          }).catch(() => {})
+          .catch(() => {});
+        fetchMutualMatches(parsed.id)
+          .then(data => setMutualMatches(Array.isArray(data) ? data : []))
+          .catch(() => {});
+        fetchRecentMessages(parsed.id)
+          .then(data => setRecentMessages(Array.isArray(data) ? data : []))
           .catch(() => {});
       }
     }
@@ -131,8 +164,8 @@ export default function Dashboard() {
               {[
                 { label: gm ? 'আগ্রহ পাঠানো' : 'Interests Sent', value: interestsSent, color: '#e11d48', bg: '#fff1f2', border: '#fecdd3' },
                 { label: gm ? 'আগ্রহ পাওয়া' : 'Received', value: interestsReceived, color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
+                { label: gm ? 'মিউচুয়াল ম্যাচ' : 'Mutual Matches', value: mutualCount, color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' },
                 { label: gm ? 'প্রোফাইল দেখেছে' : 'Profile Views', value: viewCount, color: '#0891b2', bg: '#ecfeff', border: '#a5f3fc' },
-                { label: gm ? 'প্ল্যান' : 'Plan', value: planLabel, color: '#d97706', bg: '#fffbeb', border: '#fde68a' },
               ].map((s, i) => (
                 <div key={i} style={{ background: 'white', borderRadius: '14px', padding: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid ' + s.border }}>
                   <div style={{ fontSize: '26px', fontWeight: 900, color: s.color, lineHeight: 1, marginBottom: '6px' }}>{s.value}</div>
@@ -225,8 +258,8 @@ export default function Dashboard() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                 <span style={{ fontSize: '24px' }}>✦</span>
                 <div>
-                  <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 800, color: '#FAD95A', fontFamily: 'Georgia, serif' }}>একটি দিন একসাথে</p>
-                  <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>A Day Together · Compatibility Journey</p>
+                  <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 800, color: '#FAD95A', fontFamily: 'Georgia, serif' }}>Porichiti</p>
+                  <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>পরিচিতি · Compatibility Journey</p>
                 </div>
               </div>
               <p style={{ margin: '0 0 14px', fontSize: '12px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
@@ -248,6 +281,76 @@ export default function Dashboard() {
                 আগ্রহ দেখুন →
               </Link>
             </div>
+            )}
+
+            {/* Filtered interests alert */}
+            {filteredCount > 0 && (
+              <div style={{ background: '#fffbeb', borderRadius: '14px', padding: '14px 20px', marginBottom: '20px', border: '1.5px solid #fde68a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ fontSize: '20px' }}>🔍</span>
+                  <div>
+                    <p style={{ margin: '0 0 1px', fontSize: '13px', fontWeight: 700, color: '#92400e' }}>{filteredCount} filtered interest{filteredCount > 1 ? 's' : ''}</p>
+                    <p style={{ margin: 0, fontSize: '11px', color: '#b45309' }}>Outside your contact filter criteria — you can still accept them</p>
+                  </div>
+                </div>
+                <Link href="/interests" style={{ flexShrink: 0, padding: '7px 14px', background: '#d97706', color: 'white', borderRadius: '8px', fontWeight: 700, fontSize: '12px', textDecoration: 'none' }}>View</Link>
+              </div>
+            )}
+
+            {/* Mutual Matches */}
+            {mutualMatches.length > 0 && (
+              <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1.5px solid #bbf7d0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <div>
+                    <h2 style={{ margin: '0 0 2px', fontSize: '15px', fontWeight: 800, color: '#111827' }}>🎉 {gm ? 'মিউচুয়াল ম্যাচ' : 'Mutual Matches'}</h2>
+                    <p style={{ margin: 0, fontSize: '11px', color: '#16a34a', fontWeight: 600 }}>Both of you accepted each other's interest</p>
+                  </div>
+                  <Link href="/interests" style={{ fontSize: '12px', color: '#16a34a', fontWeight: 700, textDecoration: 'none' }}>See all →</Link>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px' }}>
+                  {mutualMatches.slice(0, 6).map((p: any) => (
+                    <Link key={p.id} href={'/profile/' + p.id} style={{ textDecoration: 'none', display: 'block' }}>
+                      <div style={{ borderRadius: '12px', overflow: 'hidden', border: '2px solid #bbf7d0', background: '#f0fdf4', position: 'relative' }}>
+                        <div style={{ width: '100%', paddingBottom: '100%', position: 'relative', background: '#dcfce7' }}>
+                          {p.photo_url ? (
+                            <img src={p.photo_url} alt={p.full_name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 15%' }} />
+                          ) : (
+                            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>💚</div>
+                          )}
+                          <div style={{ position: 'absolute', top: '6px', right: '6px', background: '#16a34a', borderRadius: '20px', padding: '2px 6px', fontSize: '9px', fontWeight: 700, color: 'white' }}>✓ Mutual</div>
+                        </div>
+                        <div style={{ padding: '8px' }}>
+                          <p style={{ margin: '0 0 1px', fontSize: '12px', fontWeight: 700, color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.full_name || 'Anonymous'}</p>
+                          <p style={{ margin: 0, fontSize: '10px', color: '#6b7280' }}>{p.age} yrs{p.city ? ' · ' + p.city : ''}</p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Recent Messages */}
+            {recentMessages.length > 0 && (
+              <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                  <h2 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#111827' }}>💬 Recent Messages</h2>
+                  <Link href="/messages" style={{ fontSize: '12px', color: '#e11d48', fontWeight: 700, textDecoration: 'none' }}>See all →</Link>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {recentMessages.slice(0, 3).map((msg: any, i: number) => (
+                    <Link key={i} href="/messages" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: '#f8fafc', borderRadius: '10px', textDecoration: 'none', border: '1px solid #f1f5f9' }}>
+                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#ede9fe', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                        {msg.photo_url ? <img src={msg.photo_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: '14px' }}>💬</span>}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ margin: '0 0 1px', fontSize: '13px', fontWeight: 700, color: '#111827' }}>{msg.full_name || msg.sender_name || 'Message'}</p>
+                        <p style={{ margin: 0, fontSize: '11px', color: '#6b7280', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{msg.last_message || msg.content || 'View conversation'}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             )}
 
             {/* Suggested Matches */}
