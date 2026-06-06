@@ -1,7 +1,5 @@
 import { MetadataRoute } from 'next'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const BASE_URL = 'https://biyekori.com'
 
 export const revalidate = 86400
@@ -20,26 +18,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/login`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
   ]
 
+  // Use service role key for server-side fetch, fall back to anon key
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.log('Sitemap: missing Supabase env vars, returning static pages only')
+    return staticPages
+  }
+
   try {
-    // Fetch all profiles — no deactivation filter since most profiles have null not false
-    // We fetch in batches of 1000 to handle large datasets
     let allProfiles: { id: number; updated_at: string }[] = []
     let offset = 0
     const batchSize = 1000
 
     while (true) {
       const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/profiles?select=id,updated_at&order=id.asc&limit=${batchSize}&offset=${offset}`,
+        `${supabaseUrl}/rest/v1/profiles?select=id,updated_at&order=id.asc&limit=${batchSize}&offset=${offset}`,
         {
           headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`,
+            'Content-Type': 'application/json',
           },
-          next: { revalidate: 86400 },
+          cache: 'no-store',
         }
       )
 
-      if (!res.ok) break
+      if (!res.ok) {
+        console.log(`Sitemap: fetch failed with status ${res.status}`)
+        break
+      }
 
       const batch = await res.json()
       if (!Array.isArray(batch) || batch.length === 0) break
@@ -59,7 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.log(`Sitemap: generated ${profilePages.length} profile URLs`)
     return [...staticPages, ...profilePages]
   } catch (err) {
-    console.error('Sitemap generation error:', err)
+    console.error('Sitemap error:', err)
     return staticPages
   }
 }
