@@ -4,10 +4,9 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const BASE_URL = 'https://biyekori.com'
 
-export const revalidate = 86400 // revalidate once per day
+export const revalidate = 86400
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Static pages
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE_URL, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
     { url: `${BASE_URL}/profiles`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
@@ -21,33 +20,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/login`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
   ]
 
-  // Dynamic profile pages
   try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/profiles?select=id,updated_at&is_deactivated=is.false&order=id.asc&limit=2000`,
-      {
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-        },
-        next: { revalidate: 86400 },
-      }
-    )
+    // Fetch all profiles — no deactivation filter since most profiles have null not false
+    // We fetch in batches of 1000 to handle large datasets
+    let allProfiles: { id: number; updated_at: string }[] = []
+    let offset = 0
+    const batchSize = 1000
 
-    if (!res.ok) return staticPages
+    while (true) {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/profiles?select=id,updated_at&order=id.asc&limit=${batchSize}&offset=${offset}`,
+        {
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+          },
+          next: { revalidate: 86400 },
+        }
+      )
 
-    const profiles: { id: number; updated_at: string }[] = await res.json()
+      if (!res.ok) break
 
-    const profilePages: MetadataRoute.Sitemap = profiles.map(profile => ({
+      const batch = await res.json()
+      if (!Array.isArray(batch) || batch.length === 0) break
+
+      allProfiles = [...allProfiles, ...batch]
+      if (batch.length < batchSize) break
+      offset += batchSize
+    }
+
+    const profilePages: MetadataRoute.Sitemap = allProfiles.map(profile => ({
       url: `${BASE_URL}/profile/${profile.id}`,
       lastModified: profile.updated_at ? new Date(profile.updated_at) : new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'weekly' as const,
       priority: 0.7,
     }))
 
+    console.log(`Sitemap: generated ${profilePages.length} profile URLs`)
     return [...staticPages, ...profilePages]
-  } catch {
-    // If fetch fails, return static pages only
+  } catch (err) {
+    console.error('Sitemap generation error:', err)
     return staticPages
   }
 }
