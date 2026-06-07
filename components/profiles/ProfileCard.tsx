@@ -442,7 +442,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
         <div className="flex items-start justify-between mb-3">
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-lg font-black text-gray-900">{name}</h3>
+              <h3 className="text-lg font-bold text-gray-900">{name}</h3>
               {isPremium && (
                 <span style={{ fontSize: '10px', fontWeight: 700, color: '#b45309', background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: '6px', padding: '2px 6px', letterSpacing: '0.3px' }}>
                   Premium
@@ -491,23 +491,28 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          <div className="bg-gray-50 p-2.5 rounded-xl">
-            <p className="text-xs text-gray-500 mb-0.5">Location</p>
-            <p className="font-bold text-gray-900 text-xs">{location}</p>
-          </div>
-          <div className="bg-gray-50 p-2.5 rounded-xl">
-            <p className="text-xs text-gray-500 mb-0.5">Education</p>
-            <p className="font-bold text-gray-900 text-xs">{profile.education}{showDegree && " (" + profile.degree + ")"}</p>
-          </div>
-          <div className="bg-gray-50 p-2.5 rounded-xl">
-            <p className="text-xs text-gray-500 mb-0.5">Profession</p>
-            <p className="font-bold text-gray-900 text-xs">{profile.profession}</p>
-          </div>
-          <div className="bg-gray-50 p-2.5 rounded-xl">
-            <p className="text-xs text-gray-500 mb-0.5">Religion</p>
-            <p className="font-bold text-gray-900 text-xs">{profile.religion}</p>
-          </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
+          {location && (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: '#374151', background: '#f3f4f6', borderRadius: '20px', padding: '3px 10px', fontWeight: 500 }}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              {location}
+            </span>
+          )}
+          {profile.profession && (
+            <span style={{ fontSize: '11px', color: '#374151', background: '#f3f4f6', borderRadius: '20px', padding: '3px 10px', fontWeight: 500 }}>
+              {profile.profession}
+            </span>
+          )}
+          {profile.education && (
+            <span style={{ fontSize: '11px', color: '#374151', background: '#f0f9ff', borderRadius: '20px', padding: '3px 10px', fontWeight: 500 }}>
+              {profile.education}{showDegree && ' (' + profile.degree + ')'}
+            </span>
+          )}
+          {profile.religion && (
+            <span style={{ fontSize: '11px', color: '#374151', background: '#fdf4ff', borderRadius: '20px', padding: '3px 10px', fontWeight: 500 }}>
+              {profile.religion}
+            </span>
+          )}
         </div>
 
         {profile.phone && (
@@ -550,32 +555,30 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
               Waiting for Response...
             </div>
           )}
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <Link href={"/profile/" + profile.id} className="block bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2.5 rounded-xl font-bold text-sm text-center" style={{ flex: 1 }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <Link href={"/profile/" + profile.id} style={{ flex: 1, display: 'block', padding: '10px', background: 'white', border: '1.5px solid #e5e7eb', borderRadius: '12px', fontWeight: 700, fontSize: '13px', textAlign: 'center', textDecoration: 'none', color: '#374151', transition: 'all 0.2s' }}>
               View Profile
             </Link>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-              <button
-                onClick={handleShortlist}
-                title={isShortlisted ? 'Shortlisted' : 'Shortlist'}
-                style={{
-                  width: '44px', height: '34px', borderRadius: '10px', border: 'none', cursor: 'pointer',
-                  background: isShortlisted ? '#fff1f2' : '#f3f4f6',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  flexShrink: 0, transition: 'all 0.2s'
-                }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24"
-                  fill={isShortlisted ? '#e11d48' : 'none'}
-                  stroke={isShortlisted ? '#e11d48' : '#9ca3af'}
-                  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
-              </button>
+            <button
+              onClick={handleShortlist}
+              title={isShortlisted ? 'Shortlisted' : 'Shortlist'}
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px',
+                padding: '8px 10px', borderRadius: '12px', border: 'none', cursor: 'pointer',
+                background: isShortlisted ? '#fff1f2' : '#f9fafb',
+                transition: 'all 0.2s', flexShrink: 0
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24"
+                fill={isShortlisted ? '#e11d48' : 'none'}
+                stroke={isShortlisted ? '#e11d48' : '#9ca3af'}
+                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
               <span style={{ fontSize: '9px', fontWeight: 700, color: isShortlisted ? '#e11d48' : '#9ca3af', whiteSpace: 'nowrap' }}>
                 {isShortlisted ? 'Shortlisted' : 'Shortlist'}
               </span>
-            </div>
+            </button>
           </div>
         </div>
       </div>
