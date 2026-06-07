@@ -101,13 +101,33 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
     filtered = filtered.filter((p: any) => p.marital_status === maritalFilter)
   }
   if (eduFilter) {
-    filtered = filtered.filter((p: any) => p.education === eduFilter)
+    const eduMap: Record<string, string[]> = {
+      "Bachelor's":  ["Bachelor's", 'BBA', 'Bachelor of Arts', 'Bachelor of Science', "Bachelor's Degree", 'Bachelor of Commerce', 'Bachelor', 'BA English'],
+      "Master's":    ["Master's", 'MBA', 'Masters in Economics'],
+      'Engineering': ['Engineering', 'B.Sc Engineering', 'BSc in Computer Science', 'BSc Computer Science'],
+      'Medical':     ['Medical', 'MBBS', 'BDS', 'Diploma in Nursing'],
+      'PhD':         ['PhD'],
+      'HSC':         ['HSC'],
+    }
+    const eduTargets = eduMap[eduFilter] || [eduFilter]
+    filtered = filtered.filter((p: any) => eduTargets.includes(p.education))
   }
   if (relLevelFilter) {
     filtered = filtered.filter((p: any) => p.religious_level === relLevelFilter)
   }
   if (profFilter) {
-    filtered = filtered.filter((p: any) => p.profession === profFilter)
+    const profMap: Record<string, string[]> = {
+      'Doctor':          ['Doctor', 'Medical Officer', 'Dentist'],
+      'Engineer':        ['Engineer', 'Software Developer', 'Project Manager'],
+      'IT Professional': ['IT Professional', 'Software Developer'],
+      'Teacher':         ['Teacher', 'Teacher (Primary)', 'School Teacher', 'Teacher / Professor', 'University Lecturer'],
+      'Business':        ['Business', 'Small Business', 'Business / Self Employed', 'Shop Owner', 'Shop Assistant'],
+      'Banker':          ['Bank Officer', 'Senior Bank Officer'],
+      'Government Job':  ['Government Officer', 'Government Employee', 'Government Official'],
+      'Lawyer':          ['Lawyer', 'Legal Advisor', 'Court Official'],
+    }
+    const profTargets = profMap[profFilter] || [profFilter]
+    filtered = filtered.filter((p: any) => profTargets.includes(p.profession))
   }
   if (nidOnly) {
     filtered = filtered.filter((p: any) => p.nid_verified === true)

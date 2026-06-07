@@ -300,7 +300,7 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)' }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'none' }}
     >
-      <div style={{ position: 'relative', flexShrink: 0, width: '160px', paddingBottom: '14px', borderRadius: '16px 0 0 16px' }}>
+      <div style={{ position: 'relative', flexShrink: 0, width: '160px', paddingBottom: '20px', borderRadius: '16px 0 0 16px' }}>
         {photoUrl ? (
           <img src={photoUrl} alt={name} style={{ width: '160px', height: 'calc(100% - 14px)', minHeight: '180px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
         ) : (
@@ -373,8 +373,8 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 20px', marginBottom: '8px' }}>
           {infoRows.map((row, i) => row.some(Boolean) && (
             <React.Fragment key={i}>
-              {row[0] && <span style={{ fontSize: '12px', color: '#374151', fontWeight: 500 }}>{row[0]}</span>}
-              {row[1] && <span style={{ fontSize: '12px', color: '#374151', fontWeight: 500 }}>{row[1]}</span>}
+              {row[0] && <span style={{ fontSize: '13px', color: '#374151', fontWeight: 500 }}>{row[0]}</span>}
+              {row[1] && <span style={{ fontSize: '13px', color: '#374151', fontWeight: 500 }}>{row[1]}</span>}
             </React.Fragment>
           ))}
         </div>
@@ -388,8 +388,8 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
         )}
       </div>
 
-      <div style={{ flexShrink: 0, width: '120px', borderLeft: '1px solid #f3f4f6', background: 'linear-gradient(180deg,#fff5f7,#ffffff)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '16px 12px', minHeight: '100%' }}>
-        <p style={{ margin: 0, fontSize: '10px', color: '#e11d48', fontWeight: 700, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quick Actions</p>
+      <div style={{ flexShrink: 0, width: '140px', borderLeft: '1px solid #f3f4f6', background: 'linear-gradient(180deg,#fff5f7,#ffffff)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '16px 12px', minHeight: '100%' }}>
+        <p style={{ margin: 0, fontSize: '11px', color: '#e11d48', fontWeight: 700, textAlign: 'center' }}>Quick Actions</p>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
           <button onClick={handleSendInterest} disabled={interestSent} title={interestSent ? 'Interest Sent' : 'Send Interest'}
             style={{ width: '48px', height: '48px', borderRadius: '50%', border: 'none', cursor: interestSent ? 'default' : 'pointer', background: interestSent ? '#f3f4f6' : 'linear-gradient(135deg,#10b981,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: interestSent ? 'none' : '0 3px 10px rgba(16,185,129,0.35)', transition: 'all 0.2s' }}>
