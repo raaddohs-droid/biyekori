@@ -73,13 +73,46 @@ export default function Home() {
         </div>
       </section>
 
-      <footer style={{ padding: '40px 60px', borderTop: '1px solid rgba(240,192,64,0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-        <span style={{ fontSize: '18px', fontWeight: 700, color: '#F0C040', letterSpacing: '3px' }}>BIYEKORI</span>
-        <span style={{ fontSize: '12px', color: 'rgba(253,246,238,0.2)' }}>2026 BIYEKORI - BANGLADESH AI MATRIMONY</span>
-        <div style={{ display: 'flex', gap: '32px' }}>
-          {['Pricing','Profiles','About','Safety','Privacy','Terms','FAQ'].map(l => (
-            <Link key={l} href={`/${l.toLowerCase()}`} style={{ fontSize: '12px', color: 'rgba(253,246,238,0.25)', textDecoration: 'none' }}>{l.toUpperCase()}</Link>
-          ))}
+      <footer style={{ padding: '48px 60px 32px', borderTop: '1px solid rgba(240,192,64,0.08)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '32px', marginBottom: '40px' }}>
+          <div>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: '#F0C040', letterSpacing: '3px', display: 'block', marginBottom: '8px' }}>BIYEKORI</span>
+            <p style={{ margin: 0, fontSize: '12px', color: 'rgba(253,246,238,0.3)', lineHeight: 1.6, maxWidth: '220px' }}>Bangladesh first AI-powered matrimony platform. Find your life partner.</p>
+          </div>
+          <div style={{ display: 'flex', gap: '48px', flexWrap: 'wrap' }}>
+            <div>
+              <p style={{ margin: '0 0 14px', fontSize: '11px', fontWeight: 700, color: 'rgba(240,192,64,0.4)', letterSpacing: '2px' }}>PLATFORM</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {['Profiles','Pricing','About','FAQ'].map(l => (
+                  <Link key={l} href={`/${l.toLowerCase()}`} style={{ fontSize: '13px', color: 'rgba(253,246,238,0.35)', textDecoration: 'none' }}>{l}</Link>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p style={{ margin: '0 0 14px', fontSize: '11px', fontWeight: 700, color: 'rgba(240,192,64,0.4)', letterSpacing: '2px' }}>LEGAL</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {['Safety','Privacy','Terms'].map(l => (
+                  <Link key={l} href={`/${l.toLowerCase()}`} style={{ fontSize: '13px', color: 'rgba(253,246,238,0.35)', textDecoration: 'none' }}>{l}</Link>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p style={{ margin: '0 0 14px', fontSize: '11px', fontWeight: 700, color: 'rgba(240,192,64,0.4)', letterSpacing: '2px' }}>CONTACT</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <a href="mailto:support@biyekori.com" style={{ fontSize: '13px', color: 'rgba(253,246,238,0.35)', textDecoration: 'none' }}>support@biyekori.com</a>
+                <a href="https://wa.me/8801733577215" target="_blank" rel="noreferrer" style={{ fontSize: '13px', color: 'rgba(253,246,238,0.35)', textDecoration: 'none' }}>WhatsApp</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style={{ borderTop: '1px solid rgba(240,192,64,0.06)', paddingTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          <span style={{ fontSize: '12px', color: 'rgba(253,246,238,0.2)' }}>&copy; 2026 Biyekori. All rights reserved.</span>
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+            <a href="https://facebook.com/biyekori" target="_blank" rel="noreferrer" style={{ color: 'rgba(253,246,238,0.3)', textDecoration: 'none', fontSize: '12px', letterSpacing: '1px' }}>Facebook</a>
+            <a href="https://instagram.com/biyekori" target="_blank" rel="noreferrer" style={{ color: 'rgba(253,246,238,0.3)', textDecoration: 'none', fontSize: '12px', letterSpacing: '1px' }}>Instagram</a>
+            <a href="https://youtube.com/@biyekori" target="_blank" rel="noreferrer" style={{ color: 'rgba(253,246,238,0.3)', textDecoration: 'none', fontSize: '12px', letterSpacing: '1px' }}>YouTube</a>
+            <a href="https://linkedin.com/company/biyekori" target="_blank" rel="noreferrer" style={{ color: 'rgba(253,246,238,0.3)', textDecoration: 'none', fontSize: '12px', letterSpacing: '1px' }}>LinkedIn</a>
+          </div>
         </div>
       </footer>
     </main>
