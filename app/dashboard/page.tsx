@@ -75,6 +75,8 @@ export default function Dashboard() {
   const [recentMessages, setRecentMessages] = useState<any[]>([]);
   const [filteredCount, setFilteredCount] = useState(0);
   const [mutualCount, setMutualCount] = useState(0);
+  const [shortlistCount, setShortlistCount] = useState(0);
+  const [shortlistProfiles, setShortlistProfiles] = useState<any[]>([]);
 
   useEffect(() => {
     const userData = localStorage.getItem('biyekori_user');
@@ -89,6 +91,13 @@ export default function Dashboard() {
         body: JSON.stringify({ userId: parsed.id, updates: { last_active_at: new Date().toISOString() } })
       }).catch(() => {});
       fetchViewCount(parsed.id).then(setViewCount);
+      fetch('/api/shortlists?userId=' + parsed.id)
+        .then(r => r.json())
+        .then(data => {
+          const list = data.shortlists || [];
+          setShortlistCount(list.length);
+          setShortlistProfiles(list.slice(0, 4));
+        }).catch(() => {});
       fetch('/api/interests/list?userId=' + parsed.id)
         .then(r => r.json())
         .then(data => {
@@ -406,6 +415,51 @@ export default function Dashboard() {
               ) : (
                 <div style={{ textAlign: 'center', padding: '20px', color: '#9ca3af', fontSize: '13px' }}>
                   Complete your profile to see better suggestions
+                </div>
+              )}
+            </div>
+
+            {/* Shortlisted by Me */}
+            <div style={{ background: "white", borderRadius: "16px", padding: "20px", marginBottom: "20px", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #fce7f3" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+                <div>
+                  <h2 style={{ margin: "0 0 2px", fontSize: "15px", fontWeight: 800, color: "#111827" }}>Shortlisted</h2>
+                  <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>{shortlistCount} profile{shortlistCount !== 1 ? "s" : ""} saved</p>
+                </div>
+                <Link href="/interests" style={{ fontSize: "12px", color: "#e11d48", fontWeight: 700, textDecoration: "none" }}
+                  onClick={() => { try { localStorage.setItem("interests_tab", "shortlisted") } catch(e) {} }}>
+                  See all →
+                </Link>
+              </div>
+              {shortlistCount === 0 ? (
+                <p style={{ fontSize: "13px", color: "#9ca3af", textAlign: "center", padding: "12px 0" }}>
+                  Tap the heart on any profile to shortlist them
+                </p>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
+                  {shortlistProfiles.map((s: any) => {
+                    const p = s.profile;
+                    if (!p) return null;
+                    return (
+                      <Link key={s.profile_id} href={"/profile/" + s.profile_id} style={{ textDecoration: "none", display: "block" }}>
+                        <div style={{ borderRadius: "10px", overflow: "hidden", border: "1.5px solid #fce7f3", background: "#fff5f7" }}>
+                          <div style={{ width: "100%", paddingBottom: "100%", position: "relative", background: "#f3f4f6" }}>
+                            {p.photo_url
+                              ? <img src={p.photo_url} alt={p.full_name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 15%" }} />
+                              : <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#fce7f3,#ede9fe)", fontSize: "22px" }}>?</div>
+                            }
+                            <div style={{ position: "absolute", top: "4px", right: "4px" }}>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="#e11d48" stroke="#e11d48" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            </div>
+                          </div>
+                          <div style={{ padding: "6px 8px" }}>
+                            <p style={{ margin: 0, fontSize: "11px", fontWeight: 700, color: "#111827", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.full_name || "Anonymous"}</p>
+                            <p style={{ margin: 0, fontSize: "10px", color: "#9ca3af" }}>{p.age} yrs</p>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>

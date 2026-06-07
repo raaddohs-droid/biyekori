@@ -269,6 +269,46 @@ function maskName(n: string, ok: boolean): string {
 
 export default function ProfileCard({ profile, currentUserPackage = "prottasha", currentUserVerified = false, viewerProfile = null, ...rest }: { profile: any, currentUserPackage?: string, currentUserVerified?: boolean, viewerProfile?: any, [key: string]: any }) {
   const [showGiftMenu, setShowGiftMenu] = useState(false);
+  const [isShortlisted, setIsShortlisted] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('biyekori_user');
+      if (!stored) return;
+      const user = JSON.parse(stored);
+      if (!user?.id) return;
+      fetch('/api/shortlists?userId=' + user.id)
+        .then(r => r.json())
+        .then(data => {
+          const found = (data.shortlists || []).some((s: any) => String(s.profile_id) === String(profile.id));
+          setIsShortlisted(found);
+        }).catch(() => {});
+    } catch(e) {}
+  }, [profile.id]);
+
+  const handleShortlist = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const stored = localStorage.getItem('biyekori_user');
+    if (!stored) { window.location.href = '/login'; return; }
+    const user = JSON.parse(stored);
+    if (!user?.id) return;
+    if (isShortlisted) {
+      await fetch('/api/shortlists', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, profileId: profile.id })
+      });
+      setIsShortlisted(false);
+    } else {
+      await fetch('/api/shortlists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, profileId: profile.id })
+      });
+      setIsShortlisted(true);
+    }
+  };
   const [interestSent, setInterestSent] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
@@ -510,9 +550,31 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
               Waiting for Response...
             </div>
           )}
-          <Link href={"/profile/" + profile.id} className="block w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2.5 rounded-xl font-bold text-sm text-center">
-            View Profile
-          </Link>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Link href={"/profile/" + profile.id} className="block bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2.5 rounded-xl font-bold text-sm text-center" style={{ flex: 1 }}>
+              View Profile
+            </Link>
+            <button
+              onClick={handleShortlist}
+              title={isShortlisted ? 'Shortlisted' : 'Shortlist'}
+              style={{
+                width: '44px', height: '44px', borderRadius: '12px', border: 'none', cursor: 'pointer',
+                background: isShortlisted ? '#fff1f2' : '#f3f4f6',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0, transition: 'all 0.2s'
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24"
+                fill={isShortlisted ? '#e11d48' : 'none'}
+                stroke={isShortlisted ? '#e11d48' : '#9ca3af'}
+                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+          </div>
+          {isShortlisted && (
+            <p style={{ textAlign: 'center', fontSize: '11px', color: '#e11d48', fontWeight: 600, margin: '2px 0 0' }}>Shortlisted</p>
+          )}
         </div>
       </div>
     </div>
