@@ -14,6 +14,10 @@ function getItems(profile: any, viewer: any): Array<{
   type: 'warning' | 'info' | 'tip'
 }> {
   const items: Array<{ icon: string; title: string; detail: string; type: 'warning' | 'info' | 'tip' }> = []
+  const isMale = (profile.gender || '').toLowerCase() === 'male'
+  const he = isMale ? 'he' : 'she'
+  const his = isMale ? 'his' : 'her'
+  const him = isMale ? 'him' : 'her'
 
   // Age difference
   if (viewer?.expected_age_min || viewer?.expected_age_max) {
@@ -25,7 +29,7 @@ function getItems(profile: any, viewer: any): Array<{
       items.push({
         icon: '📅',
         title: 'Age difference',
-        detail: `Their age (${pAge}) is ${diff} year${diff > 1 ? 's' : ''} outside your preferred range (${min}–${max}). Many couples make this work — consider if it matters to you.`,
+        detail: `${his.charAt(0).toUpperCase() + his.slice(1)} age (${pAge}) is ${diff} year${diff > 1 ? 's' : ''} outside the range you had in mind (${min}–${max}). Lots of couples have an age gap — just worth thinking about.`,
         type: 'warning'
       })
     }
@@ -36,7 +40,7 @@ function getItems(profile: any, viewer: any): Array<{
     items.push({
       icon: '🛡️',
       title: 'Not selfie verified',
-      detail: 'This profile has not completed live selfie verification. You can still connect — just be mindful when sharing personal contact details.',
+      detail: `${he.charAt(0).toUpperCase() + he.slice(1)} hasn't done the live selfie check yet. You can still reach out — just take it easy before sharing personal details.`,
       type: 'warning'
     })
   }
@@ -49,7 +53,7 @@ function getItems(profile: any, viewer: any): Array<{
     items.push({
       icon: '🏠',
       title: 'Living arrangement differs',
-      detail: `You prefer ${viewer.expected_living_arrangement}, they prefer ${profile.living_arrangement}. This is an important decision — worth aligning on early in conversations.`,
+      detail: `You are thinking ${viewer.expected_living_arrangement}, ${he} is thinking ${profile.living_arrangement}. Good to talk about early.`,
       type: 'info'
     })
   }
@@ -60,7 +64,7 @@ function getItems(profile: any, viewer: any): Array<{
     items.push({
       icon: '💍',
       title: 'Different marriage timelines',
-      detail: `You expect marriage ${viewer.expected_marriage_timeline.toLowerCase()}, they are thinking ${profile.marriage_timeline.toLowerCase()}. Worth discussing early.`,
+      detail: `You are thinking ${viewer.expected_marriage_timeline.toLowerCase()}, ${he} is thinking ${profile.marriage_timeline.toLowerCase()}. Bring this up early — it saves everyone time.`,
       type: 'info'
     })
   }
@@ -84,7 +88,7 @@ function getItems(profile: any, viewer: any): Array<{
     items.push({
       icon: '🕌',
       title: 'Different religions',
-      detail: `You prefer a ${viewer.expected_religion} partner. This profile is ${profile.religion}. This is a significant consideration for most families.`,
+      detail: `You were looking for a ${viewer.expected_religion} partner. ${he.charAt(0).toUpperCase() + he.slice(1)} is ${profile.religion}. Most families feel strongly about this.`,
       type: 'warning'
     })
   }
@@ -95,7 +99,7 @@ function getItems(profile: any, viewer: any): Array<{
     items.push({
       icon: '📝',
       title: 'Profile is incomplete',
-      detail: `This profile is only ${completion}% complete. Key information like income, family type, and lifestyle preferences may be missing. Consider asking them to complete their profile.`,
+      detail: `${his.charAt(0).toUpperCase() + his.slice(1)} profile is only ${completion}% filled in. Income, family type and lifestyle are still missing. You could ask ${him} to add more.`,
       type: 'tip'
     })
   }
@@ -105,7 +109,7 @@ function getItems(profile: any, viewer: any): Array<{
     items.push({
       icon: '📷',
       title: 'No profile photo',
-      detail: 'This profile has no photo. You may want to request one before proceeding.',
+      detail: 'No photo on this profile yet. You may want to ask for one before deciding.',
       type: 'tip'
     })
   }
@@ -117,7 +121,7 @@ function getItems(profile: any, viewer: any): Array<{
       items.push({
         icon: '🚭',
         title: 'Smoking preference differs',
-        detail: `You prefer a non-smoker. This profile smokes${profile.smoking === 'occasionally' ? ' occasionally' : ''}. Worth discussing if this is a dealbreaker for you.`,
+        detail: `You prefer a non-smoker. ${he.charAt(0).toUpperCase() + he.slice(1)} smokes${profile.smoking === 'occasionally' ? ' occasionally' : ''}. Better to know now if this is a dealbreaker.`,
         type: 'warning'
       })
     }
