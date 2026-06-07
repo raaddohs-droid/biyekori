@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
+import { InterestCounter } from '@/components/UpgradeNudge'
 import ProfileCard from './ProfileCard'
 import Link from 'next/link'
 
@@ -195,6 +196,8 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
   const photoUrl = profile.photo_url || profile.photoUrl
   const isPremium = profile.package !== 'prottasha'
   const [interestSent, setInterestSent] = useState(false)
+  const [showLimitNudge, setShowLimitNudge] = useState(false)
+  const [limitData, setLimitData] = useState<any>(null)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const relationshipStatus = (interestMap?.[String(profile.id)] ?? 'none') as 'none'|'sent'|'received'|'accepted'
   const rawName = profile.full_name || profile.name || 'Anonymous'
@@ -217,6 +220,11 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
         body: JSON.stringify({ senderId: user.id, receiverId: profile.id })
       })
       const data = await res.json()
+      if (res.status === 403 && data.upgrade) {
+        setLimitData({ used: data.used || data.limit, limit: data.limit, remaining: 0 })
+        setShowLimitNudge(true)
+        return
+      }
       if (data.success) setInterestSent(true)
     } catch(e) {}
   }
@@ -349,6 +357,9 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={interestSent ? '#9ca3af' : 'white'} strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
           </button>
           <span style={{ fontSize: '10px', color: interestSent ? '#9ca3af' : '#059669', fontWeight: 700 }}>{interestSent ? 'Sent' : 'Connect'}</span>
+          {showLimitNudge && limitData && (
+            <UpgradeNudge type="interest_limit" data={limitData} onDismiss={() => setShowLimitNudge(false)} />
+          )}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
           <button onClick={(e) => { e.stopPropagation(); const stored = localStorage.getItem('biyekori_user'); if (!stored) { window.location.href = '/register?reason=contact'; return; } const user = JSON.parse(stored); if (!user.package || user.package === 'prottasha') { setShowUpgradeModal(true); return; } window.location.href = '/profile/' + profile.id; }}
@@ -401,6 +412,8 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
   const [viewerProfile, setViewerProfile] = useState<any>(null)
   const [sortedProfiles, setSortedProfiles] = useState<any[]>(profiles)
   const [interestMap, setInterestMap] = useState<Record<string, string>>({})
+  const [interestUsage, setInterestUsage] = useState<{used:number,limit:number,pkg:string}|null>(null)
+  const [currentUser, setCurrentUser] = useState<any>(null)
 
   useEffect(() => {
     // Default order when no viewer — keep as-is
@@ -429,6 +442,13 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
             // Will re-sort with mutuals on top once interestMap loads
           }
         })
+        .catch(() => {})
+
+      // Fetch interest usage
+      setCurrentUser(user)
+      fetch('/api/interests/send?userId=' + user.id)
+        .then(r => r.json())
+        .then(data => { if (data.limit) setInterestUsage(data) })
         .catch(() => {})
 
       // Fetch all interests once and build lookup map
@@ -464,6 +484,9 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
     <div>
       {view === 'list' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
+          {interestUsage && currentUser && (
+            <InterestCounter used={interestUsage.used} limit={interestUsage.limit} pkg={interestUsage.pkg} />
+          )}
           {sortedProfiles.map((profile: any) => (
             <ListRow key={profile.id} profile={profile} viewerProfile={viewerProfile} interestMap={interestMap} />
           ))}

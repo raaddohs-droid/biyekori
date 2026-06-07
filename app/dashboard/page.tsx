@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ProfileCompletion from '@/components/ProfileCompletion';
+import UpgradeNudge from '@/components/UpgradeNudge';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -301,6 +302,20 @@ export default function Dashboard() {
                 </div>
                 <Link href="/interests" style={{ flexShrink: 0, padding: '7px 14px', background: '#d97706', color: 'white', borderRadius: '8px', fontWeight: 700, fontSize: '12px', textDecoration: 'none' }}>View</Link>
               </div>
+            )}
+
+            {/* Viewer tease nudge */}
+            {parseInt(viewCount) >= 3 && (
+              <UpgradeNudge type="viewer_tease" data={{ count: parseInt(viewCount) }} />
+            )}
+
+            {/* Mutual urgency nudge — show if mutual match exists and user is free */}
+            {mutualMatches.length > 0 && !isPremium && (
+              <UpgradeNudge type="mutual_urgency" data={{
+                name: mutualMatches[0]?.full_name,
+                lastActive: '2h ago',
+                competitorCount: 2
+              }} />
             )}
 
             {/* Mutual Matches */}
