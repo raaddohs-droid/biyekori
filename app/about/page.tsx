@@ -53,8 +53,8 @@ export default function AboutPage() {
           <h2 style={{ margin: '0 0 16px', fontSize: '22px', fontWeight: 800, color: '#111827' }}>Our numbers</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
             {[
-              { value: '10,000+', label: 'Profiles' },
-              { value: '100%', label: 'Free to browse' },
+              { value: '1,200+', label: 'Profiles' },
+              { value: '100%', label: 'Free to join' },
               { value: '24hr', label: 'Support response' },
             ].map((s, i) => (
               <div key={i} style={{ textAlign: 'center' }}>
