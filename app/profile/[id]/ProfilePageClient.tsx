@@ -807,9 +807,9 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                   </p>
                   <button
                     onClick={() => {
-                      const u = new SpeechSynthesisUtterance('এটা দেখে বুঝবেন প্রোফাইলটা কতটা নির্ভরযোগ্য। যে যত বেশি তথ্য দিয়েছেন আর যাচাই করিয়েছেন, তার স্কোর তত বেশি।')
-                      u.lang = 'bn-BD'
-                      window.speechSynthesis.speak(u)
+                      const text = encodeURIComponent('এটা দেখে বুঝবেন প্রোফাইলটা কতটা নির্ভরযোগ্য। যে যত বেশি তথ্য দিয়েছেন আর যাচাই করিয়েছেন, তার স্কোর তত বেশি।')
+                      const audio = new Audio(`https://translate.googleapis.com/translate_tts?ie=UTF-8&q=${text}&tl=bn&client=gtx`)
+                      audio.play()
                     }}
                     style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', color: '#0369a1', fontWeight: 600 }}
                   >
