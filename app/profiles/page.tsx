@@ -199,7 +199,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px' }}>
 
         <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ margin: '0 0 16px', fontSize: '28px', fontWeight: 800, color: '#1f2937' }}>
+          <h1 style={{ margin: '0 0 16px', fontSize: '26px', fontWeight: 600, color: '#1f2937' }}>
             Browse Profiles
           </h1>
           {/* Discovery tabs */}
