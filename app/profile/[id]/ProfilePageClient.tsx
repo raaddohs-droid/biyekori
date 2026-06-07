@@ -255,6 +255,8 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
 
 export default function ProfilePageClient({ profile }: { profile: any }) {
   const [showModal, setShowModal] = useState(false)
+  const [showTrustInfo, setShowTrustInfo] = useState(false)
+  const [trustLang, setTrustLang] = useState<'en'|'bn'>('en')
   const [viewerProfile, setViewerProfile] = useState<any>(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [guestBlurred, setGuestBlurred] = useState(false)
@@ -780,6 +782,49 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
         {isLoggedIn && viewerProfile && <BeforeYouConnect profile={profile} viewerProfile={viewerProfile} isLoggedIn={isLoggedIn} />}
 
         {showModal && <ScoreModal profile={profile} onClose={() => setShowModal(false)} isLoggedIn={isLoggedIn} viewerProfile={viewerProfile} />}
+        {showTrustInfo && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowTrustInfo(false)}>
+            <div style={{ background: 'white', borderRadius: '20px', padding: '28px 24px', maxWidth: '380px', width: '100%', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }} onClick={e => e.stopPropagation()}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#111827' }}>Profile Trust Score</h3>
+                <button onClick={() => setShowTrustInfo(false)} style={{ background: '#f3f4f6', border: 'none', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer', fontSize: '14px', color: '#6b7280' }}>&#x2715;</button>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                <button onClick={() => setTrustLang('en')} style={{ flex: 1, padding: '8px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: '13px', background: trustLang === 'en' ? '#7c3aed' : '#f3f4f6', color: trustLang === 'en' ? 'white' : '#6b7280' }}>English</button>
+                <button onClick={() => setTrustLang('bn')} style={{ flex: 1, padding: '8px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: '13px', background: trustLang === 'bn' ? '#7c3aed' : '#f3f4f6', color: trustLang === 'bn' ? 'white' : '#6b7280' }}>&#2476;&#2494;&#2434;&#2482;&#2494;</button>
+              </div>
+              {trustLang === 'en' ? (
+                <p style={{ margin: '0 0 16px', fontSize: '14px', color: '#374151', lineHeight: 1.7 }}>
+                  This score shows how reliable and complete a profile is. The more information someone has provided and verified — like NID, selfie, and profile details — the higher their score.
+                </p>
+              ) : (
+                <div style={{ marginBottom: '16px' }}>
+                  <p style={{ margin: '0 0 12px', fontSize: '14px', color: '#374151', lineHeight: 1.8 }}>
+                    &#2447;&#2463;&#2494; &#2470;&#2503;&#2454;&#2503; &#2476;&#2497;&#2436;&#2476;&#2503;&#2472; &#2474;&#2509;&#2480;&#2507;&#2467;&#2494;&#2439;&#2482;&#2463;&#2494; &#2453;&#2468;&#2463;&#2494; &#2472;&#2495;&#2480;&#2509;&#2477;&#2480;&#2479;&#2507;&#2455;&#2509;&#2479;&#2964; &#2479;&#2503; &#2479;&#2468; &#2476;&#2503;&#2486;&#2495; &#2468;&#2469;&#2509;&#2479; &#2470;&#2495;&#2527;&#2503;&#2459;&#2503;&#2472; &#2438;&#2480; &#2479;&#2494;&#2458;&#2494;&#2439; &#2453;&#2480;&#2495;&#2527;&#2503;&#2459;&#2503;&#2472;, &#2468;&#2494;&#2480; &#2488;&#2509;&#2453;&#2507;&#2480; &#2468;&#2468; &#2476;&#2503;&#2486;&#2495;&#2964;
+                  </p>
+                  <button
+                    onClick={() => {
+                      const u = new SpeechSynthesisUtterance('এটা দেখে বুঝবেন প্রোফাইলটা কতটা নির্ভরযোগ্য। যে যত বেশি তথ্য দিয়েছেন আর যাচাই করিয়েছেন, তার স্কোর তত বেশি।')
+                      u.lang = 'bn-BD'
+                      window.speechSynthesis.speak(u)
+                    }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', color: '#0369a1', fontWeight: 600 }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                    &#2486;&#2497;&#2472;&#2497;&#2472; (Listen)
+                  </button>
+                </div>
+              )}
+              <div style={{ background: '#f8fafc', borderRadius: '10px', padding: '12px 14px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: '#6b7280', lineHeight: 1.6 }}>
+                  {trustLang === 'en'
+                    ? 'A low score just means the profile is new or incomplete — not that the person is fake.'
+                    : 'কম স্কোর মানে প্রোফাইল নতুন বা অসম্পূর্ণ — এর মানে এই নয় যে মানুষটা ভুয়া।'}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Header Card */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
