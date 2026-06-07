@@ -321,7 +321,15 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         )}
       </div>
 
-      <UpgradeNudge currentPage={currentPage} />
+      {currentPage >= 3 && currentPage <= 5 && (
+        <UpgradeNudge type="soft" data={{
+          message: currentPage === 5
+            ? 'You are on the last free page. Upgrade Silver to browse all profiles.'
+            : `Enjoying Biyekori? Upgrade Silver to browse unlimited profiles.`,
+          ctaText: 'Upgrade Silver',
+          ctaHref: '/pricing'
+        }} />
+      )}
     </div>
   )
 }
