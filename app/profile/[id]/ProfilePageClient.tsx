@@ -175,7 +175,7 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
             </div>
             <div className={`rounded-xl p-3 text-center cursor-pointer transition ${tab === 'predict' ? 'bg-white/30 ring-2 ring-white' : 'bg-white/10'}`} onClick={() => setTab('predict')}>
               <div className="text-3xl font-black" style={{ color: dataConfidence >= 60 ? '#34d399' : '#fbbf24' }}>{dataConfidence}%</div>
-              <div className="text-sm font-bold">Data Confidence</div>
+              <div className="text-sm font-bold">Profile Trust Score</div>
               <div className="text-xs text-purple-200">{getConfLabel(dataConfidence)}</div>
               <div className="text-xs text-purple-300 mt-1">Tap to see breakdown</div>
             </div>
@@ -216,7 +216,7 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
           {tab === 'predict' && (
             <>
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-sm text-amber-800">
-                ℹ️ <strong>Data Confidence</strong> = how complete this profile is. More info = more accurate AI matching.
+                ℹ️ <strong>Profile Trust Score</strong> = how reliable and complete this profile is. More info and verification = higher score.
               </div>
               <h3 className="font-bold text-gray-800 mb-3">Profile Completeness</h3>
               <div className="space-y-2">
@@ -628,7 +628,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                       <span className="text-3xl font-black text-green-300">??%</span>
                     </div>
                   </div>
-                  <p className="font-bold text-white mt-2">Data Confidence</p>
+                  <p className="font-bold text-white mt-2">Profile Trust Score</p>
                 </div>
               </div>
             </div>
@@ -687,7 +687,10 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                   <span className="text-3xl font-black" style={{ color: dataConfidence >= 60 ? '#34d399' : '#fbbf24' }}>{dataConfidence}%</span>
                 </div>
               </div>
-              <p className="font-bold text-white mt-2">Data Confidence</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+                <p className="font-bold text-white" style={{ margin: 0 }}>Profile Trust Score</p>
+                <button onClick={(e) => { e.stopPropagation(); setShowTrustInfo(true) }} style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'rgba(255,255,255,0.25)', border: 'none', cursor: 'pointer', color: 'white', fontSize: '11px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>i</button>
+              </div>
               <p className="text-purple-200 text-xs text-center mt-1">{getConfLabel(dataConfidence)}</p>
             </div>
           </div>
