@@ -211,6 +211,64 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
           </div>
         </div>
 
+        {/* Profession quick-filter pills */}
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+          {[
+            { label: 'Doctor', value: 'Doctor' },
+            { label: 'Engineer', value: 'Engineer' },
+            { label: 'IT Professional', value: 'IT Professional' },
+            { label: 'Teacher', value: 'Teacher' },
+            { label: 'Business', value: 'Business' },
+            { label: 'Banker', value: 'Banker' },
+            { label: 'Government Job', value: 'Government Job' },
+            { label: 'Lawyer', value: 'Lawyer' },
+          ].map(({ label, value }) => {
+            const isActive = profFilter === value
+            const href = isActive
+              ? `/profiles?userGender=${userGender}&excludeId=${excludeId}&view=${viewMode}`
+              : `/profiles?userGender=${userGender}&excludeId=${excludeId}&view=${viewMode}&prof=${encodeURIComponent(value)}`
+            return (
+              <Link key={value} href={href} style={{
+                padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600,
+                textDecoration: 'none', whiteSpace: 'nowrap',
+                background: isActive ? '#e11d48' : 'white',
+                color: isActive ? 'white' : '#6b7280',
+                border: isActive ? '2px solid #e11d48' : '2px solid #e5e7eb',
+              }}>
+                {label}
+              </Link>
+            )
+          })}
+        </div>
+
+        {/* Education quick-filter pills */}
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
+          {[
+            { label: "Bachelor's", value: "Bachelor's" },
+            { label: "Master's", value: "Master's" },
+            { label: 'Engineering', value: 'Engineering' },
+            { label: 'Medical', value: 'Medical' },
+            { label: 'PhD', value: 'PhD' },
+            { label: 'HSC', value: 'HSC' },
+          ].map(({ label, value }) => {
+            const isActive = eduFilter === value
+            const href = isActive
+              ? `/profiles?userGender=${userGender}&excludeId=${excludeId}&view=${viewMode}`
+              : `/profiles?userGender=${userGender}&excludeId=${excludeId}&view=${viewMode}&edu=${encodeURIComponent(value)}`
+            return (
+              <Link key={value} href={href} style={{
+                padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 600,
+                textDecoration: 'none', whiteSpace: 'nowrap',
+                background: isActive ? '#7c3aed' : 'white',
+                color: isActive ? 'white' : '#6b7280',
+                border: isActive ? '2px solid #7c3aed' : '2px solid #e5e7eb',
+              }}>
+                {label}
+              </Link>
+            )
+          })}
+        </div>
+
         <Suspense fallback={null}>
           <AdvancedSearch userGender={userGender} excludeId={excludeId} />
         </Suspense>
@@ -278,7 +336,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
             </a>
           </div>
 
-          {(districtFilter || minAge !== 18 || maxAge !== 70 || maritalFilter || religionFilter) && (
+          {(districtFilter || minAge !== 18 || maxAge !== 70 || maritalFilter || religionFilter || profFilter || eduFilter) && (
             <Link href={`/profiles?userGender=${userGender}&excludeId=${excludeId}`} style={{ padding: '8px 16px', background: '#f3f4f6', color: '#6b7280', borderRadius: '8px', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}>
               Clear
             </Link>
