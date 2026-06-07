@@ -42,7 +42,21 @@ export async function GET() {
     // Append any remaining noobs at end
     while (noobIdx < noobs.length) boosted.push({ ...noobs[noobIdx++], _noob_boosted: true })
 
-    return NextResponse.json({ profiles: boosted })
+    // GUARDIAN BOOST: inject guardian profiles at positions 4, 10, 16, 22
+    const guardians = boosted.filter((p: any) => p.guardian_mode === true)
+    const nonGuardians = boosted.filter((p: any) => !p.guardian_mode)
+    const guardianBoosted: any[] = []
+    let gIdx = 0
+    const guardianInsertAt = new Set([4, 10, 16, 22, 28, 34, 40, 46, 52, 58])
+    for (let i = 0; i < nonGuardians.length; i++) {
+      if (guardianInsertAt.has(i) && gIdx < guardians.length) {
+        guardianBoosted.push({ ...guardians[gIdx++], _guardian_boosted: true })
+      }
+      guardianBoosted.push(nonGuardians[i])
+    }
+    while (gIdx < guardians.length) guardianBoosted.push({ ...guardians[gIdx++], _guardian_boosted: true })
+
+    return NextResponse.json({ profiles: guardianBoosted })
   } catch (err) {
     return NextResponse.json({ error: 'Failed to fetch profiles' }, { status: 500 })
   }
