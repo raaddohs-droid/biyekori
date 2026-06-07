@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { InterestCounter } from '@/components/UpgradeNudge'
+import UpgradeNudge, { InterestCounter } from '@/components/UpgradeNudge'
 import ProfileCard from './ProfileCard'
 import Link from 'next/link'
 
