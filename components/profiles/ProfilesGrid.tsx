@@ -199,6 +199,7 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
   const [showLimitNudge, setShowLimitNudge] = useState(false)
   const [limitData, setLimitData] = useState<any>(null)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [isShortlisted, setIsShortlisted] = useState(false)
   const relationshipStatus = (interestMap?.[String(profile.id)] ?? 'none') as 'none'|'sent'|'received'|'accepted'
   const rawName = profile.full_name || profile.name || 'Anonymous'
   const name = maskName(rawName, relationshipStatus)
@@ -206,6 +207,44 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
   useEffect(() => {
     if (relationshipStatus === 'sent' || relationshipStatus === 'accepted') setInterestSent(true)
   }, [relationshipStatus])
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('biyekori_user')
+      if (!stored) return
+      const user = JSON.parse(stored)
+      if (!user?.id) return
+      fetch('/api/shortlists?userId=' + user.id)
+        .then(r => r.json())
+        .then(data => {
+          const found = (data.shortlists || []).some((s: any) => String(s.profile_id) === String(profile.id))
+          setIsShortlisted(found)
+        }).catch(() => {})
+    } catch(e) {}
+  }, [profile.id])
+
+  const handleShortlistRow = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const stored = localStorage.getItem('biyekori_user')
+    if (!stored) { window.location.href = '/login'; return }
+    const user = JSON.parse(stored)
+    if (!user?.id) return
+    if (isShortlisted) {
+      await fetch('/api/shortlists', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, profileId: profile.id })
+      })
+      setIsShortlisted(false)
+    } else {
+      await fetch('/api/shortlists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, profileId: profile.id })
+      })
+      setIsShortlisted(true)
+    }
+  }
 
   const handleSendInterest = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -374,6 +413,13 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </Link>
           <span style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600 }}>Profile</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+          <button onClick={handleShortlistRow}
+            style={{ width: '48px', height: '48px', borderRadius: '50%', border: 'none', cursor: 'pointer', background: isShortlisted ? '#fff1f2' : '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: isShortlisted ? '0 3px 10px rgba(225,29,72,0.2)' : 'none', transition: 'all 0.2s' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill={isShortlisted ? '#e11d48' : 'none'} stroke={isShortlisted ? '#e11d48' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+          <span style={{ fontSize: '10px', color: isShortlisted ? '#e11d48' : '#9ca3af', fontWeight: 700 }}>{isShortlisted ? 'Shortlisted' : 'Shortlist'}</span>
         </div>
       </div>
     </div>

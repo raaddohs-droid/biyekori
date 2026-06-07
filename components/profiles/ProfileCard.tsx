@@ -554,27 +554,29 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
             <Link href={"/profile/" + profile.id} className="block bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2.5 rounded-xl font-bold text-sm text-center" style={{ flex: 1 }}>
               View Profile
             </Link>
-            <button
-              onClick={handleShortlist}
-              title={isShortlisted ? 'Shortlisted' : 'Shortlist'}
-              style={{
-                width: '44px', height: '44px', borderRadius: '12px', border: 'none', cursor: 'pointer',
-                background: isShortlisted ? '#fff1f2' : '#f3f4f6',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0, transition: 'all 0.2s'
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24"
-                fill={isShortlisted ? '#e11d48' : 'none'}
-                stroke={isShortlisted ? '#e11d48' : '#9ca3af'}
-                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-              </svg>
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+              <button
+                onClick={handleShortlist}
+                title={isShortlisted ? 'Shortlisted' : 'Shortlist'}
+                style={{
+                  width: '44px', height: '34px', borderRadius: '10px', border: 'none', cursor: 'pointer',
+                  background: isShortlisted ? '#fff1f2' : '#f3f4f6',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0, transition: 'all 0.2s'
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24"
+                  fill={isShortlisted ? '#e11d48' : 'none'}
+                  stroke={isShortlisted ? '#e11d48' : '#9ca3af'}
+                  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </button>
+              <span style={{ fontSize: '9px', fontWeight: 700, color: isShortlisted ? '#e11d48' : '#9ca3af', whiteSpace: 'nowrap' }}>
+                {isShortlisted ? 'Shortlisted' : 'Shortlist'}
+              </span>
+            </div>
           </div>
-          {isShortlisted && (
-            <p style={{ textAlign: 'center', fontSize: '11px', color: '#e11d48', fontWeight: 600, margin: '2px 0 0' }}>Shortlisted</p>
-          )}
         </div>
       </div>
     </div>
