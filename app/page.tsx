@@ -27,7 +27,7 @@ export default function Home() {
         </div>
 
         <p style={{ fontSize: '11px', color: 'rgba(253,246,238,0.15)', letterSpacing: '2.5px', margin: '24px 0 0', position: 'relative', zIndex: 2 }}>
-          1000+ PROFILES · AI MATCHMAKING · NO CREDIT CARD
+          3000+ PROFILES · AI MATCHMAKING · NO CREDIT CARD
         </p>
 
         <div style={{ position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', opacity: 0.25 }}>
