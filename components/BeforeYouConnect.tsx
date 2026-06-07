@@ -179,11 +179,13 @@ export default function BeforeYouConnect({ profile, viewerProfile, isLoggedIn }:
         cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         borderBottom: '1px solid #f1f5f9'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '18px' }}>💬</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'linear-gradient(135deg, #fef3c7, #fde68a)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ fontSize: '26px', lineHeight: 1 }}>🤔</span>
+          </div>
           <div style={{ textAlign: 'left' }}>
-            <p style={{ margin: 0, fontSize: '14px', fontWeight: 800, color: '#111827' }}>Before You Connect</p>
-            <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af' }}>{items.length} thing{items.length !== 1 ? 's' : ''} to be aware of</p>
+            <p style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#111827' }}>Know Before You Connect</p>
+            <p style={{ margin: 0, fontSize: '12px', color: '#9ca3af' }}>{items.length} things our AI noticed about this match</p>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
