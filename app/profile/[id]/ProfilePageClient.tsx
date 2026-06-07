@@ -808,7 +808,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                   <button
                     onClick={() => {
                       const text = encodeURIComponent('এটা দেখে বুঝবেন প্রোফাইলটা কতটা নির্ভরযোগ্য। যে যত বেশি তথ্য দিয়েছেন আর যাচাই করিয়েছেন, তার স্কোর তত বেশি।')
-                      fetch('/api/tts?text=' + encodeURIComponent('এটা দেখে বুঝবেন প্রোফাইলটা কতটা নির্ভরযোগ্য। যে যত বেশি তথ্য দিয়েছেন আর যাচাই করিয়েছেন, তার স্কোর তত বেশি।')).then(r => r.blob()).then(blob => new Audio(URL.createObjectURL(blob)).play()).catch(() => {})
+                      fetch('/api/tts?text=' + encodeURIComponent('এটা দেখে বুঝবেন প্রোফাইলটা কতটা নির্ভরযোগ্য। যে যত বেশি তথ্য দিয়েছেন আর যাচাই করিয়েছেন, তার স্কোর তত বেশি। কম স্কোর মানে প্রোফাইল নতুন বা অসম্পূর্ণ — এর মানে এই নয় যে মানুষটা ভুয়া।') + '&speed=1.15').then(r => r.blob()).then(blob => new Audio(URL.createObjectURL(blob)).play()).catch(() => {})
                     }}
                     style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', color: '#0369a1', fontWeight: 600 }}
                   >
