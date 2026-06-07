@@ -3,13 +3,13 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
 const GUEST_KEY = "bk_guest_first_visit"
-const BLUR_AFTER_MS = 3 * 60 * 1000 // 5 minutes
+const BLUR_AFTER_MS = 3 * 60 * 1000 // 3 minutes
 const BLOCK_RETURN_MS = 24 * 60 * 60 * 1000 // 24 hours
 
 export default function GuestGate({ page }: { page: number }) {
   const router = useRouter()
   const [blurred, setBlurred] = useState(false)
-  const [secondsLeft, setSecondsLeft] = useState(300)
+  const [secondsLeft, setSecondsLeft] = useState(180)
 
   useEffect(() => {
     // If logged in, do nothing
@@ -33,7 +33,7 @@ export default function GuestGate({ page }: { page: number }) {
       const elapsed = now - firstVisit
 
       if (elapsed >= BLUR_AFTER_MS) {
-        // Already past 5 mins — blur immediately
+        // Already past 3 mins — blur immediately
         setBlurred(true)
         setSecondsLeft(0)
         return
@@ -54,7 +54,7 @@ export default function GuestGate({ page }: { page: number }) {
     } else {
       // First visit — store timestamp
       localStorage.setItem(GUEST_KEY, String(now))
-      setSecondsLeft(300)
+      setSecondsLeft(180)
 
       const timer = setTimeout(() => setBlurred(true), BLUR_AFTER_MS)
       const interval = setInterval(() => {
@@ -72,7 +72,7 @@ export default function GuestGate({ page }: { page: number }) {
 
   if (!blurred) {
     // Show a subtle countdown banner
-    if (secondsLeft > 0 && secondsLeft < 300) {
+    if (secondsLeft > 0 && secondsLeft < 180) {
       return (
         <div style={{
           position: "fixed", bottom: "20px", left: "50%", transform: "translateX(-50%)",
