@@ -306,60 +306,59 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
         ) : (
           <div style={{ width: '160px', height: '160px', overflow: 'hidden', background: profile.gender === 'female' ? '#FFF0F6' : '#EFF6FF' }}>
             {profile.gender === 'female' ? (
-              <svg width="160" height="160" viewBox="0 0 200 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-                <rect width="200" height="256" fill="#FFF0F6"/>
-                <circle cx="100" cy="128" r="110" fill="#FCE7F3" opacity="0.45"/>
-                <circle cx="20" cy="30" r="50" fill="#FBCFE8" opacity="0.2"/>
-                <circle cx="185" cy="220" r="65" fill="#FBCFE8" opacity="0.2"/>
-                <g transform="translate(100,118)">
-                  <ellipse rx="9" ry="24" fill="#F9A8D4" opacity="0.3" transform="rotate(0)"/>
-                  <ellipse rx="9" ry="24" fill="#F9A8D4" opacity="0.3" transform="rotate(45)"/>
-                  <ellipse rx="9" ry="24" fill="#F9A8D4" opacity="0.3" transform="rotate(90)"/>
-                  <ellipse rx="9" ry="24" fill="#F9A8D4" opacity="0.3" transform="rotate(135)"/>
-                  <ellipse rx="9" ry="24" fill="#EC4899" opacity="0.14" transform="rotate(22.5)"/>
-                  <ellipse rx="9" ry="24" fill="#EC4899" opacity="0.14" transform="rotate(67.5)"/>
-                  <ellipse rx="9" ry="24" fill="#EC4899" opacity="0.14" transform="rotate(112.5)"/>
-                  <ellipse rx="9" ry="24" fill="#EC4899" opacity="0.14" transform="rotate(157.5)"/>
-                  <circle r="6" fill="#DB2777" opacity="0.28"/>
+              <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+                <rect width="160" height="160" fill="#FFF0F6"/>
+                <circle cx="80" cy="80" r="80" fill="#FCE7F3" opacity="0.6"/>
+                <circle cx="10" cy="15" r="35" fill="#FBCFE8" opacity="0.25"/>
+                <circle cx="150" cy="140" r="45" fill="#FBCFE8" opacity="0.25"/>
+                <g transform="translate(80,72)">
+                  <ellipse rx="7" ry="18" fill="#F9A8D4" opacity="0.35" transform="rotate(0)"/>
+                  <ellipse rx="7" ry="18" fill="#F9A8D4" opacity="0.35" transform="rotate(45)"/>
+                  <ellipse rx="7" ry="18" fill="#F9A8D4" opacity="0.35" transform="rotate(90)"/>
+                  <ellipse rx="7" ry="18" fill="#F9A8D4" opacity="0.35" transform="rotate(135)"/>
+                  <ellipse rx="7" ry="18" fill="#EC4899" opacity="0.18" transform="rotate(22.5)"/>
+                  <ellipse rx="7" ry="18" fill="#EC4899" opacity="0.18" transform="rotate(67.5)"/>
+                  <ellipse rx="7" ry="18" fill="#EC4899" opacity="0.18" transform="rotate(112.5)"/>
+                  <ellipse rx="7" ry="18" fill="#EC4899" opacity="0.18" transform="rotate(157.5)"/>
+                  <circle r="5" fill="#DB2777" opacity="0.3"/>
                 </g>
-                <path d="M78 96 Q62 118 60 152 Q60 172 64 188 Q72 200 80 208 Q85 190 84 168 Q83 144 84 118 Q82 108 78 96Z" fill="#9D174D" opacity="0.55"/>
-                <path d="M122 96 Q138 118 140 152 Q140 172 136 188 Q128 200 120 208 Q115 190 116 168 Q117 144 116 118 Q118 108 122 96Z" fill="#9D174D" opacity="0.55"/>
-                <ellipse cx="100" cy="100" rx="27" ry="28" fill="#9D174D" opacity="0.62"/>
-                <line x1="100" y1="74" x2="100" y2="92" stroke="#7C1652" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
-                <rect x="93" y="126" width="14" height="6" rx="3" fill="#DB2777" opacity="0.58"/>
-                <path d="M62 230 Q60 186 100 182 Q140 186 138 230 L138 242 Q120 235 100 234 Q80 235 62 242Z" fill="#DB2777" opacity="0.6"/>
-                <rect x="88" y="130" width="24" height="22" rx="4" fill="#DB2777" opacity="0.6"/>
-                <ellipse cx="82" cy="165" rx="10" ry="14" fill="#C81E6B" opacity="0.18"/>
-                <ellipse cx="118" cy="165" rx="10" ry="14" fill="#C81E6B" opacity="0.18"/>
-                <line x1="68" y1="248" x2="132" y2="248" stroke="#F0C040" strokeWidth="1.2" strokeLinecap="round"/>
-                <circle cx="68" cy="248" r="1.8" fill="#F0C040"/>
-                <circle cx="132" cy="248" r="1.8" fill="#F0C040"/>
+                <path d="M58 55 Q46 70 45 90 Q45 105 48 115 Q54 125 60 130 Q63 118 62 104 Q62 88 63 68Z" fill="#9D174D" opacity="0.52"/>
+                <path d="M102 55 Q114 70 115 90 Q115 105 112 115 Q106 125 100 130 Q97 118 98 104 Q98 88 97 68Z" fill="#9D174D" opacity="0.52"/>
+                <ellipse cx="80" cy="58" rx="22" ry="23" fill="#9D174D" opacity="0.65"/>
+                <line x1="80" y1="37" x2="80" y2="50" stroke="#7C1652" strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
+                <rect x="74" y="79" width="12" height="5" rx="2.5" fill="#DB2777" opacity="0.6"/>
+                <path d="M52 155 Q50 122 80 119 Q110 122 108 155 L108 160 L52 160Z" fill="#DB2777" opacity="0.62"/>
+                <rect x="70" y="82" width="20" height="18" rx="3" fill="#DB2777" opacity="0.62"/>
+                <ellipse cx="64" cy="105" rx="8" ry="11" fill="#C81E6B" opacity="0.2"/>
+                <ellipse cx="96" cy="105" rx="8" ry="11" fill="#C81E6B" opacity="0.2"/>
+                <line x1="52" y1="152" x2="108" y2="152" stroke="#F0C040" strokeWidth="1" strokeLinecap="round"/>
+                <circle cx="52" cy="152" r="1.5" fill="#F0C040"/>
+                <circle cx="108" cy="152" r="1.5" fill="#F0C040"/>
               </svg>
             ) : (
-              <svg width="160" height="160" viewBox="0 0 200 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-                <rect width="200" height="256" fill="#EFF6FF"/>
-                <circle cx="100" cy="128" r="110" fill="#DBEAFE" opacity="0.45"/>
-                <circle cx="175" cy="25" r="45" fill="#BFDBFE" opacity="0.16"/>
-                <circle cx="15" cy="230" r="55" fill="#BFDBFE" opacity="0.16"/>
-                <polygon points="100,28 118,58 82,58" fill="#3B82F6" opacity="0.08"/>
-                <polygon points="26,98 46,132 8,132" fill="#1D4ED8" opacity="0.06"/>
-                <polygon points="172,158 192,192 152,192" fill="#3B82F6" opacity="0.07"/>
-                <rect x="154" y="48" width="26" height="26" rx="3" fill="#1D4ED8" opacity="0.06" transform="rotate(20 167 61)"/>
-                <rect x="14" y="152" width="20" height="20" rx="3" fill="#3B82F6" opacity="0.06" transform="rotate(-15 24 162)"/>
-                <circle cx="165" cy="106" r="1.8" fill="#93C5FD" opacity="0.38"/>
-                <circle cx="35" cy="58" r="1.5" fill="#93C5FD" opacity="0.32"/>
-                <ellipse cx="100" cy="100" rx="27" ry="26" fill="#0F3896" opacity="0.72"/>
-                <path d="M82 88 Q100 82 118 88" fill="none" stroke="#0A2880" strokeWidth="1.2" strokeLinecap="round" opacity="0.4"/>
-                <path d="M78 96 Q100 90 122 96" fill="none" stroke="#0A2880" strokeWidth="1" strokeLinecap="round" opacity="0.3"/>
-                <rect x="91" y="124" width="18" height="6" rx="3" fill="#1D4ED8" opacity="0.65"/>
-                <path d="M38 230 Q36 182 100 178 Q164 182 162 230 L162 242 Q134 235 100 234 Q66 235 38 242Z" fill="#1D4ED8" opacity="0.62"/>
-                <rect x="86" y="128" width="28" height="22" rx="4" fill="#1D4ED8" opacity="0.62"/>
-                <line x1="100" y1="148" x2="100" y2="195" stroke="#BFDBFE" strokeWidth="1.2" strokeLinecap="round" opacity="0.45"/>
-                <ellipse cx="78" cy="168" rx="13" ry="17" fill="#1540A8" opacity="0.22"/>
-                <ellipse cx="122" cy="168" rx="13" ry="17" fill="#1540A8" opacity="0.22"/>
-                <line x1="68" y1="248" x2="132" y2="248" stroke="#F0C040" strokeWidth="1.2" strokeLinecap="round"/>
-                <circle cx="68" cy="248" r="1.8" fill="#F0C040"/>
-                <circle cx="132" cy="248" r="1.8" fill="#F0C040"/>
+              <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+                <rect width="160" height="160" fill="#EFF6FF"/>
+                <circle cx="80" cy="80" r="80" fill="#DBEAFE" opacity="0.55"/>
+                <circle cx="140" cy="15" r="35" fill="#BFDBFE" opacity="0.2"/>
+                <circle cx="10" cy="145" r="40" fill="#BFDBFE" opacity="0.2"/>
+                <polygon points="80,18 94,42 66,42" fill="#3B82F6" opacity="0.1"/>
+                <polygon points="20,72 36,100 6,100" fill="#1D4ED8" opacity="0.08"/>
+                <polygon points="138,110 154,138 122,138" fill="#3B82F6" opacity="0.09"/>
+                <rect x="124" y="32" width="22" height="22" rx="3" fill="#1D4ED8" opacity="0.08" transform="rotate(20 135 43)"/>
+                <rect x="12" y="108" width="18" height="18" rx="3" fill="#3B82F6" opacity="0.08" transform="rotate(-15 21 117)"/>
+                <circle cx="132" cy="72" r="1.5" fill="#93C5FD" opacity="0.5"/>
+                <circle cx="28" cy="40" r="1.2" fill="#93C5FD" opacity="0.45"/>
+                <ellipse cx="80" cy="58" rx="22" ry="21" fill="#0F3896" opacity="0.72"/>
+                <path d="M64 48 Q80 42 96 48 Q94 44 80 42 Q66 44 64 48Z" fill="#0A2880" opacity="0.5"/>
+                <rect x="73" y="77" width="14" height="5" rx="2.5" fill="#1D4ED8" opacity="0.68"/>
+                <path d="M36 155 Q34 118 80 115 Q126 118 124 155 L124 160 L36 160Z" fill="#1D4ED8" opacity="0.62"/>
+                <rect x="68" y="80" width="24" height="18" rx="3" fill="#1D4ED8" opacity="0.62"/>
+                <line x1="80" y1="96" x2="80" y2="128" stroke="#BFDBFE" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+                <ellipse cx="60" cy="108" rx="11" ry="14" fill="#1540A8" opacity="0.24"/>
+                <ellipse cx="100" cy="108" rx="11" ry="14" fill="#1540A8" opacity="0.24"/>
+                <line x1="36" y1="152" x2="124" y2="152" stroke="#F0C040" strokeWidth="1" strokeLinecap="round"/>
+                <circle cx="36" cy="152" r="1.5" fill="#F0C040"/>
+                <circle cx="124" cy="152" r="1.5" fill="#F0C040"/>
               </svg>
             )}
           </div>
