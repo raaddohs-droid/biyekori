@@ -306,8 +306,8 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
         ) : (
           <div style={{ width: '160px', height: '160px', overflow: 'hidden', background: profile.gender === 'female' ? '#FFF0F6' : '#EFF6FF' }}>
             {profile.gender === 'female' ? (
-              <svg width="160" height="100%" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style={{minHeight:"180px"}}>
-                <rect width="160" height="200" fill="#FFF0F6"/>
+              <svg width="160" height="160" viewBox="0 0 200 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+                <rect width="200" height="256" fill="#FFF0F6"/>
                 <circle cx="100" cy="128" r="110" fill="#FCE7F3" opacity="0.45"/>
                 <circle cx="20" cy="30" r="50" fill="#FBCFE8" opacity="0.2"/>
                 <circle cx="185" cy="220" r="65" fill="#FBCFE8" opacity="0.2"/>
@@ -336,7 +336,7 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
                 <circle cx="132" cy="248" r="1.8" fill="#F0C040"/>
               </svg>
             ) : (
-              <svg width="160" height="180" viewBox="0 0 200 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <svg width="160" height="160" viewBox="0 0 200 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
                 <rect width="200" height="256" fill="#EFF6FF"/>
                 <circle cx="100" cy="128" r="110" fill="#DBEAFE" opacity="0.45"/>
                 <circle cx="175" cy="25" r="45" fill="#BFDBFE" opacity="0.16"/>
