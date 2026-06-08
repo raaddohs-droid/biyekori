@@ -200,6 +200,7 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
   const [limitData, setLimitData] = useState<any>(null)
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [isShortlisted, setIsShortlisted] = useState(false)
+  const [photoRequested, setPhotoRequested] = useState(false)
   const relationshipStatus = (interestMap?.[String(profile.id)] ?? 'none') as 'none'|'sent'|'received'|'accepted'
   const rawName = profile.full_name || profile.name || 'Anonymous'
   const name = maskName(rawName, relationshipStatus)
@@ -300,13 +301,13 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)' }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'none' }}
     >
-      <div style={{ position: 'relative', flexShrink: 0, width: '160px', height: '160px', borderRadius: '16px 0 0 16px', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', flexShrink: 0, width: '320px', height: '320px', borderRadius: '16px 0 0 16px', overflow: 'hidden' }}>
         {photoUrl ? (
-          <img src={photoUrl} alt={name} style={{ width: '160px', height: 'calc(100% - 14px)', minHeight: '180px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
+          <img src={photoUrl} alt={name} style={{ width: '320px', height: '320px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
         ) : (
-          <div style={{ width: '160px', height: '160px', overflow: 'hidden', background: profile.gender === 'female' ? '#FFF0F6' : '#EFF6FF' }}>
+          <div style={{ width: '320px', height: '320px', overflow: 'hidden', background: profile.gender === 'female' ? '#FFF0F6' : '#EFF6FF', position: 'relative' }}>
             {profile.gender === 'female' ? (
-              <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+              <svg width="320" height="320" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
                 <rect width="160" height="160" fill="#FFF0F6"/>
                 <circle cx="80" cy="80" r="80" fill="#FCE7F3" opacity="0.6"/>
                 <circle cx="10" cy="15" r="35" fill="#FBCFE8" opacity="0.25"/>
@@ -336,7 +337,7 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
                 <circle cx="108" cy="152" r="1.5" fill="#F0C040"/>
               </svg>
             ) : (
-              <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+              <svg width="320" height="320" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
                 <rect width="160" height="160" fill="#EFF6FF"/>
                 <circle cx="80" cy="80" r="80" fill="#DBEAFE" opacity="0.55"/>
                 <circle cx="140" cy="15" r="35" fill="#BFDBFE" opacity="0.2"/>
@@ -361,6 +362,13 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
                 <circle cx="124" cy="152" r="1.5" fill="#F0C040"/>
               </svg>
             )}
+          <div style={{ position: 'absolute', bottom: '12px', left: '50%', transform: 'translateX(-50%)', zIndex: 10, whiteSpace: 'nowrap' }}>
+              {photoRequested ? (
+                <span style={{ fontSize: '11px', fontWeight: 700, color: '#15803d', background: 'rgba(255,255,255,0.95)', padding: '4px 12px', borderRadius: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>✓ Request sent</span>
+              ) : (
+                <button onClick={e => { e.stopPropagation(); setPhotoRequested(true) }} style={{ fontSize: '11px', fontWeight: 700, color: 'white', background: profile.gender === 'female' ? 'linear-gradient(135deg,#DB2777,#9D174D)' : 'linear-gradient(135deg,#1D4ED8,#1E40AF)', border: 'none', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.2)', letterSpacing: '0.3px' }}>Photo on Request</button>
+              )}
+            </div>
           </div>
         )}
         {/* Score badge - outside photo, at bottom edge */}
