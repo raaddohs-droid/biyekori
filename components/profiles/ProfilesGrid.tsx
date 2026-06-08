@@ -304,10 +304,10 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
         {photoUrl ? (
           <img src={photoUrl} alt={name} style={{ width: '160px', height: 'calc(100% - 14px)', minHeight: '180px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
         ) : (
-          <div style={{ width: '160px', minHeight: '180px', overflow: 'hidden', background: profile.gender === 'female' ? '#FFF0F6' : '#EFF6FF' }}>
+          <div style={{ width: '160px', minHeight: '180px', height: '100%', overflow: 'hidden', background: profile.gender === 'female' ? '#FFF0F6' : '#EFF6FF', display: 'flex', alignItems: 'stretch' }}>
             {profile.gender === 'female' ? (
-              <svg width="160" height="180" viewBox="0 0 200 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-                <rect width="200" height="256" fill="#FFF0F6"/>
+              <svg width="160" height="100%" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style={{minHeight:"180px"}}>
+                <rect width="160" height="200" fill="#FFF0F6"/>
                 <circle cx="100" cy="128" r="110" fill="#FCE7F3" opacity="0.45"/>
                 <circle cx="20" cy="30" r="50" fill="#FBCFE8" opacity="0.2"/>
                 <circle cx="185" cy="220" r="65" fill="#FBCFE8" opacity="0.2"/>
