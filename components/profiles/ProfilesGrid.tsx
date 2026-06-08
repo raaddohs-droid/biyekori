@@ -300,11 +300,11 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)' }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'none' }}
     >
-      <div style={{ position: 'relative', flexShrink: 0, width: '160px', paddingBottom: '20px', borderRadius: '16px 0 0 16px' }}>
+      <div style={{ position: 'relative', flexShrink: 0, width: '160px', height: '160px', borderRadius: '16px 0 0 16px', overflow: 'hidden' }}>
         {photoUrl ? (
           <img src={photoUrl} alt={name} style={{ width: '160px', height: 'calc(100% - 14px)', minHeight: '180px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
         ) : (
-          <div style={{ width: '160px', minHeight: '180px', height: '100%', overflow: 'hidden', background: profile.gender === 'female' ? '#FFF0F6' : '#EFF6FF', display: 'flex', alignItems: 'stretch' }}>
+          <div style={{ width: '160px', height: '160px', overflow: 'hidden', background: profile.gender === 'female' ? '#FFF0F6' : '#EFF6FF' }}>
             {profile.gender === 'female' ? (
               <svg width="160" height="100%" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style={{minHeight:"180px"}}>
                 <rect width="160" height="200" fill="#FFF0F6"/>
