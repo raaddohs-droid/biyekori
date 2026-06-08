@@ -77,6 +77,9 @@ export default function Dashboard() {
   const [mutualCount, setMutualCount] = useState(0);
   const [shortlistCount, setShortlistCount] = useState(0);
   const [shortlistProfiles, setShortlistProfiles] = useState<any[]>([]);
+  const [dailyMatch, setDailyMatch] = useState<any>(null);
+  const [dailyMatchReason, setDailyMatchReason] = useState<string>('');
+  const [dailyMatchLoading, setDailyMatchLoading] = useState(false);
 
   useEffect(() => {
     const userData = localStorage.getItem('biyekori_user');
@@ -112,6 +115,38 @@ export default function Dashboard() {
           setMutualIds(new Set([...sentAccepted, ...receivedAccepted]));
         }).catch(() => {});
       if (parsed.gender) {
+        // Daily Best Match — refresh once per day
+        const dmKey = 'biyekori_daily_match_' + parsed.id
+        const dmDate = 'biyekori_daily_match_date_' + parsed.id
+        const today = new Date().toDateString()
+        const stored = localStorage.getItem(dmKey)
+        const storedDate = localStorage.getItem(dmDate)
+        if (stored && storedDate === today) {
+          try { const dm = JSON.parse(stored); setDailyMatch(dm.profile); setDailyMatchReason(dm.reason) } catch(e) {}
+        } else {
+          setDailyMatchLoading(true)
+          const showGender = parsed.gender === 'male' ? 'female' : 'male'
+          fetch(`${SUPABASE_URL}/rest/v1/profiles?gender=eq.${showGender}&id=neq.${parsed.id}&select=id,full_name,photo_url,age,city,profession,education,religious_level,marital_status&order=id.desc&limit=20`, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } })
+            .then(r => r.json())
+            .then(async (profiles) => {
+              if (!profiles || profiles.length === 0) return
+              const pick = profiles[Math.floor(Math.random() * Math.min(profiles.length, 10))]
+              const prompt = `You are a Bangladeshi matrimony matchmaker. A ${parsed.age || 25} year old ${parsed.gender} is looking for a match. You selected: ${pick.full_name?.split(' ')[0] || 'this person'}, ${pick.age} yrs, ${pick.profession}, ${pick.city}. Write ONE warm sentence (max 15 words) explaining why this could be a great match. Be specific and encouraging.`
+              try {
+                const aiRes = await fetch('/api/game', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, maxTokens: 60 }) })
+                const aiData = await aiRes.json()
+                const reason = aiData.result || 'A promising match based on your preferences.'
+                setDailyMatch(pick)
+                setDailyMatchReason(reason)
+                localStorage.setItem(dmKey, JSON.stringify({ profile: pick, reason }))
+                localStorage.setItem(dmDate, today)
+              } catch(e) {
+                setDailyMatch(pick)
+                setDailyMatchReason('A promising match based on your preferences.')
+              }
+              setDailyMatchLoading(false)
+            })
+        }
         fetchSuggestedProfiles(parsed.gender, parsed.id)
           .then(data => setSuggestedProfiles(Array.isArray(data) ? data : []))
           .catch(() => {});
@@ -318,6 +353,41 @@ export default function Dashboard() {
               <UpgradeNudge type="viewer_tease" data={{ count: parseInt(viewCount) }} />
             )}
 
+            {/* Daily Best Match */}
+            <div style={{ background: 'linear-gradient(135deg,#fffbeb,#fef3c7)', borderRadius: '16px', padding: '20px', marginBottom: '20px', border: '1.5px solid #F0C040', boxShadow: '0 2px 12px rgba(240,192,64,0.15)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                <div>
+                  <h2 style={{ margin: '0 0 2px', fontSize: '15px', fontWeight: 800, color: '#92400e' }}>⭐ {gm ? 'আজকের সেরা মিল' : "Today's Best Match"}</h2>
+                  <p style={{ margin: 0, fontSize: '11px', color: '#b45309', fontWeight: 600 }}>AI-picked · Refreshes daily</p>
+                </div>
+                <span style={{ fontSize: '10px', color: '#92400e', background: 'rgba(240,192,64,0.3)', padding: '3px 8px', borderRadius: '20px', fontWeight: 700 }}>NEW</span>
+              </div>
+              {dailyMatchLoading ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 0' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(240,192,64,0.2)', animation: 'pulse 1.5s infinite' }}/>
+                  <p style={{ margin: 0, fontSize: '13px', color: '#92400e' }}>Finding your best match today...</p>
+                </div>
+              ) : dailyMatch ? (
+                <Link href={`/profile/${dailyMatch.id}`} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{ position: 'relative', flexShrink: 0 }}>
+                    {dailyMatch.photo_url ? (
+                      <img src={dailyMatch.photo_url} alt="" style={{ width: '72px', height: '72px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #F0C040' }}/>
+                    ) : (
+                      <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: 'linear-gradient(135deg,#F0C040,#C07800)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', color: 'white', fontWeight: 800, border: '2px solid #F0C040' }}>
+                        {dailyMatch.full_name?.charAt(0) || '?'}
+                      </div>
+                    )}
+                    <div style={{ position: 'absolute', bottom: '-2px', right: '-2px', background: '#F0C040', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px' }}>⭐</div>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 800, color: '#92400e' }}>{dailyMatch.full_name?.split(' ')[0] || 'Anonymous'}, {dailyMatch.age}</p>
+                    <p style={{ margin: '0 0 6px', fontSize: '12px', color: '#b45309' }}>{dailyMatch.profession} · {dailyMatch.city}</p>
+                    <p style={{ margin: 0, fontSize: '12px', color: '#78350f', fontStyle: 'italic', lineHeight: 1.5 }}>"{dailyMatchReason}"</p>
+                  </div>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#92400e" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                </Link>
+              ) : null}
+            </div>
             {/* Mutual urgency nudge — show if mutual match exists and user is free */}
             {mutualMatches.length > 0 && !isPremium && (
               <UpgradeNudge type="mutual_urgency" data={{
