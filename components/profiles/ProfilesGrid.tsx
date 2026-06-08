@@ -313,7 +313,7 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
                 {profile.gender === 'female' ? (
                   <div style={{ position: 'absolute', top: '-8px', left: '-12px', right: '-12px', height: '55px', background: 'linear-gradient(135deg,#9D174D,#DB2777)', borderRadius: '50% 50% 0 0', zIndex: -1 }}/>
                 ) : (
-                  <div style={{ position: 'absolute', top: '-4px', left: '4px', right: '4px', height: '28px', background: 'linear-gradient(135deg,#0F3896,#1D4ED8)', borderRadius: '60% 60% 0 0', zIndex: -1 }}/>
+                  <div style={{ position: 'absolute', top: '-12px', left: '-6px', right: '-6px', height: '48px', background: 'linear-gradient(135deg,#0F3896,#1D4ED8)', borderRadius: '50%', zIndex: -1 }}/>
                 )}
               </div>
               {/* Shoulders/body */}
@@ -331,7 +331,7 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
           </div>
         )}
         {/* Score badge - outside photo, at bottom edge */}
-        <div onClick={(e) => { e.stopPropagation() }} style={{ position: 'absolute', bottom: '-14px', left: '50%', transform: 'translateX(-50%)', zIndex: 20, background: viewerProfile ? getScoreColor(score) : '#6b7280', borderRadius: '20px', padding: '4px 12px', display: 'flex', alignItems: 'center', gap: '3px', boxShadow: '0 2px 8px rgba(0,0,0,0.2), 0 0 0 2px white', whiteSpace: 'nowrap' }}>
+        <div onClick={(e) => { e.stopPropagation() }} style={{ position: 'absolute', bottom: '-18px', left: '50%', transform: 'translateX(-50%)', zIndex: 20, background: viewerProfile ? getScoreColor(score) : '#6b7280', borderRadius: '20px', padding: '4px 12px', display: 'flex', alignItems: 'center', gap: '3px', boxShadow: '0 2px 8px rgba(0,0,0,0.2), 0 0 0 2px white', whiteSpace: 'nowrap' }}>
           <span style={{ fontSize: '11px', color: 'white', fontWeight: 800, letterSpacing: '0.2px' }}>{viewerProfile ? '♥ ' + score + '%' : '🔒'}</span>
         </div>
       </div>
