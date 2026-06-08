@@ -301,11 +301,11 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
       onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)' }}
       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'none' }}
     >
-      <div style={{ position: 'relative', flexShrink: 0, width: '320px', height: '320px', borderRadius: '16px 0 0 16px', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', flexShrink: 0, width: '320px', height: '340px', borderRadius: '16px 0 0 16px', overflow: 'visible', paddingBottom: '20px' }}>
         {photoUrl ? (
-          <img src={photoUrl} alt={name} style={{ width: '320px', height: '320px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block' }} />
+          <img src={photoUrl} alt={name} style={{ width: '320px', height: '320px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block', borderRadius: '16px 0 0 16px' }} />
         ) : (
-          <div style={{ width: '320px', height: '320px', overflow: 'hidden', background: profile.gender === 'female' ? 'linear-gradient(160deg,#FFF0F6,#FCE7F3)' : 'linear-gradient(160deg,#EFF6FF,#DBEAFE)', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <div style={{ width: '320px', height: '320px', overflow: 'hidden', background: profile.gender === 'female' ? 'linear-gradient(160deg,#FFF0F6,#FCE7F3)' : 'linear-gradient(160deg,#EFF6FF,#DBEAFE)', position: 'relative', borderRadius: '16px 0 0 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, top: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '40px' }}>
               {/* Head */}
               <div style={{ width: '90px', height: '90px', borderRadius: '50%', background: profile.gender === 'female' ? 'linear-gradient(135deg,#DB2777,#F9A8D4)' : 'linear-gradient(135deg,#1D4ED8,#93C5FD)', marginBottom: '0px', zIndex: 2, position: 'relative' }}>
