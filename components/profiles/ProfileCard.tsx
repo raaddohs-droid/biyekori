@@ -393,7 +393,14 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
         ) : allPhotos.length > 0 ? (
           <img src={allPhotos[currentPhotoIndex]} alt={name} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-6xl">?</div>
+          <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-rose-50 to-purple-50">
+            {profile.gender === 'female' ? (
+              <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#f9a8d4" strokeWidth="1"><circle cx="12" cy="7" r="4"/><path d="M5.5 21c0-3.5 2.9-6 6.5-6s6.5 2.5 6.5 6"/><line x1="12" y1="16" x2="12" y2="19"/><line x1="10" y1="19" x2="14" y2="19"/></svg>
+            ) : (
+              <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" strokeWidth="1"><circle cx="12" cy="7" r="4"/><path d="M5.5 21c0-3.5 2.9-6 6.5-6s6.5 2.5 6.5 6"/></svg>
+            )}
+            <p style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 600, letterSpacing: '0.5px' }}>Photo on Request</p>
+          </div>
         )}
         {allPhotos.length > 1 && (
           <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-1">
