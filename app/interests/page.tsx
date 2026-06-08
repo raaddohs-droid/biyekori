@@ -10,6 +10,7 @@ export default function InterestsPage() {
   const [received, setReceived] = useState<any[]>([])
   const [sent, setSent] = useState<any[]>([])
   const [filtered, setFiltered] = useState<any[]>([])
+  const [shortlisted, setShortlisted] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [userId, setUserId] = useState("")
   const [currentUser, setCurrentUser] = useState<any>(null)
@@ -49,6 +50,11 @@ export default function InterestsPage() {
       setSent(data.sent || [])
       setFiltered(data.filtered || [])
     } catch (e) { console.error(e) }
+    try {
+      const sr = await fetch("/api/shortlists?userId=" + uid)
+      const sd = await sr.json()
+      setShortlisted(sd.shortlists || [])
+    } catch (e) {}
     setLoading(false)
   }
 
@@ -105,7 +111,7 @@ export default function InterestsPage() {
     setSendingMsg(false)
   }
 
-  const list = tab === "received" ? received : tab === "filtered" ? filtered : sent
+  const list = tab === "received" ? received : tab === "filtered" ? filtered : tab === "shortlisted" ? shortlisted : sent
 
   const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
     pending:  { label: "Waiting for Response",  bg: "#FEF3C7", color: "#92400E" },
@@ -125,13 +131,13 @@ export default function InterestsPage() {
 
         {/* Tabs */}
         <div style={{ display: "flex", gap: "8px", marginBottom: "24px", background: "white", padding: "6px", borderRadius: "16px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
-          {["sent", "received", "filtered"].map(t => (
+          {["received", "shortlisted", "sent", "filtered"].map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               flex: 1, padding: "12px", borderRadius: "12px", border: "none", cursor: "pointer", fontWeight: 700, fontSize: "13px", fontFamily: "Georgia, serif", transition: "all 0.2s",
-              background: tab === t ? (t === "filtered" ? "linear-gradient(135deg, #f59e0b, #d97706)" : "linear-gradient(135deg, #e11d48, #db2777)") : "transparent",
+              background: tab === t ? (t === "filtered" ? "linear-gradient(135deg, #f59e0b, #d97706)" : t === "shortlisted" ? "linear-gradient(135deg, #e11d48, #7c3aed)" : "linear-gradient(135deg, #e11d48, #db2777)") : "transparent",
               color: tab === t ? "white" : "#6b7280"
             }}>
-              {t === "sent" ? `Sent (${sent.length})` : t === "received" ? `Received (${received.length})` : `Filtered (${filtered.length})`}
+              {t === "received" ? `Received (${received.length})` : t === "shortlisted" ? `Shortlisted (${shortlisted.length})` : t === "sent" ? `Sent (${sent.length})` : `Filtered (${filtered.length})`}
             </button>
           ))}
         </div>
@@ -153,6 +159,33 @@ export default function InterestsPage() {
                 Browse Profiles →
               </Link>
             )}
+          </div>
+        ) : tab === "shortlisted" ? (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px" }}>
+            {shortlisted.length === 0 ? (
+              <p style={{ gridColumn: "span 2", textAlign: "center", color: "#9ca3af", fontSize: "13px", padding: "40px 0" }}>No profiles shortlisted yet. Tap the heart on any profile to save it.</p>
+            ) : shortlisted.map((s: any) => {
+              const p = s.profile
+              if (!p) return null
+              return (
+                <a key={s.profile_id} href={"/profile/" + s.profile_id} style={{ textDecoration: "none", display: "block", background: "white", borderRadius: "16px", overflow: "hidden", border: "1.5px solid #fce7f3", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+                  <div style={{ width: "100%", paddingBottom: "75%", position: "relative", background: "#f3f4f6" }}>
+                    {p.photo_url
+                      ? <img src={p.photo_url} alt={p.full_name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 15%" }} />
+                      : <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "32px", background: "linear-gradient(135deg,#fce7f3,#ede9fe)" }}>?</div>
+                    }
+                    <div style={{ position: "absolute", top: "8px", right: "8px" }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#e11d48" stroke="#e11d48" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </div>
+                  </div>
+                  <div style={{ padding: "10px 12px" }}>
+                    <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: 700, color: "#111827" }}>{p.full_name || "Anonymous"}</p>
+                    <p style={{ margin: 0, fontSize: "11px", color: "#6b7280" }}>{p.age} yrs · {p.city || p.district || "Bangladesh"}</p>
+                    <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#9ca3af" }}>{p.profession}</p>
+                  </div>
+                </a>
+              )
+            })}
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
