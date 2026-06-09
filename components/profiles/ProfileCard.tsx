@@ -311,6 +311,7 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
   };
   const [interestSent, setInterestSent] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [photoRequested, setPhotoRequested] = useState(false);
 
   const rawName = profile.full_name || profile.name || "Anonymous";
 
@@ -455,6 +456,22 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
                 <circle cx="132" cy="248" r="1.8" fill="#F0C040"/>
                 <text x="100" y="256" textAnchor="middle" fontFamily="Georgia,serif" fontSize="8.5" fill="#1E40AF" fontStyle="italic" letterSpacing="1.5">ছবি চাওয়া যাবে</text>
               </svg>
+            )}
+            {!photoUrl && (
+              <div style={{ position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)', zIndex: 10, whiteSpace: 'nowrap' }}>
+                {photoRequested ? (
+                  <span style={{ fontSize: '10px', fontWeight: 700, color: '#15803d', background: 'rgba(255,255,255,0.95)', padding: '3px 10px', borderRadius: '20px' }}>✓ Request sent</span>
+                ) : (
+                  <button onClick={e => {
+                    e.stopPropagation()
+                    setPhotoRequested(true)
+                    try {
+                      const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
+                      if (u.id) fetch('/api/photo-request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ requesterId: u.id, requestedId: profile.id }) })
+                    } catch(e) {}
+                  }} style={{ fontSize: '10px', fontWeight: 700, color: 'white', background: profile.gender === 'female' ? 'linear-gradient(135deg,#DB2777,#9D174D)' : 'linear-gradient(135deg,#1D4ED8,#1E40AF)', border: 'none', padding: '4px 10px', borderRadius: '20px', cursor: 'pointer' }}>Photo on Request</button>
+                )}
+              </div>
             )}
           </div>
         )}

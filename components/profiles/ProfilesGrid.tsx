@@ -325,7 +325,21 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
               {photoRequested ? (
                 <span style={{ fontSize: '11px', fontWeight: 700, color: '#15803d', background: 'rgba(255,255,255,0.95)', padding: '4px 12px', borderRadius: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>✓ Request sent</span>
               ) : (
-                <button onClick={e => { e.stopPropagation(); setPhotoRequested(true) }} style={{ fontSize: '11px', fontWeight: 700, color: 'white', background: profile.gender === 'female' ? 'linear-gradient(135deg,#DB2777,#9D174D)' : 'linear-gradient(135deg,#1D4ED8,#1E40AF)', border: 'none', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.2)', letterSpacing: '0.3px' }}>Photo on Request</button>
+                <button onClick={e => {
+                    e.stopPropagation()
+                    setPhotoRequested(true)
+                    try {
+                      const stored = localStorage.getItem('biyekori_user')
+                      if (stored) {
+                        const user = JSON.parse(stored)
+                        fetch('/api/photo-request', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ requesterId: user.id, requestedId: profile.id })
+                        })
+                      }
+                    } catch(e) {}
+                  }} style={{ fontSize: '11px', fontWeight: 700, color: 'white', background: profile.gender === 'female' ? 'linear-gradient(135deg,#DB2777,#9D174D)' : 'linear-gradient(135deg,#1D4ED8,#1E40AF)', border: 'none', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.2)', letterSpacing: '0.3px' }}>Photo on Request</button>
               )}
             </div>
           </div>
