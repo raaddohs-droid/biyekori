@@ -315,10 +315,10 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
                 <circle cx="276" cy="220" r="1.8" fill="#F9A8D4" opacity="0.25"/>
                 <ellipse cx="265" cy="300" rx="20" ry="7" fill="#F9A8D4" opacity="0.18" transform="rotate(30 265 300)"/>
                 <path d="M72 148 Q68 78 150 58 Q232 78 228 148 Q238 152 244 162 Q232 154 226 156 Q216 90 150 78 Q84 90 74 156 Q68 154 56 162 Q62 152 72 148Z" fill="#9D174D" opacity="0.85"/>
-                <path d="M72 146 Q44 178 40 225 Q38 262 46 290 Q56 266 57 238 Q58 205 64 170 Q68 152 74 140Z" fill="#9D174D" opacity="0.75"/>
-                <path d="M228 146 Q256 178 260 225 Q262 262 254 290 Q244 266 243 238 Q242 205 236 170 Q232 152 226 140Z" fill="#9D174D" opacity="0.75"/>
+                <path d="M72 146 Q36 178 32 225 Q30 262 38 295 Q52 268 54 238 Q56 202 62 168 Q67 150 74 138Z" fill="#9D174D" opacity="0.82"/>
+                <path d="M228 146 Q264 178 268 225 Q270 262 262 295 Q248 268 246 238 Q244 202 238 168 Q233 150 226 138Z" fill="#9D174D" opacity="0.82"/>
                 <ellipse cx="150" cy="88" rx="76" ry="58" fill="#9D174D" opacity="0.85"/>
-                <rect x="74" y="110" width="152" height="42" fill="#9D174D" opacity="0.85"/>
+
                 <ellipse cx="150" cy="138" rx="60" ry="62" fill="#DB2777" opacity="0.78"/>
                 <rect x="140" y="196" width="20" height="11" rx="5" fill="#DB2777" opacity="0.74"/>
                 <path d="M84 208 Q84 198 140 197 L160 197 Q216 198 216 208 Q236 220 242 248 Q246 270 240 290 L60 290 Q54 270 58 248 Q64 220 84 208Z" fill="#DB2777" opacity="0.74"/>
