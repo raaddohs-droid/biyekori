@@ -305,20 +305,56 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
         {photoUrl ? (
           <img src={photoUrl} alt={name} style={{ width: '320px', height: '320px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block', borderRadius: '16px 0 0 16px' }} />
         ) : (
-          <div style={{ width: '320px', height: '320px', overflow: 'hidden', background: profile.gender === 'female' ? 'linear-gradient(160deg,#FFF0F6,#FCE7F3)' : 'linear-gradient(160deg,#EFF6FF,#DBEAFE)', position: 'relative', borderRadius: '16px 0 0 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, top: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '40px' }}>
-              {/* Head */}
-              <div style={{ width: '90px', height: '90px', borderRadius: '50%', background: profile.gender === 'female' ? 'linear-gradient(135deg,#DB2777,#F9A8D4)' : 'linear-gradient(135deg,#1D4ED8,#93C5FD)', marginBottom: '0px', zIndex: 2, position: 'relative' }}>
-                {/* Hair */}
-                {profile.gender === 'female' ? (
-                  <div style={{ position: 'absolute', top: '-8px', left: '-12px', right: '-12px', height: '55px', background: 'linear-gradient(135deg,#9D174D,#DB2777)', borderRadius: '50% 50% 0 0', zIndex: -1 }}/>
-                ) : (
-                  <div style={{ position: 'absolute', top: '-12px', left: '-6px', right: '-6px', height: '48px', background: 'linear-gradient(135deg,#0F3896,#1D4ED8)', borderRadius: '50%', zIndex: -1 }}/>
-                )}
-              </div>
-              {/* Shoulders/body */}
-              <div style={{ width: profile.gender === 'female' ? '180px' : '220px', height: '120px', borderRadius: '90px 90px 0 0', background: profile.gender === 'female' ? 'linear-gradient(135deg,#DB2777,#F9A8D4)' : 'linear-gradient(135deg,#1D4ED8,#93C5FD)', marginTop: '-10px' }}/>
-            </div>
+          <div style={{ width: '320px', height: '320px', overflow: 'hidden', position: 'relative', borderRadius: '16px 0 0 16px' }}>
+            {profile.gender === 'female' ? (
+              <svg width="320" height="320" viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="320" fill="#FFF0F6"/>
+                <circle cx="150" cy="190" r="170" fill="#FCE7F3" opacity="0.35"/>
+                <circle cx="30" cy="50" r="1.8" fill="#F9A8D4" opacity="0.35"/>
+                <circle cx="272" cy="42" r="1.5" fill="#EC4899" opacity="0.28"/>
+                <circle cx="276" cy="220" r="1.8" fill="#F9A8D4" opacity="0.25"/>
+                <ellipse cx="265" cy="300" rx="20" ry="7" fill="#F9A8D4" opacity="0.18" transform="rotate(30 265 300)"/>
+                <path d="M72 148 Q68 78 150 58 Q232 78 228 148 Q238 152 244 162 Q232 154 226 156 Q216 90 150 78 Q84 90 74 156 Q68 154 56 162 Q62 152 72 148Z" fill="#9D174D" opacity="0.85"/>
+                <path d="M72 146 Q44 178 40 225 Q38 262 46 290 Q56 266 57 238 Q58 205 64 170 Q68 152 74 140Z" fill="#9D174D" opacity="0.75"/>
+                <path d="M228 146 Q256 178 260 225 Q262 262 254 290 Q244 266 243 238 Q242 205 236 170 Q232 152 226 140Z" fill="#9D174D" opacity="0.75"/>
+                <ellipse cx="150" cy="88" rx="76" ry="58" fill="#9D174D" opacity="0.85"/>
+                <rect x="74" y="110" width="152" height="42" fill="#9D174D" opacity="0.85"/>
+                <ellipse cx="150" cy="138" rx="60" ry="62" fill="#DB2777" opacity="0.78"/>
+                <rect x="140" y="196" width="20" height="11" rx="5" fill="#DB2777" opacity="0.74"/>
+                <path d="M84 208 Q84 198 140 197 L160 197 Q216 198 216 208 Q236 220 242 248 Q246 270 240 290 L60 290 Q54 270 58 248 Q64 220 84 208Z" fill="#DB2777" opacity="0.74"/>
+                <ellipse cx="116" cy="238" rx="14" ry="18" fill="#BE185D" opacity="0.16"/>
+                <ellipse cx="184" cy="238" rx="14" ry="18" fill="#BE185D" opacity="0.16"/>
+                <line x1="150" y1="208" x2="150" y2="288" stroke="#FBCFE8" strokeWidth="1.4" strokeLinecap="round" opacity="0.4"/>
+                <line x1="92" y1="300" x2="208" y2="300" stroke="#F0C040" strokeWidth="1.5" strokeLinecap="round"/>
+                <circle cx="92" cy="300" r="2.2" fill="#F0C040"/>
+                <circle cx="208" cy="300" r="2.2" fill="#F0C040"/>
+              </svg>
+            ) : (
+              <svg width="320" height="320" viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="320" fill="#EFF6FF"/>
+                <circle cx="150" cy="190" r="170" fill="#DBEAFE" opacity="0.35"/>
+                <polygon points="26,34 44,66 8,66" fill="#3B82F6" opacity="0.08"/>
+                <polygon points="274,38 292,70 256,70" fill="#1D4ED8" opacity="0.07"/>
+                <rect x="254" y="230" rx="3" width="26" height="26" fill="#1D4ED8" opacity="0.06" transform="rotate(18 267 243)"/>
+                <circle cx="26" cy="158" r="1.8" fill="#93C5FD" opacity="0.35"/>
+                <ellipse cx="150" cy="90" rx="60" ry="36" fill="#071B60" opacity="0.85"/>
+                <path d="M96 118 Q96 78 150 66 Q204 78 204 118 Q210 114 216 112 Q208 84 150 62 Q92 84 84 112 Q90 114 96 118Z" fill="#071B60" opacity="0.85"/>
+                <ellipse cx="92" cy="126" rx="8" ry="16" fill="#071B60" opacity="0.7"/>
+                <ellipse cx="208" cy="126" rx="8" ry="16" fill="#071B60" opacity="0.7"/>
+                <path d="M106 84 Q150 74 194 84" fill="none" stroke="#040D30" strokeWidth="2" strokeLinecap="round" opacity="0.45"/>
+                <path d="M100 96 Q150 85 200 96" fill="none" stroke="#040D30" strokeWidth="1.5" strokeLinecap="round" opacity="0.35"/>
+                <ellipse cx="150" cy="136" rx="58" ry="62" fill="#1D4ED8" opacity="0.78"/>
+                <rect x="136" y="194" width="28" height="12" rx="6" fill="#1D4ED8" opacity="0.74"/>
+                <path d="M46 208 Q46 197 136 196 L164 196 Q254 197 254 208 Q278 222 284 252 Q288 274 282 294 L18 294 Q12 274 16 252 Q22 222 46 208Z" fill="#1D4ED8" opacity="0.74"/>
+                <ellipse cx="106" cy="238" rx="16" ry="20" fill="#1540A8" opacity="0.18"/>
+                <ellipse cx="194" cy="238" rx="16" ry="20" fill="#1540A8" opacity="0.18"/>
+                <line x1="150" y1="208" x2="150" y2="292" stroke="#BFDBFE" strokeWidth="1.4" strokeLinecap="round" opacity="0.4"/>
+                <path d="M138 197 Q150 208 162 197" fill="none" stroke="#93C5FD" strokeWidth="1.8" strokeLinecap="round" opacity="0.5"/>
+                <line x1="92" y1="300" x2="208" y2="300" stroke="#F0C040" strokeWidth="1.5" strokeLinecap="round"/>
+                <circle cx="92" cy="300" r="2.2" fill="#F0C040"/>
+                <circle cx="208" cy="300" r="2.2" fill="#F0C040"/>
+              </svg>
+            )}
             {/* Gold accent line */}
             <div style={{ position: 'absolute', bottom: '44px', left: '25%', right: '25%', height: '1px', background: 'linear-gradient(90deg,transparent,#F0C040,transparent)' }}/>
           <div style={{ position: 'absolute', bottom: '12px', left: '50%', transform: 'translateX(-50%)', zIndex: 10, whiteSpace: 'nowrap' }}>
