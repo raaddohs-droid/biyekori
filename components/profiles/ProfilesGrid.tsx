@@ -345,9 +345,12 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
           </div>
         )}
         {/* Score badge - outside photo, at bottom edge */}
-        <div onClick={(e) => { e.stopPropagation() }} style={{ position: 'absolute', bottom: '-18px', left: '50%', transform: 'translateX(-50%)', zIndex: 20, background: viewerProfile ? getScoreColor(score) : '#6b7280', borderRadius: '20px', padding: '4px 12px', display: 'flex', alignItems: 'center', gap: '3px', boxShadow: '0 2px 8px rgba(0,0,0,0.2), 0 0 0 2px white', whiteSpace: 'nowrap' }}>
-          <span style={{ fontSize: '11px', color: 'white', fontWeight: 800, letterSpacing: '0.2px' }}>{viewerProfile ? '♥ ' + score + '%' : '🔒'}</span>
-        </div>
+        <a href={`/profile/${profile.id}`} onClick={(e) => { e.stopPropagation() }} style={{ position: 'absolute', bottom: '-28px', left: '50%', transform: 'translateX(-50%)', zIndex: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', textDecoration: 'none' }}>
+          <div style={{ background: viewerProfile ? getScoreColor(score) : '#6b7280', borderRadius: '20px', padding: '4px 14px', display: 'flex', alignItems: 'center', gap: '3px', boxShadow: '0 2px 8px rgba(0,0,0,0.2), 0 0 0 2px white', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: '11px', color: 'white', fontWeight: 800, letterSpacing: '0.2px' }}>{viewerProfile ? '♥ ' + score + '%' : '🔒'}</span>
+          </div>
+          <span style={{ fontSize: '9px', color: '#9ca3af', fontWeight: 600, letterSpacing: '0.3px', whiteSpace: 'nowrap' }}>why this score →</span>
+        </a>
       </div>
 
       <div style={{ flex: 1, padding: '20px 20px 16px', minWidth: 0 }}>

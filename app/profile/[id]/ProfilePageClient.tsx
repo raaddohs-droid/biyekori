@@ -298,7 +298,7 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
 
         <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 rounded-t-2xl text-white">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">🤖 AI Score Explained</h2>
+            <h2 className="text-xl font-bold">💕 Why You Match</h2>
             <button onClick={onClose} className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 text-lg font-bold">✕</button>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -306,13 +306,13 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
               <div className="text-3xl font-black">{matchScore}%</div>
               <div className="text-sm font-bold">AI Match Score</div>
               <div className="text-xs text-purple-200">{getMatchLabel(matchScore)}</div>
-              <div className="text-xs text-purple-300 mt-1">Tap to see breakdown</div>
+              <div className="text-xs text-purple-200 mt-1">tap to explore →</div>
             </div>
             <div className={`rounded-xl p-3 text-center cursor-pointer transition ${tab === 'predict' ? 'bg-white/30 ring-2 ring-white' : 'bg-white/10'}`} onClick={() => setTab('predict')}>
               <div className="text-3xl font-black" style={{ color: dataConfidence >= 60 ? '#34d399' : '#fbbf24' }}>{dataConfidence}%</div>
               <div className="text-sm font-bold">Profile Trust Score</div>
               <div className="text-xs text-purple-200">{getConfLabel(dataConfidence)}</div>
-              <div className="text-xs text-purple-300 mt-1">Tap to see breakdown</div>
+              <div className="text-xs text-purple-200 mt-1">tap to explore →</div>
             </div>
 
           </div>
@@ -848,7 +848,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               onClick={() => setShowModal(true)}
               className="inline-flex items-center gap-2 bg-white text-purple-700 font-bold px-6 py-2.5 rounded-xl transition text-sm hover:bg-purple-50 shadow-lg"
             >
-              🔍 Why this score? Tap to understand
+              💕 Why You Match — tap to explore
             </button>
             {!isLoggedIn && <p className="text-purple-200 text-xs mt-2">Score is based on general preferences • Log in for your personal match score</p>}
           </div>
