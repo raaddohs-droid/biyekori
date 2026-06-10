@@ -35,187 +35,52 @@ function parseHeightToCm(h: string): number {
 
 // Full scientific match score using viewer's preferences vs profile fields
 function computeMatchScore(profile: any, viewer: any): number {
-  const hasPrefs = viewer && (
-    viewer.expected_age_min || viewer.expected_age_max ||
-    viewer.religion || viewer.expected_education ||
-    viewer.expected_religious_level || viewer.expected_family_type
-  )
-  if (!hasPrefs) return getGenericScore(profile)
+  const REL_LEVELS = ['Liberal', 'Moderate', 'Religious', 'Very Religious']
+  const EDU_RANK: Record<string, number> = { 'SSC': 1, 'HSC': 2, "Bachelor's": 3, 'BBA': 3, 'Engineering': 4, 'B.Sc Engineering': 4, "Master's": 5, 'MBA': 5, 'MBBS': 5, 'Medical': 5, 'PhD': 6 }
+  const hasViewer = !!(viewer && viewer.id)
 
-  let total = 0
-  let maxTotal = 0
-
-  // 1. AGE MATCH (15 pts)
-  maxTotal += 15
-  const age = profile.age || 0
-  const ageMin = viewer.expected_age_min || 18
-  const ageMax = viewer.expected_age_max || 60
-  if (age >= ageMin && age <= ageMax) {
-    total += 15
-  } else {
-    const diff = Math.min(Math.abs(age - ageMin), Math.abs(age - ageMax))
-    total += Math.max(0, 15 - diff * 2)
+  if (!hasViewer) {
+    let score = 0
+    score += profile.religion ? 12 : 4
+    const age = profile.age || 0
+    if (age >= 20 && age <= 35) score += 12
+    else if (age >= 18 && age <= 40) score += 7
+    else score += 3
+    score += (EDU_RANK[profile.education || ''] || 2) >= 3 ? 12 : 6
+    score += Math.round(((profile.profile_completion || 30) / 100) * 20)
+    if (String(profile.smoking || 'false') === 'false') score += 5
+    if (profile.is_verified) score += 8
+    else if (profile.phone_verified) score += 4
+    if (profile.photo_url) score += 8
+    if (profile.about_me) score += 6
+    return Math.max(30, Math.min(99, score))
   }
 
-  // 2. RELIGION MATCH (15 pts)
-  maxTotal += 15
-  if (viewer.religion && profile.religion) {
-    if (viewer.religion === profile.religion) total += 15
-    else total += 0
-  } else {
-    total += 10
-    maxTotal -= 5
+  let earned = 0; let possible = 0
+  function add(w: number, s: number) { earned += s; possible += w }
+
+  if (viewer.religion || profile.religion) add(15, viewer.religion === profile.religion ? 15 : 0)
+  if (viewer.expected_religious_level || profile.religious_level) {
+    const vRI = REL_LEVELS.indexOf(viewer.expected_religious_level || '')
+    const pRI = REL_LEVELS.indexOf(profile.religious_level || '')
+    let s = 6; if (vRI >= 0 && pRI >= 0) { const d = Math.abs(vRI-pRI); s = d===0?10:d===1?7:d===2?3:0 }
+    add(10, s)
   }
+  { const age=profile.age||0, mn=viewer.expected_age_min||18, mx=viewer.expected_age_max||60, inR=age>=mn&&age<=mx, diff=inR?0:Math.min(Math.abs(age-mn),Math.abs(age-mx)); add(12, inR?12:Math.max(0,12-diff*2)) }
+  if (viewer.expected_education || profile.education) { const er=EDU_RANK[viewer.expected_education||'']||0, pr=EDU_RANK[profile.education||'']||0; add(8, er===0?6:pr>=er?8:Math.max(0,8-(er-pr)*2)) }
+  { const pd=(profile.district||profile.city||'').toLowerCase(); let ed: string[]=[]; try{ed=(viewer.expected_districts||[]).map((d:string)=>d.toLowerCase())}catch{}; const sv=(viewer.district||'').toLowerCase()===pd; add(7, ed.includes(pd)||sv?7:ed.length>0?2:4) }
+  if (viewer.expected_income || profile.monthly_income) { const ei=parseFloat(viewer.expected_income||'0'), pi=profile.monthly_income||0; let s=4; if(ei>0&&pi>0){const r=pi/ei;s=r>=1?7:r>=0.8?5:r>=0.6?3:1}; add(7,s) }
+  { const em=(viewer.expected_marital_status||'Never Married').toLowerCase(), pm=(profile.marital_status||'').toLowerCase(); add(7, em==='any'||em===pm?7:pm==='never married'?5:2) }
+  if (profile.height) { const ph=parseHeightToCm(profile.height), mn=parseHeightToCm(viewer.expected_height_min||''), mx=parseHeightToCm(viewer.expected_height_max||''); let s=3; if(ph>0&&mn>0&&mx>0){if(ph>=mn&&ph<=mx)s=5;else{const d=Math.min(Math.abs(ph-mn),Math.abs(ph-mx));s=d<5?3:1}}; add(5,s) }
+  if (viewer.expected_family_values || profile.family_values) { const ef=(viewer.expected_family_values||'').toLowerCase(), pf=(profile.family_values||'').toLowerCase(); add(5, !ef||ef===pf?5:2) }
+  { const es=(viewer.expected_smoking||'no').toLowerCase(), ps=String(profile.smoking||'false').toLowerCase()==='true'; add(4, es==='no'?(!ps?4:0):4) }
+  if (viewer.expected_family_type || profile.family_type) { const eft=(viewer.expected_family_type||'').toLowerCase(), pft=(profile.family_type||'').toLowerCase(); add(4, !eft||eft===pft?4:2) }
+  add(8, Math.round(((profile.profile_completion||30)/100)*8))
+  add(5, profile.is_verified?5:profile.phone_verified?2:0)
 
-  // 3. RELIGIOSITY MATCH (10 pts)
-  maxTotal += 10
-  const relLevels = ['Liberal', 'Moderate', 'Religious', 'Very Religious']
-  const viewerRelIdx = relLevels.indexOf(viewer.expected_religious_level || '')
-  const profileRelIdx = relLevels.indexOf(profile.religious_level || '')
-  if (viewerRelIdx >= 0 && profileRelIdx >= 0) {
-    const diff = Math.abs(viewerRelIdx - profileRelIdx)
-    total += diff === 0 ? 10 : diff === 1 ? 6 : diff === 2 ? 2 : 0
-  } else {
-    total += 6
-  }
-
-  // 4. EDUCATION MATCH (10 pts)
-  maxTotal += 10
-  const expectedEduRank = EDU_RANK[viewer.expected_education || ''] || 0
-  const profileEduRank = EDU_RANK[profile.education || ''] || 0
-  if (expectedEduRank === 0) {
-    total += 7
-  } else if (profileEduRank >= expectedEduRank) {
-    total += 10
-  } else {
-    const diff = expectedEduRank - profileEduRank
-    total += Math.max(0, 10 - diff * 3)
-  }
-
-  // 5. DISTRICT/LOCATION (8 pts)
-  maxTotal += 8
-  const viewerDistrict = viewer.district || viewer.city || ''
-  const profileDistrict = profile.district || profile.city || ''
-  const preferredDistrict = viewer.partner_district || ''
-  if (preferredDistrict && profileDistrict) {
-    if (profileDistrict === preferredDistrict) total += 8
-    else if (profileDistrict === viewerDistrict) total += 5
-    else total += 2
-  } else if (profileDistrict === viewerDistrict) {
-    total += 8
-  } else {
-    total += 4
-  }
-
-  // 6. FAMILY TYPE (7 pts)
-  maxTotal += 7
-  if (viewer.expected_family_type && profile.family_type) {
-    total += viewer.expected_family_type === profile.family_type ? 7 : 2
-  } else {
-    total += 4
-  }
-
-  // 7. INCOME COMPATIBILITY (7 pts)
-  maxTotal += 7
-  const expectedIncome = parseFloat(viewer.expected_income || '0')
-  const profileIncome = profile.monthly_income || 0
-  if (expectedIncome > 0 && profileIncome > 0) {
-    const ratio = profileIncome / expectedIncome
-    if (ratio >= 1.0) total += 7
-    else if (ratio >= 0.8) total += 5
-    else if (ratio >= 0.6) total += 3
-    else total += 1
-  } else {
-    total += 4
-  }
-
-  // 8. MARITAL STATUS (5 pts)
-  maxTotal += 5
-  const ms = (profile.marital_status || '').toLowerCase()
-  if (ms === 'never married' || ms === 'never_married') total += 5
-  else if (ms === 'divorced' || ms === 'widowed') total += 3
-  else total += 2
-
-  // 9. HEIGHT MATCH (5 pts)
-  maxTotal += 5
-  const profileHeightCm = parseHeightToCm(profile.height || '')
-  const minH = parseHeightToCm(viewer.expected_height_min || '')
-  const maxH = parseHeightToCm(viewer.expected_height_max || '')
-  if (profileHeightCm > 0 && minH > 0 && maxH > 0) {
-    if (profileHeightCm >= minH && profileHeightCm <= maxH) total += 5
-    else {
-      const diff = Math.min(Math.abs(profileHeightCm - minH), Math.abs(profileHeightCm - maxH))
-      total += diff < 5 ? 3 : diff < 10 ? 1 : 0
-    }
-  } else {
-    total += 3
-  }
-
-  // 10. LIFESTYLE MATCH (6 pts)
-  maxTotal += 6
-  let lifestyleScore = 0
-  const profileSmoking = String(profile.smoking || 'false').toLowerCase()
-  if (profileSmoking === 'false' || profileSmoking === 'no') lifestyleScore += 2
-  const profileDrinking = String(profile.drinking || 'false').toLowerCase()
-  if (profileDrinking === 'false' || profileDrinking === 'no') lifestyleScore += 2
-  if (profile.diet) lifestyleScore += 2
-  total += lifestyleScore
-
-  // 11. PERSONALITY COMPATIBILITY (4 pts)
-  maxTotal += 4
-  if (profile.personality_type && viewer.personality_type) {
-    const compatible: Record<string, string[]> = {
-      'Modern': ['Modern', 'Liberal'],
-      'Traditional': ['Traditional', 'Religious'],
-      'Liberal': ['Modern', 'Liberal'],
-      'Religious': ['Traditional', 'Religious', 'Moderate'],
-      'Moderate': ['Moderate', 'Traditional', 'Religious']
-    }
-    const viewerPersonality = viewer.personality_type || ''
-    const profilePersonality = profile.personality_type || ''
-    const compatList = compatible[viewerPersonality] || []
-    total += compatList.includes(profilePersonality) ? 4 : viewerPersonality === profilePersonality ? 4 : 1
-  } else {
-    total += 2
-  }
-
-  // 12. PROFILE COMPLETENESS BONUS (8 pts)
-  maxTotal += 8
-  const completeness = profile.profile_completion || 0
-  total += Math.round((completeness / 100) * 8)
-
-  // 13. VERIFICATION BONUS (5 pts)
-  maxTotal += 5
-  if (profile.is_verified) total += 5
-  else if (profile.phone_verified) total += 2
-
-  // 14. CAREER & EMPLOYER (5 pts) — new field
-  maxTotal += 5
-  if (profile.working_with || profile.employer_name) {
-    const stableWork = ['Government / Public Sector', 'Defense / Civil Services']
-    total += stableWork.includes(profile.working_with || '') ? 5 : 3
-  } else if (profile.profession) {
-    total += 2
-  }
-
-  // 15. FAMILY BACKGROUND (5 pts) — new field
-  maxTotal += 5
-  if (profile.father_profession && profile.mother_profession) total += 5
-  else if (profile.father_profession || profile.mother_profession) total += 3
-  else if (profile.family_financial_status) total += 2
-
-  // 16. MARRIAGE TIMELINE (4 pts) — new field
-  maxTotal += 4
-  if (viewer.marriage_timeline && profile.marriage_timeline) {
-    total += viewer.marriage_timeline === profile.marriage_timeline ? 4 : 2
-  } else if (profile.marriage_timeline) {
-    total += 2
-  }
-
-  // Normalize to 100
-  const raw = Math.round((total / maxTotal) * 100)
-  return Math.max(30, Math.min(99, raw))
+  return Math.max(30, Math.min(99, possible>0?Math.round((earned/possible)*100):50))
 }
+
 
 // Generic score when no viewer context (fallback)
 function getGenericScore(profile: any): number {

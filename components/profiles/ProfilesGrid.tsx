@@ -28,134 +28,142 @@ function parseHeightToCm(h: string): number {
 }
 
 function computeMatchScore(profile: any, viewer: any): number {
-  const hasPrefs = viewer && (
-    viewer.expected_age_min || viewer.expected_age_max ||
-    viewer.religion || viewer.expected_education ||
-    viewer.expected_religious_level || viewer.expected_family_type
-  )
-  if (!hasPrefs) return getGenericScore(profile)
+  const REL_LEVELS = ['Liberal', 'Moderate', 'Religious', 'Very Religious']
+  const hasViewer = !!(viewer && viewer.id)
 
-  let total = 0
-  let maxTotal = 0
+  if (!hasViewer) {
+    // Generic score for guests
+    let score = 0
+    score += profile.religion ? 12 : 4
+    const age = profile.age || 0
+    if (age >= 20 && age <= 35) score += 12
+    else if (age >= 18 && age <= 40) score += 7
+    else score += 3
+    score += (EDU_RANK[profile.education || ''] || 2) >= 3 ? 12 : 6
+    score += Math.round(((profile.profile_completion || 30) / 100) * 20)
+    if (String(profile.smoking || 'false') === 'false') score += 5
+    if (String(profile.drinking || 'false') === 'false') score += 5
+    if (profile.is_verified) score += 8
+    else if (profile.phone_verified) score += 4
+    if (profile.photo_url) score += 8
+    if (profile.about_me) score += 6
+    if (profile.family_values) score += 4
+    if (profile.hobbies) score += 4
+    return Math.max(30, Math.min(99, score))
+  }
 
-  // 1. AGE (15)
-  maxTotal += 15
-  const age = profile.age || 0
-  const ageMin = viewer.expected_age_min || 18
-  const ageMax = viewer.expected_age_max || 60
-  if (age >= ageMin && age <= ageMax) total += 15
-  else { const diff = Math.min(Math.abs(age - ageMin), Math.abs(age - ageMax)); total += Math.max(0, 15 - diff * 2) }
+  let earned = 0
+  let possible = 0
 
-  // 2. RELIGION (15)
-  maxTotal += 15
-  if (viewer.religion && profile.religion) {
-    total += viewer.religion === profile.religion ? 15 : 0
-  } else { total += 10; maxTotal -= 5 }
+  function add(weight: number, score: number) { earned += score; possible += weight }
 
-  // 3. RELIGIOSITY (10)
-  maxTotal += 10
-  const relLevels = ['Liberal', 'Moderate', 'Religious', 'Very Religious']
-  const vRI = relLevels.indexOf(viewer.expected_religious_level || '')
-  const pRI = relLevels.indexOf(profile.religious_level || '')
-  if (vRI >= 0 && pRI >= 0) {
-    const d = Math.abs(vRI - pRI)
-    total += d === 0 ? 10 : d === 1 ? 6 : d === 2 ? 2 : 0
-  } else total += 6
+  // 1. RELIGION (15)
+  if (viewer.religion || profile.religion) {
+    const match = viewer.religion === profile.religion
+    add(15, match ? 15 : 0)
+  }
 
-  // 4. EDUCATION (10)
-  maxTotal += 10
-  const expEdu = EDU_RANK[viewer.expected_education || ''] || 0
-  const profEdu = EDU_RANK[profile.education || ''] || 0
-  if (expEdu === 0) total += 7
-  else if (profEdu >= expEdu) total += 10
-  else total += Math.max(0, 10 - (expEdu - profEdu) * 3)
-
-  // 5. DISTRICT (8)
-  maxTotal += 8
-  const vDist = viewer.district || viewer.city || ''
-  const pDist = profile.district || profile.city || ''
-  const prefDist = viewer.partner_district || ''
-  if (prefDist && pDist) { total += pDist === prefDist ? 8 : pDist === vDist ? 5 : 2 }
-  else total += pDist === vDist ? 8 : 4
-
-  // 6. FAMILY TYPE (7)
-  maxTotal += 7
-  if (viewer.expected_family_type && profile.family_type)
-    total += viewer.expected_family_type === profile.family_type ? 7 : 2
-  else total += 4
-
-  // 7. INCOME (7)
-  maxTotal += 7
-  const expInc = parseFloat(viewer.expected_income || '0')
-  const profInc = profile.monthly_income || 0
-  if (expInc > 0 && profInc > 0) {
-    const r = profInc / expInc
-    total += r >= 1 ? 7 : r >= 0.8 ? 5 : r >= 0.6 ? 3 : 1
-  } else total += 4
-
-  // 8. MARITAL STATUS (5)
-  maxTotal += 5
-  const ms = (profile.marital_status || '').toLowerCase()
-  total += (ms === 'never married' || ms === 'never_married') ? 5 : (ms === 'divorced' || ms === 'widowed') ? 3 : 2
-
-  // 9. HEIGHT (5)
-  maxTotal += 5
-  const phCm = parseHeightToCm(profile.height || '')
-  const minH = parseHeightToCm(viewer.expected_height_min || '')
-  const maxH = parseHeightToCm(viewer.expected_height_max || '')
-  if (phCm > 0 && minH > 0 && maxH > 0) {
-    if (phCm >= minH && phCm <= maxH) total += 5
-    else { const d = Math.min(Math.abs(phCm - minH), Math.abs(phCm - maxH)); total += d < 5 ? 3 : d < 10 ? 1 : 0 }
-  } else total += 3
-
-  // 10. LIFESTYLE (6)
-  maxTotal += 6
-  let ls = 0
-  if (String(profile.smoking || 'false').toLowerCase() === 'false') ls += 2
-  if (String(profile.drinking || 'false').toLowerCase() === 'false') ls += 2
-  if (profile.diet) ls += 2
-  total += ls
-
-  // 11. PERSONALITY (4)
-  maxTotal += 4
-  if (profile.personality_type && viewer.personality_type) {
-    const compat: Record<string, string[]> = {
-      'Modern': ['Modern', 'Liberal'], 'Traditional': ['Traditional', 'Religious'],
-      'Liberal': ['Modern', 'Liberal'], 'Religious': ['Traditional', 'Religious', 'Moderate'],
-      'Moderate': ['Moderate', 'Traditional', 'Religious']
+  // 2. RELIGIOUS LEVEL (10)
+  if (viewer.expected_religious_level || profile.religious_level) {
+    const vRI = REL_LEVELS.indexOf(viewer.expected_religious_level || '')
+    const pRI = REL_LEVELS.indexOf(profile.religious_level || '')
+    let score = 6
+    if (vRI >= 0 && pRI >= 0) {
+      const d = Math.abs(vRI - pRI)
+      score = d === 0 ? 10 : d === 1 ? 7 : d === 2 ? 3 : 0
     }
-    total += (compat[viewer.personality_type] || []).includes(profile.personality_type) ? 4 : viewer.personality_type === profile.personality_type ? 4 : 1
-  } else total += 2
+    add(10, score)
+  }
 
-  // 12. COMPLETENESS (8)
-  maxTotal += 8
-  total += Math.round(((profile.profile_completion || 0) / 100) * 8)
+  // 3. AGE (12)
+  {
+    const age = profile.age || 0
+    const ageMin = viewer.expected_age_min || 18
+    const ageMax = viewer.expected_age_max || 60
+    const inRange = age >= ageMin && age <= ageMax
+    const diff = inRange ? 0 : Math.min(Math.abs(age - ageMin), Math.abs(age - ageMax))
+    add(12, inRange ? 12 : Math.max(0, 12 - diff * 2))
+  }
+
+  // 4. EDUCATION (8)
+  if (viewer.expected_education || profile.education) {
+    const expRank = EDU_RANK[viewer.expected_education || ''] || 0
+    const profRank = EDU_RANK[profile.education || ''] || 0
+    add(8, expRank === 0 ? 6 : profRank >= expRank ? 8 : Math.max(0, 8 - (expRank - profRank) * 2))
+  }
+
+  // 5. LOCATION (7)
+  {
+    const profDist = (profile.district || profile.city || '').toLowerCase()
+    let expDists: string[] = []
+    try { expDists = (viewer.expected_districts || []).map((d: string) => d.toLowerCase()) } catch {}
+    const viewerDist = (viewer.district || '').toLowerCase()
+    const inExpected = expDists.length > 0 && expDists.includes(profDist)
+    const sameAsViewer = profDist === viewerDist
+    add(7, inExpected || sameAsViewer ? 7 : expDists.length > 0 ? 2 : 4)
+  }
+
+  // 6. INCOME (7)
+  if (viewer.expected_income || profile.monthly_income) {
+    const expInc = parseFloat(viewer.expected_income || '0')
+    const profInc = profile.monthly_income || 0
+    let score = 4
+    if (expInc > 0 && profInc > 0) {
+      const r = profInc / expInc
+      score = r >= 1 ? 7 : r >= 0.8 ? 5 : r >= 0.6 ? 3 : 1
+    } else if (!expInc) score = 4
+    add(7, score)
+  }
+
+  // 7. MARITAL STATUS (7)
+  {
+    const expMs = (viewer.expected_marital_status || 'Never Married').toLowerCase()
+    const profMs = (profile.marital_status || '').toLowerCase()
+    const match = expMs === 'any' || expMs === profMs
+    add(7, match ? 7 : profMs === 'never married' ? 5 : 2)
+  }
+
+  // 8. HEIGHT (5)
+  if (profile.height) {
+    const phCm = parseHeightToCm(profile.height)
+    const minCm = parseHeightToCm(viewer.expected_height_min || '')
+    const maxCm = parseHeightToCm(viewer.expected_height_max || '')
+    let score = 3
+    if (phCm > 0 && minCm > 0 && maxCm > 0) {
+      if (phCm >= minCm && phCm <= maxCm) score = 5
+      else { const d = Math.min(Math.abs(phCm-minCm), Math.abs(phCm-maxCm)); score = d < 5 ? 3 : 1 }
+    }
+    add(5, score)
+  }
+
+  // 9. FAMILY VALUES (5)
+  if (viewer.expected_family_values || profile.family_values) {
+    const expFv = (viewer.expected_family_values || '').toLowerCase()
+    const profFv = (profile.family_values || '').toLowerCase()
+    add(5, !expFv || expFv === profFv ? 5 : 2)
+  }
+
+  // 10. SMOKING (4)
+  {
+    const expSmoke = (viewer.expected_smoking || 'no').toLowerCase()
+    const profileSmokes = String(profile.smoking || 'false').toLowerCase() === 'true'
+    add(4, expSmoke === 'no' ? (!profileSmokes ? 4 : 0) : 4)
+  }
+
+  // 11. FAMILY TYPE (4)
+  if (viewer.expected_family_type || profile.family_type) {
+    const expFt = (viewer.expected_family_type || '').toLowerCase()
+    const profFt = (profile.family_type || '').toLowerCase()
+    add(4, !expFt || expFt === profFt ? 4 : 2)
+  }
+
+  // 12. PROFILE TRUST (8)
+  add(8, Math.round(((profile.profile_completion || 30) / 100) * 8))
 
   // 13. VERIFICATION (5)
-  maxTotal += 5
-  total += profile.is_verified ? 5 : profile.phone_verified ? 2 : 0
+  add(5, profile.is_verified ? 5 : profile.phone_verified ? 2 : 0)
 
-  return Math.max(30, Math.min(99, Math.round((total / maxTotal) * 100)))
-}
-
-function getGenericScore(profile: any): number {
-  let score = 0
-  score += profile.religion ? 12 : 4
-  const age = profile.age || 0
-  if (age >= 20 && age <= 35) score += 12
-  else if (age >= 18 && age <= 40) score += 7
-  else score += 3
-  score += (EDU_RANK[profile.education || ''] || 2) >= 3 ? 12 : 6
-  score += Math.round(((profile.profile_completion || 30) / 100) * 20)
-  if (String(profile.smoking || 'false') === 'false') score += 5
-  if (String(profile.drinking || 'false') === 'false') score += 5
-  if (profile.is_verified) score += 8
-  else if (profile.phone_verified) score += 4
-  if (profile.photo_url) score += 8
-  if (profile.about_me) score += 6
-  if (profile.family_values) score += 4
-  if (profile.hobbies) score += 4
-  return Math.max(30, Math.min(99, score))
+  return Math.max(30, Math.min(99, possible > 0 ? Math.round((earned / possible) * 100) : 50))
 }
 
 function getScoreColor(score: number): string {
