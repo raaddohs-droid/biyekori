@@ -307,52 +307,36 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
         ) : (
           <div style={{ width: '320px', height: '320px', overflow: 'hidden', position: 'relative', borderRadius: '16px 0 0 16px' }}>
             {profile.gender === 'female' ? (
-              <svg width="320" height="320" viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg">
-                <rect width="300" height="320" fill="#FFF0F6"/>
-                <circle cx="150" cy="190" r="170" fill="#FCE7F3" opacity="0.35"/>
-                <circle cx="30" cy="50" r="1.8" fill="#F9A8D4" opacity="0.35"/>
-                <circle cx="272" cy="42" r="1.5" fill="#EC4899" opacity="0.28"/>
-                <circle cx="276" cy="220" r="1.8" fill="#F9A8D4" opacity="0.25"/>
-                <ellipse cx="265" cy="300" rx="20" ry="7" fill="#F9A8D4" opacity="0.18" transform="rotate(30 265 300)"/>
-                <path d="M72 148 Q68 78 150 58 Q232 78 228 148 Q238 152 244 162 Q232 154 226 156 Q216 90 150 78 Q84 90 74 156 Q68 154 56 162 Q62 152 72 148Z" fill="#9D174D" opacity="0.85"/>
-                <path d="M72 146 Q36 178 32 225 Q30 262 38 295 Q52 268 54 238 Q56 202 62 168 Q67 150 74 138Z" fill="#9D174D" opacity="0.82"/>
-                <path d="M228 146 Q264 178 268 225 Q270 262 262 295 Q248 268 246 238 Q244 202 238 168 Q233 150 226 138Z" fill="#9D174D" opacity="0.82"/>
-                <ellipse cx="150" cy="88" rx="76" ry="58" fill="#9D174D" opacity="0.85"/>
-
-                <ellipse cx="150" cy="138" rx="60" ry="62" fill="#DB2777" opacity="0.78"/>
-                <rect x="140" y="196" width="20" height="11" rx="5" fill="#DB2777" opacity="0.74"/>
-                <path d="M84 208 Q84 198 140 197 L160 197 Q216 198 216 208 Q236 220 242 248 Q246 270 240 290 L60 290 Q54 270 58 248 Q64 220 84 208Z" fill="#DB2777" opacity="0.74"/>
-                <ellipse cx="116" cy="238" rx="14" ry="18" fill="#BE185D" opacity="0.16"/>
-                <ellipse cx="184" cy="238" rx="14" ry="18" fill="#BE185D" opacity="0.16"/>
-                <line x1="150" y1="208" x2="150" y2="288" stroke="#FBCFE8" strokeWidth="1.4" strokeLinecap="round" opacity="0.4"/>
-                <line x1="92" y1="300" x2="208" y2="300" stroke="#F0C040" strokeWidth="1.5" strokeLinecap="round"/>
-                <circle cx="92" cy="300" r="2.2" fill="#F0C040"/>
-                <circle cx="208" cy="300" r="2.2" fill="#F0C040"/>
+              <svg width="320" height="320" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+                <rect width="260" height="260" fill="#FFF0F6"/>
+                <circle cx="130" cy="140" r="130" fill="#FCE7F3" opacity="0.5"/>
+                <circle cx="22" cy="38" r="2" fill="#F9A8D4" opacity="0.5"/>
+                <circle cx="238" cy="32" r="1.5" fill="#EC4899" opacity="0.4"/>
+                <circle cx="244" cy="190" r="2" fill="#F9A8D4" opacity="0.35"/>
+                <circle cx="228" cy="56" r="6" fill="#F9A8D4" opacity="0.25"/>
+                <circle cx="240" cy="48" r="4" fill="#EC4899" opacity="0.18"/>
+                <ellipse cx="72" cy="95" rx="22" ry="60" fill="#9D174D" opacity="0.78"/>
+                <ellipse cx="188" cy="95" rx="22" ry="60" fill="#9D174D" opacity="0.78"/>
+                <ellipse cx="130" cy="60" rx="70" ry="48" fill="#9D174D" opacity="0.82"/>
+                <path d="M 40 260 L 40 220 Q 40 195 65 185 Q 85 178 100 175 Q 104 168 105 160 Q 88 152 80 136 Q 70 116 70 100 Q 70 40 130 28 Q 190 40 190 100 Q 190 116 180 136 Q 172 152 155 160 Q 156 168 160 175 Q 175 178 195 185 Q 220 195 220 220 L 220 260 Z" fill="#DB2777" opacity="0.82"/>
+                <line x1="80" y1="242" x2="180" y2="242" stroke="#F0C040" strokeWidth="1.5" strokeLinecap="round"/>
+                <circle cx="80" cy="242" r="2" fill="#F0C040"/>
+                <circle cx="180" cy="242" r="2" fill="#F0C040"/>
               </svg>
             ) : (
-              <svg width="320" height="320" viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg">
-                <rect width="300" height="320" fill="#EFF6FF"/>
-                <circle cx="150" cy="190" r="170" fill="#DBEAFE" opacity="0.35"/>
-                <polygon points="26,34 44,66 8,66" fill="#3B82F6" opacity="0.08"/>
-                <polygon points="274,38 292,70 256,70" fill="#1D4ED8" opacity="0.07"/>
-                <rect x="254" y="230" rx="3" width="26" height="26" fill="#1D4ED8" opacity="0.06" transform="rotate(18 267 243)"/>
-                <circle cx="26" cy="158" r="1.8" fill="#93C5FD" opacity="0.35"/>
-                <ellipse cx="150" cy="90" rx="60" ry="36" fill="#071B60" opacity="0.85"/>
-                <path d="M96 118 Q96 78 150 66 Q204 78 204 118 Q210 114 216 112 Q208 84 150 62 Q92 84 84 112 Q90 114 96 118Z" fill="#071B60" opacity="0.85"/>
-                <ellipse cx="92" cy="126" rx="8" ry="16" fill="#071B60" opacity="0.7"/>
-                <ellipse cx="208" cy="126" rx="8" ry="16" fill="#071B60" opacity="0.7"/>
-                <path d="M106 84 Q150 74 194 84" fill="none" stroke="#040D30" strokeWidth="2" strokeLinecap="round" opacity="0.45"/>
-                <path d="M100 96 Q150 85 200 96" fill="none" stroke="#040D30" strokeWidth="1.5" strokeLinecap="round" opacity="0.35"/>
-                <ellipse cx="150" cy="136" rx="58" ry="62" fill="#1D4ED8" opacity="0.78"/>
-                <rect x="136" y="194" width="28" height="12" rx="6" fill="#1D4ED8" opacity="0.74"/>
-                <path d="M46 208 Q46 197 136 196 L164 196 Q254 197 254 208 Q278 222 284 252 Q288 274 282 294 L18 294 Q12 274 16 252 Q22 222 46 208Z" fill="#1D4ED8" opacity="0.74"/>
-                <ellipse cx="106" cy="238" rx="16" ry="20" fill="#1540A8" opacity="0.18"/>
-                <ellipse cx="194" cy="238" rx="16" ry="20" fill="#1540A8" opacity="0.18"/>
-                <line x1="150" y1="208" x2="150" y2="292" stroke="#BFDBFE" strokeWidth="1.4" strokeLinecap="round" opacity="0.4"/>
-                <path d="M138 197 Q150 208 162 197" fill="none" stroke="#93C5FD" strokeWidth="1.8" strokeLinecap="round" opacity="0.5"/>
-                <line x1="92" y1="300" x2="208" y2="300" stroke="#F0C040" strokeWidth="1.5" strokeLinecap="round"/>
-                <circle cx="92" cy="300" r="2.2" fill="#F0C040"/>
-                <circle cx="208" cy="300" r="2.2" fill="#F0C040"/>
+              <svg width="320" height="320" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+                <rect width="260" height="260" fill="#EFF6FF"/>
+                <circle cx="130" cy="140" r="130" fill="#DBEAFE" opacity="0.5"/>
+                <polygon points="22,32 38,60 6,60" fill="#3B82F6" opacity="0.1"/>
+                <polygon points="238,36 254,64 222,64" fill="#1D4ED8" opacity="0.08"/>
+                <rect x="224" y="188" rx="3" width="22" height="22" fill="#1D4ED8" opacity="0.07" transform="rotate(18 235 199)"/>
+                <circle cx="20" cy="170" r="2" fill="#93C5FD" opacity="0.4"/>
+                <rect x="68" y="30" width="124" height="52" rx="62" fill="#071B60" opacity="0.82"/>
+                <path d="M 88 42 Q 130 34 172 42" fill="none" stroke="#040D30" strokeWidth="2" strokeLinecap="round" opacity="0.4"/>
+                <path d="M 20 260 L 20 215 Q 20 188 50 178 Q 72 170 95 168 Q 98 160 98 152 Q 84 144 76 128 Q 68 108 68 92 Q 68 38 130 28 Q 192 38 192 92 Q 192 108 184 128 Q 176 144 162 152 Q 162 160 165 168 Q 188 170 210 178 Q 240 188 240 215 L 240 260 Z" fill="#1D4ED8" opacity="0.82"/>
+                <line x1="80" y1="242" x2="180" y2="242" stroke="#F0C040" strokeWidth="1.5" strokeLinecap="round"/>
+                <circle cx="80" cy="242" r="2" fill="#F0C040"/>
+                <circle cx="180" cy="242" r="2" fill="#F0C040"/>
               </svg>
             )}
             {/* Gold accent line */}
