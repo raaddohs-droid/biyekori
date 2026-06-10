@@ -36,76 +36,208 @@ async function recordView(profileId: string) {
 
 // ─── SCORING ENGINE ───────────────────────────────────────────
 
-function calculateScores(profile: any) {
+function parseHCm(h: string): number {
+  if (!h) return 0
+  try {
+    const clean = h.replace(/"/g,'').replace("'",".")
+    const parts = clean.split('.')
+    return (parseInt(parts[0]) * 12 + (parseInt(parts[1]) || 0)) * 2.54
+  } catch { return 0 }
+}
+
+function calculateScores(profile: any, viewer?: any) {
   const breakdown: any[] = []
-  let totalScore = 0
+  const REL_LEVELS = ['Liberal', 'Moderate', 'Religious', 'Very Religious']
+  const EDU_RANK: Record<string,number> = {
+    'SSC':1,'HSC':2,"Bachelor's":3,'BBA':3,'BSc':3,'B.Sc':3,'Bachelor of Arts':3,
+    'Bachelor of Science':3,'Bachelor of Commerce':3,'LLB':3,'Engineering':4,
+    'B.Sc Engineering':4,"Master's":5,'MBA':5,'LLM':5,'MDS':5,'MBBS':5,'Medical':5,'PhD':6
+  }
+  const isVerified = profile.is_verified
+  const hasViewer = !!(viewer && viewer.id)
+  let earned = 0
+  let possible = 0
 
-  const religionMatch = profile.religion === 'Islam'
-  const religionScore = religionMatch ? 25 : 5
-  totalScore += religionScore
-  breakdown.push({
-    factor: 'Religion', icon: '🕌', score: religionScore, max: 25, matched: religionMatch,
-    reason: religionMatch ? `Both are ${profile.religion} — strong foundation` : `Religion is ${profile.religion} — may differ from your preference`,
-    tip: 'Religion compatibility is the #1 factor in Bangladeshi marriages'
-  })
+  function addField(factor: string, icon: string, weight: number, score: number, matched: boolean, reason: string, tip: string, viewerVal?: string, profileVal?: string) {
+    earned += score
+    possible += weight
+    breakdown.push({ factor, icon, score, max: weight, matched, reason, tip, viewerVal, profileVal })
+  }
 
-  const age = profile.age
-  const ageInRange = age >= 20 && age <= 35
-  const ageScore = ageInRange ? 15 : age >= 18 && age <= 40 ? 8 : 3
-  totalScore += ageScore
-  breakdown.push({
-    factor: 'Age Preference', icon: '🎂', score: ageScore, max: 15, matched: ageInRange,
-    reason: ageInRange ? `Age ${age} is within typical preference range` : `Age ${age} is outside the typical preference range`,
-    tip: 'Age compatibility is important for long-term happiness'
-  })
+  // 1. RELIGION (15)
+  if (viewer?.religion || profile.religion) {
+    const vRel = viewer?.religion || 'Islam'
+    const pRel = profile.religion || ''
+    const match = vRel === pRel
+    addField('Religion', '🕌', 15, match ? 15 : 0, match,
+      match ? `Both are ${pRel}` : `You prefer ${vRel}, profile is ${pRel}`,
+      'Religion is the #1 compatibility factor in BD marriages',
+      hasViewer ? vRel : undefined, pRel)
+  }
 
-  const eduRank: Record<string, number> = { 'SSC': 1, 'HSC': 2, "Bachelor's": 3, "Master's": 4, 'Medical': 5, 'Engineering': 5, 'Law': 4 }
-  const eduScore = (eduRank[profile.education] || 3) >= 3 ? 15 : (eduRank[profile.education] || 3) === 2 ? 8 : 5
-  totalScore += eduScore
-  breakdown.push({
-    factor: 'Education', icon: '🎓', score: eduScore, max: 15, matched: eduScore >= 12,
-    reason: eduScore >= 12 ? `${profile.education} degree — strong educational background` : `${profile.education} — may differ from your preference`,
-    tip: 'Higher education usually means better compatibility for modern couples'
-  })
+  // 2. RELIGIOUS LEVEL (10)
+  if (viewer?.expected_religious_level || profile.religious_level) {
+    const vRI = REL_LEVELS.indexOf(viewer?.expected_religious_level || '')
+    const pRI = REL_LEVELS.indexOf(profile.religious_level || '')
+    let score = 6
+    if (vRI >= 0 && pRI >= 0) {
+      const d = Math.abs(vRI - pRI)
+      score = d === 0 ? 10 : d === 1 ? 7 : d === 2 ? 3 : 0
+    }
+    const match = score >= 7
+    addField('Religious Level', '🙏', 10, score, match,
+      match ? 'Religious levels are compatible' : 'Gap in religious practice level',
+      'Similar religiosity leads to harmonious daily life',
+      hasViewer ? (viewer?.expected_religious_level || '') : undefined,
+      profile.religious_level || '')
+  }
 
-  totalScore += 7
-  breakdown.push({
-    factor: 'Location', icon: '📍', score: 7, max: 10, matched: true,
-    reason: `Based in ${profile.city}, ${profile.district}`,
-    tip: 'Proximity makes meeting families easier'
-  })
+  // 3. AGE (12)
+  {
+    const age = profile.age || 0
+    const ageMin = viewer?.expected_age_min || (hasViewer ? 18 : 20)
+    const ageMax = viewer?.expected_age_max || (hasViewer ? 60 : 35)
+    const inRange = age >= ageMin && age <= ageMax
+    const diff = inRange ? 0 : Math.min(Math.abs(age - ageMin), Math.abs(age - ageMax))
+    const score = inRange ? 12 : Math.max(0, 12 - diff * 2)
+    addField('Age', '🎂', 12, score, inRange,
+      inRange ? `Age ${age} is within your preferred range (${ageMin}–${ageMax})` : `Age ${age} is outside preferred range (${ageMin}–${ageMax})`,
+      'Age compatibility is important for long-term happiness',
+      hasViewer ? `${ageMin}–${ageMax} yrs` : undefined, `${age} yrs`)
+  }
 
-  const persScore = profile.personality_type ? 8 : 5
-  totalScore += persScore
-  breakdown.push({
-    factor: 'Personality', icon: '🧠', score: persScore, max: 10, matched: persScore >= 8,
-    reason: profile.personality_type ? `Personality: "${profile.personality_type}"` : 'Personality not specified',
-    tip: 'Personality compatibility predicts long-term happiness'
-  })
+  // 4. EDUCATION (8)
+  if (viewer?.expected_education || profile.education) {
+    const expRank = EDU_RANK[viewer?.expected_education || ''] || 0
+    const profRank = EDU_RANK[profile.education || ''] || 0
+    const score = expRank === 0 ? 6 : profRank >= expRank ? 8 : Math.max(0, 8 - (expRank - profRank) * 2)
+    const match = score >= 6
+    addField('Education', '🎓', 8, score, match,
+      match ? `${profile.education} meets your education preference` : `${profile.education} is below your preferred level`,
+      'Education level affects lifestyle and communication compatibility',
+      hasViewer ? (viewer?.expected_education || 'Any') : undefined, profile.education || '')
+  }
 
-  const relScore = profile.religious_level === 'Religious' ? 10 : profile.religious_level === 'Very Religious' ? 7 : 5
-  totalScore += relScore
-  breakdown.push({
-    factor: 'Religious Practice', icon: '🙏', score: relScore, max: 10, matched: relScore >= 8,
-    reason: `Prayer habit: ${profile.prayer_habit || 'Not specified'}`,
-    tip: 'Matching religious practice leads to harmonious family life'
-  })
+  // 5. LOCATION (7)
+  {
+    const profDist = (profile.district || profile.city || '').toLowerCase()
+    let expDists: string[] = []
+    try { expDists = (viewer?.expected_districts || []).map((d: string) => d.toLowerCase()) } catch {}
+    const viewerDist = (viewer?.district || '').toLowerCase()
+    const inExpected = expDists.length > 0 && expDists.includes(profDist)
+    const sameAsViewer = profDist === viewerDist
+    const score = inExpected || sameAsViewer ? 7 : expDists.length > 0 ? 2 : 4
+    const match = score >= 5
+    addField('Location', '📍', 7, score, match,
+      match ? `${profile.district} is in your preferred area` : `${profile.district} is outside your preferred districts`,
+      'Proximity makes meeting families and visits easier',
+      hasViewer && expDists.length > 0 ? expDists.slice(0,2).join(', ') : undefined,
+      profile.district || '')
+  }
 
-  const famScore = profile.family_values ? 8 : 5
-  totalScore += famScore
-  breakdown.push({
-    factor: 'Family Values', icon: '👨‍👩‍👧‍👦', score: famScore, max: 10, matched: famScore >= 8,
-    reason: profile.family_values ? `Family values: ${profile.family_values}` : 'Family values not specified',
-    tip: 'Shared family values are essential for a lasting marriage'
-  })
+  // 6. INCOME (7)
+  if (viewer?.expected_income || profile.monthly_income) {
+    const expInc = parseFloat(viewer?.expected_income || '0')
+    const profInc = profile.monthly_income || 0
+    let score = 4
+    if (expInc > 0 && profInc > 0) {
+      const r = profInc / expInc
+      score = r >= 1 ? 7 : r >= 0.8 ? 5 : r >= 0.6 ? 3 : 1
+    } else if (!expInc) score = 4
+    const match = score >= 5
+    addField('Income', '💰', 7, score, match,
+      match ? `Income ৳${profInc?.toLocaleString()} meets your expectation` : `Income ৳${profInc?.toLocaleString()} is below expected ৳${expInc?.toLocaleString()}`,
+      'Financial stability is important for family life in Bangladesh',
+      hasViewer && expInc > 0 ? `৳${expInc.toLocaleString()}+` : undefined,
+      profInc > 0 ? `৳${profInc.toLocaleString()}` : 'Not specified')
+  }
 
-  const hobbyScore = profile.hobbies ? 4 : 2
-  totalScore += hobbyScore
-  breakdown.push({
-    factor: 'Shared Interests', icon: '🎨', score: hobbyScore, max: 5, matched: hobbyScore >= 3,
-    reason: profile.hobbies ? `Hobbies: ${profile.hobbies}` : 'Hobbies not specified',
-    tip: 'Shared hobbies make daily life more enjoyable together'
-  })
+  // 7. MARITAL STATUS (7)
+  {
+    const expMs = (viewer?.expected_marital_status || 'Never Married').toLowerCase()
+    const profMs = (profile.marital_status || '').toLowerCase()
+    const match = expMs === 'any' || expMs === profMs
+    const score = match ? 7 : profMs === 'never married' ? 5 : 2
+    addField('Marital Status', '💍', 7, score, match,
+      match ? 'Marital status matches your preference' : `You prefer ${expMs}, profile is ${profMs}`,
+      'Marital status is an important consideration in BD matrimony',
+      hasViewer ? (viewer?.expected_marital_status || 'Never Married') : undefined,
+      profile.marital_status || '')
+  }
+
+  // 8. HEIGHT (5)
+  if (profile.height) {
+    const phCm = parseHCm(profile.height)
+    const minCm = parseHCm(viewer?.expected_height_min || '')
+    const maxCm = parseHCm(viewer?.expected_height_max || '')
+    let score = 3
+    if (phCm > 0 && minCm > 0 && maxCm > 0) {
+      if (phCm >= minCm && phCm <= maxCm) score = 5
+      else { const d = Math.min(Math.abs(phCm-minCm), Math.abs(phCm-maxCm)); score = d < 5 ? 3 : 1 }
+    }
+    addField('Height', '📏', 5, score, score >= 4,
+      score >= 4 ? `Height ${profile.height} is within your preference` : `Height ${profile.height} is outside your preference`,
+      'Height preference is common in BD matrimony',
+      hasViewer && viewer?.expected_height_min ? `${viewer.expected_height_min}–${viewer.expected_height_max}` : undefined,
+      profile.height)
+  }
+
+  // 9. FAMILY VALUES (5)
+  if (viewer?.expected_family_values || profile.family_values) {
+    const expFv = (viewer?.expected_family_values || '').toLowerCase()
+    const profFv = (profile.family_values || '').toLowerCase()
+    const match = !expFv || expFv === profFv
+    addField('Family Values', '👨‍👩‍👧‍👦', 5, match ? 5 : 2, match,
+      match ? `Family values align (${profile.family_values})` : `Values differ: you prefer ${expFv}, profile is ${profFv}`,
+      'Shared family values are essential for a lasting marriage',
+      hasViewer ? (viewer?.expected_family_values || '') : undefined,
+      profile.family_values || '')
+  }
+
+  // 10. SMOKING (4)
+  {
+    const expSmoke = (viewer?.expected_smoking || 'no').toLowerCase()
+    const profileSmokes = String(profile.smoking || 'false').toLowerCase() === 'true'
+    const match = expSmoke === 'no' ? !profileSmokes : true
+    addField('Non-Smoker', '🚭', 4, match ? 4 : 0, match,
+      match ? 'Non-smoker — matches your preference' : 'Profile smokes — may not match your preference',
+      'Smoking habits affect health and lifestyle compatibility',
+      hasViewer ? (expSmoke === 'no' ? 'Non-smoker preferred' : 'Any') : undefined,
+      profileSmokes ? 'Smoker' : 'Non-smoker')
+  }
+
+  // 11. FAMILY TYPE (4)
+  if (viewer?.expected_family_type || profile.family_type) {
+    const expFt = (viewer?.expected_family_type || '').toLowerCase()
+    const profFt = (profile.family_type || '').toLowerCase()
+    const match = !expFt || expFt === profFt
+    addField('Family Type', '🏠', 4, match ? 4 : 2, match,
+      match ? `Family type matches (${profile.family_type})` : `You prefer ${expFt} family, profile has ${profFt}`,
+      'Nuclear vs Joint family preference matters for daily life',
+      hasViewer ? (viewer?.expected_family_type || 'Any') : undefined,
+      profile.family_type || '')
+  }
+
+  // 12. PROFILE TRUST (8)
+  {
+    const completion = profile.profile_completion || 30
+    const score = Math.round((completion / 100) * 8)
+    addField('Profile Trust', '🛡️', 8, score, completion >= 70,
+      completion >= 70 ? `Profile is ${completion}% complete — trustworthy` : `Profile is only ${completion}% complete`,
+      'Complete profiles lead to better matches and higher trust',
+      undefined, `${completion}%`)
+  }
+
+  // 13. VERIFICATION (5)
+  {
+    const score = isVerified ? 5 : profile.phone_verified ? 2 : 0
+    addField('Verification', '✅', 5, score, isVerified,
+      isVerified ? 'Profile is verified' : profile.phone_verified ? 'Phone verified only' : 'Not verified',
+      'Verified profiles confirm the person is real',
+      undefined, isVerified ? 'Verified' : profile.phone_verified ? 'Phone only' : 'Unverified')
+  }
+
+  const finalScore = possible > 0 ? Math.round((earned / possible) * 100) : 50
 
   let dataConfidence = 0
   const confBreakdown = [
@@ -130,12 +262,15 @@ function calculateScores(profile: any) {
   confBreakdown.forEach(c => { if (c.met) dataConfidence += c.points })
 
   return {
-    matchScore: Math.min(Math.round(totalScore), 100),
+    matchScore: Math.max(30, Math.min(99, finalScore)),
     dataConfidence: Math.min(dataConfidence, 100),
     breakdown,
-    confBreakdown
+    confBreakdown,
+    fieldsCompared: breakdown.length,
+    hasPersonalScore: hasViewer
   }
 }
+
 
 function getMatchLabel(s: number) {
   if (s >= 85) return 'Excellent Match! 🌟'
@@ -154,7 +289,7 @@ function getConfLabel(s: number) {
 // ─── MODAL ────────────────────────────────────────────────────
 
 function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: any, onClose: () => void, isLoggedIn: boolean, viewerProfile?: any }) {
-  const { matchScore, dataConfidence, breakdown, confBreakdown } = calculateScores(profile)
+  const { matchScore, dataConfidence, breakdown, confBreakdown, fieldsCompared, hasPersonalScore } = calculateScores(profile, viewerProfile)
   const [tab, setTab] = useState<'match' | 'predict'>('match')
 
   return (
@@ -192,16 +327,29 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
               </div>
               )}
               <h3 className="font-bold text-gray-800 mb-3">Match Score Breakdown</h3>
+              {hasPersonalScore && (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-3 mb-3 text-xs text-green-800">
+                  ✅ Personalised score based on your {fieldsCompared} preferences
+                </div>
+              )}
               <div className="space-y-3">
                 {breakdown.map((item: any, i: number) => (
-                  <div key={i} className="border border-gray-100 rounded-xl p-3">
+                  <div key={i} className={`border rounded-xl p-3 ${item.matched ? 'border-green-100 bg-green-50/30' : 'border-red-100 bg-red-50/20'}`}>
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
                         <span>{item.icon}</span>
                         <span className="font-semibold text-gray-800 text-sm">{item.factor}</span>
+                        <span>{item.matched ? '✅' : '❌'}</span>
                       </div>
                       <span className="text-xs text-gray-500">{item.score}/{item.max} pts</span>
                     </div>
+                    {item.viewerVal && (
+                      <div className="flex gap-2 text-xs mb-1">
+                        <span className="text-purple-600 font-medium">You want: {item.viewerVal}</span>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-gray-600">Profile: {item.profileVal}</span>
+                      </div>
+                    )}
                     <div className="w-full bg-gray-100 rounded-full h-1.5 mb-2">
                       <div className="h-1.5 rounded-full transition-all" style={{ width: `${(item.score / item.max) * 100}%`, backgroundColor: item.matched ? '#10b981' : '#f97316' }} />
                     </div>
@@ -264,7 +412,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [photoIndex, setPhotoIndex] = useState(0)
   const [contactRequest, setContactRequest] = useState<any>(null)
   const [loadingContact, setLoadingContact] = useState(false)
-  const { matchScore, dataConfidence } = calculateScores(profile)
+  const { matchScore, dataConfidence } = calculateScores(profile, viewerProfile)
   const [galleryPhotos, setGalleryPhotos] = useState<any[]>([])
   const profileCode = getProfileCode(profile.id, profile.created_at || '')
 
