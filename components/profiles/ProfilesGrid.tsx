@@ -305,39 +305,11 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
         {photoUrl ? (
           <img src={photoUrl} alt={name} style={{ width: '320px', height: '320px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block', borderRadius: '16px 0 0 16px' }} />
         ) : (
-          <div style={{ width: '320px', height: '320px', overflow: 'hidden', position: 'relative', borderRadius: '16px 0 0 16px' }}>
+          <div style={{ width: '320px', height: '320px', overflow: 'hidden', position: 'relative', borderRadius: '16px 0 0 16px', background: profile.gender === 'female' ? '#FFF0F6' : '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {profile.gender === 'female' ? (
-              <svg width="320" height="320" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
-                <rect width="260" height="260" fill="#FFF0F6"/>
-                <circle cx="130" cy="140" r="130" fill="#FCE7F3" opacity="0.5"/>
-                <circle cx="22" cy="38" r="2" fill="#F9A8D4" opacity="0.5"/>
-                <circle cx="238" cy="32" r="1.5" fill="#EC4899" opacity="0.4"/>
-                <circle cx="244" cy="190" r="2" fill="#F9A8D4" opacity="0.35"/>
-                <circle cx="228" cy="56" r="6" fill="#F9A8D4" opacity="0.25"/>
-                <circle cx="240" cy="48" r="4" fill="#EC4899" opacity="0.18"/>
-                <ellipse cx="72" cy="95" rx="22" ry="60" fill="#9D174D" opacity="0.78"/>
-                <ellipse cx="188" cy="95" rx="22" ry="60" fill="#9D174D" opacity="0.78"/>
-                <ellipse cx="130" cy="60" rx="70" ry="48" fill="#9D174D" opacity="0.82"/>
-                <path d="M 40 260 L 40 220 Q 40 195 65 185 Q 85 178 100 175 Q 104 168 105 160 Q 88 152 80 136 Q 70 116 70 100 Q 70 40 130 28 Q 190 40 190 100 Q 190 116 180 136 Q 172 152 155 160 Q 156 168 160 175 Q 175 178 195 185 Q 220 195 220 220 L 220 260 Z" fill="#DB2777" opacity="0.82"/>
-                <line x1="80" y1="242" x2="180" y2="242" stroke="#F0C040" strokeWidth="1.5" strokeLinecap="round"/>
-                <circle cx="80" cy="242" r="2" fill="#F0C040"/>
-                <circle cx="180" cy="242" r="2" fill="#F0C040"/>
-              </svg>
+              <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@7.4.47/svg/face-woman.svg" width="220" height="220" style={{ filter: 'invert(27%) sepia(80%) saturate(1500%) hue-rotate(300deg) brightness(90%)', opacity: 0.55, marginBottom: '30px' }} alt=""/>
             ) : (
-              <svg width="320" height="320" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
-                <rect width="260" height="260" fill="#EFF6FF"/>
-                <circle cx="130" cy="140" r="130" fill="#DBEAFE" opacity="0.5"/>
-                <polygon points="22,32 38,60 6,60" fill="#3B82F6" opacity="0.1"/>
-                <polygon points="238,36 254,64 222,64" fill="#1D4ED8" opacity="0.08"/>
-                <rect x="224" y="188" rx="3" width="22" height="22" fill="#1D4ED8" opacity="0.07" transform="rotate(18 235 199)"/>
-                <circle cx="20" cy="170" r="2" fill="#93C5FD" opacity="0.4"/>
-                <rect x="68" y="30" width="124" height="52" rx="62" fill="#071B60" opacity="0.82"/>
-                <path d="M 88 42 Q 130 34 172 42" fill="none" stroke="#040D30" strokeWidth="2" strokeLinecap="round" opacity="0.4"/>
-                <path d="M 20 260 L 20 215 Q 20 188 50 178 Q 72 170 95 168 Q 98 160 98 152 Q 84 144 76 128 Q 68 108 68 92 Q 68 38 130 28 Q 192 38 192 92 Q 192 108 184 128 Q 176 144 162 152 Q 162 160 165 168 Q 188 170 210 178 Q 240 188 240 215 L 240 260 Z" fill="#1D4ED8" opacity="0.82"/>
-                <line x1="80" y1="242" x2="180" y2="242" stroke="#F0C040" strokeWidth="1.5" strokeLinecap="round"/>
-                <circle cx="80" cy="242" r="2" fill="#F0C040"/>
-                <circle cx="180" cy="242" r="2" fill="#F0C040"/>
-              </svg>
+              <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@7.4.47/svg/account-tie.svg" width="220" height="220" style={{ filter: 'invert(27%) sepia(80%) saturate(500%) hue-rotate(180deg) brightness(90%)', opacity: 0.55, marginBottom: '30px' }} alt=""/>
             )}
             {/* Gold accent line */}
             <div style={{ position: 'absolute', bottom: '44px', left: '25%', right: '25%', height: '1px', background: 'linear-gradient(90deg,transparent,#F0C040,transparent)' }}/>
