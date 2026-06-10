@@ -1244,23 +1244,64 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           </div>
         )}
 
-        {hasValue(profile.expected_age_min) && (
-          <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6" style={{color:"#111827"}}>👑 Partner Expectations</h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Expected Age</span><span className="font-medium" style={{color:"#111827"}}>{profile.expected_age_min} - {profile.expected_age_max} years</span></div>
-              {hasValue(profile.expected_height_min) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Expected Height</span><span className="font-medium" style={{color:"#111827"}}>{profile.expected_height_min} – {profile.expected_height_max}</span></div>}
-              {hasValue(profile.expected_education) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Expected Education</span><span className="font-medium" style={{color:"#111827"}}>{profile.expected_education}</span></div>}
-              {hasValue(profile.expected_religious_level) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Religious Level</span><span className="font-medium" style={{color:"#111827"}}>{profile.expected_religious_level}</span></div>}
-              {hasValue(profile.expected_marital_status) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Marital Status</span><span className="font-medium" style={{color:"#111827"}}>{profile.expected_marital_status}</span></div>}
-              {hasValue(profile.expected_family_values) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Values</span><span className="font-medium" style={{color:"#111827"}}>{profile.expected_family_values}</span></div>}
-              {hasValue(profile.expected_income) && profile.expected_income !== '0' && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Expected Income</span><span className="font-medium" style={{color:"#111827"}}>৳{parseInt(profile.expected_income).toLocaleString()}+</span></div>}
-              {hasValue(profile.expected_smoking) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Smoking</span><span className="font-medium" style={{color:"#111827"}}>{profile.expected_smoking === 'no' ? 'Non-smoker preferred' : 'Any'}</span></div>}
-              {profile.expected_districts && profile.expected_districts.length > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Preferred Districts</span><span className="font-medium" style={{color:"#111827"}}>{Array.isArray(profile.expected_districts) ? profile.expected_districts.slice(0,3).join(', ') : profile.expected_districts}</span></div>}
+        {hasValue(profile.expected_age_min) && (() => {
+          const EDU_RANK2: Record<string,number> = {'SSC':1,'HSC':2,"Bachelor's":3,'BBA':3,'Engineering':4,"Master's":5,'MBA':5,'MBBS':5,'Medical':5,'PhD':6}
+          function parseHIn2(h: string): number {
+            if (!h) return 0
+            try { const c = h.replace(/"/g,'').replace("'",".").split('.'); return parseInt(c[0])*12+(parseInt(c[1])||0) } catch { return 0 }
+          }
+          const vp = viewerProfile
+          function matchField2(field: string): boolean | null {
+            if (!vp) return null
+            if (field==='age') { const a=vp.age||0; return a>=(profile.expected_age_min||0)&&a<=(profile.expected_age_max||99) }
+            if (field==='height') { const vh=parseHIn2(vp.height||''),mn=parseHIn2(profile.expected_height_min||''),mx=parseHIn2(profile.expected_height_max||''); return vh>0&&mn>0&&mx>0?vh>=mn&&vh<=mx:null }
+            if (field==='education') { const er=EDU_RANK2[profile.expected_education||'']||0,vr=EDU_RANK2[vp.education||'']||0; return er===0?true:vr>=er }
+            if (field==='religious_level') { return !profile.expected_religious_level||profile.expected_religious_level===vp.religious_level }
+            if (field==='marital_status') { const em=(profile.expected_marital_status||'').toLowerCase(); return em==='any'||em===(vp.marital_status||'').toLowerCase() }
+            if (field==='family_values') { return !profile.expected_family_values||profile.expected_family_values===vp.family_values }
+            if (field==='income') { const ei=parseFloat(profile.expected_income||'0'); return ei===0?true:(vp.monthly_income||0)>=ei }
+            if (field==='smoking') { return profile.expected_smoking!=='no'||String(vp.smoking||'false').toLowerCase()!=='true' }
+            if (field==='district') { const dists=Array.isArray(profile.expected_districts)?profile.expected_districts.map((d:string)=>d.toLowerCase()):[]; return dists.length===0?true:dists.includes((vp.district||vp.city||'').toLowerCase()) }
+            return null
+          }
+          function MB({f}: {f: string}) {
+            const m = matchField2(f)
+            if (m===null) return null
+            return <span className={`ml-1 ${m?'text-green-500':'text-red-500'}`}>{m?'✅':'❌'}</span>
+          }
+          const distStr = Array.isArray(profile.expected_districts) ? profile.expected_districts.slice(0,3).join(', ') : profile.expected_districts
+          return (
+            <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6" style={{color:"#111827"}}>👑 Partner Expectations</h2>
+              {!isLoggedIn && (
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-700">
+                  <Link href="/login" className="font-bold underline">Log in</Link> to see if you match this profile&apos;s expectations
+                </div>
+              )}
+              <div className="grid md:grid-cols-2 gap-x-8">
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-gray-600 text-sm">Expected Age</span>
+                  <span className="font-medium text-sm flex items-center">{profile.expected_age_min}–{profile.expected_age_max} yrs<MB f="age"/></span>
+                </div>
+                {hasValue(profile.expected_height_min) && <div className="flex justify-between items-center py-2 border-b border-gray-100"><span className="text-gray-600 text-sm">Expected Height</span><span className="font-medium text-sm flex items-center">{profile.expected_height_min} – {profile.expected_height_max}<MB f="height"/></span></div>}
+                {hasValue(profile.expected_education) && <div className="flex justify-between items-center py-2 border-b border-gray-100"><span className="text-gray-600 text-sm">Expected Education</span><span className="font-medium text-sm flex items-center">{profile.expected_education}<MB f="education"/></span></div>}
+                {hasValue(profile.expected_religious_level) && <div className="flex justify-between items-center py-2 border-b border-gray-100"><span className="text-gray-600 text-sm">Religious Level</span><span className="font-medium text-sm flex items-center">{profile.expected_religious_level}<MB f="religious_level"/></span></div>}
+                {hasValue(profile.expected_marital_status) && <div className="flex justify-between items-center py-2 border-b border-gray-100"><span className="text-gray-600 text-sm">Marital Status</span><span className="font-medium text-sm flex items-center">{profile.expected_marital_status}<MB f="marital_status"/></span></div>}
+                {hasValue(profile.expected_family_values) && <div className="flex justify-between items-center py-2 border-b border-gray-100"><span className="text-gray-600 text-sm">Family Values</span><span className="font-medium text-sm flex items-center">{profile.expected_family_values}<MB f="family_values"/></span></div>}
+                {hasValue(profile.expected_income) && profile.expected_income !== '0' && <div className="flex justify-between items-center py-2 border-b border-gray-100"><span className="text-gray-600 text-sm">Expected Income</span><span className="font-medium text-sm flex items-center">৳{parseInt(profile.expected_income).toLocaleString()}+<MB f="income"/></span></div>}
+                {hasValue(profile.expected_smoking) && <div className="flex justify-between items-center py-2 border-b border-gray-100"><span className="text-gray-600 text-sm">Smoking</span><span className="font-medium text-sm flex items-center">{profile.expected_smoking==='no'?'Non-smoker preferred':'Any'}<MB f="smoking"/></span></div>}
+                {profile.expected_districts && profile.expected_districts.length > 0 && <div className="flex justify-between items-center py-2 border-b border-gray-100"><span className="text-gray-600 text-sm">Preferred Districts</span><span className="font-medium text-sm flex items-center">{distStr}<MB f="district"/></span></div>}
+              </div>
+              {isLoggedIn && (
+                <div className="mt-5 text-center">
+                  <button onClick={() => setShowModal(true)} className="text-sm text-purple-600 font-semibold hover:underline">
+                    🔍 See full compatibility analysis →
+                  </button>
+                </div>
+              )}
             </div>
-
-          </div>
-        )}
+          )
+        })()}
 
         <div className="bg-white rounded-2xl shadow-lg p-6">
           {actionMsg && (
