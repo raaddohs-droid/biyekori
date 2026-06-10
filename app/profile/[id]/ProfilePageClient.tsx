@@ -1258,11 +1258,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               {hasValue(profile.expected_smoking) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Smoking</span><span className="font-medium" style={{color:"#111827"}}>{profile.expected_smoking === 'no' ? 'Non-smoker preferred' : 'Any'}</span></div>}
               {profile.expected_districts && profile.expected_districts.length > 0 && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Preferred Districts</span><span className="font-medium" style={{color:"#111827"}}>{Array.isArray(profile.expected_districts) ? profile.expected_districts.slice(0,3).join(', ') : profile.expected_districts}</span></div>}
             </div>
-            {hasValue(profile.partner_preference) && (
-              <div className="mt-4 p-4 bg-pink-50 rounded-xl border border-pink-100">
-                <p className="text-sm text-gray-700 italic" style={{color:"#374151"}}>"{profile.partner_preference}"</p>
-              </div>
-            )}
+
           </div>
         )}
 
