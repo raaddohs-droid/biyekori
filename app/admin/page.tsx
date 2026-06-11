@@ -273,9 +273,9 @@ export default function AdminDashboard() {
         <Link href="/dashboard" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', textDecoration: 'none', fontWeight: 600 }}>Exit Admin</Link>
       </div>
 
-      <div style={{ paddingTop: '60px', display: 'flex', minHeight: '100vh' }}>
+      <div style={{ paddingTop: '100px', display: 'flex', minHeight: '100vh' }}>
         {/* Sidebar */}
-        <div style={{ width: '200px', background: 'white', borderRight: '1px solid #e5e7eb', position: 'fixed', top: '60px', bottom: 0, overflowY: 'auto', padding: '16px 0' }}>
+        <div style={{ width: '200px', background: 'white', borderRight: '1px solid #e5e7eb', position: 'fixed', top: '100px', bottom: 0, overflowY: 'auto', padding: '16px 0' }}>
           {tabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)} style={{
               width: '100%', padding: '12px 20px', border: 'none', cursor: 'pointer', textAlign: 'left',
