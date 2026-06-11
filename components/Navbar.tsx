@@ -105,10 +105,10 @@ export default function Navbar() {
   const completion = user?.profile_completion || 30
 
   // On homepage use dark navbar, elsewhere use white
-  const navBg = isHome ? 'rgba(75,20,33,0.94)' : 'white'
+  const navBg = isHome ? 'rgba(8,6,4,0.85)' : 'white'
   const navBorder = isHome ? 'rgba(240,192,64,0.08)' : '#f3f4f6'
   const textColor = isHome ? 'rgba(253,246,238,0.6)' : '#4b5563'
-  const activeColor = isHome ? '#B89255' : '#e11d48'
+  const activeColor = isHome ? '#F0C040' : '#e11d48'
   const logoGold = isHome
 
   const planColors: Record<string, {color: string; bg: string}> = {
@@ -161,7 +161,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" style={{ textDecoration: 'none' }}>
           {logoGold ? (
-            <span style={{ fontSize: '20px', fontWeight: 700, color: '#B89255', letterSpacing: '3px', fontFamily: 'Georgia, serif' }}>BIYEKORI</span>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: '#F0C040', letterSpacing: '3px', fontFamily: 'Georgia, serif' }}>BIYEKORI</span>
           ) : (
             <span style={{ fontSize: '20px', fontWeight: 700, background: 'linear-gradient(135deg, #e11d48, #9333ea)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: 'Georgia, serif' }}>Biye Kori</span>
           )}
@@ -242,7 +242,7 @@ export default function Navbar() {
                 cursor: 'pointer', padding: '6px', borderRadius: '50%',
                 display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={isHome ? '#B89255' : '#6b7280'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={isHome ? '#F0C040' : '#6b7280'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                   <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                 </svg>
@@ -330,7 +330,7 @@ export default function Navbar() {
                 <span style={{ fontSize: '13px', fontWeight: 600, color: isHome ? '#FDF6EE' : '#1f2937', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'Georgia, serif' }}>
                   {user.full_name?.split(' ')[0]}
                 </span>
-                <svg style={{ width: '14px', height: '14px', color: isHome ? '#B89255' : '#9ca3af', transition: 'transform 0.2s', transform: showMenu ? 'rotate(180deg)' : 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg style={{ width: '14px', height: '14px', color: isHome ? '#F0C040' : '#9ca3af', transition: 'transform 0.2s', transform: showMenu ? 'rotate(180deg)' : 'none' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
@@ -363,10 +363,10 @@ export default function Navbar() {
                     <div style={{ marginBottom: '12px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                         <span style={{ fontSize: '11px', color: 'rgba(253,246,238,0.5)', letterSpacing: '1px' }}>PROFILE COMPLETION</span>
-                        <span style={{ fontSize: '11px', fontWeight: 700, color: completion >= 70 ? '#4ade80' : '#B89255' }}>{completion}%</span>
+                        <span style={{ fontSize: '11px', fontWeight: 700, color: completion >= 70 ? '#4ade80' : '#F0C040' }}>{completion}%</span>
                       </div>
                       <div style={{ height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${completion}%`, background: completion >= 70 ? '#4ade80' : 'linear-gradient(90deg,#B89255,#B89255)', borderRadius: '4px' }} />
+                        <div style={{ height: '100%', width: `${completion}%`, background: completion >= 70 ? '#4ade80' : 'linear-gradient(90deg,#F0C040,#C07800)', borderRadius: '4px' }} />
                       </div>
                     </div>
 
@@ -374,10 +374,10 @@ export default function Navbar() {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'rgba(240,192,64,0.08)', borderRadius: '8px', border: '1px solid rgba(240,192,64,0.15)' }}>
                       <div>
                         <p style={{ margin: 0, fontSize: '10px', color: 'rgba(253,246,238,0.4)', letterSpacing: '1px' }}>CURRENT PLAN</p>
-                        <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#B89255', textTransform: 'capitalize' }}>{user.package === 'prottasha' ? 'Free' : user.package === 'silver' ? 'Silver' : user.package === 'gold' ? 'Gold' : user.package === 'milon' ? 'NRB Gold' : 'Free'}</p>
+                        <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#F0C040', textTransform: 'capitalize' }}>{user.package === 'prottasha' ? 'Free' : user.package === 'silver' ? 'Silver' : user.package === 'gold' ? 'Gold' : user.package === 'milon' ? 'NRB Gold' : 'Free'}</p>
                       </div>
                       {user.package === 'prottasha' && (
-                        <Link href="/pricing" onClick={() => setShowMenu(false)} style={{ padding: '5px 14px', background: '#6D1F2F', color: '#080604', borderRadius: '6px', fontSize: '11px', fontWeight: 700, textDecoration: 'none', letterSpacing: '0.5px' }}>
+                        <Link href="/pricing" onClick={() => setShowMenu(false)} style={{ padding: '5px 14px', background: 'linear-gradient(135deg,#F0C040,#C07800)', color: '#080604', borderRadius: '6px', fontSize: '11px', fontWeight: 700, textDecoration: 'none', letterSpacing: '0.5px' }}>
                           Upgrade
                         </Link>
                       )}
@@ -433,7 +433,7 @@ export default function Navbar() {
                 padding: '8px 20px', fontSize: '13px', fontWeight: 700,
                 color: isHome ? '#080604' : 'white',
                 textDecoration: 'none', borderRadius: '6px',
-                background: isHome ? '#6D1F2F' : 'linear-gradient(135deg,#e11d48,#9333ea)',
+                background: isHome ? 'linear-gradient(135deg,#F0C040,#C07800)' : 'linear-gradient(135deg,#e11d48,#9333ea)',
                 fontFamily: 'Georgia, serif', letterSpacing: '0.5px'
               }}>
                 Join Free

@@ -12,14 +12,14 @@ export default function HomeCTA() {
 
   if (isLoggedIn) {
     return (
-      <Link href="/profiles" style={{ display: 'inline-block', padding: '16px 56px', background: '#6D1F2F', color: '#080604', fontSize: '14px', fontWeight: 700, textDecoration: 'none', borderRadius: '4px', letterSpacing: '3px', position: 'relative', zIndex: 2, marginBottom: '48px' }}>
+      <Link href="/profiles" style={{ display: 'inline-block', padding: '16px 56px', background: 'linear-gradient(135deg, #F0C040, #C07800)', color: '#080604', fontSize: '14px', fontWeight: 700, textDecoration: 'none', borderRadius: '4px', letterSpacing: '3px', position: 'relative', zIndex: 2, marginBottom: '48px' }}>
         BROWSE PROFILES
       </Link>
     )
   }
 
   return (
-    <Link href="/register" style={{ display: 'inline-block', padding: '16px 56px', background: '#6D1F2F', color: '#080604', fontSize: '14px', fontWeight: 700, textDecoration: 'none', borderRadius: '4px', letterSpacing: '3px', position: 'relative', zIndex: 2, marginBottom: '48px' }}>
+    <Link href="/register" style={{ display: 'inline-block', padding: '16px 56px', background: 'linear-gradient(135deg, #F0C040, #C07800)', color: '#080604', fontSize: '14px', fontWeight: 700, textDecoration: 'none', borderRadius: '4px', letterSpacing: '3px', position: 'relative', zIndex: 2, marginBottom: '48px' }}>
       JOIN FREE
     </Link>
   )
