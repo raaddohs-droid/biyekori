@@ -434,22 +434,24 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [dobRequesting, setDobRequesting] = useState(false)
 
   useEffect(() => {
-    // Immediately wall guests — no grace period
+    // Guest sees teaser (safe fields only). Wall appears only on interaction.
+    // Logged-in users get full profile via secure API.
     try {
       const userData = localStorage.getItem('biyekori_user')
       const isGuest = !userData || !JSON.parse(userData)?.id
       if (isGuest) {
-        setGuestBlurred(true)
         setIsLoggedIn(false)
-        return
+        // Don't blur immediately — let them see the teaser
+        // guestBlurred stays false until they try to interact
+      } else {
+        const u = JSON.parse(userData)
+        setIsLoggedIn(true)
+        // Fetch full sensitive data securely
+        fetch('/api/profiles/secure?id=' + profile.id + '&viewerId=' + u.id)
+          .then(r => r.json())
+          .then(data => { if (data.profile) setFullProfile(data.profile) })
+          .catch(() => {})
       }
-      const u = JSON.parse(userData)
-      setIsLoggedIn(true)
-      // Fetch sensitive fields securely after auth confirmed
-      fetch('/api/profiles/secure?id=' + profile.id + '&viewerId=' + u.id)
-        .then(r => r.json())
-        .then(data => { if (data.profile) setFullProfile(data.profile) })
-        .catch(() => {})
     } catch(e) {}
     if (profile?.id) recordView(String(profile.id));
     const userData = localStorage.getItem('biyekori_user');
@@ -723,11 +725,13 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           padding: '40px 32px', maxWidth: '400px', width: '90%',
           textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.2)'
         }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>💌</div>
-          <h2 style={{ margin: '0 0 10px', fontSize: '22px', fontWeight: 800, color: '#111827' }}>Your free preview has ended</h2>
-          <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280', lineHeight: 1.6 }}>Login or create a free account to keep browsing profiles on Biyekori.</p>
-          <a href="/login" style={{ display: 'block', padding: '14px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', borderRadius: '12px', fontWeight: 700, fontSize: '15px', textDecoration: 'none', marginBottom: '10px' }}>Login</a>
-          <a href="/register" style={{ display: 'block', padding: '14px', background: '#f3f4f6', color: '#374151', borderRadius: '12px', fontWeight: 700, fontSize: '15px', textDecoration: 'none' }}>Create Free Account</a>
+          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg,#7B1D2E,#9D174D)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <h2 style={{ margin: '0 0 10px', fontSize: '20px', fontWeight: 800, color: '#1a0a0d' }}>Login to connect with this profile</h2>
+          <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280', lineHeight: 1.6 }}>Create a free account to send interest, view full details and find your match on Biyekori.</p>
+          <a href="/login" style={{ display: 'block', padding: '14px', background: 'linear-gradient(135deg,#7B1D2E,#9D174D)', color: 'white', borderRadius: '12px', fontWeight: 700, fontSize: '15px', textDecoration: 'none', marginBottom: '10px' }}>Login</a>
+          <a href="/register" style={{ display: 'block', padding: '14px', background: '#f8f4f5', color: '#7B1D2E', border: '1px solid rgba(123,29,46,0.2)', borderRadius: '12px', fontWeight: 700, fontSize: '15px', textDecoration: 'none' }}>Create Free Account</a>
           <p style={{ margin: '16px 0 0', fontSize: '11px', color: '#9ca3af' }}>Free forever · No credit card required</p>
         </div>
       </div>
