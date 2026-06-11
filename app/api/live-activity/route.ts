@@ -1,25 +1,34 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+    const { searchParams } = new URL(request.url)
+    const genderParam = searchParams.get('gender')
+    // DB stores lowercase: "male" / "female"
+    const gender = genderParam === 'Male' ? 'male' : genderParam === 'male' ? 'male' : 'female'
 
-    const supabase = createClient(url!, key!)
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
 
-    // No filters at all - just get any 3 profiles and show raw data
     const { data, error } = await supabase
       .from('profiles')
       .select('id, full_name, age, district, photo_url, gender')
-      .limit(3)
+      .eq('gender', gender)
+      .not('photo_url', 'is', null)
+      .limit(60)
 
     if (error) {
-      return NextResponse.json({ debug: 'error', error: error.message })
+      console.error('live-activity error:', error.message)
+      return NextResponse.json({ profiles: [] })
     }
 
-    return NextResponse.json({ debug: 'ok', count: data?.length, sample: data })
+    const shuffled = (data || []).sort(() => Math.random() - 0.5)
+    return NextResponse.json({ profiles: shuffled })
   } catch (err: any) {
-    return NextResponse.json({ debug: 'exception', error: err.message })
+    console.error('live-activity error:', err)
+    return NextResponse.json({ profiles: [] })
   }
 }
