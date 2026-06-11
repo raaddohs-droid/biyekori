@@ -136,9 +136,9 @@ function calculateScores(profile: any, viewer?: any) {
   }
 
   // 6. INCOME (7)
-  if (viewer?.expected_income || profile.monthly_income) {
+  if (viewer?.expected_income || fp.monthly_income) {
     const expInc = parseFloat(viewer?.expected_income || '0')
-    const profInc = profile.monthly_income || 0
+    const profInc = fp.monthly_income || 0
     let score = 4
     if (expInc > 0 && profInc > 0) {
       const r = profInc / expInc
@@ -242,7 +242,7 @@ function calculateScores(profile: any, viewer?: any) {
   let dataConfidence = 0
   const confBreakdown = [
     { label: 'Profile Photo', icon: '📸', met: !!profile.photo_url, points: 15, tip: 'A photo builds trust and confidence' },
-    { label: 'About Me written', icon: '✍️', met: (profile.about_me?.length || 0) > 30, points: 10, tip: 'Tells us who this person really is' },
+    { label: 'About Me written', icon: '✍️', met: (fp.about_me?.length || 0) > 30, points: 10, tip: 'Tells us who this person really is' },
     { label: 'NID Verified', icon: '🪪', met: !!profile.nid_verified, points: 15, tip: 'Confirms this is a real, verified person' },
     { label: 'Education & Profession', icon: '🎓', met: !!profile.education && !!profile.profession, points: 10, tip: 'Helps assess lifestyle compatibility' },
     { label: 'Religion', icon: '🕌', met: !!profile.religion, points: 8, tip: 'Key compatibility factor' },
@@ -409,10 +409,12 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [guestBlurred, setGuestBlurred] = useState(false)
   const [guestSecondsLeft, setGuestSecondsLeft] = useState(0)
+  const [fullProfile, setFullProfile] = useState<any>(null)
   const [photoIndex, setPhotoIndex] = useState(0)
   const [contactRequest, setContactRequest] = useState<any>(null)
   const [loadingContact, setLoadingContact] = useState(false)
-  const { matchScore, dataConfidence } = calculateScores(profile, viewerProfile)
+  const fp = fullProfile || profile // fp = full data if logged in, safe data if guest
+  const { matchScore, dataConfidence } = calculateScores(fp, viewerProfile)
   const [galleryPhotos, setGalleryPhotos] = useState<any[]>([])
   const profileCode = getProfileCode(profile.id, profile.created_at || '')
 
@@ -432,28 +434,22 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [dobRequesting, setDobRequesting] = useState(false)
 
   useEffect(() => {
-    // Guest blur timer for profile detail page
+    // Immediately wall guests — no grace period
     try {
-      const user = localStorage.getItem('biyekori_user')
-      const isGuest = !user || !JSON.parse(user)?.id
+      const userData = localStorage.getItem('biyekori_user')
+      const isGuest = !userData || !JSON.parse(userData)?.id
       if (isGuest) {
-        const GUEST_KEY = 'bk_guest_first_visit'
-        const BLUR_AFTER_MS = 5 * 60 * 1000
-        const now = Date.now()
-        const stored = localStorage.getItem(GUEST_KEY)
-        const firstVisit = stored ? parseInt(stored) : now
-        if (!stored) localStorage.setItem(GUEST_KEY, String(now))
-        const elapsed = now - firstVisit
-        if (elapsed >= BLUR_AFTER_MS) {
-          setGuestBlurred(true)
-        } else {
-          const remaining = BLUR_AFTER_MS - elapsed
-          setGuestSecondsLeft(Math.ceil(remaining / 1000))
-          const t = setTimeout(() => setGuestBlurred(true), remaining)
-          const iv = setInterval(() => setGuestSecondsLeft(p => { if (p <= 1) { clearInterval(iv); return 0 } return p - 1 }), 1000)
-          return () => { clearTimeout(t); clearInterval(iv) }
-        }
+        setGuestBlurred(true)
+        setIsLoggedIn(false)
+        return
       }
+      const u = JSON.parse(userData)
+      setIsLoggedIn(true)
+      // Fetch sensitive fields securely after auth confirmed
+      fetch('/api/profiles/secure?id=' + profile.id + '&viewerId=' + u.id)
+        .then(r => r.json())
+        .then(data => { if (data.profile) setFullProfile(data.profile) })
+        .catch(() => {})
     } catch(e) {}
     if (profile?.id) recordView(String(profile.id));
     const userData = localStorage.getItem('biyekori_user');
@@ -1088,30 +1084,30 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           </div>
         </div>
 
-        {hasValue(profile.about_me) && (
+        {hasValue(fp.about_me) && (
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>📝 About Me</h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line" style={{color:"#374151"}}>{profile.about_me}</p>
+            <p className="text-gray-700 leading-relaxed whitespace-pre-line" style={{color:"#374151"}}>{fp.about_me}</p>
           </div>
         )}
 
-        {hasValue(profile.partner_preference) && (
+        {hasValue(fp.partner_preference) && (
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>💕 What I'm Looking For</h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line" style={{color:"#374151"}}>{profile.partner_preference}</p>
+            <p className="text-gray-700 leading-relaxed whitespace-pre-line" style={{color:"#374151"}}>{fp.partner_preference}</p>
           </div>
         )}
 
         <div className="grid md:grid-cols-2 gap-6 mb-6">
-          {(hasValue(profile.height) || hasValue(profile.weight)) && (
+          {(hasValue(profile.height) || hasValue(fp.weight)) && (
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>👤 Personal Details</h3>
               <div className="space-y-3">
                 {hasValue(profile.height) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Height</span><span className="font-medium" style={{color:"#111827"}}>{profile.height}</span></div>}
-                {hasValue(profile.weight) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Weight</span><span className="font-medium" style={{color:"#111827"}}>{profile.weight} kg</span></div>}
-                {hasValue(profile.complexion) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Complexion</span><span className="font-medium" style={{color:"#111827"}}>{profile.complexion}</span></div>}
+                {hasValue(fp.weight) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Weight</span><span className="font-medium" style={{color:"#111827"}}>{fp.weight} kg</span></div>}
+                {hasValue(fp.complexion) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Complexion</span><span className="font-medium" style={{color:"#111827"}}>{fp.complexion}</span></div>}
                 {hasValue(profile.body_type) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Body Type</span><span className="font-medium" style={{color:"#111827"}}>{profile.body_type}</span></div>}
-                {hasValue(profile.blood_group) && <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Blood Group</span><span className="font-medium" style={{color:"#111827"}}>{profile.blood_group}</span></div>}
+                {hasValue(fp.blood_group) && <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Blood Group</span><span className="font-medium" style={{color:"#111827"}}>{fp.blood_group}</span></div>}
               </div>
             </div>
           )}
@@ -1149,8 +1145,8 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                 {hasValue(profile.working_with) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Working With</span><span className="font-medium" style={{color:"#111827"}}>{profile.working_with}</span></div>}
                 {hasValue(profile.working_as) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Working As</span><span className="font-medium" style={{color:"#111827"}}>{profile.working_as}</span></div>}
                 {hasValue(profile.employer_name) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Employer</span><span className="font-medium" style={{color:"#111827"}}>{profile.employer_name}</span></div>}
-                {hasValue(profile.monthly_income) && profile.monthly_income > 0 && !profile.income_hidden && (
-                  <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Monthly Income</span><span className="font-medium" style={{color:"#111827"}}>৳{Number(profile.monthly_income).toLocaleString()}</span></div>
+                {hasValue(fp.monthly_income) && fp.monthly_income > 0 && !fp.income_hidden && (
+                  <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Monthly Income</span><span className="font-medium" style={{color:"#111827"}}>৳{Number(fp.monthly_income).toLocaleString()}</span></div>
                 )}
               </div>
               {/* DOB request */}
@@ -1205,7 +1201,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                 {profile.num_brothers !== null && profile.num_brothers !== undefined && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>No. of Brothers</span><span className="font-medium" style={{color:"#111827"}}>{profile.num_brothers === 0 ? 'None' : profile.num_brothers}</span></div>}
                 {hasValue(profile.family_financial_status) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Financial Status</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_financial_status}</span></div>}
                 {hasValue(profile.family_location) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Location</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_location}</span></div>}
-                {hasValue(profile.total_siblings) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Total Siblings</span><span className="font-medium" style={{color:"#111827"}}>{profile.total_siblings}</span></div>}
+                {hasValue(fp.total_siblings) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Total Siblings</span><span className="font-medium" style={{color:"#111827"}}>{fp.total_siblings}</span></div>}
                 {hasValue(profile.family_type) && <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Type</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_type}</span></div>}
                 {hasValue(profile.family_values) && <div className="flex justify-between py-2"><span className="text-gray-600" style={{color:"#4b5563"}}>Family Values</span><span className="font-medium" style={{color:"#111827"}}>{profile.family_values}</span></div>}
               </div>
