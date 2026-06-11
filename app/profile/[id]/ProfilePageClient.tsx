@@ -854,7 +854,6 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
           {/* Always-visible glossary */}
           <div style={{ marginTop: '20px', borderTop: '1px solid #f0e8ec', paddingTop: '14px' }}>
-            <p style={{ margin: '0 0 8px', fontSize: '11px', fontWeight: 700, color: '#9ca3af', letterSpacing: '1px', fontFamily: 'system-ui, sans-serif' }}>এই শব্দগুলো কী মানে?</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <p style={{ margin: 0, fontSize: '11.5px', color: '#4b5563', fontFamily: 'Hind Siliguri, system-ui, sans-serif', lineHeight: 1.5 }}>
                 <strong style={{ color: '#7B1D2E' }}>নিরাপদ যোগাযোগ মানে</strong> — ফোন নম্বর ছাড়া, পরিচয় গোপন রেখে কথা বলা। পরিচয় প্রকাশ শুধু আপনার ইচ্ছায়।
