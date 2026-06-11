@@ -78,6 +78,15 @@ export default function Dashboard() {
   const [shortlistCount, setShortlistCount] = useState(0);
   const [shortlistProfiles, setShortlistProfiles] = useState<any[]>([]);
   const [liveActivity, setLiveActivity] = useState<any[]>([]);
+
+  // Listen for activity toast events → bump profile views counter
+  useEffect(() => {
+    function handleActivity() {
+      setViewCount(prev => String(parseInt(prev || '0') + 1));
+    }
+    window.addEventListener('biyekori-activity', handleActivity);
+    return () => window.removeEventListener('biyekori-activity', handleActivity);
+  }, []);
   const [dailyMatch, setDailyMatch] = useState<any>(null);
   const [dailyMatchReason, setDailyMatchReason] = useState<string>('');
   const [dailyMatchLoading, setDailyMatchLoading] = useState(false);
