@@ -11,22 +11,20 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const gender = searchParams.get('gender') === 'Male' ? 'Male' : 'Female'
 
+    // No filters at all - just gender, grab 60
     const { data, error } = await supabase
       .from('profiles')
       .select('id, full_name, age, district, photo_url, gender')
       .eq('gender', gender)
-      .not('photo_url', 'is', null)
       .limit(60)
 
     if (error) {
-      console.error('live-activity error:', error.message)
-      return NextResponse.json({ profiles: [] })
+      return NextResponse.json({ profiles: [], error: error.message })
     }
 
     const shuffled = (data || []).sort(() => Math.random() - 0.5)
-    return NextResponse.json({ profiles: shuffled })
-  } catch (err) {
-    console.error('live-activity error:', err)
-    return NextResponse.json({ profiles: [] })
+    return NextResponse.json({ profiles: shuffled, count: shuffled.length })
+  } catch (err: any) {
+    return NextResponse.json({ profiles: [], error: err.message })
   }
 }
