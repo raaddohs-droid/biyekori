@@ -830,8 +830,8 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#1a0a0d', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.action} যোগ দিন।</p>
-              <p style={{ margin: '2px 0 0', fontSize: '13px', color: '#6b7280', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.benefit}</p>
+              <p style={{ margin: 0, fontSize: '19px', fontWeight: 800, color: '#1a0a0d', fontFamily: 'Hind Siliguri, system-ui, sans-serif', lineHeight: 1.3 }}>{softPrompt.action} যোগ দিন।</p>
+              <p style={{ margin: '6px 0 0', fontSize: '13px', color: '#555', fontFamily: 'Hind Siliguri, system-ui, sans-serif', lineHeight: 1.5 }}>{softPrompt.benefit}</p>
             </div>
           </div>
           {ACTION_EXPLANATIONS[softPrompt.action] && (
@@ -851,6 +851,22 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           <a href="/login" style={{ display: 'block', padding: '12px', background: '#f8f4f5', color: '#7B1D2E', border: '1px solid rgba(123,29,46,0.2)', borderRadius: '12px', fontWeight: 700, fontSize: '14px', textDecoration: 'none', textAlign: 'center', fontFamily: 'system-ui, sans-serif' }}>
             আমার অ্যাকাউন্ট আছে — Login
           </a>
+
+          {/* Always-visible glossary */}
+          <div style={{ marginTop: '20px', borderTop: '1px solid #f0e8ec', paddingTop: '14px' }}>
+            <p style={{ margin: '0 0 8px', fontSize: '11px', fontWeight: 700, color: '#9ca3af', letterSpacing: '1px', fontFamily: 'system-ui, sans-serif' }}>এই শব্দগুলো কী মানে?</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <p style={{ margin: 0, fontSize: '11.5px', color: '#4b5563', fontFamily: 'Hind Siliguri, system-ui, sans-serif', lineHeight: 1.5 }}>
+                <strong style={{ color: '#7B1D2E' }}>আগ্রহ</strong> — এই প্রোফাইল সম্পর্কে আমি আগ্রহী। প্রতিউত্তরে তিনিও আগ্রহ প্রকাশ করতে পারেন।
+              </p>
+              <p style={{ margin: 0, fontSize: '11.5px', color: '#4b5563', fontFamily: 'Hind Siliguri, system-ui, sans-serif', lineHeight: 1.5 }}>
+                <strong style={{ color: '#7B1D2E' }}>নিরাপদ যোগাযোগ</strong> — ফোন নম্বর ছাড়া, পরিচয় গোপন রেখে কথা বলা। পরিচয় প্রকাশ শুধু আপনার ইচ্ছায়।
+              </p>
+              <p style={{ margin: 0, fontSize: '11.5px', color: '#4b5563', fontFamily: 'Hind Siliguri, system-ui, sans-serif', lineHeight: 1.5 }}>
+                <strong style={{ color: '#7B1D2E' }}>বায়োডেটা</strong> — আপনার প্রোফাইলের সুন্দর PDF। পরিবারের সাথে শেয়ার করুন।
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     )}
