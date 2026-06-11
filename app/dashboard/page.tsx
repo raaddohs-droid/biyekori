@@ -77,6 +77,7 @@ export default function Dashboard() {
   const [mutualCount, setMutualCount] = useState(0);
   const [shortlistCount, setShortlistCount] = useState(0);
   const [shortlistProfiles, setShortlistProfiles] = useState<any[]>([]);
+  const [liveActivity, setLiveActivity] = useState<any[]>([]);
   const [dailyMatch, setDailyMatch] = useState<any>(null);
   const [dailyMatchReason, setDailyMatchReason] = useState<string>('');
   const [dailyMatchLoading, setDailyMatchLoading] = useState(false);
@@ -148,8 +149,18 @@ export default function Dashboard() {
             })
         }
         fetchSuggestedProfiles(parsed.gender, parsed.id)
-          .then(data => setSuggestedProfiles(Array.isArray(data) ? data : []))
+          .then((data: any[]) => setSuggestedProfiles(data || []));
+        // Live activity feed
+        const actGender = parsed.gender === 'female' ? 'Male' : 'Female';
+        fetch('/api/live-activity?gender=' + actGender)
+          .then(r => r.json())
+          .then(data => {
+            if (Array.isArray(data.profiles)) {
+              setLiveActivity(data.profiles.slice(0, 5));
+            }
+          })
           .catch(() => {});
+
         fetchMutualMatches(parsed.id)
           .then(data => setMutualMatches(Array.isArray(data) ? data : []))
           .catch(() => {});
@@ -453,6 +464,42 @@ export default function Dashboard() {
               </div>
             )}
 
+            {/* Live Activity Feed */}
+            {liveActivity.length > 0 && (
+              <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px rgba(34,197,94,0.6)', animation: 'pulse 2s infinite', flexShrink: 0 }} />
+                  <h2 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#111827' }}>Live Activity</h2>
+                  <span style={{ fontSize: '11px', color: '#9ca3af', marginLeft: '4px' }}>right now on Biyekori</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {liveActivity.map((p: any, i: number) => {
+                    const actions = ['এইমাত্র যোগ দিয়েছেন', 'এখন সক্রিয়', 'এইমাত্র যোগ দিয়েছেন', 'এখন সক্রিয়', 'প্রোফাইল দেখেছেন'];
+                    const action = actions[i % actions.length];
+                    const nameParts = (p.full_name || '').trim().split(' ');
+                    const masked = nameParts.length > 1 ? nameParts[0] + ' ' + nameParts[1].charAt(0).toUpperCase() + '.' : nameParts[0];
+                    return (
+                      <Link key={p.id} href={'/profile/' + p.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 10px', background: '#f8fafc', borderRadius: '10px', textDecoration: 'none', border: '1px solid #f1f5f9' }}>
+                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '1.5px solid #7B1D2E', background: '#f0e8ec' }}>
+                          {p.photo_url
+                            ? <img src={p.photo_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            : <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#7B1D2E,#9D174D)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="rgba(255,255,255,0.7)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="rgba(255,255,255,0.5)"/></svg>
+                              </div>
+                          }
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{masked}, {p.age}</p>
+                          <p style={{ margin: '1px 0 0', fontSize: '11px', color: '#7B1D2E', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{action}</p>
+                        </div>
+                        <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af', flexShrink: 0 }}>{p.district || 'Bangladesh'}</p>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Suggested Matches */}
             <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -642,3 +689,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
