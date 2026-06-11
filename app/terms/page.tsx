@@ -23,7 +23,7 @@ export default function TermsPage() {
           },
           {
             title: '4. Payments and refunds',
-            content: `Paid plans (Standard, Premium, Global) are billed monthly. Payments are processed via bKash or bank transfer. If you receive no interests within 30 days of upgrading, you may request a full refund by emailing support@biyekori.com. Refund requests are processed within 7 business days. We reserve the right to refuse refunds for accounts found to have violated these terms.`
+            content: `Paid plans (Silver, Gold, NRB Gold) are billed monthly. Payments are processed via bKash or bank transfer. If you receive no interests within 30 days of upgrading, you may request a full refund by emailing support@biyekori.com. Refund requests are processed within 7 business days. We reserve the right to refuse refunds for accounts found to have violated these terms.`
           },
           {
             title: '5. Privacy and data',
@@ -55,3 +55,4 @@ export default function TermsPage() {
     </div>
   )
 }
+
