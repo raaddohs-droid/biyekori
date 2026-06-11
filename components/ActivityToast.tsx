@@ -81,6 +81,9 @@ export default function ActivityToast({ viewerGender }: { viewerGender?: string 
 
       setToasts(prev => [...prev, { id: toastId, profile, type, exiting: false }].slice(-3))
 
+      // Notify dashboard to bump stats
+      try { window.dispatchEvent(new Event('biyekori-activity')) } catch {}
+
       // Exit after 5s
       setTimeout(() => {
         setToasts(prev => prev.map(t => t.id === toastId ? { ...t, exiting: true } : t))
@@ -92,7 +95,7 @@ export default function ActivityToast({ viewerGender }: { viewerGender?: string 
 
     function scheduleNext() {
       if (shownCountRef.current >= MAX_TOASTS_PER_SESSION) return
-      const delay = 12000 + Math.random() * 6000 // 12-18s
+      const delay = 24000 + Math.random() * 12000 // 24-36s
       timerRef.current = setTimeout(() => {
         showNext()
         scheduleNext()
