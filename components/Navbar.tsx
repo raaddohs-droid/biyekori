@@ -214,7 +214,7 @@ export default function Navbar() {
               onChange={e => setSearchId(e.target.value)}
               placeholder="Profile ID..."
               style={{
-                width: '90px', padding: '5px 10px',
+                width: '180px', padding: '7px 14px',
                 border: `1px solid ${searchError ? '#e11d48' : '#e5e7eb'}`,
                 borderRadius: '20px', fontSize: '12px', outline: 'none',
                 background: isHome ? 'rgba(255,255,255,0.1)' : '#f9fafb',
