@@ -6,39 +6,36 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-export const revalidate = 300 // cache 5 minutes server-side
-
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const gender = searchParams.get('gender') === 'Male' ? 'Male' : 'Female'
 
-    // Active within last 30 days
-    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-
+    // Try with photo only first - no completion or last_active filter
     const { data, error } = await supabase
       .from('profiles')
       .select('id, full_name, age, district, photo_url, gender')
       .eq('gender', gender)
-      .eq('is_banned', false)
       .not('photo_url', 'is', null)
       .not('photo_url', 'eq', '')
-      .gte('profile_completion', 70)
-      .gte('last_active_at', since)
-      .order('last_active_at', { ascending: false })
       .limit(60)
 
     if (error) {
-      console.error('live-activity query error:', error.message)
-      return NextResponse.json({ profiles: [] })
+      console.error('live-activity error:', error.message)
+      return NextResponse.json({ profiles: [] }, {
+        headers: { 'Access-Control-Allow-Origin': '*' }
+      })
     }
 
-    // Shuffle so each page load feels fresh
     const shuffled = (data || []).sort(() => Math.random() - 0.5)
 
-    return NextResponse.json({ profiles: shuffled })
+    return NextResponse.json({ profiles: shuffled }, {
+      headers: { 'Access-Control-Allow-Origin': '*' }
+    })
   } catch (err) {
     console.error('live-activity error:', err)
-    return NextResponse.json({ profiles: [] })
+    return NextResponse.json({ profiles: [] }, {
+      headers: { 'Access-Control-Allow-Origin': '*' }
+    })
   }
 }
