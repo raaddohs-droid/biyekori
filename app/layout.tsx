@@ -1,8 +1,9 @@
-﻿import type { Metadata } from "next"
+import type { Metadata } from "next"
 import { Geist, Geist_Mono, Hind_Siliguri } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/Navbar"
 import UrgencyBar from "@/components/UrgencyBar"
+import ActivityToastWrapper from "@/components/ActivityToastWrapper"
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] })
 const hindSiliguri = Hind_Siliguri({ variable: "--font-hind-siliguri", subsets: ["bengali", "latin"], weight: ["400", "600", "700"] })
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar />
         <div style={{ position: 'fixed', top: '60px', left: 0, right: 0, zIndex: 49 }}><UrgencyBar /></div>
         {children}
+        <ActivityToastWrapper />
       </body>
     </html>
   )
