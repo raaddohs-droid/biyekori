@@ -82,6 +82,8 @@ export default function AdminDashboard() {
   const [emailBody, setEmailBody] = useState('')
   const [emailSending, setEmailSending] = useState(false)
   const [emailResult, setEmailResult] = useState('')
+  const [retentionRunning, setRetentionRunning] = useState(false)
+  const [retentionResult, setRetentionResult] = useState<any>(null)
 
   // SMS rate limit
   const [smsRateLimit, setSmsRateLimit] = useState(2)
@@ -224,6 +226,7 @@ export default function AdminDashboard() {
     { id: 'revenue', label: 'Revenue', icon: '💰' },
     { id: 'sms', label: 'SMS Broadcast', icon: '📱' },
     { id: 'email', label: 'Email', icon: '📧' },
+    { id: 'retention', label: 'Retention', icon: '🔄' },
   ]
 
   const logUpgrade = async (userId: string, pkg: string, days: number, amount: string, note: string) => {
@@ -699,6 +702,79 @@ export default function AdminDashboard() {
             </div>
           )}
 
+          {tab === 'retention' && (
+            <div>
+              <h1 style={{ margin: '0 0 6px', fontSize: '22px', fontWeight: 800, color: '#111827' }}>Retention Engine</h1>
+              <p style={{ margin: '0 0 24px', fontSize: '13px', color: '#6b7280' }}>Seeds create views, shortlists, and interest accepts to make the platform feel alive. Runs daily at 12pm BD time automatically.</p>
+
+              <div style={{ background: 'white', borderRadius: '14px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', marginBottom: '16px' }}>
+                <h3 style={{ margin: '0 0 8px', fontSize: '15px', fontWeight: 800, color: '#111827' }}>What it does</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+                  {[
+                    '👁️ New users (Day 1-2): 2 seed profiles view their profile',
+                    '❤️ New users (Day 2-4): 1 seed shortlists them',
+                    '✅ Struggling users (3+ sent, 0 received): seed accepts their pending interest',
+                    '⏱️ Interests sent 48h+ to inactive profiles: auto-accepted',
+                    '🔒 Religion always matched · Never repeats seed+user combination',
+                  ].map((rule, i) => (
+                    <div key={i} style={{ padding: '8px 12px', background: '#f8fafc', borderRadius: '8px', fontSize: '12px', color: '#374151' }}>{rule}</div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={async () => {
+                    setRetentionRunning(true)
+                    setRetentionResult(null)
+                    try {
+                      const res = await fetch('/api/retention/run', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer biyekori-cron-2026', 'Content-Type': 'application/json' }
+                      })
+                      const data = await res.json()
+                      setRetentionResult(data)
+                    } catch (e: any) {
+                      setRetentionResult({ error: e.message })
+                    }
+                    setRetentionRunning(false)
+                  }}
+                  disabled={retentionRunning}
+                  style={{ width: '100%', padding: '14px', background: retentionRunning ? '#9ca3af' : 'linear-gradient(135deg,#7B1D2E,#9D174D)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: 700, cursor: retentionRunning ? 'not-allowed' : 'pointer' }}>
+                  {retentionRunning ? 'Running...' : 'Run Retention Engine Now'}
+                </button>
+
+                {retentionResult && (
+                  <div style={{ marginTop: '16px', padding: '16px', background: retentionResult.error ? '#fff1f2' : '#f0fdf4', border: '1px solid ' + (retentionResult.error ? '#fecdd3' : '#bbf7d0'), borderRadius: '10px' }}>
+                    {retentionResult.error ? (
+                      <p style={{ margin: 0, fontSize: '13px', color: '#e11d48', fontWeight: 600 }}>Error: {retentionResult.error}</p>
+                    ) : (
+                      <div>
+                        <p style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 700, color: '#15803d' }}>Run complete</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '8px' }}>
+                          {[
+                            { label: 'Views', value: retentionResult.results?.views || 0, color: '#0891b2' },
+                            { label: 'Shortlists', value: retentionResult.results?.shortlists || 0, color: '#7c3aed' },
+                            { label: 'Accepts', value: retentionResult.results?.accepts || 0, color: '#16a34a' },
+                            { label: 'Skipped', value: retentionResult.results?.skipped || 0, color: '#9ca3af' },
+                          ].map(s => (
+                            <div key={s.label} style={{ background: 'white', borderRadius: '8px', padding: '10px', textAlign: 'center', border: '1px solid #e5e7eb' }}>
+                              <p style={{ margin: 0, fontSize: '22px', fontWeight: 800, color: s.color }}>{s.value}</p>
+                              <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{s.label}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <p style={{ margin: '8px 0 0', fontSize: '11px', color: '#9ca3af' }}>{retentionResult.timestamp}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div style={{ background: '#fffbeb', borderRadius: '12px', padding: '14px 16px', border: '1px solid #fde68a' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: '#92400e' }}><strong>Auto-schedule:</strong> Runs daily at 6:00 UTC (12:00 PM Bangladesh time) via Vercel cron. You can also run manually above anytime.</p>
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
 
@@ -823,3 +899,4 @@ function VerifyCard({ v, filter, onApprove, onReject }: { v: any, filter: string
     </div>
   )
 }
+
