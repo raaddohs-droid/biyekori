@@ -411,6 +411,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [guestSecondsLeft, setGuestSecondsLeft] = useState(0)
   const [fullProfile, setFullProfile] = useState<any>(null)
   const [guestNudge, setGuestNudge] = useState<string | null>(null)
+  const [softPrompt, setSoftPrompt] = useState<{action: string, benefit: string} | null>(null)
   const [pagesLeft, setPagesLeft] = useState<number>(5)
   const [wallReason, setWallReason] = useState<'pages'|'time'>('pages')
   const [photoIndex, setPhotoIndex] = useState(0)
@@ -608,7 +609,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   const handleSendInterest = async () => {
     const userData = localStorage.getItem('biyekori_user');
-    if (!userData) { window.location.href = '/register?reason=interest'; return; }
+    if (!userData) { setSoftPrompt({ action: 'আগ্রহ পাঠান', benefit: 'বিনামূল্যে যোগ দিন এবং প্রতি মাসে ৩টি আগ্রহ পাঠান' }); return; }
     if (interestSent) return;
     const user = JSON.parse(userData);
     try {
@@ -650,7 +651,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   const handleSendMessage = async () => {
     const userData = localStorage.getItem('biyekori_user');
-    if (!userData) { window.location.href = '/register?reason=message'; return; }
+    if (!userData) { setSoftPrompt({ action: 'বার্তা পাঠান', benefit: 'বিনামূল্যে যোগ দিন এবং নিরাপদে যোগাযোগ করুন' }); return; }
     const user = JSON.parse(userData);
     const isPaid = user.plan && user.plan !== 'free';
 
@@ -682,10 +683,10 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   }
 
   const handleBlock = async () => {
-    if (!isLoggedIn) { window.location.href = '/login'; return }
+    if (!isLoggedIn) { setSoftPrompt({ action: 'ব্লক করুন', benefit: 'লগইন করুন এবং আপনার অভিজ্ঞতা নিয়ন্ত্রণ করুন' }); return }
     const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
     const isPremium = u.package && u.package !== 'prottasha'
-    if (!isPremium) { alert('Blocking is a Premium feature. Upgrade to use it.'); window.location.href = '/pricing'; return }
+    if (!isPremium) { setSoftPrompt({ action: 'ব্লক করুন', benefit: 'এই ফিচারটি প্রিমিয়াম সদস্যদের জন্য — আপগ্রেড করুন' }); return }
     if (!confirm(`Block ${profile.full_name}? They will not be able to see your profile or contact you.`)) return
     const res = await fetch('/api/block', {
       method: 'POST',
@@ -724,10 +725,10 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   }
 
   const handleReportClick = () => {
-    if (!isLoggedIn) { window.location.href = '/login'; return }
+    if (!isLoggedIn) { setSoftPrompt({ action: 'রিপোর্ট করুন', benefit: 'লগইন করুন এবং প্ল্যাটফর্ম নিরাপদ রাখতে সাহায্য করুন' }); return }
     const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
     const isPremium = u.package && u.package !== 'prottasha'
-    if (!isPremium) { alert('Reporting is a Premium feature. Upgrade to use it.'); window.location.href = '/pricing'; return }
+    if (!isPremium) { setSoftPrompt({ action: 'রিপোর্ট করুন', benefit: 'এই ফিচারটি প্রিমিয়াম সদস্যদের জন্য — আপগ্রেড করুন' }); return }
     if (!hasInteraction) { alert('You can only report someone who has sent or received an interest with you.'); return }
     setShowReportModal(true)
     setReportDone(false)
@@ -738,13 +739,13 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   const handleDownloadBiodata = () => {
     const userData = localStorage.getItem('biyekori_user');
-    if (!userData) { window.location.href = '/register?reason=biodata'; return; }
+    if (!userData) { setSoftPrompt({ action: 'বায়োডেটা ডাউনলোড', benefit: 'বিনামূল্যে যোগ দিন এবং বায়োডেটা ডাউনলোড করুন' }); return; }
     window.location.href = '/biodata/' + profile.id;
   }
 
   const handleRequestContact = async () => {
     const stored = localStorage.getItem('biyekori_user')
-    if (!stored) { window.location.href = '/register?reason=contact'; return; }
+    if (!stored) { setSoftPrompt({ action: 'যোগাযোগের তথ্য', benefit: 'বিনামূল্যে যোগ দিন এবং পরিচিত হোন' }); return; }
     const user = JSON.parse(stored)
     const isPaid = user.package && user.package !== 'prottasha'
     if (!isPaid) { window.location.href = '/pricing'; return; }
@@ -797,6 +798,45 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   return (
     <>
+    {softPrompt && (
+      <div
+        onClick={() => setSoftPrompt(null)}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 996,
+          background: 'rgba(0,0,0,0.3)',
+          display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+        }}>
+        <div
+          onClick={e => e.stopPropagation()}
+          style={{
+            background: 'white', borderRadius: '24px 24px 0 0',
+            padding: '28px 28px 40px', width: '100%', maxWidth: '520px',
+            boxShadow: '0 -8px 40px rgba(0,0,0,0.15)',
+            animation: 'slideUp 0.3s ease',
+          }}>
+          <div style={{ width: '40px', height: '4px', borderRadius: '2px', background: '#e5e7eb', margin: '0 auto 20px' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+            <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg,#7B1D2E,#9D174D)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#1a0a0d', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.action} করতে যোগ দিন</p>
+              <p style={{ margin: '2px 0 0', fontSize: '13px', color: '#6b7280', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.benefit}</p>
+            </div>
+          </div>
+          <div style={{ background: '#fef9f0', borderRadius: '10px', padding: '10px 14px', marginBottom: '20px', fontSize: '12px', color: '#92400e', fontFamily: 'system-ui, sans-serif' }}>
+            ✓ বিনামূল্যে · ✓ প্রতি মাসে ৩টি আগ্রহ · ✓ সীমাহীন আগ্রহ পাওয়া · ✓ নিরাপদ যোগাযোগ
+          </div>
+          <a href="/register" style={{ display: 'block', padding: '14px', background: 'linear-gradient(135deg,#7B1D2E,#9D174D)', color: 'white', borderRadius: '12px', fontWeight: 700, fontSize: '15px', textDecoration: 'none', textAlign: 'center', marginBottom: '10px', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>
+            বিনামূল্যে যোগ দিন
+          </a>
+          <a href="/login" style={{ display: 'block', padding: '12px', background: '#f8f4f5', color: '#7B1D2E', border: '1px solid rgba(123,29,46,0.2)', borderRadius: '12px', fontWeight: 700, fontSize: '14px', textDecoration: 'none', textAlign: 'center', fontFamily: 'system-ui, sans-serif' }}>
+            আমার অ্যাকাউন্ট আছে — Login
+          </a>
+        </div>
+      </div>
+    )}
+
     {guestNudge && !guestBlurred && (
       <div style={{
         position: 'fixed', bottom: '100px', left: '50%', transform: 'translateX(-50%)',
