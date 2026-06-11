@@ -2,6 +2,7 @@
 import { Geist, Geist_Mono, Hind_Siliguri } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/Navbar"
+import UrgencyBar from "@/components/UrgencyBar"
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] })
 const hindSiliguri = Hind_Siliguri({ variable: "--font-hind-siliguri", subsets: ["bengali", "latin"], weight: ["400", "600", "700"] })
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Navbar />
+        <div style={{ paddingTop: '64px' }}><UrgencyBar /></div>
         {children}
       </body>
     </html>

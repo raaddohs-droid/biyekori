@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <main style={{ fontFamily: "'Georgia', serif", background: '#FFFBF5', color: '#1a0a0d', overflowX: 'hidden' }}>
 
-      <div style={{ paddingTop: '70px' }}><UrgencyBar /></div>
+      
 
       {/* HERO */}
       <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', backgroundImage: "url('/hero-wedding.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundRepeat: 'no-repeat', padding: '120px 24px 80px 50%', textAlign: 'left', overflow: 'hidden' }}>
