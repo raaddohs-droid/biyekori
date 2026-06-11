@@ -237,7 +237,7 @@ export default function LandingClient() {
                   num: '01',
                   icon: '👤',
                   title: 'Create Your Profile',
-                  desc: 'Tell your story — who you are, what you value, what you&apos;re looking for. Takes two minutes.',
+                  desc: 'Tell your story — who you are, what you value, what you&apos;re looking for. Ready in minutes.',
                   cta: 'Free to join',
                 },
                 {
