@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ProfilePageClient from './ProfilePageClient'
 
@@ -7,6 +6,9 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
+
+// Fields safe to show publicly (teaser only)
+const PUBLIC_FIELDS = 'id,full_name,age,gender,religion,religious_level,district,city,profession,education,height,marital_status,photo_url,package,is_verified,guardian_mode,profile_completion,created_at,last_active_at,marriage_timeline,family_type,family_values'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
@@ -20,32 +22,26 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     return {
       title: 'Profile | Biyekori',
       description: 'Find your life partner on Biyekori — Bangladesh AI Matrimony.',
+      robots: { index: false, follow: false },
     }
   }
 
-  const name = profile.full_name ? profile.full_name.split(' ')[0] + ', ' + (profile.age || '') : 'Profile'
+  const firstName = profile.full_name ? profile.full_name.split(' ')[0] : 'Profile'
   const location = profile.city || profile.district || 'Bangladesh'
-  const title = name + ' — ' + location + ' | Biyekori'
-  const description = 'View ' + (profile.full_name || 'this profile') + ' on Biyekori — Bangladesh AI Matrimony. Find your perfect match.'
-  const image = profile.photo_url || 'https://biyekori.com/og-default.jpg'
-  const url = 'https://biyekori.com/profile/' + resolvedParams.id
+  const title = `${firstName}, ${profile.age || ''} — ${location} | Biyekori`
+  const description = `View this profile on Biyekori — Bangladesh's privacy-first matrimony platform.`
+  const image = 'https://biyekori.com/og-default.jpg' // never expose real photo in OG
 
   return {
     title,
     description,
+    robots: { index: false, follow: false }, // never index personal profiles
     openGraph: {
       title,
       description,
-      url,
       siteName: 'Biyekori',
-      images: [{ url: image, width: 1200, height: 630, alt: title }],
+      images: [{ url: image, width: 1200, height: 630, alt: 'Biyekori' }],
       type: 'profile',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [image],
     },
   }
 }
@@ -53,9 +49,10 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
 
+  // Only fetch safe public fields server-side — sensitive data fetched client-side after auth check
   const { data: profile, error } = await supabase
     .from('profiles')
-    .select('*')
+    .select(PUBLIC_FIELDS)
     .eq('id', resolvedParams.id)
     .single()
 
