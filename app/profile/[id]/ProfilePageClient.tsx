@@ -863,7 +863,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                 <strong style={{ color: '#7B1D2E' }}>নিরাপদ যোগাযোগ</strong> — ফোন নম্বর ছাড়া, পরিচয় গোপন রেখে কথা বলা। পরিচয় প্রকাশ শুধু আপনার ইচ্ছায়।
               </p>
               <p style={{ margin: 0, fontSize: '11.5px', color: '#4b5563', fontFamily: 'Hind Siliguri, system-ui, sans-serif', lineHeight: 1.5 }}>
-                <strong style={{ color: '#7B1D2E' }}>বায়োডেটা</strong> — আপনার প্রোফাইলের সুন্দর PDF। পরিবারের সাথে শেয়ার করুন।
+                <strong style={{ color: '#7B1D2E' }}>বায়োডেটা</strong> — আপনার পছন্দের মানুষটির প্রোফাইলের সুন্দর PDF। পরিবারের সাথে শেয়ার করুন।
               </p>
             </div>
           </div>
