@@ -10,7 +10,7 @@ export default function Home() {
 
       {/* HERO */}
       <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', backgroundImage: "url('/hero-wedding.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundRepeat: 'no-repeat', padding: '120px 24px 80px 50%', textAlign: 'left', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 100%)', pointerEvents: 'none' }}/>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%)', pointerEvents: 'none' }}/>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '800px', height: '800px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(240,192,64,0.08) 0%,transparent 65%)', pointerEvents: 'none' }}/>
 
         <p style={{ fontSize: 'clamp(16px, 2vw, 22px)', color: '#F0C040', margin: '0 0 14px', letterSpacing: '3px', position: 'relative', zIndex: 2, fontStyle: 'italic' }}>
