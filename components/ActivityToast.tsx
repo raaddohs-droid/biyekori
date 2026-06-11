@@ -93,20 +93,36 @@ export default function ActivityToast({ viewerGender }: { viewerGender?: string 
       }, 5000)
     }
 
+    function isBDNightTime(): boolean {
+      // BD time = UTC+6. Suppress toasts 11pm-8am BD (17:00-02:00 UTC)
+      const utcHour = new Date().getUTCHours()
+      return utcHour >= 17 || utcHour < 2
+    }
+
+    function getNextDelay(): number {
+      // 20% chance of long gap (3-5 min), 80% normal (45s-3min)
+      const longGap = Math.random() < 0.2
+      if (longGap) return 180000 + Math.random() * 120000 // 3-5 min
+      return 45000 + Math.random() * 135000 // 45s-3min
+    }
+
     function scheduleNext() {
       if (shownCountRef.current >= MAX_TOASTS_PER_SESSION) return
-      const delay = 24000 + Math.random() * 12000 // 24-36s
+      if (isBDNightTime()) return // no toasts at night
+      const delay = getNextDelay()
       timerRef.current = setTimeout(() => {
-        showNext()
+        if (!isBDNightTime()) showNext()
         scheduleNext()
       }, delay)
     }
 
-    // First toast after 4s
+    // First toast after 8s
     const firstTimer = setTimeout(() => {
-      showNext()
-      scheduleNext()
-    }, 4000)
+      if (!isBDNightTime()) {
+        showNext()
+        scheduleNext()
+      }
+    }, 8000)
 
     return () => {
       clearTimeout(firstTimer)
