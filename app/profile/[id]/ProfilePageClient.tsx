@@ -609,7 +609,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   const handleSendInterest = async () => {
     const userData = localStorage.getItem('biyekori_user');
-    if (!userData) { setSoftPrompt({ action: 'আগ্রহ পাঠান', benefit: 'বিনামূল্যে যোগ দিন এবং প্রতি মাসে ৩টি আগ্রহ পাঠান' }); return; }
+    if (!userData) { setSoftPrompt({ action: 'আগ্রহ পাঠাতে', benefit: 'বিনামূল্যে যোগ দিন এবং প্রতি মাসে ৩টি আগ্রহ পাঠান' }); return; }
     if (interestSent) return;
     const user = JSON.parse(userData);
     try {
@@ -651,7 +651,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   const handleSendMessage = async () => {
     const userData = localStorage.getItem('biyekori_user');
-    if (!userData) { setSoftPrompt({ action: 'বার্তা পাঠান', benefit: 'বিনামূল্যে যোগ দিন এবং নিরাপদে যোগাযোগ করুন' }); return; }
+    if (!userData) { setSoftPrompt({ action: 'বার্তা পাঠাতে', benefit: 'বিনামূল্যে যোগ দিন এবং নিরাপদে যোগাযোগ করুন' }); return; }
     const user = JSON.parse(userData);
     const isPaid = user.plan && user.plan !== 'free';
 
@@ -683,10 +683,10 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   }
 
   const handleBlock = async () => {
-    if (!isLoggedIn) { setSoftPrompt({ action: 'ব্লক করুন', benefit: 'লগইন করুন এবং আপনার অভিজ্ঞতা নিয়ন্ত্রণ করুন' }); return }
+    if (!isLoggedIn) { setSoftPrompt({ action: 'ব্লক করতে', benefit: 'লগইন করুন এবং আপনার অভিজ্ঞতা নিয়ন্ত্রণ করুন' }); return }
     const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
     const isPremium = u.package && u.package !== 'prottasha'
-    if (!isPremium) { setSoftPrompt({ action: 'ব্লক করুন', benefit: 'এই ফিচারটি প্রিমিয়াম সদস্যদের জন্য — আপগ্রেড করুন' }); return }
+    if (!isPremium) { setSoftPrompt({ action: 'ব্লক করতে', benefit: 'এই ফিচারটি প্রিমিয়াম সদস্যদের জন্য — আপগ্রেড করুন' }); return }
     if (!confirm(`Block ${profile.full_name}? They will not be able to see your profile or contact you.`)) return
     const res = await fetch('/api/block', {
       method: 'POST',
@@ -725,10 +725,10 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   }
 
   const handleReportClick = () => {
-    if (!isLoggedIn) { setSoftPrompt({ action: 'রিপোর্ট করুন', benefit: 'লগইন করুন এবং প্ল্যাটফর্ম নিরাপদ রাখতে সাহায্য করুন' }); return }
+    if (!isLoggedIn) { setSoftPrompt({ action: 'রিপোর্ট করতে', benefit: 'লগইন করুন এবং প্ল্যাটফর্ম নিরাপদ রাখতে সাহায্য করুন' }); return }
     const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
     const isPremium = u.package && u.package !== 'prottasha'
-    if (!isPremium) { setSoftPrompt({ action: 'রিপোর্ট করুন', benefit: 'এই ফিচারটি প্রিমিয়াম সদস্যদের জন্য — আপগ্রেড করুন' }); return }
+    if (!isPremium) { setSoftPrompt({ action: 'রিপোর্ট করতে', benefit: 'এই ফিচারটি প্রিমিয়াম সদস্যদের জন্য — আপগ্রেড করুন' }); return }
     if (!hasInteraction) { alert('You can only report someone who has sent or received an interest with you.'); return }
     setShowReportModal(true)
     setReportDone(false)
@@ -739,13 +739,13 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   const handleDownloadBiodata = () => {
     const userData = localStorage.getItem('biyekori_user');
-    if (!userData) { setSoftPrompt({ action: 'বায়োডেটা ডাউনলোড', benefit: 'বিনামূল্যে যোগ দিন এবং বায়োডেটা ডাউনলোড করুন' }); return; }
+    if (!userData) { setSoftPrompt({ action: 'বায়োডেটা ডাউনলোড করতে', benefit: 'বিনামূল্যে যোগ দিন এবং বায়োডেটা ডাউনলোড করুন' }); return; }
     window.location.href = '/biodata/' + profile.id;
   }
 
   const handleRequestContact = async () => {
     const stored = localStorage.getItem('biyekori_user')
-    if (!stored) { setSoftPrompt({ action: 'যোগাযোগের তথ্য', benefit: 'বিনামূল্যে যোগ দিন এবং পরিচিত হোন' }); return; }
+    if (!stored) { setSoftPrompt({ action: 'যোগাযোগের তথ্য দেখতে', benefit: 'বিনামূল্যে যোগ দিন এবং পরিচিত হোন' }); return; }
     const user = JSON.parse(stored)
     const isPaid = user.package && user.package !== 'prottasha'
     if (!isPaid) { window.location.href = '/pricing'; return; }
@@ -820,7 +820,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#1a0a0d', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.action} করতে যোগ দিন</p>
+              <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#1a0a0d', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.action} যোগ দিন</p>
               <p style={{ margin: '2px 0 0', fontSize: '13px', color: '#6b7280', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.benefit}</p>
             </div>
           </div>
