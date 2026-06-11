@@ -417,6 +417,15 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [contactRequest, setContactRequest] = useState<any>(null)
   const [loadingContact, setLoadingContact] = useState(false)
   const fp = fullProfile || profile // fp = full data if logged in, safe data if guest
+
+  // Mask name for guests — show first name + last initial only
+  function getDisplayName(full: string, loggedIn: boolean): string {
+    if (loggedIn) return full || 'Anonymous'
+    const parts = (full || '').trim().split(' ')
+    if (parts.length === 1) return parts[0].charAt(0) + '***'
+    return parts[0] + ' ' + parts[1].charAt(0) + '.'
+  }
+  const displayName = getDisplayName(profile.full_name || '', isLoggedIn)
   const { matchScore, dataConfidence } = calculateScores(fp, viewerProfile)
   const [galleryPhotos, setGalleryPhotos] = useState<any[]>([])
   const profileCode = getProfileCode(profile.id, profile.created_at || '')
@@ -760,7 +769,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   }
 
   const handleShareWhatsApp = () => {
-    const name = profile.full_name || 'Profile';
+    const name = getDisplayName(profile.full_name || 'Profile', isLoggedIn);
     const profileUrl = 'https://biyekori.com/profile/' + profile.id;
     const msg = 'Ei profile ta dekho Biye Kori te: ' + profileUrl;
     const waUrl = 'https://wa.me/?text=' + encodeURIComponent(msg);
@@ -896,7 +905,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(88,28,135,0.75)', backdropFilter: 'blur(2px)', borderRadius: '16px', padding: '24px', textAlign: 'center' }}>
               <div style={{ fontSize: '36px', marginBottom: '10px' }}>🤖</div>
               <h3 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 800, color: 'white' }}>
-                See your AI compatibility with {profile.full_name?.split(' ')[0] || 'this person'}
+                See your AI compatibility with {isLoggedIn ? (profile.full_name?.split(' ')[0] || 'this person') : 'this profile'}
               </h3>
               <p style={{ margin: '0 0 20px', fontSize: '13px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
                 Login to get your personalized match score based on your preferences, religion, location and lifestyle.
@@ -1151,7 +1160,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                 })()}
               </div>
               <div className="flex-1 mt-4 md:mt-16">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">{profile.full_name || 'Anonymous'}</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{displayName}</h1>
 
                 {/* Guardian Mode badge */}
                 <div style={{ marginBottom: '10px' }}>
