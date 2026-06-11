@@ -1194,8 +1194,12 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                         <img
                           src={allPhotos[photoIndex]}
                           alt={profile.full_name || 'Profile'}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', transition: 'opacity 0.2s' }}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', transition: 'opacity 0.2s', userSelect: 'none', WebkitUserSelect: 'none' }}
+                          onContextMenu={e => e.preventDefault()}
+                          onDragStart={e => e.preventDefault()}
                         />
+                        {/* Transparent overlay blocks right-click save on photo */}
+                        <div style={{ position: 'absolute', inset: 0, zIndex: 2 }} onContextMenu={e => e.preventDefault()} />
                         {/* Counter */}
                         {total > 1 && (
                           <div style={{ position: 'absolute', bottom: '8px', right: '8px', background: 'rgba(0,0,0,0.6)', color: 'white', fontSize: '11px', fontWeight: 700, padding: '3px 8px', borderRadius: '20px' }}>
@@ -1220,7 +1224,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                         <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
                           {allPhotos.map((photo: string, i: number) => (
                             <button key={i} onClick={() => setPhotoIndex(i)} style={{ width: '44px', height: '44px', borderRadius: '8px', overflow: 'hidden', border: i === photoIndex ? '2px solid #e11d48' : '2px solid #e5e7eb', padding: 0, cursor: 'pointer', flexShrink: 0 }}>
-                              <img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                              <img src={photo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', userSelect: 'none' }} onContextMenu={e => e.preventDefault()} onDragStart={e => e.preventDefault()} />
                             </button>
                           ))}
                         </div>
@@ -1426,8 +1430,8 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '12px' }}>
               {galleryPhotos.map((photo: any, i: number) => (
                 <div key={i} style={{ aspectRatio: '1', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', cursor: 'pointer' }}
-                  onClick={() => window.open(photo.photo_url, '_blank')}>
-                  <img src={photo.photo_url} alt={`Gallery ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  onClick={e => e.preventDefault()}>
+                  <img src={photo.photo_url} alt={`Gallery ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', userSelect: 'none' }} onContextMenu={e => e.preventDefault()} onDragStart={e => e.preventDefault()} />
                 </div>
               ))}
             </div>
