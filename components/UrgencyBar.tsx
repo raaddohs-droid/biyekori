@@ -12,9 +12,10 @@ const SIGNALS = [
 export default function UrgencyBar() {
   const [current, setCurrent] = useState(0)
   const [fade, setFade] = useState(true)
-  const [live, setLive] = useState(Math.floor(Math.random()*12)+4)
+  const [live, setLive] = useState(0)
 
   useEffect(() => {
+    setLive(Math.floor(Math.random()*12)+4)
     const iv = setInterval(() => setLive(p => Math.max(3, Math.min(20, p + Math.floor(Math.random()*3)-1))), 8000)
     return () => clearInterval(iv)
   }, [])
