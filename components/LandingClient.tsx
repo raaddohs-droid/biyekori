@@ -56,7 +56,7 @@ export default function LandingClient() {
         <div style={{ display: 'flex', gap: '48px', flexWrap: 'wrap', justifyContent: 'center', padding: '0 24px 40px' }}>
           {[{ target: 1811, label: 'Women registered' }, { target: 1199, label: 'Men registered' }, { target: 3010, label: 'Total profiles' }].map(({ target, label }) => (
             <div key={label} style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 800, color: '#F0C040', letterSpacing: '-1px' }}>
+              <div style={{ fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 800, color: '#B89255', letterSpacing: '-1px' }}>
                 <Counter target={target} />
               </div>
               <div style={{ fontSize: '13px', color: '#6b4040', letterSpacing: '1px', marginTop: '4px', fontFamily: 'system-ui, sans-serif' }}>{label}</div>
@@ -66,13 +66,13 @@ export default function LandingClient() {
       </FadeIn>
 
       {/* WHO IS THIS FOR */}
-      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', borderTop: '1px solid rgba(123,29,46,0.08)', background: '#FFFBF5' }}>
+      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', borderTop: '1px solid rgba(123,29,46,0.08)', background: '#FBF6EE' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <FadeIn>
             <p style={{ fontSize: '14px', color: 'rgba(123,29,46,0.7)', letterSpacing: '3px', marginBottom: '16px', textAlign: 'center', fontFamily: 'system-ui, sans-serif', textTransform: 'uppercase' }}>Biyekori is for</p>
             <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 48px)', fontWeight: 700, color: '#1a0a0d', textAlign: 'center', margin: '0 0 56px', lineHeight: 1.2 }}>
               Whether you&apos;re searching for yourself<br/>
-              <span style={{ color: '#F0C040' }}>or for someone you love</span>
+              <span style={{ color: '#B89255' }}>or for someone you love</span>
             </h2>
           </FadeIn>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
@@ -87,7 +87,7 @@ export default function LandingClient() {
                   <div style={{ fontSize: '32px', marginBottom: '14px' }}>{icon}</div>
                   <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a0a0d', margin: '0 0 10px' }}>{title}</h3>
                   <p style={{ fontSize: '15px', color: '#4b2020', lineHeight: 1.75, margin: '0 0 16px', fontFamily: 'system-ui, sans-serif' }}>{desc}</p>
-                  <span style={{ fontSize: '13px', color: '#7B1D2E', fontFamily: 'system-ui, sans-serif' }}>Get started \u2192</span>
+                  <span style={{ fontSize: '13px', color: '#6D1F2F', fontFamily: 'system-ui, sans-serif' }}>Get started \u2192</span>
                 </HoverCard>
               </FadeIn>
             ))}
@@ -96,18 +96,18 @@ export default function LandingClient() {
       </section>
 
       {/* AI MATCH SCORE */}
-      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', borderTop: '1px solid rgba(123,29,46,0.08)', background: '#FFFBF5' }}>
+      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', borderTop: '1px solid rgba(123,29,46,0.08)', background: '#FBF6EE' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '64px', alignItems: 'center' }}>
           <FadeIn>
             <p style={{ fontSize: '14px', color: 'rgba(123,29,46,0.7)', letterSpacing: '3px', marginBottom: '16px', fontFamily: 'system-ui, sans-serif', textTransform: 'uppercase' }}>The feature nobody else has</p>
             <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 48px)', fontWeight: 700, color: '#1a0a0d', margin: '0 0 20px', lineHeight: 1.1 }}>
-              See <span style={{ color: '#F0C040' }}>exactly</span> why<br/>you match.
+              See <span style={{ color: '#B89255' }}>exactly</span> why<br/>you match.
             </h2>
             <p style={{ fontSize: 'clamp(16px, 1.4vw, 18px)', color: '#3d1515', lineHeight: 1.9, margin: '0 0 28px', fontFamily: 'system-ui, sans-serif' }}>
               Every profile shows a personal compatibility score — a field-by-field breakdown. Religion, age, height, income, location, family values. See where you match and where you don&apos;t, before you say hello.
             </p>
             <p style={{ fontSize: '15px', color: 'rgba(253,246,238,0.52)', fontStyle: 'italic', fontFamily: 'system-ui, sans-serif', marginBottom: '28px' }}>No other matrimony platform in Bangladesh does this.</p>
-            <Link href="/profiles" style={{ display: 'inline-block', padding: '14px 32px', background: 'linear-gradient(135deg, #F0C040, #C07800)', color: '#080604', fontSize: '14px', fontWeight: 700, textDecoration: 'none', borderRadius: '4px', letterSpacing: '2px', fontFamily: 'system-ui, sans-serif' }}>
+            <Link href="/profiles" style={{ display: 'inline-block', padding: '14px 32px', background: '#6D1F2F', color: '#080604', fontSize: '14px', fontWeight: 700, textDecoration: 'none', borderRadius: '4px', letterSpacing: '2px', fontFamily: 'system-ui, sans-serif' }}>
               SEE LIVE SCORES
             </Link>
           </FadeIn>
@@ -147,12 +147,12 @@ export default function LandingClient() {
       </section>
 
       {/* FEATURES */}
-      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', borderTop: '1px solid rgba(123,29,46,0.08)', background: '#FFFBF5' }}>
+      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', borderTop: '1px solid rgba(123,29,46,0.08)', background: '#FBF6EE' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <FadeIn>
             <p style={{ fontSize: '14px', color: 'rgba(123,29,46,0.7)', letterSpacing: '3px', marginBottom: '16px', textAlign: 'center', fontFamily: 'system-ui, sans-serif', textTransform: 'uppercase' }}>What makes Biyekori different</p>
             <h2 style={{ fontSize: 'clamp(28px, 3vw, 44px)', fontWeight: 700, color: '#1a0a0d', textAlign: 'center', margin: '0 0 56px', lineHeight: 1.2 }}>
-              Built for Bangladesh.<br/><span style={{ color: '#F0C040' }}>Every detail.</span>
+              Built for Bangladesh.<br/><span style={{ color: '#B89255' }}>Every detail.</span>
             </h2>
           </FadeIn>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
@@ -169,7 +169,7 @@ export default function LandingClient() {
                   <div style={{ fontSize: '30px', marginBottom: '14px' }}>{icon}</div>
                   <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#1a0a0d', margin: '0 0 10px' }}>{title}</h3>
                   <p style={{ fontSize: '14px', color: '#5c3030', lineHeight: 1.85, margin: '0 0 14px', fontFamily: 'system-ui, sans-serif' }}>{desc}</p>
-                  <span style={{ fontSize: '13px', color: '#7B1D2E', fontFamily: 'system-ui, sans-serif' }}>Learn more \u2192</span>
+                  <span style={{ fontSize: '13px', color: '#6D1F2F', fontFamily: 'system-ui, sans-serif' }}>Learn more \u2192</span>
                 </HoverCard>
               </FadeIn>
             ))}
@@ -178,12 +178,12 @@ export default function LandingClient() {
       </section>
 
       {/* TRUST */}
-      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', borderTop: '1px solid rgba(123,29,46,0.08)', textAlign: 'center', background: '#FFF0F3' }}>
+      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', borderTop: '1px solid rgba(123,29,46,0.08)', textAlign: 'center', background: '#F8EFE5' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           <FadeIn>
             <p style={{ fontSize: '14px', color: 'rgba(123,29,46,0.7)', letterSpacing: '3px', marginBottom: '16px', fontFamily: 'system-ui, sans-serif', textTransform: 'uppercase' }}>Safety and trust</p>
             <h2 style={{ fontSize: 'clamp(28px, 3vw, 44px)', fontWeight: 700, color: '#1a0a0d', margin: '0 0 16px', lineHeight: 1.2 }}>
-              Your family&apos;s trust<br/><span style={{ color: '#F0C040' }}>is not negotiable.</span>
+              Your family&apos;s trust<br/><span style={{ color: '#B89255' }}>is not negotiable.</span>
             </h2>
             <p style={{ fontSize: 'clamp(16px, 1.4vw, 18px)', color: '#4b2020', lineHeight: 1.9, margin: '0 0 52px', fontFamily: 'system-ui, sans-serif' }}>
               Every account requires phone verification. Premium members go through photo and NID document checks. Fake profiles are removed immediately. You can block or report anyone, anytime.
@@ -210,7 +210,7 @@ export default function LandingClient() {
       </section>
 
       {/* MISSION */}
-      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', borderTop: '1px solid rgba(123,29,46,0.08)', background: '#FFFBF5' }}>
+      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', borderTop: '1px solid rgba(123,29,46,0.08)', background: '#FBF6EE' }}>
         <FadeIn>
           <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center' }}>
             <p style={{ fontSize: 'clamp(18px, 2vw, 26px)', color: '#2d1010', lineHeight: 2.0, fontStyle: 'italic', margin: '0 0 28px' }}>

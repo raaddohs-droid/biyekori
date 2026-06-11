@@ -1,0 +1,6 @@
+content = open('components/LogoAnimation.tsx', 'r', encoding='utf-8').read()
+content = content.replace("ctx.fillStyle = '#080604';\n      ctx.fillRect(0, 0, W, H);\n      initializedRef.current = true;", "ctx.clearRect(0, 0, W, H);\n      initializedRef.current = true;")
+content = content.replace("ctx.fillStyle = '#080604';\n      ctx.fillRect(0, 0, W, H);\n\n      const t = Math.min(elapsed / 500, 1);", "ctx.clearRect(0, 0, W, H);\n\n      const t = Math.min(elapsed / 500, 1);")
+content = content.replace("ctx.fillStyle = '#080604';\n      ctx.fillRect(0, 0, W, H);\n\n      lx = cx - gap; rx = cx + gap;", "ctx.clearRect(0, 0, W, H);\n\n      lx = cx - gap; rx = cx + gap;")
+open('components/LogoAnimation.tsx', 'w', encoding='utf-8', newline='\n').write(content)
+print('Done')
