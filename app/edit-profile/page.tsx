@@ -118,7 +118,6 @@ export default function EditProfilePage() {
   const [showMoreLifestyle, setShowMoreLifestyle] = useState(false)
   const [familyInvolvement, setFamilyInvolvement] = useState('')
   const [socialLifestyle, setSocialLifestyle] = useState('')
-  const [dowryStance, setDowryStance] = useState('')
   const [weddingStyle, setWeddingStyle] = useState('')
 
   // Partner preference fields
@@ -212,8 +211,7 @@ export default function EditProfilePage() {
         setFamilyLocation(p.family_location || '')
         setFamilyInvolvement(p.family_involvement || '')
         setSocialLifestyle(p.social_lifestyle || '')
-        setDowryStance(p.dowry_stance || '')
-        setWeddingStyle(p.wedding_style || '')
+            setWeddingStyle(p.wedding_style || '')
         setPhotoPrivacy(p.photo_privacy || false)
         setIncomeHidden(p.income_hidden || false)
         setDobPrivacy(p.dob_privacy || 'age_only')
@@ -279,7 +277,7 @@ export default function EditProfilePage() {
         num_brothers: numBrothers !== '' ? parseInt(numBrothers) : null,
         family_financial_status: familyFinancialStatus, family_location: familyLocation,
         family_involvement: familyInvolvement, social_lifestyle: socialLifestyle,
-        dowry_stance: dowryStance, wedding_style: weddingStyle,
+        wedding_style: weddingStyle,
         marriage_timeline: marriageTimeline, living_arrangement: livingArrangement,
         work_after_marriage: workAfterMarriage, smoking, drinking, diet,
         willing_to_relocate: willingToRelocate,
@@ -938,14 +936,6 @@ export default function EditProfilePage() {
                       </select>
                     </div>
                     <div>
-                      <label className={labelClass}>Dowry Stance</label>
-                      <select value={dowryStance} onChange={e => setDowryStance(e.target.value)} className={inputClass}>
-                        <option value="">Select</option>
-                        <option value="against">Strictly against dowry</option>
-                        <option value="gifts_only">No dowry; voluntary gifts only</option>
-                        <option value="discussion">Open to discussion</option>
-                        <option value="prefer_not">Prefer not to say</option>
-                      </select>
                     </div>
                     <div>
                       <label className={labelClass}>Preferred Wedding Style</label>
@@ -1352,3 +1342,4 @@ export default function EditProfilePage() {
     </div>
   )
 }
+
