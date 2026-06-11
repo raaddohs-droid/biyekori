@@ -14,7 +14,6 @@ export default function Home() {
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '800px', height: '800px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(240,192,64,0.08) 0%,transparent 65%)', pointerEvents: 'none' }}/>
 
         <p style={{ fontSize: 'clamp(16px, 2vw, 22px)', color: '#F0C040', margin: '0 0 14px', letterSpacing: '3px', position: 'relative', zIndex: 2, fontStyle: 'italic' }}>
-          <span style={{fontFamily: "var(--font-hind-siliguri)"}}>আপনার জন্য কেউ অপেক্ষা করছে</span>
         </p>
         <h1 style={{ fontSize: 'clamp(40px, 6.5vw, 90px)', fontWeight: 700, color: '#FFFFFF', margin: '0 0 20px', lineHeight: 1.0, letterSpacing: '-2px', position: 'relative', zIndex: 2, textShadow: '0 2px 30px rgba(0,0,0,0.4)' }}>
           Someone is waiting<br/>for you.
@@ -65,7 +64,6 @@ export default function Home() {
       <section style={{ minHeight: '50vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#7B1D2E', textAlign: 'center', padding: 'clamp(60px,8vw,100px) 24px', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '700px', height: '700px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(240,192,64,0.08) 0%,transparent 70%)', pointerEvents: 'none' }}/>
         <p style={{ fontSize: 'clamp(18px, 2vw, 24px)', color: '#F0C040', margin: '0 0 16px', position: 'relative', zIndex: 2, letterSpacing: '2px' }}>
-          <span style={{ fontFamily: 'var(--font-hind-siliguri)' }}>দেরি কেন? শুরু করুন আজই</span>
         </p>
         <h2 style={{ fontSize: 'clamp(32px, 4.5vw, 62px)', fontWeight: 700, color: '#FFFFFF', margin: '0 0 20px', lineHeight: 1.05, position: 'relative', zIndex: 2, letterSpacing: '-1.5px' }}>
           Your person is out there.<br/><span style={{ color: '#F0C040' }}>Go find them.</span>
@@ -87,7 +85,6 @@ export default function Home() {
           <div style={{ maxWidth: '280px' }}>
             <span style={{ fontSize: '24px', fontWeight: 800, color: '#F0C040', letterSpacing: '4px', display: 'block', marginBottom: '10px' }}>BIYEKORI</span>
             <p style={{ margin: '0 0 8px', fontSize: '13px', color: 'rgba(255,255,255,0.35)', fontStyle: 'italic' }}>
-              <span style={{ fontFamily: 'var(--font-hind-siliguri)' }}>আপনার জন্য কেউ অপেক্ষা করছে</span>
             </p>
             <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, fontFamily: 'system-ui, sans-serif' }}>Bangladesh&apos;s most thoughtful matrimony platform. Built in Dhaka.</p>
           </div>
