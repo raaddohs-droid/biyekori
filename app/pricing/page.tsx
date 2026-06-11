@@ -67,7 +67,7 @@ export default function PricingPage() {
       borderColor: '#7c3aed',
       popular: false,
       features: [
-        'Everything in Standard',
+        'Everything in Silver',
         'View 30 contact numbers/month',
         'Unlimited messages',
         'Top search placement',
@@ -221,14 +221,14 @@ export default function PricingPage() {
         <div style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)', borderRadius: '16px', padding: '32px 36px', display: 'grid', gridTemplateColumns: '1fr auto', gap: '32px', alignItems: 'center', marginBottom: '48px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, color: 'white' }}>Global</h3>
+              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 900, color: 'white' }}>NRB Gold</h3>
               <span style={{ fontSize: '11px', fontWeight: 700, color: '#fbbf24', background: 'rgba(251,191,36,0.15)', padding: '2px 8px', borderRadius: '20px' }}>Overseas Bangladeshi</span>
             </div>
             <p style={{ margin: '0 0 14px', fontSize: '26px', fontWeight: 900, color: 'white' }}>
               $15 <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', fontWeight: 400 }}>per month (USD)</span>
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-              {['All Premium features', 'USD pricing', 'Priority NRB matching', 'WhatsApp support'].map((f, i) => (
+              {['All Gold features', 'USD pricing', 'Priority NRB matching', 'WhatsApp support'].map((f, i) => (
                 <span key={i} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', background: 'rgba(255,255,255,0.1)', padding: '4px 12px', borderRadius: '20px' }}>{f}</span>
               ))}
             </div>
@@ -243,7 +243,7 @@ export default function PricingPage() {
           {[
             { icon: '🔒', title: 'No hidden charges', desc: 'Cancel anytime via email.' },
             { icon: '📱', title: 'Pay via bKash', desc: '017XXXXXXXX — send payment ID.' },
-            { icon: '⚡', title: 'Instant activation', desc: 'Within 2 hours of payment.' },
+            { icon: '⚡', title: 'Quick activation', desc: 'Within 2 hours of payment confirmation.' },
             { icon: '🤝', title: '30-day refund', desc: 'No interests? Full refund.' },
           ].map((item, i) => (
             <div key={i} style={{ background: 'white', borderRadius: '12px', padding: '18px', border: '1px solid #e5e7eb', textAlign: 'center' }}>
@@ -267,3 +267,4 @@ export default function PricingPage() {
     </div>
   )
 }
+
