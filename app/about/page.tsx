@@ -8,7 +8,7 @@ export default function AboutPage() {
         <div style={{ marginBottom: '48px' }}>
           <p style={{ margin: '0 0 8px', fontSize: '12px', letterSpacing: '3px', color: '#e11d48', fontWeight: 700, textTransform: 'uppercase' }}>About Us</p>
           <h1 style={{ margin: '0 0 16px', fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 900, color: '#111827', lineHeight: 1.2 }}>
-            Bangladesh's most trusted matrimony platform
+            Bangladesh's privacy-first matrimony platform
           </h1>
           <p style={{ margin: 0, fontSize: '18px', color: '#6b7280', lineHeight: 1.7 }}>
             Biyekori was built for Bangladeshi families who want a safe, serious, and modern way to find a life partner.
@@ -78,3 +78,4 @@ export default function AboutPage() {
     </div>
   )
 }
+
