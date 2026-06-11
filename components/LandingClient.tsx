@@ -209,6 +209,94 @@ export default function LandingClient() {
         </div>
       </section>
 
+
+      {/* HOW IT WORKS */}
+      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', background: '#FFFBF5', borderTop: '1px solid rgba(123,29,46,0.08)' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <FadeIn>
+            <div style={{ textAlign: 'center', marginBottom: 'clamp(48px,6vw,72px)' }}>
+              <p style={{ fontSize: '12px', color: 'rgba(123,29,46,0.7)', letterSpacing: '3px', marginBottom: '12px', fontFamily: 'system-ui, sans-serif', textTransform: 'uppercase' }}>কীভাবে কাজ করে</p>
+              <h2 style={{ fontSize: 'clamp(26px, 3vw, 42px)', fontWeight: 700, color: '#1a0a0d', margin: '0 0 16px', lineHeight: 1.2 }}>
+                চার সহজ ধাপে<br/>
+                <span style={{ color: '#7B1D2E' }}>আপনার জীবনসঙ্গী খুঁজুন</span>
+              </h2>
+              <p style={{ fontSize: 'clamp(15px, 1.3vw, 17px)', color: '#4b2020', maxWidth: '520px', margin: '0 auto', lineHeight: 1.8, fontFamily: 'system-ui, sans-serif' }}>
+                প্রতিটি ধাপ আপনার গতিতে, আপনার শর্তে — কোনো চাপ নেই।
+              </p>
+            </div>
+          </FadeIn>
+
+          {/* Steps */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0', position: 'relative' }}>
+            {[
+              {
+                step: '১',
+                icon: '✍️',
+                title: 'আপনার গল্প লিখুন',
+                desc: 'নাম, বয়স, পেশা, পরিবার — যা আপনাকে আপনি করে তোলে। মাত্র কয়েক মিনিটে প্রোফাইল তৈরি করুন।',
+                color: '#7B1D2E',
+                bg: '#fff5f7',
+              },
+              {
+                step: '২',
+                icon: '🛡️',
+                title: 'পরিচয় নিশ্চিত করুন',
+                desc: 'ফোন, সেলফি বা NID — যাতে সবাই জানে আপনি সত্যিকারের মানুষ। যাচাই করা প্রোফাইল বেশি সাড়া পায়।',
+                color: '#0891b2',
+                bg: '#f0f9ff',
+              },
+              {
+                step: '৩',
+                icon: '💌',
+                title: 'নিরাপদে পরিচিত হন',
+                desc: 'আগ্রহ পাঠান, বায়োডেটা শেয়ার করুন — ফোন নম্বর ছাড়াই। পরিচয় প্রকাশ শুধু আপনার ইচ্ছায়।',
+                color: '#7c3aed',
+                bg: '#faf5ff',
+              },
+              {
+                step: '৪',
+                icon: '👨‍👩‍👧',
+                title: 'পরিবারকে সাথে রাখুন',
+                desc: 'Guardian Mode — বাবা-মা বা ভাই-বোন পাশে থেকে সিদ্ধান্ত নিতে পারবেন। বিয়ে পরিবারের সাথেই সুন্দর।',
+                color: '#16a34a',
+                bg: '#f0fdf4',
+              },
+            ].map(({ step, icon, title, desc, color, bg }, i) => (
+              <FadeIn key={step} delay={i * 120}>
+                <div style={{ position: 'relative', padding: '32px 28px', background: bg, borderRadius: '16px', margin: '8px', border: `1px solid ${color}22`, height: '100%', boxSizing: 'border-box' }}>
+                  {/* Step number */}
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 800, marginBottom: '16px', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>
+                    {step}
+                  </div>
+                  {/* Icon */}
+                  <div style={{ fontSize: '32px', marginBottom: '12px' }}>{icon}</div>
+                  {/* Title */}
+                  <h3 style={{ margin: '0 0 10px', fontSize: '17px', fontWeight: 800, color: '#1a0a0d', fontFamily: 'Hind Siliguri, system-ui, sans-serif', lineHeight: 1.3 }}>{title}</h3>
+                  {/* Desc */}
+                  <p style={{ margin: 0, fontSize: '14px', color: '#4b5563', lineHeight: 1.75, fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{desc}</p>
+                  {/* Connector arrow (not on last) */}
+                  {i < 3 && (
+                    <div style={{ position: 'absolute', top: '44px', right: '-16px', fontSize: '20px', color: color, zIndex: 2, display: 'none' }}>→</div>
+                  )}
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <FadeIn delay={500}>
+            <div style={{ textAlign: 'center', marginTop: '48px' }}>
+              <a href="/register" style={{ display: 'inline-block', padding: '16px 40px', background: 'linear-gradient(135deg, #7B1D2E, #9D174D)', color: 'white', borderRadius: '6px', fontSize: '14px', fontWeight: 700, textDecoration: 'none', letterSpacing: '2px', fontFamily: 'system-ui, sans-serif' }}>
+                এখনই শুরু করুন — বিনামূল্যে
+              </a>
+              <p style={{ margin: '12px 0 0', fontSize: '13px', color: '#9ca3af', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>
+                কোনো ক্রেডিট কার্ড লাগবে না · যেকোনো সময় বাতিল করুন
+              </p>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
       {/* MISSION */}
       <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', borderTop: '1px solid rgba(123,29,46,0.08)', background: '#FFFBF5' }}>
         <FadeIn>
@@ -223,3 +311,4 @@ export default function LandingClient() {
     </>
   )
 }
+
