@@ -830,7 +830,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#1a0a0d', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.action}। যোগ দিন</p>
+              <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#1a0a0d', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.action} যোগ দিন।</p>
               <p style={{ margin: '2px 0 0', fontSize: '13px', color: '#6b7280', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.benefit}</p>
             </div>
           </div>
