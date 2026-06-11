@@ -136,9 +136,9 @@ function calculateScores(profile: any, viewer?: any) {
   }
 
   // 6. INCOME (7)
-  if (viewer?.expected_income || fp.monthly_income) {
+  if (viewer?.expected_income || profile.monthly_income) {
     const expInc = parseFloat(viewer?.expected_income || '0')
-    const profInc = fp.monthly_income || 0
+    const profInc = profile.monthly_income || 0
     let score = 4
     if (expInc > 0 && profInc > 0) {
       const r = profInc / expInc
@@ -242,7 +242,7 @@ function calculateScores(profile: any, viewer?: any) {
   let dataConfidence = 0
   const confBreakdown = [
     { label: 'Profile Photo', icon: '📸', met: !!profile.photo_url, points: 15, tip: 'A photo builds trust and confidence' },
-    { label: 'About Me written', icon: '✍️', met: (fp.about_me?.length || 0) > 30, points: 10, tip: 'Tells us who this person really is' },
+    { label: 'About Me written', icon: '✍️', met: (profile.about_me?.length || 0) > 30, points: 10, tip: 'Tells us who this person really is' },
     { label: 'NID Verified', icon: '🪪', met: !!profile.nid_verified, points: 15, tip: 'Confirms this is a real, verified person' },
     { label: 'Education & Profession', icon: '🎓', met: !!profile.education && !!profile.profession, points: 10, tip: 'Helps assess lifestyle compatibility' },
     { label: 'Religion', icon: '🕌', met: !!profile.religion, points: 8, tip: 'Key compatibility factor' },
