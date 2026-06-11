@@ -609,7 +609,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   const handleSendInterest = async () => {
     const userData = localStorage.getItem('biyekori_user');
-    if (!userData) { setSoftPrompt({ action: 'আগ্রহ পাঠাতে', benefit: 'বিনামূল্যে যোগ দিন এবং প্রতি মাসে ৩টি আগ্রহ পাঠান' }); return; }
+    if (!userData) { setSoftPrompt({ action: 'আগ্রহ পাঠাতে', benefit: 'মাসে ৩টি আগ্রহ পাঠানোর সুযোগ পাবেন — সম্পূর্ণ বিনামূল্যে' }); return; }
     if (interestSent) return;
     const user = JSON.parse(userData);
     try {
@@ -651,7 +651,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   const handleSendMessage = async () => {
     const userData = localStorage.getItem('biyekori_user');
-    if (!userData) { setSoftPrompt({ action: 'বার্তা পাঠাতে', benefit: 'বিনামূল্যে যোগ দিন এবং নিরাপদে যোগাযোগ করুন' }); return; }
+    if (!userData) { setSoftPrompt({ action: 'বার্তা পাঠাতে', benefit: 'নিরাপদে যোগাযোগ করুন — কোনো ফোন নম্বর শেয়ার ছাড়াই' }); return; }
     const user = JSON.parse(userData);
     const isPaid = user.plan && user.plan !== 'free';
 
@@ -683,10 +683,10 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   }
 
   const handleBlock = async () => {
-    if (!isLoggedIn) { setSoftPrompt({ action: 'ব্লক করতে', benefit: 'লগইন করুন এবং আপনার অভিজ্ঞতা নিয়ন্ত্রণ করুন' }); return }
+    if (!isLoggedIn) { setSoftPrompt({ action: 'ব্লক করতে', benefit: 'আপনার নিরাপত্তা আপনার হাতে' }); return }
     const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
     const isPremium = u.package && u.package !== 'prottasha'
-    if (!isPremium) { setSoftPrompt({ action: 'ব্লক করতে', benefit: 'এই ফিচারটি প্রিমিয়াম সদস্যদের জন্য — আপগ্রেড করুন' }); return }
+    if (!isPremium) { setSoftPrompt({ action: 'ব্লক করতে', benefit: 'প্রিমিয়াম সদস্যরা এই সুবিধা পান — আপগ্রেড করুন' }); return }
     if (!confirm(`Block ${profile.full_name}? They will not be able to see your profile or contact you.`)) return
     const res = await fetch('/api/block', {
       method: 'POST',
@@ -725,7 +725,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   }
 
   const handleReportClick = () => {
-    if (!isLoggedIn) { setSoftPrompt({ action: 'রিপোর্ট করতে', benefit: 'লগইন করুন এবং প্ল্যাটফর্ম নিরাপদ রাখতে সাহায্য করুন' }); return }
+    if (!isLoggedIn) { setSoftPrompt({ action: 'রিপোর্ট করতে', benefit: 'আপনার রিপোর্ট প্ল্যাটফর্মকে নিরাপদ রাখে' }); return }
     const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}')
     const isPremium = u.package && u.package !== 'prottasha'
     if (!isPremium) { setSoftPrompt({ action: 'রিপোর্ট করতে', benefit: 'এই ফিচারটি প্রিমিয়াম সদস্যদের জন্য — আপগ্রেড করুন' }); return }
@@ -739,13 +739,13 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   const handleDownloadBiodata = () => {
     const userData = localStorage.getItem('biyekori_user');
-    if (!userData) { setSoftPrompt({ action: 'বায়োডেটা ডাউনলোড করতে', benefit: 'বিনামূল্যে যোগ দিন এবং বায়োডেটা ডাউনলোড করুন' }); return; }
+    if (!userData) { setSoftPrompt({ action: 'বায়োডেটা ডাউনলোড করতে', benefit: 'বায়োডেটা ডাউনলোড করুন — পরিবারের সাথে শেয়ার করুন' }); return; }
     window.location.href = '/biodata/' + profile.id;
   }
 
   const handleRequestContact = async () => {
     const stored = localStorage.getItem('biyekori_user')
-    if (!stored) { setSoftPrompt({ action: 'যোগাযোগের তথ্য দেখতে', benefit: 'বিনামূল্যে যোগ দিন এবং পরিচিত হোন' }); return; }
+    if (!stored) { setSoftPrompt({ action: 'যোগাযোগের তথ্য দেখতে', benefit: 'পরিচিত হওয়ার প্রথম ধাপ — নিরাপদে যোগাযোগ করুন' }); return; }
     const user = JSON.parse(stored)
     const isPaid = user.package && user.package !== 'prottasha'
     if (!isPaid) { window.location.href = '/pricing'; return; }
@@ -813,6 +813,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             padding: '28px 28px 40px', width: '100%', maxWidth: '520px',
             boxShadow: '0 -8px 40px rgba(0,0,0,0.15)',
             animation: 'slideUp 0.3s ease',
+            borderTop: '3px solid #7B1D2E',
           }}>
           <div style={{ width: '40px', height: '4px', borderRadius: '2px', background: '#e5e7eb', margin: '0 auto 20px' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
