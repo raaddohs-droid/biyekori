@@ -31,7 +31,7 @@ export default function Home() {
         </div>
 
         {/* Stats bar */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(123,29,46,0.95)', padding: '18px 40px', display: 'flex', gap: '0', justifyContent: 'center', zIndex: 2 }}>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(255,255,255,0.97)', padding: '18px 40px', display: 'flex', gap: '0', justifyContent: 'center', zIndex: 2 }}>
           {[['1,811', 'Women registered'], ['1,199', 'Men registered'], ['3,010+', 'Total profiles'], ['Free', 'To join & browse']].map(([n, l], i) => (
             <div key={n} style={{ textAlign: 'center', padding: '0 40px', borderRight: i < 3 ? '1px solid rgba(240,192,64,0.2)' : 'none' }}>
               <div style={{ fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 800, color: '#F0C040', letterSpacing: '-1px' }}>{n}</div>
