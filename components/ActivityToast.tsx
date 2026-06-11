@@ -19,13 +19,20 @@ interface Toast {
   exiting: boolean
 }
 
+// Weighted: joined 40%, active 40%, viewed 20%
+const WEIGHTED_TYPES: Array<Toast['type']> = [
+  'joined', 'joined', 'joined', 'joined',
+  'active', 'active', 'active', 'active',
+  'viewed', 'viewed',
+]
+
 const TOAST_LABELS: Record<Toast['type'], (name: string) => string> = {
-  joined: (n) => `${n} এইমাত্র যোগ দিয়েছেন`,
-  active: (n) => `${n} এখন সক্রিয়`,
-  viewed: (n) => `${n} আজ প্রোফাইল দেখেছেন`,
+  joined:  (n) => `${n} এইমাত্র যোগ দিয়েছেন`,
+  active:  (n) => `${n} এখন সক্রিয়`,
+  viewed:  (n) => `${n} আজ প্রোফাইল দেখেছেন`,
 }
 
-const TOAST_TYPES: Array<Toast['type']> = ['joined', 'active', 'viewed']
+const MAX_TOASTS_PER_SESSION = 8
 
 function maskName(full: string): string {
   const parts = full.trim().split(' ')
@@ -38,8 +45,9 @@ export default function ActivityToast({ viewerGender }: { viewerGender?: string 
   const [profiles, setProfiles] = useState<ActivityProfile[]>([])
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const indexRef = useRef(0)
+  const shownCountRef = useRef(0)
 
-  // Always show opposite gender. Female viewer → Male. Male or guest → Female.
+  // Always show opposite gender. Female viewer → male. Male or guest → female.
   const showGender = viewerGender === 'Female' ? 'Male' : 'Female'
 
   useEffect(() => {
@@ -47,7 +55,8 @@ export default function ActivityToast({ viewerGender }: { viewerGender?: string 
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data.profiles) && data.profiles.length) {
-          setProfiles(data.profiles)
+          // Only keep 8 profiles from the pool — no need for more
+          setProfiles(data.profiles.slice(0, MAX_TOASTS_PER_SESSION))
         }
       })
       .catch(() => {})
@@ -57,15 +66,22 @@ export default function ActivityToast({ viewerGender }: { viewerGender?: string 
     if (!profiles.length) return
 
     function showNext() {
+      // Stop after MAX_TOASTS_PER_SESSION
+      if (shownCountRef.current >= MAX_TOASTS_PER_SESSION) {
+        if (timerRef.current) clearTimeout(timerRef.current)
+        return
+      }
+
       const profile = profiles[indexRef.current % profiles.length]
       indexRef.current++
+      shownCountRef.current++
 
-      const type = TOAST_TYPES[Math.floor(Math.random() * TOAST_TYPES.length)]
+      const type = WEIGHTED_TYPES[Math.floor(Math.random() * WEIGHTED_TYPES.length)]
       const toastId = Date.now().toString()
 
       setToasts(prev => [...prev, { id: toastId, profile, type, exiting: false }].slice(-3))
 
-      // Start exit animation after 5s, remove from DOM after 5.4s
+      // Exit after 5s
       setTimeout(() => {
         setToasts(prev => prev.map(t => t.id === toastId ? { ...t, exiting: true } : t))
         setTimeout(() => {
@@ -75,6 +91,7 @@ export default function ActivityToast({ viewerGender }: { viewerGender?: string 
     }
 
     function scheduleNext() {
+      if (shownCountRef.current >= MAX_TOASTS_PER_SESSION) return
       const delay = 12000 + Math.random() * 6000 // 12-18s
       timerRef.current = setTimeout(() => {
         showNext()
@@ -82,6 +99,7 @@ export default function ActivityToast({ viewerGender }: { viewerGender?: string 
       }, delay)
     }
 
+    // First toast after 4s
     const firstTimer = setTimeout(() => {
       showNext()
       scheduleNext()
@@ -199,7 +217,7 @@ export default function ActivityToast({ viewerGender }: { viewerGender?: string 
                   color: 'rgba(26,10,13,0.45)',
                   fontFamily: 'system-ui, sans-serif',
                 }}>
-                  {toast.profile.district}
+                  {toast.profile.district || 'Bangladesh'}
                 </p>
               </div>
 
