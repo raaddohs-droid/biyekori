@@ -410,6 +410,9 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [guestBlurred, setGuestBlurred] = useState(false)
   const [guestSecondsLeft, setGuestSecondsLeft] = useState(0)
   const [fullProfile, setFullProfile] = useState<any>(null)
+  const [guestNudge, setGuestNudge] = useState<string | null>(null)
+  const [pagesLeft, setPagesLeft] = useState<number>(5)
+  const [wallReason, setWallReason] = useState<'pages'|'time'>('pages')
   const [photoIndex, setPhotoIndex] = useState(0)
   const [contactRequest, setContactRequest] = useState<any>(null)
   const [loadingContact, setLoadingContact] = useState(false)
@@ -434,19 +437,92 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [dobRequesting, setDobRequesting] = useState(false)
 
   useEffect(() => {
-    // Guest sees teaser (safe fields only). Wall appears only on interaction.
-    // Logged-in users get full profile via secure API.
+    // Guest: 5 profile pages lifetime + 5 min/day browsing time
+    // Logged-in: fetch full sensitive data securely
     try {
       const userData = localStorage.getItem('biyekori_user')
       const isGuest = !userData || !JSON.parse(userData)?.id
       if (isGuest) {
         setIsLoggedIn(false)
-        // Don't blur immediately — let them see the teaser
-        // guestBlurred stays false until they try to interact
+
+        const PAGES_KEY = 'bk_guest_pages'        // lifetime page count
+        const TIME_KEY = 'bk_guest_time_day'      // { date, secondsUsed }
+        const PAGE_LIMIT = 5
+        const TIME_LIMIT_SECS = 5 * 60            // 5 min/day
+
+        // ── Page counter ──────────────────────────────────────────
+        const pagesRaw = localStorage.getItem(PAGES_KEY)
+        const pagesUsed = pagesRaw ? parseInt(pagesRaw) : 0
+        const remaining = Math.max(0, PAGE_LIMIT - pagesUsed)
+        setPagesLeft(remaining)
+
+        if (pagesUsed >= PAGE_LIMIT) {
+          setWallReason('pages')
+          setGuestBlurred(true)
+          return
+        }
+        // Count this page visit
+        localStorage.setItem(PAGES_KEY, String(pagesUsed + 1))
+        setPagesLeft(remaining - 1)
+
+        // ── Daily time counter ────────────────────────────────────
+        const today = new Date().toDateString()
+        let timeData = { date: today, secondsUsed: 0 }
+        try {
+          const stored = localStorage.getItem(TIME_KEY)
+          if (stored) {
+            const parsed = JSON.parse(stored)
+            if (parsed.date === today) timeData = parsed
+          }
+        } catch {}
+
+        if (timeData.secondsUsed >= TIME_LIMIT_SECS) {
+          setWallReason('time')
+          setGuestBlurred(true)
+          return
+        }
+
+        const secsRemaining = TIME_LIMIT_SECS - timeData.secondsUsed
+        setGuestSecondsLeft(secsRemaining)
+
+        // Tick down daily time
+        let elapsed = 0
+        const tickInterval = setInterval(() => {
+          elapsed++
+          const newSecsUsed = timeData.secondsUsed + elapsed
+          localStorage.setItem(TIME_KEY, JSON.stringify({ date: today, secondsUsed: newSecsUsed }))
+          setGuestSecondsLeft(secsRemaining - elapsed)
+          if (elapsed >= secsRemaining) {
+            clearInterval(tickInterval)
+            setWallReason('time')
+            setGuestBlurred(true)
+          }
+        }, 1000)
+
+        // ── Nudge popups ──────────────────────────────────────────
+        const nudgeMessages = [
+          'যোগ দিন বিনামূল্যে — মাত্র ২ মিনিটে',
+          'এই প্রোফাইলে আগ্রহ পাঠান — এখনই যোগ দিন',
+          'আপনার পছন্দের কেউ অপেক্ষা করছে',
+        ]
+        // Show first nudge after 90s, second after 3min
+        const nudge1 = setTimeout(() => {
+          setGuestNudge(nudgeMessages[Math.floor(Math.random() * nudgeMessages.length)])
+          setTimeout(() => setGuestNudge(null), 5000)
+        }, 90000)
+        const nudge2 = setTimeout(() => {
+          setGuestNudge('বিনামূল্যে যোগ দিন — ৩টি আগ্রহ পাঠানোর সুযোগ পাবেন')
+          setTimeout(() => setGuestNudge(null), 6000)
+        }, 180000)
+
+        return () => {
+          clearInterval(tickInterval)
+          clearTimeout(nudge1)
+          clearTimeout(nudge2)
+        }
       } else {
-        const u = JSON.parse(userData)
+        const u = JSON.parse(userData!)
         setIsLoggedIn(true)
-        // Fetch full sensitive data securely
         fetch('/api/profiles/secure?id=' + profile.id + '&viewerId=' + u.id)
           .then(r => r.json())
           .then(data => { if (data.profile) setFullProfile(data.profile) })
@@ -712,6 +788,33 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   return (
     <>
+    {guestNudge && !guestBlurred && (
+      <div style={{
+        position: 'fixed', bottom: '100px', left: '50%', transform: 'translateX(-50%)',
+        zIndex: 997, background: 'linear-gradient(135deg,#7B1D2E,#9D174D)',
+        color: 'white', borderRadius: '12px', padding: '12px 20px',
+        fontSize: '13px', fontWeight: 600, boxShadow: '0 4px 20px rgba(123,29,46,0.3)',
+        whiteSpace: 'nowrap', fontFamily: 'Hind Siliguri, system-ui, sans-serif',
+        animation: 'toastSlideIn 0.3s ease',
+        display: 'flex', alignItems: 'center', gap: '10px'
+      }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        {guestNudge}
+        <a href="/register" style={{ color: '#F0C040', fontWeight: 800, textDecoration: 'none', marginLeft: '4px' }}>যোগ দিন →</a>
+      </div>
+    )}
+
+    {guestSecondsLeft > 0 && guestSecondsLeft <= 60 && !guestBlurred && (
+      <div style={{
+        position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
+        zIndex: 997, background: 'rgba(26,10,13,0.85)', color: 'white',
+        borderRadius: '10px', padding: '8px 16px', fontSize: '12px', fontWeight: 600,
+        whiteSpace: 'nowrap', fontFamily: 'system-ui, sans-serif'
+      }}>
+        {guestSecondsLeft}s remaining today · <a href="/register" style={{ color: '#F0C040', textDecoration: 'none' }}>Join free</a>
+      </div>
+    )}
+
     {guestBlurred && (
       <div style={{
         position: 'fixed', inset: 0, zIndex: 998,
@@ -728,8 +831,17 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg,#7B1D2E,#9D174D)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           </div>
-          <h2 style={{ margin: '0 0 10px', fontSize: '20px', fontWeight: 800, color: '#1a0a0d' }}>Login to connect with this profile</h2>
-          <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280', lineHeight: 1.6 }}>Create a free account to send interest, view full details and find your match on Biyekori.</p>
+          <h2 style={{ margin: '0 0 10px', fontSize: '20px', fontWeight: 800, color: '#1a0a0d' }}>
+            {wallReason === 'pages' ? 'আপনার ৫টি বিনামূল্যে প্রোফাইল দেখা শেষ' : 'আজকের বিনামূল্যে সময় শেষ'}
+          </h2>
+          <p style={{ margin: '0 0 8px', fontSize: '14px', color: '#6b7280', lineHeight: 1.6 }}>
+            {wallReason === 'pages'
+              ? 'Join free to keep browsing. Send up to 3 interests every month — no payment needed.'
+              : 'Your 5 free minutes today are up. Join free to browse without limits.'}
+          </p>
+          <div style={{ margin: '0 0 20px', padding: '10px 14px', background: '#fef9f0', borderRadius: '10px', border: '1px solid #F0C040', fontSize: '13px', color: '#92400e', fontWeight: 600 }}>
+            Free membership: Browse profiles · Send 3 interests/month · Receive unlimited interests
+          </div>
           <a href="/login" style={{ display: 'block', padding: '14px', background: 'linear-gradient(135deg,#7B1D2E,#9D174D)', color: 'white', borderRadius: '12px', fontWeight: 700, fontSize: '15px', textDecoration: 'none', marginBottom: '10px' }}>Login</a>
           <a href="/register" style={{ display: 'block', padding: '14px', background: '#f8f4f5', color: '#7B1D2E', border: '1px solid rgba(123,29,46,0.2)', borderRadius: '12px', fontWeight: 700, fontSize: '15px', textDecoration: 'none' }}>Create Free Account</a>
           <p style={{ margin: '16px 0 0', fontSize: '11px', color: '#9ca3af' }}>Free forever · No credit card required</p>
