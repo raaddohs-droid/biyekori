@@ -420,12 +420,12 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const fp = fullProfile || profile // fp = full data if logged in, safe data if guest
 
   const ACTION_EXPLANATIONS: Record<string, string> = {
-    'আগ্রহ পাঠাতে': 'আগ্রহ মানে — "আমি কথা বলতে চাই"। একটি ভদ্র প্রথম পদক্ষেপ। প্রোফাইল মালিক সিদ্ধান্ত নেবেন।',
-    'বার্তা পাঠাতে': 'বার্তা মানে সরাসরি কথোপকথন — ফোন নম্বর ছাড়াই, সম্পূর্ণ নিরাপদে।',
+    'আগ্রহ পাঠাতে': 'আগ্রহ মানে — এই প্রোফাইল সম্পর্কে আমি আগ্রহী। আপনার আগ্রহের প্রতিউত্তরে তিনিও আগ্রহ প্রকাশ করতে পারেন।',
+    'বার্তা পাঠাতে': 'বার্তা মানে — সরাসরি কথোপকথন। ফোন নম্বর বা পরিচয় শেয়ার না করেই, সম্পূর্ণ নিরাপদে।',
     'ব্লক করতে': 'ব্লক করলে এই ব্যক্তি আর আপনার প্রোফাইল দেখতে বা যোগাযোগ করতে পারবেন না।',
     'রিপোর্ট করতে': 'কোনো প্রোফাইল সন্দেহজনক মনে হলে আমাদের জানান — আমরা যাচাই করব।',
     'বায়োডেটা ডাউনলোড করতে': 'বায়োডেটা একটি সুন্দর PDF — পরিবারের সাথে WhatsApp বা Messenger-এ শেয়ার করুন।',
-    'যোগাযোগের তথ্য দেখতে': 'নিরাপদ যোগাযোগ মানে ফোন নম্বর শেয়ার না করেই কথা বলা — শুধু উভয়ের সম্মতিতে।',
+    'যোগাযোগের তথ্য দেখতে': 'নিরাপদ যোগাযোগ মানে — ফোন নম্বর ছাড়া, পরিচয় গোপন রেখে কথা বলা। পরিচয় প্রকাশ শুধু আপনার ইচ্ছায়।',
   }
 
   // Mask name for guests — show first name + last initial only
@@ -830,7 +830,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#1a0a0d', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.action} যোগ দিন</p>
+              <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#1a0a0d', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.action}। যোগ দিন</p>
               <p style={{ margin: '2px 0 0', fontSize: '13px', color: '#6b7280', fontFamily: 'Hind Siliguri, system-ui, sans-serif' }}>{softPrompt.benefit}</p>
             </div>
           </div>
