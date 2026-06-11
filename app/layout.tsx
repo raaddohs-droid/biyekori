@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <Navbar />
-        <div style={{ paddingTop: '64px' }}><UrgencyBar /></div>
+        <div style={{ position: 'fixed', top: '60px', left: 0, right: 0, zIndex: 49 }}><UrgencyBar /></div>
         {children}
       </body>
     </html>
