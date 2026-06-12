@@ -231,7 +231,7 @@ export default function Dashboard() {
           <div>
 
             {/* Stats row - 4 compact cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '12px', marginBottom: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: '12px', marginBottom: '20px' }}>
               {[
                 { label: gm ? 'আগ্রহ পাঠানো' : 'Interests Sent', value: interestsSent, color: '#e11d48', bg: '#fff1f2', border: '#fecdd3' },
                 { label: gm ? 'আগ্রহ পাওয়া' : 'Received', value: interestsReceived, color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
@@ -519,7 +519,7 @@ export default function Dashboard() {
                 <Link href={'/profiles?userGender=' + (user.gender || '')} style={{ fontSize: '12px', color: '#e11d48', fontWeight: 700, textDecoration: 'none' }}>See all</Link>
               </div>
               {suggestedProfiles.length > 0 ? (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: '10px' }}>
                   {suggestedProfiles.map((p: any) => (
                     <Link key={p.id} href={'/profile/' + p.id} style={{ textDecoration: 'none', display: 'block' }}>
                       <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #f1f5f9', background: '#f8fafc' }}>
@@ -562,7 +562,7 @@ export default function Dashboard() {
                   Tap the heart on any profile to shortlist them
                 </p>
               ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: "8px" }}>
                   {shortlistProfiles.map((s: any) => {
                     const p = s.profile;
                     if (!p) return null;
