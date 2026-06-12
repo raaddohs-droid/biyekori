@@ -441,6 +441,10 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   const [interestSent, setInterestSent] = useState<boolean | null>(null)
   const [isBlocked, setIsBlocked] = useState(false)
+  const [photoRequestStatus, setPhotoRequestStatus] = useState<string|null>(null) // null|'pending'|'approved'|'declined'
+  const [photoRequestSending, setPhotoRequestSending] = useState(false)
+  // incoming requests — for female to approve/decline
+  const [incomingPhotoRequests, setIncomingPhotoRequests] = useState<any[]>([])
   const [showReportModal, setShowReportModal] = useState(false)
   const [reportReason, setReportReason] = useState('')
   const [reportDetails, setReportDetails] = useState('')
@@ -776,6 +780,32 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
       }
     } catch(e) {}
     setLoadingContact(false)
+  }
+
+  const sendPhotoRequest = async () => {
+    if (!viewerProfile || photoRequestSending) return
+    setPhotoRequestSending(true)
+    try {
+      const res = await fetch('/api/photo-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requesterId: viewerProfile.id, requestedId: profile.id })
+      })
+      const data = await res.json()
+      if (data.success) setPhotoRequestStatus('pending')
+    } catch {}
+    setPhotoRequestSending(false)
+  }
+
+  const respondPhotoRequest = async (requesterId: number, action: 'approve' | 'decline') => {
+    try {
+      await fetch('/api/photo-request/respond', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requesterId, responderId: profile.id, action })
+      })
+      setIncomingPhotoRequests(prev => prev.filter(r => r.requester_id !== requesterId))
+    } catch {}
   }
 
   const handleShareWhatsApp = () => {
@@ -1121,6 +1151,35 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           </a>
         )}
 
+        {/* Incoming photo requests — shown to profile owner */}
+        {isLoggedIn && viewerProfile && String(viewerProfile.id) === String(profile.id) && incomingPhotoRequests.length > 0 && (
+          <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '16px', border: '1px solid rgba(123,29,46,0.1)', boxShadow: '0 2px 12px rgba(123,29,46,0.06)' }}>
+            <h3 style={{ margin: '0 0 14px', fontSize: '15px', fontWeight: 700, color: '#1a0a0d' }}>📷 Photo Requests ({incomingPhotoRequests.length})</h3>
+            {incomingPhotoRequests.map((req: any) => (
+              <div key={req.requester_id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 0', borderBottom: '1px solid #f3f4f6' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#f3f4f6', overflow: 'hidden', flexShrink: 0 }}>
+                  {req.profiles?.photo_url
+                    ? <img src={req.profiles.photo_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>👨</div>
+                  }
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ margin: '0 0 2px', fontSize: '13px', fontWeight: 700, color: '#1a0a0d', fontFamily: 'system-ui' }}>
+                    {req.profiles?.full_name?.split(' ')[0] || 'Someone'}, {req.profiles?.age}
+                  </p>
+                  <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af', fontFamily: 'system-ui' }}>
+                    📍 {req.profiles?.city || req.profiles?.district || 'Bangladesh'}
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button onClick={() => respondPhotoRequest(req.requester_id, 'approve')} style={{ padding: '6px 12px', background: '#16a34a', border: 'none', borderRadius: '8px', color: 'white', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: 'system-ui' }}>✅ Share</button>
+                  <button onClick={() => respondPhotoRequest(req.requester_id, 'decline')} style={{ padding: '6px 12px', background: '#f3f4f6', border: 'none', borderRadius: '8px', color: '#6b7280', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: 'system-ui' }}>✗</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {isLoggedIn && viewerProfile && <BeforeYouConnect profile={profile} viewerProfile={viewerProfile} isLoggedIn={isLoggedIn} />}
 
         {showModal && <ScoreModal profile={profile} onClose={() => setShowModal(false)} isLoggedIn={isLoggedIn} viewerProfile={viewerProfile} />}
@@ -1181,8 +1240,24 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
                   if (total === 0) {
                     return (
-                      <div style={{ width: '200px', height: '220px', background: 'linear-gradient(135deg,#fce7f3,#ede9fe)', borderRadius: '16px', border: '4px solid white', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '48px' }}>{profile.gender === 'male' ? '👨' : '👩'}</span>
+                      <div style={{ width: '200px', height: '220px', background: '#fdf8f9', borderRadius: '16px', border: '4px solid white', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '16px' }}>
+                        <span style={{ fontSize: '44px' }}>{profile.gender === 'male' ? '👨' : '👩'}</span>
+                        <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af', textAlign: 'center', fontFamily: 'system-ui' }}>
+                          {profile.gender === 'female' ? 'Photo on Request' : 'No photo yet'}
+                        </p>
+                        {isLoggedIn && viewerProfile && String(viewerProfile.id) !== String(profile.id) && profile.gender === 'female' && (
+                          photoRequestStatus === 'approved' ? (
+                            <span style={{ fontSize: '11px', color: '#16a34a', fontWeight: 600, fontFamily: 'system-ui' }}>✅ Photo shared</span>
+                          ) : photoRequestStatus === 'pending' ? (
+                            <span style={{ fontSize: '11px', color: '#9ca3af', fontFamily: 'system-ui' }}>⏳ Request sent</span>
+                          ) : photoRequestStatus === 'declined' ? (
+                            <span style={{ fontSize: '11px', color: '#ef4444', fontFamily: 'system-ui' }}>Request declined</span>
+                          ) : (
+                            <button onClick={sendPhotoRequest} disabled={photoRequestSending} style={{ padding: '7px 14px', background: '#7B1D2E', border: 'none', borderRadius: '8px', color: 'white', fontSize: '12px', fontWeight: 700, cursor: 'pointer', fontFamily: 'system-ui' }}>
+                              {photoRequestSending ? '...' : '📷 Request Photo'}
+                            </button>
+                          )
+                        )}
                       </div>
                     )
                   }
