@@ -139,6 +139,13 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-12 px-4" style={{ paddingTop: '80px' }}>
+      {/* Language Toggle */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+        <div style={{ background: 'white', borderRadius: '30px', padding: '4px', display: 'flex', gap: '2px', boxShadow: '0 1px 8px rgba(0,0,0,0.08)', border: '1px solid rgba(123,29,46,0.1)' }}>
+          <button onClick={() => setLang('en')} style={{ padding: '6px 20px', borderRadius: '24px', border: 'none', background: lang === 'en' ? '#7B1D2E' : 'transparent', color: lang === 'en' ? 'white' : '#4b5563', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: 'system-ui, sans-serif', transition: 'all 0.2s' }}>EN</button>
+          <button onClick={() => setLang('bn')} style={{ padding: '6px 20px', borderRadius: '24px', border: 'none', background: lang === 'bn' ? '#7B1D2E' : 'transparent', color: lang === 'bn' ? 'white' : '#4b5563', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: 'Hind Siliguri, system-ui, sans-serif', transition: 'all 0.2s' }}>বাংলা</button>
+        </div>
+      </div>
       <div className="max-w-2xl mx-auto">
 
         {/* Step 0 — Mode Selection */}
