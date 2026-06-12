@@ -2048,11 +2048,14 @@ export default function Navbar() {
 
 
 
+                  {[1241, 1243].includes(Number(user?.id)) && (
                   <div style={{ borderTop: '1px solid #f3f4f6', padding: '8px 0' }}>
-
-
-
-
+                    <Link href="/admin" onClick={() => setShowMenu(false)} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 18px', fontSize: '14px', color: '#7B1D2E', textDecoration: 'none', fontWeight: 700, background: '#fff5f7' }}>
+                      <span style={{ fontSize: '16px' }}>⚙️</span> Admin Panel
+                    </Link>
+                  </div>
+                )}
+                <div style={{ borderTop: '1px solid #f3f4f6', padding: '8px 0' }}>
                     <button onClick={handleLogout}
 
 
@@ -2294,5 +2297,6 @@ export default function Navbar() {
 
 
 }
+
 
 
