@@ -289,6 +289,69 @@ export default function LandingClient() {
         </div>
       </section>
 
+
+      {/* SUCCESS STORIES TEASER */}
+      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', background: '#1a0a0d' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <FadeIn>
+            <div style={{ textAlign: 'center', marginBottom: 'clamp(40px,5vw,60px)' }}>
+              <p style={{ fontSize: '11px', color: 'rgba(240,192,64,0.7)', letterSpacing: '4px', marginBottom: '14px', fontFamily: 'system-ui, sans-serif', textTransform: 'uppercase' }}>Success Stories</p>
+              <h2 style={{ fontSize: 'clamp(26px,3vw,42px)', fontWeight: 700, color: 'white', margin: '0 0 16px', lineHeight: 1.2, fontFamily: 'Georgia, serif' }}>
+                They found each other<br/>
+                <span style={{ color: '#F0C040' }}>on Biyekori</span>
+              </h2>
+              <p style={{ fontSize: 'clamp(14px,1.2vw,17px)', color: 'rgba(255,255,255,0.6)', maxWidth: '480px', margin: '0 auto', lineHeight: 1.8, fontFamily: 'system-ui, sans-serif' }}>
+                Real families. Real marriages. Every name changed to protect privacy.
+              </p>
+            </div>
+          </FadeIn>
+
+          {/* Story Cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '40px' }}>
+            {[
+              { photo: '/stories/story1.png', names: 'Arif & Nadia', location: 'Dhaka & Chittagong', married: 'February 2026', quote: 'আমি বিশ্বাসই করতে পারিনি এত সহজে জীবনসঙ্গী খুঁজে পাওয়া যায়।' },
+              { photo: '/stories/story2.png', names: 'Raihan & Sumaiya', location: 'Sylhet & Dhaka', married: 'March 2026', quote: 'পরিবার সবসময় পাশে ছিল — প্রতিটি পদক্ষেপে।' },
+              { photo: '/stories/story3.jpg', names: 'Imran & Farida', location: 'London & Dhaka', married: 'April 2026', quote: 'বিয়েকরি সেই দূরত্বটা ঘুচিয়ে দিয়েছে।' },
+            ].map(({ photo, names, location, married, quote }, i) => (
+              <FadeIn key={names} delay={i * 100}>
+                <div style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.04)', position: 'relative' }}>
+                  {/* Photo */}
+                  <div style={{ height: '260px', overflow: 'hidden', position: 'relative' }}>
+                    <img
+                      src={photo}
+                      alt={names}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', display: 'block' }}
+                      onContextMenu={e => e.preventDefault()}
+                      onDragStart={e => e.preventDefault()}
+                    />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 30%, rgba(26,10,13,0.85) 100%)' }} />
+                    <div style={{ position: 'absolute', bottom: '14px', left: '16px', right: '16px' }}>
+                      <p style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 800, color: 'white', fontFamily: 'Georgia, serif' }}>{names}</p>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', fontFamily: 'system-ui, sans-serif' }}>📍 {location}</span>
+                        <span style={{ fontSize: '11px', background: '#F0C040', color: '#1a0a0d', padding: '1px 8px', borderRadius: '10px', fontWeight: 700, fontFamily: 'system-ui, sans-serif' }}>💍 {married}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Quote */}
+                  <div style={{ padding: '16px' }}>
+                    <p style={{ margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.75)', fontFamily: 'Hind Siliguri, system-ui, sans-serif', lineHeight: 1.7, fontStyle: 'italic' }}>"{quote}"</p>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+
+          <FadeIn delay={300}>
+            <div style={{ textAlign: 'center' }}>
+              <a href="/success-stories" style={{ display: 'inline-block', padding: '14px 40px', background: 'transparent', color: '#F0C040', border: '1.5px solid #F0C040', borderRadius: '4px', fontSize: '13px', fontWeight: 700, textDecoration: 'none', letterSpacing: '2px', fontFamily: 'system-ui, sans-serif', textTransform: 'uppercase' }}>
+                Read Their Stories →
+              </a>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
       {/* MISSION */}
       <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', borderTop: '1px solid rgba(123,29,46,0.08)', background: '#FFFBF5' }}>
         <FadeIn>
