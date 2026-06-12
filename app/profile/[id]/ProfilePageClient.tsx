@@ -965,14 +965,14 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
         </div>
       </div>
     )}
-    <div className="min-h-screen py-8 px-4" style={{ background: "#FFFBF5"" style={{colorScheme:"light"}}>
+    <div className="min-h-screen py-8 px-4" style={{ background: "#FFFBF5", colorScheme: "light" }}>
       <div className="max-w-5xl mx-auto">
 
         <Link href="/profiles" className="inline-flex items-center mb-6 font-medium" style={{ color: "#7B1D2E" }}>← Back to Profiles</Link>
 
         {/* AI Score Card */}
         {!isLoggedIn ? (
-          <div className="rounded-2xl shadow-xl p-6 mb-6 text-white" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)"" style={{ position: 'relative', overflow: 'hidden' }}>
+          <div className="rounded-2xl shadow-xl p-6 mb-6 text-white" style={{ background: 'linear-gradient(135deg, #7B1D2E, #9D174D)', position: 'relative', overflow: 'hidden' }}>
             {/* Blurred fake scores behind */}
             <div style={{ filter: 'blur(6px)', pointerEvents: 'none', userSelect: 'none', opacity: 0.5 }}>
               <div className="flex items-center gap-2 mb-1">
