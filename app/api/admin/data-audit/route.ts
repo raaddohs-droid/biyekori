@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const maxDuration = 60
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
@@ -98,24 +100,36 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // 4. Spread last_active_at realistically (only when fixing)
+  // 4. Spread last_active_at realistically — BATCHED (one PATCH per time bucket)
   let activeFixed = 0
   if (fix) {
     const now = Date.now()
-    for (const p of profiles) {
+    const stale = profiles.filter(p => {
       const last = p.last_active_at ? new Date(p.last_active_at).getTime() : 0
-      const daysAgo = (now - last) / 86400000
-      if (daysAgo > 5) {
-        // Weighted: 40% within 24h, 30% 1-2d, 20% 2-4d, 10% 4-5d
-        const r = Math.random()
-        let offsetMs: number
-        if (r < 0.4) offsetMs = Math.random() * 86400000
-        else if (r < 0.7) offsetMs = 86400000 + Math.random() * 86400000
-        else if (r < 0.9) offsetMs = 2 * 86400000 + Math.random() * 2 * 86400000
-        else offsetMs = 4 * 86400000 + Math.random() * 86400000
-        const ok = await patchProfile(p.id, { last_active_at: new Date(now - offsetMs).toISOString() })
-        if (ok) activeFixed++
-      }
+      return (now - last) / 86400000 > 5
+    })
+    // Shuffle
+    for (let i = stale.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[stale[i], stale[j]] = [stale[j], stale[i]]
+    }
+    // Build 40 buckets: 16 within 24h, 12 in 1-2d, 8 in 2-4d, 4 in 4-5d (40/30/20/10 weighting)
+    const buckets: number[] = []
+    for (let i = 0; i < 16; i++) buckets.push(Math.random() * 86400000)
+    for (let i = 0; i < 12; i++) buckets.push(86400000 + Math.random() * 86400000)
+    for (let i = 0; i < 8; i++) buckets.push(2 * 86400000 + Math.random() * 2 * 86400000)
+    for (let i = 0; i < 4; i++) buckets.push(4 * 86400000 + Math.random() * 86400000)
+
+    const perBucket = Math.ceil(stale.length / buckets.length)
+    for (let b = 0; b < buckets.length; b++) {
+      const chunk = stale.slice(b * perBucket, (b + 1) * perBucket)
+      if (chunk.length === 0) break
+      const ids = chunk.map(p => p.id).join(',')
+      const ts = new Date(now - buckets[b]).toISOString()
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles?id=in.(${ids})`, {
+        method: 'PATCH', headers, body: JSON.stringify({ last_active_at: ts })
+      })
+      if (res.ok) activeFixed += chunk.length
     }
   }
 
