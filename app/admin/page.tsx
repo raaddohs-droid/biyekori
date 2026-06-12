@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const ADMIN_IDS = [1241, 1243]
+const ADMIN_IDS = [1241]
 
 const headers = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' }
 
