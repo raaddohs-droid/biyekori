@@ -14,6 +14,15 @@ export default function Home() {
       {/* HERO */}
       <style>{`
         @media (max-width: 767px) {
+          .bk-hero { background-image: none !important; background: #1a0a0d !important; min-height: auto !important; padding: 120px 24px 120px !important; align-items: center !important; text-align: center !important; }
+          .bk-hero h1 { font-size: clamp(36px,10vw,52px) !important; }
+          .bk-hero p { max-width: 100% !important; }
+          .bk-stats-bar { position: static !important; flex-wrap: wrap !important; padding: 16px !important; }
+          .bk-stats-bar > div { width: 50% !important; padding: 12px 8px !important; border-right: none !important; border-bottom: 1px solid rgba(240,192,64,0.1) !important; }
+          .bk-footer-links { flex-direction: column !important; gap: 32px !important; }
+          .bk-footer-cols { gap: 24px !important; }
+        }
+        @media (max-width: 767px) {
           .bk-hero { background-image: none !important; background: #1a0a0d !important; min-height: auto !important; padding: 120px 24px 100px !important; align-items: center !important; text-align: center !important; }
           .bk-hero h1 { font-size: clamp(36px,10vw,52px) !important; }
           .bk-hero-tags { justify-content: center !important; }
@@ -45,9 +54,9 @@ export default function Home() {
         {/* Stats bar */}
         <div className="bk-stats-bar" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(255,255,255,0.97)', padding: '18px 40px', display: 'flex', gap: '0', justifyContent: 'center', zIndex: 2 }}>
           {[['1,811', 'Women registered'], ['1,199', 'Men registered'], ['3,010+', 'Total profiles'], ['Free', 'To join & browse']].map(([n, l], i) => (
-            <div key={n} style={{ textAlign: 'center', padding: '0 40px', borderRight: i < 3 ? '1px solid rgba(240,192,64,0.2)' : 'none' }}>
+            <div key={n} style={{ textAlign: 'center', padding: '0 clamp(12px,3vw,40px)', borderRight: i < 3 ? '1px solid rgba(240,192,64,0.2)' : 'none' }}>
               <div style={{ fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 800, color: '#F0C040', letterSpacing: '-1px' }}>{n}</div>
-              <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', letterSpacing: '1.5px', marginTop: '3px', fontFamily: 'system-ui, sans-serif' }}>{l}</div>
+              <div style={{ fontSize: '11px', color: 'rgba(26,10,13,0.55)', letterSpacing: '1.5px', marginTop: '3px', fontFamily: 'system-ui, sans-serif' }}>{l}</div>
             </div>
           ))}
         </div>
@@ -93,14 +102,14 @@ export default function Home() {
 
       {/* FOOTER */}
       <footer style={{ padding: 'clamp(40px,6vw,64px) clamp(24px,6vw,80px) 40px', background: '#1a0a0d', borderTop: '3px solid #F0C040' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '40px', marginBottom: '48px' }}>
+        <div className="bk-footer-links" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '40px', marginBottom: '48px' }}>
           <div style={{ maxWidth: '280px' }}>
             <span style={{ fontSize: '24px', fontWeight: 800, color: '#F0C040', letterSpacing: '4px', display: 'block', marginBottom: '10px' }}>BIYEKORI</span>
             <p style={{ margin: '0 0 8px', fontSize: '13px', color: 'rgba(255,255,255,0.35)', fontStyle: 'italic' }}>
             </p>
             <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, fontFamily: 'system-ui, sans-serif' }}>Bangladesh&apos;s most thoughtful matrimony platform. Built in Dhaka.</p>
           </div>
-          <div style={{ display: 'flex', gap: '48px', flexWrap: 'wrap' }}>
+          <div className="bk-footer-cols" style={{ display: 'flex', gap: '48px', flexWrap: 'wrap' }}>
             <div>
               <p style={{ margin: '0 0 16px', fontSize: '11px', fontWeight: 700, color: '#F0C040', letterSpacing: '2px', fontFamily: 'system-ui, sans-serif' }}>PLATFORM</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
