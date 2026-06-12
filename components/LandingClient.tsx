@@ -229,9 +229,9 @@ export default function LandingClient() {
           {/* Steps with connecting line */}
           <div style={{ position: 'relative' }}>
             {/* Connecting line - desktop only */}
-            <div style={{ position: 'absolute', top: '52px', left: '16.5%', right: '16.5%', height: '2px', background: 'linear-gradient(90deg, #7B1D2E, #9D174D, #7B1D2E)', opacity: 0.15, borderRadius: '2px' }} />
+            <div style={{ position: 'absolute', top: '52px', left: '16.5%', right: '16.5%', height: '2px', background: 'linear-gradient(90deg, #7B1D2E, #9D174D, #7B1D2E)', opacity: 0.15, borderRadius: '2px', display: 'none' }} />
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
               {[
                 {
                   num: '01',
