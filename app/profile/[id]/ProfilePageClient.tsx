@@ -396,7 +396,7 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
           )}
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
