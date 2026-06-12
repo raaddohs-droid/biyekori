@@ -779,7 +779,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   }
 
   const handleShareWhatsApp = () => {
-    const name = getDisplayName(profile.full_name || 'Profile', isLoggedIn);
+    const name = getDisplayName(profile.full_name || 'Profile', isLoggedIn, isMutual);
     const profileUrl = 'https://biyekori.com/profile/' + profile.id;
     const msg = 'Ei profile ta dekho Biye Kori te: ' + profileUrl;
     const waUrl = 'https://wa.me/?text=' + encodeURIComponent(msg);
