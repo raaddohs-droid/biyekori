@@ -83,13 +83,17 @@ export async function POST(req: NextRequest) {
     const midAge = ((photo.age_min || 20) + (photo.age_max || 30)) / 2
     let profile: any = null
 
-    if (hinduPhotos.includes(photoId) && photo.religion_hint === 'hindu') {
+    if (photo.profile_overrides) {
+      // Skipped photos: pick any available null-photo profile, then update its religion/nrb
+      profile = pickByAge(allProfiles, midAge, usedIds)
+    } else if (hinduPhotos.includes(photoId) && photo.religion_hint === 'hindu') {
       profile = pickByAge(hinduProfiles, midAge, usedIds)
+      if (!profile) profile = pickByAge(allProfiles, midAge, usedIds)
     } else if (nrbPhotos.includes(photoId) && photo.nrb) {
       profile = pickByAge(nrbProfiles, midAge, usedIds)
+      if (!profile) profile = pickByAge(allProfiles, midAge, usedIds)
     } else {
-      // Muslim/general pool - also try NRB pool if exhausted
-      profile = pickByAge(muslimProfiles, midAge, usedIds) || pickByAge(nrbProfiles, midAge, usedIds)
+      profile = pickByAge(muslimProfiles, midAge, usedIds) || pickByAge(allProfiles, midAge, usedIds)
     }
 
     if (!profile) { results.push({ photo: photoId, error: 'no profile available' }); continue }
