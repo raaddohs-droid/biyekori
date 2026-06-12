@@ -344,10 +344,10 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
                       <span className="text-xs text-gray-500">{item.score}/{item.max} pts</span>
                     </div>
                     {item.viewerVal && (
-                      <div className="flex gap-2 text-xs mb-1">
-                        <span className="text-purple-600 font-medium">You want: {item.viewerVal}</span>
-                        <span className="text-gray-400">•</span>
-                        <span className="text-gray-600">Profile: {item.profileVal}</span>
+                      <div style={{ display: 'flex', gap: '6px', fontSize: '11px', marginBottom: '4px', alignItems: 'center', fontFamily: 'system-ui, sans-serif' }}>
+                        <span style={{ color: '#7c3aed', fontWeight: 600, background: '#f5f3ff', padding: '1px 8px', borderRadius: '10px' }}>You: {item.viewerVal}</span>
+                        <span style={{ color: '#9ca3af' }}>&#8594;</span>
+                        <span style={{ color: '#374151', background: '#f9fafb', padding: '1px 8px', borderRadius: '10px' }}>Profile: {item.profileVal}</span>
                       </div>
                     )}
                     <div className="w-full bg-gray-100 rounded-full h-1.5 mb-2">
@@ -1682,3 +1682,4 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
     </>
   )
 }
+
