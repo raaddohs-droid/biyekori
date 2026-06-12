@@ -294,15 +294,6 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
 
   return (
     <>
-      <style>{`
-        @media (max-width: 640px) {
-          .profile-photo-flex { flex-direction: column !important; align-items: center !important; }
-          .profile-detail-grid { grid-template-columns: 1fr !important; }
-          .profile-tab-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; }
-          .profile-tab-bar::-webkit-scrollbar { display: none; }
-          .profile-actions-row { flex-direction: column !important; }
-        }
-      `}</style>
       <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
 
@@ -847,6 +838,15 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
   return (
     <>
+      <style>{`
+        @media (max-width: 640px) {
+          .profile-photo-flex { flex-direction: column !important; align-items: center !important; }
+          .profile-detail-grid { grid-template-columns: 1fr !important; }
+          .profile-tab-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; }
+          .profile-tab-bar::-webkit-scrollbar { display: none; }
+          .profile-actions-row { flex-direction: column !important; }
+        }
+      `}</style>
     {softPrompt && (
       <div
         onClick={() => setSoftPrompt(null)}
