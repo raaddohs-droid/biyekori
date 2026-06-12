@@ -54,6 +54,7 @@ export default function Navbar() {
 
 
   const [showMenu, setShowMenu] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
 
 
 
@@ -788,7 +789,7 @@ export default function Navbar() {
 
 
 
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '60px' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(12px,4vw,32px)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '60px' }}>
 
 
 
@@ -843,12 +844,12 @@ export default function Navbar() {
 
 
 
-        {/* Center nav */}
+        {/* Center nav - hidden on mobile */}
 
 
 
 
-        <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+        <div className="bk-desktop-nav" style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
 
 
 
@@ -1063,7 +1064,7 @@ export default function Navbar() {
 
 
 
-          <form onSubmit={handleIdSearch} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <form className="bk-search-bar" onSubmit={handleIdSearch} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
 
 
 
@@ -2118,13 +2119,19 @@ export default function Navbar() {
 
           ) : (
 
-
-
-
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
 
-
-
+              {/* Mobile hamburger for guests */}
+              <button
+                className="bk-mobile-hamburger"
+                onClick={() => setShowMobileMenu(o => !o)}
+                style={{ display: 'none', flexDirection: 'column', gap: '5px', background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}
+                aria-label="Menu"
+              >
+                <div style={{ width: '22px', height: '2px', background: isHome ? 'white' : '#7B1D2E', borderRadius: '2px', transition: 'all 0.2s', transform: showMobileMenu ? 'rotate(45deg) translate(5px, 5px)' : 'none' }} />
+                <div style={{ width: '22px', height: '2px', background: isHome ? 'white' : '#7B1D2E', borderRadius: '2px', opacity: showMobileMenu ? 0 : 1, transition: 'all 0.2s' }} />
+                <div style={{ width: '22px', height: '2px', background: isHome ? 'white' : '#7B1D2E', borderRadius: '2px', transition: 'all 0.2s', transform: showMobileMenu ? 'rotate(-45deg) translate(5px, -5px)' : 'none' }} />
+              </button>
 
               <Link href="/login" style={{
 
@@ -2286,17 +2293,45 @@ export default function Navbar() {
 
 
 
+
+      {/* Mobile full-screen menu */}
+      {showMobileMenu && (
+        <div style={{ position: 'fixed', inset: 0, background: '#FFFBF5', zIndex: 200, display: 'flex', flexDirection: 'column', paddingTop: '80px' }}>
+          <button onClick={() => setShowMobileMenu(false)} style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: '#7B1D2E', lineHeight: 1 }}>×</button>
+          <div style={{ padding: '0 24px 20px', borderBottom: '1px solid rgba(123,29,46,0.1)', marginBottom: '8px' }}>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: '#7B1D2E', letterSpacing: '3px', fontFamily: 'Georgia, serif' }}>BIYEKORI</span>
+          </div>
+          <nav style={{ flex: 1, overflowY: 'auto' }}>
+            {[
+              { href: '/profiles', label: '👥 Browse Profiles' },
+              { href: '/success-stories', label: '💍 Success Stories' },
+              { href: '/pricing', label: '💎 Plans & Pricing' },
+              ...(user ? [
+                { href: '/dashboard', label: '📊 Dashboard' },
+                { href: '/interests', label: '💌 Interests' },
+                { href: '/messages', label: '📨 Messages' },
+              ] : []),
+            ].map(({ href, label }) => (
+              <a key={href} href={href} onClick={() => setShowMobileMenu(false)} style={{ display: 'block', padding: '16px 24px', fontSize: '16px', fontWeight: 600, color: '#1a0a0d', textDecoration: 'none', borderBottom: '1px solid rgba(123,29,46,0.06)', fontFamily: 'system-ui' }}>
+                {label}
+              </a>
+            ))}
+          </nav>
+          {!user && (
+            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <a href="/register" onClick={() => setShowMobileMenu(false)} style={{ display: 'block', padding: '14px', background: '#7B1D2E', color: '#F0C040', borderRadius: '10px', fontSize: '15px', fontWeight: 700, textDecoration: 'none', textAlign: 'center', fontFamily: 'system-ui' }}>Join Free</a>
+              <a href="/login" onClick={() => setShowMobileMenu(false)} style={{ display: 'block', padding: '14px', background: 'transparent', color: '#7B1D2E', border: '1.5px solid #7B1D2E', borderRadius: '10px', fontSize: '15px', fontWeight: 700, textDecoration: 'none', textAlign: 'center', fontFamily: 'system-ui' }}>Login</a>
+            </div>
+          )}
+        </div>
+      )}
+
     </>
-
-
 
 
   )
 
 
-
-
 }
-
 
 
