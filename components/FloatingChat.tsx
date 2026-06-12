@@ -8,7 +8,7 @@ const IVORY = '#FFFBF5'
 export default function FloatingChat() {
   const [visible, setVisible] = useState(false)
   const [open, setOpen] = useState(false)
-  const [messages, setMessages] = useState([{ from: 'them', text: 'Assalamu alaikum 😊 Biyekori-te swagotom! Kono proshno ache?' }])
+  const [messages, setMessages] = useState([{ from: 'them', text: 'Assalamu alaikum! 😊 Biyekori Support-e swagotom. Kono proshno thakle bolun — registration, features, ba onyo kichhu.' }])
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [msgCount, setMsgCount] = useState(0)
@@ -31,9 +31,9 @@ export default function FloatingChat() {
     setMessages(newMsgs)
     setTimeout(() => { if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight }, 50)
 
-    if (newCount >= 5) {
+    if (newCount >= 8) {
       setTimeout(() => {
-        setMessages(prev => [...prev, { from: 'them', text: 'Apnar shathe kotha bole onek valo laglo! 😊 Join korun free-te — real profiles er shathe connect korun. Inshallah apnar jonno keu ache!' }])
+        setMessages(prev => [...prev, { from: 'them', text: 'Aro proshno thakle support@biyekori.com e email korun. Biyekori-te join korun — bilkul free! 😊' }])
         setEnded(true)
       }, 800)
       return
@@ -42,7 +42,7 @@ export default function FloatingChat() {
     setIsTyping(true)
     try {
       const msgs = newMsgs.slice(-6).map(m => ({ role: m.from === 'me' ? 'user' : 'assistant', content: m.text }))
-      const res = await fetch('/api/demo-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: msgs }) })
+      const res = await fetch('/api/helper-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: msgs, isHelper: true }) })
       const data = await res.json()
       setIsTyping(false)
       setMessages(prev => [...prev, { from: 'them', text: data.reply || 'Apni ki Dhaka te achen? 😊' }])
@@ -70,7 +70,7 @@ export default function FloatingChat() {
         }}>
           {/* Header */}
           <div style={{ background: MAROON, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>🧕</div>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>🌸</div>
             <div style={{ flex: 1 }}>
               <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'white', fontFamily: 'Georgia, serif' }}>Sumaiya</p>
               <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.7)', fontFamily: 'system-ui' }}>Biyekori AI · Demo</p>
@@ -103,7 +103,7 @@ export default function FloatingChat() {
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && sendMsg()}
-                  placeholder="Message..."
+                  placeholder="Ask anything..."
                   maxLength={200}
                   style={{ flex: 1, padding: '8px 12px', background: 'white', border: `1px solid rgba(123,29,46,0.2)`, borderRadius: '8px', color: '#1a0a0d', fontSize: '13px', fontFamily: 'system-ui', outline: 'none' }}
                 />
