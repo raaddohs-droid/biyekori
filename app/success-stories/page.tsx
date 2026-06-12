@@ -101,7 +101,7 @@ export default function SuccessStoriesPage() {
               gridTemplateColumns: 'minmax(0,1fr)',
             }}>
               {/* Photo */}
-              <div style={{ position: 'relative', height: '340px', overflow: 'hidden' }}>
+              <div style={{ position: 'relative', height: 'clamp(240px,50vw,340px)', overflow: 'hidden' }}>
                 <img
                   src={story.photo}
                   alt={story.names}
