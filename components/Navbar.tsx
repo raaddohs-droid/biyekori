@@ -803,7 +803,7 @@ export default function Navbar() {
 
 
 
-        <Link href="/" style={{ textDecoration: 'none', cursor: 'pointer', pointerEvents: 'auto', position: 'relative', zIndex: 60 }}>
+        <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} style={{ textDecoration: 'none', cursor: 'pointer', pointerEvents: 'auto', position: 'relative', zIndex: 60 }}>
 
 
 
