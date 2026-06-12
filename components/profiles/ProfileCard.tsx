@@ -129,8 +129,7 @@ function maskName(n: string, ok: boolean): string {
   if (!n) return 'Anonymous';
   if (ok) return n;
   const p = n.trim().split(' ').filter(Boolean);
-  if (p.length === 1) return p[0];
-  return p[0] + ' ' + p[1].charAt(0) + '.';
+  return p.map(w => w.charAt(0) + '*'.repeat(Math.max(w.length - 1, 3))).join(' ');
 }
 
 export default function ProfileCard({ profile, currentUserPackage = "prottasha", currentUserVerified = false, viewerProfile = null, ...rest }: { profile: any, currentUserPackage?: string, currentUserVerified?: boolean, viewerProfile?: any, [key: string]: any }) {
