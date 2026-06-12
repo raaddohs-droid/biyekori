@@ -427,7 +427,7 @@ export default function Dashboard() {
                   </div>
                   <Link href="/interests" style={{ fontSize: '12px', color: '#16a34a', fontWeight: 700, textDecoration: 'none' }}>See all →</Link>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: '10px' }}>
                   {mutualMatches.slice(0, 6).map((p: any) => (
                     <Link key={p.id} href={'/profile/' + p.id} style={{ textDecoration: 'none', display: 'block' }}>
                       <div style={{ borderRadius: '12px', overflow: 'hidden', border: '2px solid #bbf7d0', background: '#f0fdf4', position: 'relative' }}>
