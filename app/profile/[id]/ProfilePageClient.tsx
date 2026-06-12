@@ -435,7 +435,6 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
     if (parts.length === 1) return parts[0] + ' ***'
     return parts[0] + ' ' + parts[1].charAt(0) + '.'
   }
-  const displayName = getDisplayName(profile.full_name || '', isLoggedIn, isMutual)
   const { matchScore, dataConfidence } = calculateScores(fp, viewerProfile)
   const [galleryPhotos, setGalleryPhotos] = useState<any[]>([])
   const profileCode = getProfileCode(profile.id, profile.created_at || '')
@@ -451,6 +450,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   const [hasInteraction, setHasInteraction] = useState(false)
   const [actionMsg, setActionMsg] = useState<{text: string, type: 'info'|'success'|'upgrade'} | null>(null)
   const [isMutual, setIsMutual] = useState(false)
+  const displayName = getDisplayName(profile.full_name || '', isLoggedIn, isMutual)
   const [dobRequestStatus, setDobRequestStatus] = useState<'none'|'pending'|'granted'|'declined'>('none')
   const [dobGranted, setDobGranted] = useState<string | null>(null)
   const [dobRequesting, setDobRequesting] = useState(false)
