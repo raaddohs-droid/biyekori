@@ -12,7 +12,16 @@ export default function Home() {
       
 
       {/* HERO */}
-      <section style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', backgroundImage: "url('/hero-wedding.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundRepeat: 'no-repeat', padding: '120px 24px 80px 50%', textAlign: 'left', overflow: 'hidden' }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .bk-hero { background-image: none !important; background: #1a0a0d !important; min-height: auto !important; padding: 120px 24px 100px !important; align-items: center !important; text-align: center !important; }
+          .bk-hero h1 { font-size: clamp(36px,10vw,52px) !important; }
+          .bk-hero-tags { justify-content: center !important; }
+          .bk-stats-bar { flex-wrap: wrap !important; padding: 16px !important; gap: 0 !important; }
+          .bk-stats-bar > div { width: 50% !important; padding: 10px 8px !important; border-right: none !important; border-bottom: 1px solid rgba(240,192,64,0.15) !important; }
+        }
+      `}</style>
+      <section className="bk-hero" style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', backgroundImage: "url('/hero-wedding.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundRepeat: 'no-repeat', padding: '120px 24px 80px 50%', textAlign: 'left', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%)', pointerEvents: 'none' }}/>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '800px', height: '800px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(240,192,64,0.08) 0%,transparent 65%)', pointerEvents: 'none' }}/>
 
@@ -34,7 +43,7 @@ export default function Home() {
         </div>
 
         {/* Stats bar */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(255,255,255,0.97)', padding: '18px 40px', display: 'flex', gap: '0', justifyContent: 'center', zIndex: 2 }}>
+        <div className="bk-stats-bar" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(255,255,255,0.97)', padding: '18px 40px', display: 'flex', gap: '0', justifyContent: 'center', zIndex: 2 }}>
           {[['1,811', 'Women registered'], ['1,199', 'Men registered'], ['3,010+', 'Total profiles'], ['Free', 'To join & browse']].map(([n, l], i) => (
             <div key={n} style={{ textAlign: 'center', padding: '0 40px', borderRight: i < 3 ? '1px solid rgba(240,192,64,0.2)' : 'none' }}>
               <div style={{ fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 800, color: '#F0C040', letterSpacing: '-1px' }}>{n}</div>
