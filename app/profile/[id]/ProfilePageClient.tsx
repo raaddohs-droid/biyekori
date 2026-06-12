@@ -293,6 +293,16 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
   const [tab, setTab] = useState<'match' | 'predict'>('match')
 
   return (
+    <div>
+      <style>{`
+        @media (max-width: 640px) {
+          .profile-photo-flex { flex-direction: column !important; align-items: center !important; }
+          .profile-detail-grid { grid-template-columns: 1fr !important; }
+          .profile-tab-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; }
+          .profile-tab-bar::-webkit-scrollbar { display: none; }
+          .profile-actions-row { flex-direction: column !important; }
+        }
+      `}</style>
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
 
@@ -1230,7 +1240,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
           <div className="bg-gradient-to-r from-pink-500 to-purple-500 h-32"></div>
           <div className="px-8 pb-8">
-            <div className="flex flex-col md:flex-row gap-6 -mt-16">
+            <div className="flex flex-col md:flex-row gap-6 -mt-16 profile-photo-flex">
               <div className="flex-shrink-0">
                 {(() => {
                   const mainPhoto = profile.photo_url
@@ -1240,7 +1250,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
                   if (total === 0) {
                     return (
-                      <div style={{ width: '200px', height: '220px', background: '#fdf8f9', borderRadius: '16px', border: '4px solid white', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '16px' }}>
+                      <div style={{ width: 'clamp(150px, 40vw, 200px)', height: 'clamp(165px, 44vw, 220px)', background: '#fdf8f9', borderRadius: '16px', border: '4px solid white', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '16px' }}>
                         <span style={{ fontSize: '44px' }}>{profile.gender === 'male' ? '👨' : '👩'}</span>
                         <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af', textAlign: 'center', fontFamily: 'system-ui' }}>
                           {profile.gender === 'female' ? 'Photo on Request' : 'No photo yet'}
@@ -1263,9 +1273,9 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                   }
 
                   return (
-                    <div style={{ width: '200px' }}>
+                    <div style={{ width: 'clamp(150px, 40vw, 200px)' }}>
                       {/* Main photo */}
-                      <div style={{ position: 'relative', width: '200px', height: '220px', borderRadius: '16px', overflow: 'hidden', border: '4px solid white', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}>
+                      <div style={{ position: 'relative', width: 'clamp(150px, 40vw, 200px)', height: 'clamp(165px, 44vw, 220px)', borderRadius: '16px', overflow: 'hidden', border: '4px solid white', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}>
                         <img
                           src={allPhotos[photoIndex]}
                           alt={profile.full_name || 'Profile'}
@@ -1372,7 +1382,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           </div>
         )}
 
-        <div className="grid md:grid-cols-2 gap-6 mb-6">
+        <div className="grid md:grid-cols-2 gap-6 mb-6 profile-detail-grid">
           {(hasValue(profile.height) || hasValue(fp.weight)) && (
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4" style={{color:"#111827"}}>👤 Personal Details</h3>
