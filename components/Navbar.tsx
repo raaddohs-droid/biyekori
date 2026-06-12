@@ -888,6 +888,11 @@ export default function Navbar() {
 
 
 
+                { href: '/pricing', label: 'Pricing' },
+
+
+
+
                 { href: '/dashboard', label: 'Dashboard' },
 
 
