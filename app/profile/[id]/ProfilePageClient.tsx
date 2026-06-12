@@ -428,14 +428,14 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
     'যোগাযোগের তথ্য দেখতে': 'নিরাপদ যোগাযোগ মানে — ফোন নম্বর ছাড়া, পরিচয় গোপন রেখে কথা বলা। পরিচয় প্রকাশ শুধু আপনার ইচ্ছায়।',
   }
 
-  // Mask name for guests — show first name + last initial only
-  function getDisplayName(full: string, loggedIn: boolean): string {
-    if (loggedIn) return full || 'Anonymous'
+  // Mask name unless mutual match — show first name + last initial only
+  function getDisplayName(full: string, loggedIn: boolean, mutual: boolean): string {
+    if (mutual) return full || 'Anonymous'
     const parts = (full || '').trim().split(' ')
-    if (parts.length === 1) return parts[0].charAt(0) + '***'
+    if (parts.length === 1) return parts[0] + ' ***'
     return parts[0] + ' ' + parts[1].charAt(0) + '.'
   }
-  const displayName = getDisplayName(profile.full_name || '', isLoggedIn)
+  const displayName = getDisplayName(profile.full_name || '', isLoggedIn, isMutual)
   const { matchScore, dataConfidence } = calculateScores(fp, viewerProfile)
   const [galleryPhotos, setGalleryPhotos] = useState<any[]>([])
   const profileCode = getProfileCode(profile.id, profile.created_at || '')
