@@ -251,10 +251,13 @@ export default function ProfileCard({ profile, currentUserPackage = "prottasha",
   return (
     <div className={"bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden " + (isPremium ? "border-2 border-yellow-400" : "border border-gray-100")}>
       <div className="relative h-64 bg-gradient-to-br from-rose-100 to-purple-100">
-        {profile.photo_privacy ? (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50 gap-2">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c084fc" strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-            <p className="text-xs font-semibold text-purple-400">Photo Private</p>
+        {(profile.photo_privacy === true) ? (
+          <div className="w-full h-full flex flex-col items-center justify-center gap-3" style={{ background: 'linear-gradient(135deg,#fdf8f9,#f3f0ff)' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(123,29,46,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7B1D2E" strokeWidth="1.8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+            </div>
+            <p style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: '#7B1D2E', fontFamily: 'system-ui' }}>Photo on Request</p>
+            <p style={{ margin: 0, fontSize: '10px', color: '#9ca3af', fontFamily: 'system-ui', textAlign: 'center', padding: '0 12px' }}>Visit profile to request</p>
           </div>
         ) : allPhotos.length > 0 ? (
           <img src={allPhotos[currentPhotoIndex]} alt={name} className="w-full h-full object-cover" />
