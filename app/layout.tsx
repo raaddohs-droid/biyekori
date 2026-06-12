@@ -4,6 +4,7 @@ import "./globals.css"
 import Navbar from "@/components/Navbar"
 import UrgencyBar from "@/components/UrgencyBar"
 import ActivityToastWrapper from "@/components/ActivityToastWrapper"
+import FloatingChat from "@/components/FloatingChat"
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] })
 const hindSiliguri = Hind_Siliguri({ variable: "--font-hind-siliguri", subsets: ["bengali", "latin"], weight: ["400", "600", "700"] })
@@ -23,7 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div style={{ position: 'fixed', top: '60px', left: 0, right: 0, zIndex: 49 }}><UrgencyBar /></div>
         {children}
         <ActivityToastWrapper />
+        <FloatingChat />
       </body>
     </html>
   )
 }
+
