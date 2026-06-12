@@ -6,6 +6,10 @@ import AIPhotoCropper from '@/components/profiles/AIPhotoCropper';
 export default function RegisterPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
+  const [lang, setLang] = useState<'en'|'bn'>('en');
+
+  // Translation helper
+  const t = (en: string, bn: string) => lang === 'bn' ? bn : en;
   const [guardianMode, setGuardianMode] = useState(false);
 
   // Step 1
@@ -158,14 +162,14 @@ export default function RegisterPage() {
               >
                 <div style={{ fontSize: '48px', marginBottom: '12px' }}>👤</div>
                 <h3 style={{ margin: '0 0 8px', fontSize: '17px', fontWeight: 800, color: '#111827' }}>নিজে পরিচালিত</h3>
-                <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280', lineHeight: 1.5 }}>I am the bride or groom and will manage this profile myself</p>
+                <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280', lineHeight: 1.5 }}>{t('I am the bride or groom and will manage this profile myself', 'আমি নিজেই আমার প্রোফাইল পরিচালনা করব')}</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   {['Full profile control', 'Direct messaging', 'Voice calls', 'Porichiti game'].map(f => (
                     <span key={f} style={{ fontSize: '11px', color: '#10b981', fontWeight: 600 }}>✓ {f}</span>
                   ))}
                 </div>
                 <div style={{ marginTop: '16px', padding: '10px', background: 'linear-gradient(135deg,#e11d48,#db2777)', borderRadius: '10px', color: 'white', fontSize: '13px', fontWeight: 700 }}>
-                  Choose Self Mode
+                  {t('Choose Self Mode', 'নিজে শুরু করুন')}
                 </div>
               </button>
 
@@ -180,20 +184,20 @@ export default function RegisterPage() {
               >
                 <div style={{ fontSize: '48px', marginBottom: '12px' }}>👨‍👩‍👧</div>
                 <h3 style={{ margin: '0 0 8px', fontSize: '17px', fontWeight: 800, color: '#111827' }}>পরিবার পরিচালিত</h3>
-                <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280', lineHeight: 1.5 }}>A parent or family member is setting up this profile on behalf of the bride/groom</p>
+                <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280', lineHeight: 1.5 }}>{t('A parent or family member is setting up this profile on behalf of the bride/groom', 'পিতামাতা বা পরিবারের সদস্য পাত্র/পাত্রীর পক্ষে প্রোফাইল তৈরি করছেন')}</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   {['Bengali interface', 'Formal messaging', 'Family-first approach', 'Guardian badge on profile'].map(f => (
                     <span key={f} style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 600 }}>✓ {f}</span>
                   ))}
                 </div>
                 <div style={{ marginTop: '16px', padding: '10px', background: 'linear-gradient(135deg,#7c3aed,#a855f7)', borderRadius: '10px', color: 'white', fontSize: '13px', fontWeight: 700 }}>
-                  Choose Guardian Mode
+                  {t('Choose Guardian Mode', 'পরিবার হিসেবে শুরু করুন')}
                 </div>
               </button>
             </div>
 
             <p style={{ marginTop: '20px', fontSize: '11px', color: '#9ca3af', textAlign: 'center' }}>
-              You can switch modes later from Settings after OTP verification.
+              {t('You can switch modes later from Settings after OTP verification.', 'OTP যাচাইয়ের পরে সেটিংস থেকে পরিবর্তন করা যাবে।')}
             </p>
           </div>
         )}
@@ -209,18 +213,18 @@ export default function RegisterPage() {
             ))}
           </div>
           <div className="flex justify-between mt-2 text-xs font-bold text-gray-600">
-            <span>Photo & Info</span><span>Basic Details</span><span>Contact & Verify</span>
+            <span>{t('Photo & Info', 'ছবি ও তথ্য')}</span><span>{t('Basic Details', 'বিস্তারিত')}</span><span>{t('Contact & Verify', 'যোগাযোগ')}</span>
           </div>
         </div>}
 
         {/* Step 1 */}
         {step === 1 && (
           <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-black text-gray-900 mb-6">Create Your Profile</h2>
+            <h2 className="text-2xl font-black text-gray-900 mb-6">{t('Create Your Profile', 'আপনার প্রোফাইল তৈরি করুন')}</h2>
 
             {/* I am a */}
             <div className="mb-5">
-              <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? "Registering for a..." : "I am a..."}</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? t("Registering for a...", "যার জন্য নিবন্ধন করছেন...") : t("I am a...", "আমি একজন...")}</label>
               <select
                 value={iAm}
                 onChange={(e) => setIAm(e.target.value)}
@@ -228,8 +232,8 @@ export default function RegisterPage() {
                 required
               >
                 <option value="">Select one</option>
-                <option value="bride">{guardianMode ? "Bride (Patri) - Registering a bride" : "Bride (Patri) - I am a woman looking for a groom"}</option>
-                <option value="groom">{guardianMode ? "Groom (Patro) - Registering a groom" : "Groom (Patro) - I am a man looking for a bride"}</option>
+                <option value="bride">{guardianMode ? t("Bride (Patri) - Registering a bride", "পাত্রী - একজন পাত্রীর জন্য নিবন্ধন") : t("Bride (Patri) - I am a woman looking for a groom", "পাত্রী - আমি একজন নারী, পাত্র খুঁজছি")}</option>
+                <option value="groom">{guardianMode ? t("Groom (Patro) - Registering a groom", "পাত্র - একজন পাত্রের জন্য নিবন্ধন") : t("Groom (Patro) - I am a man looking for a bride", "পাত্র - আমি একজন পুরুষ, পাত্রী খুঁজছি")}</option>
               </select>
             </div>
 
@@ -246,15 +250,15 @@ export default function RegisterPage() {
 
             {/* Main Photo */}
             <div className="mb-5">
-              <label className="block text-sm font-bold text-gray-900 mb-2">Profile Photo</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">{t('Profile Photo', 'প্রোফাইল ছবি')}</label>
               <AIPhotoCropper onPhotoSelect={handlePhotoSelect} uploadCount={0} />
 
               {/* Photo privacy toggle */}
               <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-bold text-gray-800">Photo Privacy</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Only show my photo to people whose interest I accept</p>
+                    <p className="text-sm font-bold text-gray-800">{t('Photo Privacy', 'ছবির গোপনীয়তা')}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{t('Only show my photo to people whose interest I accept', 'শুধুমাত্র যাদের আগ্রহ গ্রহণ করব তাদের ছবি দেখাবে')}</p>
                   </div>
                   <button
                     type="button"
@@ -269,7 +273,7 @@ export default function RegisterPage() {
 
             {/* Additional Photos */}
             <div className="mb-5">
-              <label className="block text-sm font-bold text-gray-900 mb-2">Additional Photos (Optional, up to 8)</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">{t('Additional Photos (Optional, up to 8)', 'অতিরিক্ত ছবি (ঐচ্ছিক, সর্বোচ্চ ৮টি)')}</label>
               <div className="grid grid-cols-4 gap-2 mb-2">
                 {additionalPhotos.map((photo, index) => (
                   <div key={index} className="relative aspect-square rounded-lg overflow-hidden border-2 border-rose-200">
@@ -292,7 +296,7 @@ export default function RegisterPage() {
               disabled={!selectedPhoto || !iAm}
               className={`w-full py-4 rounded-xl font-bold transition ${selectedPhoto && iAm ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:shadow-xl' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
             >
-              Next
+              {t('Next', 'পরবর্তী')}
             </button>
           </div>
         )}
@@ -300,15 +304,15 @@ export default function RegisterPage() {
         {/* Step 2 */}
         {step === 2 && (
           <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-black text-gray-900 mb-6">Basic Information</h2>
+            <h2 className="text-2xl font-black text-gray-900 mb-6">{t('Basic Information', 'মৌলিক তথ্য')}</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "Her Full Name" : "His Full Name") : "Full Name"}</label>
-                <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" placeholder={guardianMode ? (iAm === "bride" ? "Enter her full name" : "Enter his full name") : "Enter your full name"} required />
+                <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? t("Her Full Name", "তার পুরো নাম") : t("His Full Name", "তার পুরো নাম")) : t("Full Name", "পুরো নাম")}</label>
+                <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" placeholder={guardianMode ? (iAm === "bride" ? t("Enter her full name", "তার পুরো নাম লিখুন") : t("Enter his full name", "তার পুরো নাম লিখুন")) : t("Enter your full name", "আপনার পুরো নাম লিখুন")} required />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "Her Date of Birth" : "His Date of Birth") : "Date of Birth"}</label>
+                  <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? t("Her Date of Birth", "তার জন্ম তারিখ") : t("His Date of Birth", "তার জন্ম তারিখ")) : t("Date of Birth", "জন্ম তারিখ")}</label>
                   <div className="grid grid-cols-3 gap-2">
                     <select value={dobDay} onChange={(e) => setDobDay(e.target.value)} className="px-2 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 text-sm">
                       <option value="">Day</option>
@@ -317,13 +321,13 @@ export default function RegisterPage() {
                       ))}
                     </select>
                     <select value={dobMonth} onChange={(e) => setDobMonth(e.target.value)} className="px-2 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 text-sm">
-                      <option value="">Month</option>
+                      <option value="">{t("Month", "মাস")}</option>
                       {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((m, i) => (
                         <option key={i+1} value={i+1}>{m}</option>
                       ))}
                     </select>
                     <select value={dobYear} onChange={(e) => setDobYear(e.target.value)} className="px-2 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 text-sm">
-                      <option value="">Year</option>
+                      <option value="">{t("Year", "বছর")}</option>
                       {Array.from({length: 53}, (_, i) => new Date().getFullYear() - 18 - i).map(y => (
                         <option key={y} value={y}>{y}</option>
                       ))}
@@ -331,22 +335,22 @@ export default function RegisterPage() {
                   </div>
                   {dobDay && dobMonth && dobYear && (
                     <p className="text-xs text-rose-500 font-semibold mt-1">
-                      Age: {Math.floor((Date.now() - new Date(parseInt(dobYear), parseInt(dobMonth)-1, parseInt(dobDay)).getTime()) / (365.25*24*60*60*1000))} years
+                      {t('Age', 'বয়স')}: {Math.floor((Date.now() - new Date(parseInt(dobYear), parseInt(dobMonth)-1, parseInt(dobDay)).getTime()) / (365.25*24*60*60*1000))} years
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "Her District" : "His District") : "District"}</label>
+                  <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? t("Her District", "তার জেলা") : t("His District", "তার জেলা")) : t("District", "জেলা")}</label>
                   <select value={city} onChange={(e) => setCity(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" required>
-                    <option value="">Select District</option>
+                    <option value="">{t("Select District", "জেলা নির্বাচন করুন")}</option>
                     {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "Her Education" : "His Education") : "Education"}</label>
+                <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? t("Her Education", "তার শিক্ষা") : t("His Education", "তার শিক্ষা")) : t("Education", "শিক্ষাগত যোগ্যতা")}</label>
                 <select value={education} onChange={(e) => setEducation(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" required>
-                  <option value="">Select Education</option>
+                  <option value="">{t("Select Education", "শিক্ষা নির্বাচন করুন")}</option>
                   <option value="SSC">SSC</option>
                   <option value="HSC">HSC</option>
                   <option value="Bachelor">Bachelor</option>
@@ -360,7 +364,7 @@ export default function RegisterPage() {
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "Her Profession" : "His Profession") : "Profession"}</label>
                 <select value={profession} onChange={(e) => setProfession(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" required>
-                  <option value="">Select Profession</option>
+                  <option value="">{t("Select Profession", "পেশা নির্বাচন করুন")}</option>
                   <option value="Student">Student</option>
                   <option value="Doctor">Doctor</option>
                   <option value="Engineer">Engineer</option>
@@ -377,7 +381,7 @@ export default function RegisterPage() {
               </div>
             </div>
             <div className="mt-4">
-              <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "About Her" : "About Him") : "About Me"} <span className="text-gray-400 font-normal">(optional)</span></label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? t("About Her", "তার সম্পর্কে") : t("About Him", "তার সম্পর্কে")) : t("About Me", "আমার সম্পর্কে")} <span className="text-gray-400 font-normal">({t("optional", "ঐচ্ছিক")})</span></label>
               <textarea value={aboutMe} onChange={(e) => setAboutMe(e.target.value)} rows={3} placeholder={guardianMode ? (iAm === "bride" ? "Describe her background, character and what the family is looking for in a groom..." : "Describe his background, character and what the family is looking for in a bride...") : "Tell potential matches about yourself, your values, and what you are looking for..."} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 resize-none" />
             </div>
             <div className="flex gap-4 mt-6">
@@ -390,23 +394,23 @@ export default function RegisterPage() {
         {/* Step 3 */}
         {step === 3 && (
           <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-black text-gray-900 mb-6">Contact & Verification</h2>
+            <h2 className="text-2xl font-black text-gray-900 mb-6">{t('Contact & Verification', 'যোগাযোগ ও যাচাইকরণ')}</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">Phone Number</label>
+                <label className="block text-sm font-bold text-gray-900 mb-2">{t('Phone Number', 'ফোন নম্বর')}</label>
                 <div className="flex gap-2">
                   <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" placeholder="01XXXXXXXXX" maxLength={11} />
                   <button onClick={handleSendOtp} disabled={loading || otpVerified} className="px-4 py-3 bg-rose-500 text-white rounded-xl font-bold hover:bg-rose-600 disabled:bg-gray-300 text-sm">
-                    {loading ? '...' : otpVerified ? 'Verified' : 'Send OTP'}
+                    {loading ? '...' : otpVerified ? t('Verified ✓', 'যাচাই হয়েছে ✓') : t('Send OTP', 'OTP পাঠান')}
                   </button>
                 </div>
               </div>
               {sentOtp && !otpVerified && (
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-2">Enter OTP</label>
+                  <label className="block text-sm font-bold text-gray-900 mb-2">{t('Enter OTP', 'OTP লিখুন')}</label>
                   <div className="flex gap-2">
                     <input type="text" value={otp} onChange={(e) => setOtp(e.target.value)} className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" placeholder="6-digit OTP" maxLength={6} />
-                    <button onClick={handleVerifyOtp} className="px-4 py-3 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 text-sm">Verify</button>
+                    <button onClick={handleVerifyOtp} className="px-4 py-3 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 text-sm">{t('Verify', 'যাচাই করুন')}</button>
                   </div>
                 </div>
               )}
@@ -423,7 +427,7 @@ export default function RegisterPage() {
             <div className="flex gap-4 mt-6">
               <button onClick={() => setStep(2)} className="flex-1 py-4 bg-gray-100 text-gray-900 rounded-xl font-bold">Back</button>
               <button onClick={handleSubmit} disabled={loading || !otpVerified || !password} className={`flex-1 py-4 rounded-xl font-bold ${!loading && otpVerified && password ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>
-                {loading ? 'Registering...' : 'Complete Registration'}
+                {loading ? t('Registering...', 'নিবন্ধন হচ্ছে...') : t('Complete Registration', 'নিবন্ধন সম্পন্ন করুন')}
               </button>
             </div>
           </div>
@@ -469,3 +473,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+
