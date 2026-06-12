@@ -1079,7 +1079,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             >
               💕 Why You Match — tap to explore
             </button>
-            {!isLoggedIn && <p className="text-white opacity-70 text-xs mt-2 }}>Score is based on general preferences • Log in for your personal match score</p>}
+            {!isLoggedIn && <p className="text-white opacity-70 text-xs mt-2">Score is based on general preferences • Log in for your personal match score</p>}
           </div>
         </div>
         )}
