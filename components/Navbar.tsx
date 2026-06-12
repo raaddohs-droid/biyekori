@@ -745,11 +745,18 @@ export default function Navbar() {
 
 
   return (
-
-
-
-
     <>
+      <style>{`
+        @media (max-width: 767px) {
+          .bk-desktop-nav { display: none !important; }
+          .bk-search-bar { display: none !important; }
+          .bk-login-btns { display: none !important; }
+          .bk-mobile-hamburger { display: flex !important; }
+        }
+        @media (min-width: 768px) {
+          .bk-mobile-hamburger { display: none !important; }
+        }
+      `}</style>
 
 
 
