@@ -111,7 +111,11 @@ export async function POST(req: NextRequest) {
       // Update profile
       const updateData: any = { photo_url: mainUrl }
       if (additionalUrls.length) updateData.additional_photos = additionalUrls
-
+      // Apply profile overrides (religion, nrb_country etc)
+      if (photo.profile_overrides) {
+        if (photo.profile_overrides.religion) updateData.religion = photo.profile_overrides.religion
+        if (photo.profile_overrides.nrb_country) updateData.nrb_country = photo.profile_overrides.nrb_country
+      }
       await patchProfile(profile.id, updateData)
       results.push({ photo: photoId, profile_id: profile.id, profile_age: profile.age, url: mainUrl, additional: additionalUrls.length })
       processed++
