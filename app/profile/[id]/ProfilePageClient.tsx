@@ -296,7 +296,7 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
 
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 rounded-t-2xl text-white">
+        <div className="p-6 rounded-t-2xl text-white" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)"">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">💕 Why You Match</h2>
             <button onClick={onClose} className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 text-lg font-bold">✕</button>
@@ -305,14 +305,14 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
             <div className={`rounded-xl p-3 text-center cursor-pointer transition ${tab === 'match' ? 'bg-white/30 ring-2 ring-white' : 'bg-white/10'}`} onClick={() => setTab('match')}>
               <div className="text-3xl font-black">{matchScore}%</div>
               <div className="text-sm font-bold">AI Match Score</div>
-              <div className="text-xs text-purple-200">{getMatchLabel(matchScore)}</div>
-              <div className="text-xs text-purple-200 mt-1">tap to explore →</div>
+              <div className="text-xs text-white opacity-70">{getMatchLabel(matchScore)}</div>
+              <div className="text-xs text-white opacity-70 mt-1">tap to explore →</div>
             </div>
             <div className={`rounded-xl p-3 text-center cursor-pointer transition ${tab === 'predict' ? 'bg-white/30 ring-2 ring-white' : 'bg-white/10'}`} onClick={() => setTab('predict')}>
               <div className="text-3xl font-black" style={{ color: dataConfidence >= 60 ? '#34d399' : '#fbbf24' }}>{dataConfidence}%</div>
               <div className="text-sm font-bold">Profile Trust Score</div>
-              <div className="text-xs text-purple-200">{getConfLabel(dataConfidence)}</div>
-              <div className="text-xs text-purple-200 mt-1">tap to explore →</div>
+              <div className="text-xs text-white opacity-70">{getConfLabel(dataConfidence)}</div>
+              <div className="text-xs text-white opacity-70 mt-1">tap to explore →</div>
             </div>
 
           </div>
@@ -354,7 +354,7 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
                       <div className="h-1.5 rounded-full transition-all" style={{ width: `${(item.score / item.max) * 100}%`, backgroundColor: item.matched ? '#10b981' : '#f97316' }} />
                     </div>
                     <p className="text-xs text-gray-600">{item.reason}</p>
-                    <p className="text-xs text-purple-600 italic mt-1">💡 {item.tip}</p>
+                    <p className="text-xs italic" style={{ color: "#7B1D2E" mt-1">💡 {item.tip}</p>
                   </div>
                 ))}
               </div>
@@ -388,7 +388,7 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
           {!isLoggedIn && (
           <div className="mt-6 pt-4 border-t border-gray-100 text-center">
             <p className="text-xs text-gray-500 mb-3">Want YOUR match score with this person?</p>
-            <Link href="/login" className="block w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl text-sm hover:shadow-lg transition">
+            <Link href="/login" className="block w-full py-3 text-white font-bold rounded-xl text-sm hover:shadow-lg transition" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)"">
               Log In for Personal Match Score
             </Link>
           </div>
@@ -965,21 +965,21 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
         </div>
       </div>
     )}
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 py-8 px-4" style={{colorScheme:"light"}}>
+    <div className="min-h-screen py-8 px-4" style={{ background: "#FFFBF5"" style={{colorScheme:"light"}}>
       <div className="max-w-5xl mx-auto">
 
-        <Link href="/profiles" className="inline-flex items-center text-pink-600 hover:text-pink-700 mb-6 font-medium">← Back to Profiles</Link>
+        <Link href="/profiles" className="inline-flex items-center mb-6 font-medium" style={{ color: "#7B1D2E"">← Back to Profiles</Link>
 
         {/* AI Score Card */}
         {!isLoggedIn ? (
-          <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-xl p-6 mb-6 text-white" style={{ position: 'relative', overflow: 'hidden' }}>
+          <div className="rounded-2xl shadow-xl p-6 mb-6 text-white" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)"" style={{ position: 'relative', overflow: 'hidden' }}>
             {/* Blurred fake scores behind */}
             <div style={{ filter: 'blur(6px)', pointerEvents: 'none', userSelect: 'none', opacity: 0.5 }}>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-2xl">🤖</span>
                 <div>
                   <h2 className="text-xl font-bold">AI Compatibility Analysis</h2>
-                  <p className="text-purple-200 text-xs">Powered by Biyekori AI Matchmaker</p>
+                  <p className="text-white opacity-70 text-xs">Powered by Biyekori AI Matchmaker</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-6 bg-white/10 rounded-xl p-6 mt-4">
@@ -1027,12 +1027,12 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             </div>
           </div>
         ) : (
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-xl p-6 mb-6 text-white">
+        <div className="rounded-2xl shadow-xl p-6 mb-6 text-white" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)"">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-2xl">🤖</span>
             <div>
               <h2 className="text-xl font-bold">AI Compatibility Analysis</h2>
-              <p className="text-purple-200 text-xs">Powered by Biyekori AI Matchmaker • Based on general preferences</p>
+              <p className="text-white opacity-70 text-xs">Powered by Biyekori AI Matchmaker • Based on general preferences</p>
             </div>
           </div>
 
@@ -1049,7 +1049,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                 </div>
               </div>
               <p className="font-bold text-white mt-2">AI Match Score</p>
-              <p className="text-purple-200 text-xs text-center mt-1">{getMatchLabel(matchScore)}</p>
+              <p className="text-white opacity-70 text-xs text-center mt-1">{getMatchLabel(matchScore)}</p>
             </div>
 
             <div className="flex flex-col items-center">
@@ -1068,18 +1068,18 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                 <p className="font-bold text-white" style={{ margin: 0 }}>Profile Trust Score</p>
                 <button onClick={(e) => { e.stopPropagation(); setShowTrustInfo(true) }} style={{ width: '18px', height: '18px', borderRadius: '50%', background: 'rgba(255,255,255,0.25)', border: 'none', cursor: 'pointer', color: 'white', fontSize: '11px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>i</button>
               </div>
-              <p className="text-purple-200 text-xs text-center mt-1">{getConfLabel(dataConfidence)}</p>
+              <p className="text-white opacity-70 text-xs text-center mt-1">{getConfLabel(dataConfidence)}</p>
             </div>
           </div>
 
           <div className="mt-4 text-center">
             <button
               onClick={() => setShowModal(true)}
-              className="inline-flex items-center gap-2 bg-white text-purple-700 font-bold px-6 py-2.5 rounded-xl transition text-sm hover:bg-purple-50 shadow-lg"
+              className="inline-flex items-center gap-2 bg-white font-bold px-6 py-2.5 rounded-xl" style={{ color: "#7B1D2E" transition text-sm hover:bg-purple-50 shadow-lg"
             >
               💕 Why You Match — tap to explore
             </button>
-            {!isLoggedIn && <p className="text-purple-200 text-xs mt-2">Score is based on general preferences • Log in for your personal match score</p>}
+            {!isLoggedIn && <p className="text-white opacity-70 text-xs mt-2">Score is based on general preferences • Log in for your personal match score</p>}
           </div>
         </div>
         )}
@@ -1236,7 +1236,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
         {/* Header Card */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
-          <div className="bg-gradient-to-r from-pink-500 to-purple-500 h-32"></div>
+          <div className="h-32" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)""></div>
           <div className="px-8 pb-8">
             <div className="flex flex-col md:flex-row gap-6 -mt-16 profile-photo-flex">
               <div className="flex-shrink-0">
@@ -1351,14 +1351,14 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                   <span style={{ fontSize: '12px', color: '#374151', fontWeight: 800, letterSpacing: '0.5px' }}>{profileCode}</span>
                 </div>
                 <div className="flex flex-wrap gap-2 mb-3">
-                  {hasValue(profile.age) && <span className="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium">{profile.age} years</span>}
-                  {hasValue(profile.marital_status) && <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">{profile.marital_status}</span>}
+                  {hasValue(profile.age) && <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ background: "#fff0f2", color: "#7B1D2E"">{profile.age} years</span>}
+                  {hasValue(profile.marital_status) && <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ background: "#f8f0f2", color: "#7B1D2E"">{profile.marital_status}</span>}
                   {profile.nid_verified && <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold">✓ NID Verified</span>}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {hasValue(profile.religious_level) && <span className="px-3 py-1 bg-green-50 text-green-700 rounded-lg text-sm">🕌 {profile.religious_level}</span>}
                   {hasValue(profile.city) && <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm">📍 {profile.city}</span>}
-                  {hasValue(profile.profession) && <span className="px-3 py-1 bg-purple-50 text-purple-700 rounded-lg text-sm">💼 {profile.profession}</span>}
+                  {hasValue(profile.profession) && <span className="px-3 py-1 rounded-lg text-sm" style={{ background: "#f8f0f2", color: "#7B1D2E"">💼 {profile.profession}</span>}
                   {hasValue(profile.education) && <span className="px-3 py-1 bg-orange-50 text-orange-700 rounded-lg text-sm">🎓 {profile.education}</span>}
                 </div>
               </div>
@@ -1571,7 +1571,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               </div>
               {isLoggedIn && (
                 <div className="mt-5 text-center">
-                  <button onClick={() => setShowModal(true)} className="text-sm text-purple-600 font-semibold hover:underline">
+                  <button onClick={() => setShowModal(true)} className="text-sm font-semibold hover:underline" style={{ color: "#7B1D2E"">
                     🔍 See full compatibility analysis →
                   </button>
                 </div>
@@ -1582,7 +1582,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
         <div className="bg-white rounded-2xl shadow-lg p-6">
           {actionMsg && (
-            <div className={`mb-4 p-4 rounded-xl text-sm font-medium text-center ${actionMsg.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : actionMsg.type === 'upgrade' ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
+            <div className={`mb-4 p-4 rounded-xl text-sm font-medium text-center ${actionMsg.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : actionMsg.type === 'upgrade' ? 'border" style={{ background: "#fff0f2", color: "#7B1D2E", borderColor: "#f8d0d8"' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
               {actionMsg.text}
               {actionMsg.type === 'upgrade' && (
                 <a href="/pricing" className="ml-2 underline font-bold">View Plans</a>
