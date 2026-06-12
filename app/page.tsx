@@ -120,7 +120,7 @@ export default function Home() {
         <div style={{ borderTop: '1px solid rgba(240,192,64,0.15)', paddingTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.3)', fontFamily: 'system-ui, sans-serif' }}>&copy; 2026 Biyekori. All rights reserved.</span>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <a href="https://facebook.com/biyekori" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '42px', height: '42px', borderRadius: '50%', background: 'rgba(240,192,64,0.1)', border: '1px solid rgba(240,192,64,0.2)' }}>
+            <a href="https://www.facebook.com/profile.php?id=61590028991299" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '42px', height: '42px', borderRadius: '50%', background: 'rgba(240,192,64,0.1)', border: '1px solid rgba(240,192,64,0.2)' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="#F0C040"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
             </a>
             <a href="https://instagram.com/biyekori" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '42px', height: '42px', borderRadius: '50%', background: 'rgba(240,192,64,0.1)', border: '1px solid rgba(240,192,64,0.2)' }}>
@@ -138,3 +138,4 @@ export default function Home() {
     </main>
   )
 }
+
