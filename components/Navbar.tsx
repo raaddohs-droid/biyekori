@@ -803,7 +803,7 @@ export default function Navbar() {
 
 
 
-        <Link href="/" style={{ textDecoration: 'none' }}>
+        <Link href="/" style={{ textDecoration: 'none', cursor: 'pointer', pointerEvents: 'auto', position: 'relative', zIndex: 60 }}>
 
 
 
