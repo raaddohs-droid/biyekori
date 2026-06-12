@@ -823,7 +823,7 @@ export default function Navbar() {
 
 
 
-            <span style={{ fontSize: '20px', fontWeight: 700, background: 'linear-gradient(135deg, #e11d48, #9333ea)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: 'Georgia, serif' }}>Biye Kori</span>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: '#7B1D2E', letterSpacing: '3px', fontFamily: 'Georgia, serif' }}>BIYEKORI</span>
 
 
 
@@ -974,6 +974,11 @@ export default function Navbar() {
 
 
                 { href: user ? `/profiles?userGender=${user.gender}&excludeId=${user.id}` : '/profiles', label: 'Profiles' },
+
+
+
+
+                { href: '/success-stories', label: 'Success Stories' },
 
 
 
@@ -2284,3 +2289,4 @@ export default function Navbar() {
 
 
 }
+
