@@ -145,7 +145,7 @@ export default function DemoExperience() {
       </div>
 
       <div style={{ display:'flex', alignItems:'center', gap:'12px', background:'rgba(240,192,64,0.05)', border:'1px solid rgba(240,192,64,0.12)', borderRadius:'12px', padding:'14px', marginBottom:'16px' }}>
-        <div style={{ width:'50px', height:'50px', borderRadius:'50%', background:'linear-gradient(135deg,#DB2777,#9D174D)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'22px', flexShrink:0 }}>🧕</div>
+        <div style={{ width:'50px', height:'50px', borderRadius:'50%', background:'linear-gradient(135deg,#7B1D2E,#9D174D)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'22px', flexShrink:0 }}>🧕</div>
         <div>
           <div style={{ fontSize:'15px', fontWeight:600 }}>Sumaiya A., 26 · Dhaka</div>
           <div style={{ fontSize:'12px', color:'rgba(253,246,238,0.55)', marginTop:'2px', fontFamily:'system-ui' }}>Religious · Master&apos;s · Teacher</div>
@@ -166,7 +166,7 @@ export default function DemoExperience() {
               <style>{`@keyframes wave{0%,100%{height:8px}50%{height:28px}}`}</style>
               <div style={{ display:'flex', justifyContent:'center', gap:'4px', height:'36px', alignItems:'center', marginBottom:'12px' }}>
                 {[0,1,2,3,4].map(i=>(
-                  <div key={i} style={{ width:'4px', background:'#10b981', borderRadius:'2px', animation:`wave 1s ease-in-out ${i*0.1}s infinite` }}/>
+                  <div key={i} style={{ width:'4px', background:'#9D174D', borderRadius:'2px', animation:`wave 1s ease-in-out ${i*0.1}s infinite` }}/>
                 ))}
               </div>
             </>
@@ -188,7 +188,7 @@ export default function DemoExperience() {
         <div>
           <div ref={chatRef} style={{ height:'210px', overflowY:'auto', padding:'12px', background:'rgba(0,0,0,0.3)', borderRadius:'10px', marginBottom:'12px', display:'flex', flexDirection:'column', gap:'8px' }}>
             {messages.map((m,i) => (
-              <div key={i} style={{ maxWidth:'82%', padding:'9px 13px', borderRadius:m.from==='them'?'12px 12px 12px 4px':'12px 12px 4px 12px', fontSize:'14px', lineHeight:1.55, background:m.from==='them'?'rgba(240,192,64,0.1)':'#DB2777', color:'#FDF6EE', alignSelf:m.from==='them'?'flex-start':'flex-end', fontFamily:'system-ui' }}>
+              <div key={i} style={{ maxWidth:'82%', padding:'9px 13px', borderRadius:m.from==='them'?'12px 12px 12px 4px':'12px 12px 4px 12px', fontSize:'14px', lineHeight:1.55, background:m.from==='them'?'rgba(240,192,64,0.1)':'#7B1D2E', color:'#FDF6EE', alignSelf:m.from==='them'?'flex-start':'flex-end', fontFamily:'system-ui' }}>
                 {m.text}
               </div>
             ))}
@@ -215,7 +215,7 @@ export default function DemoExperience() {
           <div style={{ fontSize:'15px', fontWeight:600, marginBottom:'16px', lineHeight:1.6 }}>You both have a free Sunday. What would you choose?</div>
           <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
             {Object.entries(LABELS).map(([key,label]) => (
-              <button key={key} onClick={()=>!gamePick&&setGamePick(key)} style={{ padding:'12px 16px', background:gamePick===key?'rgba(219,39,119,0.15)':gamePick?'rgba(240,192,64,0.02)':'rgba(240,192,64,0.04)', border:`1px solid ${gamePick===key?'#DB2777':'rgba(240,192,64,0.15)'}`, borderRadius:'8px', color:gamePick&&gamePick!==key?'rgba(253,246,238,0.38)':'rgba(253,246,238,0.85)', fontSize:'14px', cursor:gamePick?'default':'pointer', textAlign:'left', fontFamily:'system-ui', transition:'all 0.2s' }}>
+              <button key={key} onClick={()=>!gamePick&&setGamePick(key)} style={{ padding:'12px 16px', background:gamePick===key?'rgba(123,29,46,0.2)':gamePick?'rgba(240,192,64,0.02)':'rgba(240,192,64,0.04)', border:`1px solid ${gamePick===key?'#7B1D2E':'rgba(240,192,64,0.15)'}`, borderRadius:'8px', color:gamePick&&gamePick!==key?'rgba(253,246,238,0.38)':'rgba(253,246,238,0.85)', fontSize:'14px', cursor:gamePick?'default':'pointer', textAlign:'left', fontFamily:'system-ui', transition:'all 0.2s' }}>
                 {label}
               </button>
             ))}
@@ -235,4 +235,5 @@ export default function DemoExperience() {
     </div>
   )
 }
+
 
