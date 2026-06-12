@@ -128,8 +128,9 @@ const GIFTS: [string, number][] = [
 function maskName(n: string, ok: boolean): string {
   if (!n) return 'Anonymous';
   if (ok) return n;
-  const p = n.trim().split(' ');
-  return p.map(x => x[0] + '*'.repeat(Math.max(x.length - 1, 3))).join(' ');
+  const p = n.trim().split(' ').filter(Boolean);
+  if (p.length === 1) return p[0];
+  return p[0] + ' ' + p[1].charAt(0) + '.';
 }
 
 export default function ProfileCard({ profile, currentUserPackage = "prottasha", currentUserVerified = false, viewerProfile = null, ...rest }: { profile: any, currentUserPackage?: string, currentUserVerified?: boolean, viewerProfile?: any, [key: string]: any }) {
