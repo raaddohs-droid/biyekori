@@ -84,6 +84,8 @@ export default function AdminDashboard() {
   const [emailResult, setEmailResult] = useState('')
   const [retentionRunning, setRetentionRunning] = useState(false)
   const [retentionResult, setRetentionResult] = useState<any>(null)
+  const [analytics, setAnalytics] = useState<any>(null)
+  const [analyticsLoading, setAnalyticsLoading] = useState(false)
 
   // SMS rate limit
   const [smsRateLimit, setSmsRateLimit] = useState(2)
@@ -105,6 +107,7 @@ export default function AdminDashboard() {
     if (!user) return
     if (tab === 'users') loadUsers()
     if (tab === 'verifications') loadVerifications()
+    if (tab === 'analytics') loadAnalytics()
   }, [tab, user])
 
   const showMsg = (msg: string) => { setActionMsg(msg); setTimeout(() => setActionMsg(''), 4000) }
@@ -227,7 +230,86 @@ export default function AdminDashboard() {
     { id: 'sms', label: 'SMS Broadcast', icon: '📱' },
     { id: 'email', label: 'Email', icon: '📧' },
     { id: 'retention', label: 'Retention', icon: '🔄' },
+    { id: 'analytics', label: 'Analytics', icon: '📈' },
   ]
+
+  const loadAnalytics = async () => {
+    setAnalyticsLoading(true)
+    try {
+      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+
+      const now = new Date()
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()
+
+      // Registrations today
+      const { count: regsToday } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', today)
+      // Registrations this week
+      const { count: regsWeek } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', weekAgo)
+      // Registrations this month
+      const { count: regsMonth } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', monthAgo)
+
+      // Active users today (last_active_at)
+      const { count: activeToday } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('last_active_at', today)
+      // Active this week
+      const { count: activeWeek } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('last_active_at', weekAgo)
+
+      // Interests sent today
+      const { count: interestsToday } = await supabase.from('interests').select('*', { count: 'exact', head: true }).gte('sent_at', today)
+      // Interests this week
+      const { count: interestsWeek } = await supabase.from('interests').select('*', { count: 'exact', head: true }).gte('sent_at', weekAgo)
+
+      // Accepted interests (all time)
+      const { count: accepted } = await supabase.from('interests').select('*', { count: 'exact', head: true }).eq('status', 'accepted')
+      // Total interests
+      const { count: totalInterests } = await supabase.from('interests').select('*', { count: 'exact', head: true })
+
+      // Premium users
+      const { count: premiumUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).neq('package', 'prottasha')
+
+      // Top districts
+      const { data: districtData } = await supabase.from('profiles').select('district').not('district', 'is', null).limit(1000)
+      const districtCount: Record<string, number> = {}
+      districtData?.forEach((p: any) => { if (p.district) districtCount[p.district] = (districtCount[p.district] || 0) + 1 })
+      const topDistricts = Object.entries(districtCount).sort((a, b) => b[1] - a[1]).slice(0, 8)
+
+      // Daily registrations last 7 days
+      const { data: recentRegs } = await supabase.from('profiles').select('created_at').gte('created_at', weekAgo).order('created_at', { ascending: true })
+      const dailyRegs: Record<string, number> = {}
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000)
+        const key = d.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' })
+        dailyRegs[key] = 0
+      }
+      recentRegs?.forEach((p: any) => {
+        const key = new Date(p.created_at).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' })
+        if (dailyRegs[key] !== undefined) dailyRegs[key]++
+      })
+
+      // Gender split
+      const { count: femaleCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('gender', 'female')
+      const { count: maleCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('gender', 'male')
+
+      // Conversion funnel: total → active → sent interest → premium
+      const { count: total } = await supabase.from('profiles').select('*', { count: 'exact', head: true })
+      const { count: sentAny } = await supabase.from('interests').select('sender_id', { count: 'exact', head: true })
+
+      setAnalytics({
+        regsToday, regsWeek, regsMonth,
+        activeToday, activeWeek,
+        interestsToday, interestsWeek,
+        accepted, totalInterests,
+        premiumUsers, total,
+        topDistricts, dailyRegs,
+        femaleCount, maleCount,
+        sentAny,
+        acceptRate: totalInterests ? Math.round((accepted! / totalInterests) * 100) : 0,
+        conversionRate: total ? Math.round((premiumUsers! / total!) * 100) : 0,
+      })
+    } catch (e) { console.error('analytics error', e) }
+    setAnalyticsLoading(false)
+  }
 
   const logUpgrade = async (userId: string, pkg: string, days: number, amount: string, note: string) => {
     try {
@@ -775,6 +857,111 @@ export default function AdminDashboard() {
             </div>
           )}
 
+          {tab === 'analytics' && (
+            <div>
+              <h1 style={{ margin: '0 0 6px', fontSize: '22px', fontWeight: 800, color: '#111827' }}>Analytics</h1>
+              <p style={{ margin: '0 0 24px', fontSize: '13px', color: '#6b7280' }}>Platform performance, user behaviour and growth metrics.</p>
+
+              {analyticsLoading ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>Loading analytics...</div>
+              ) : analytics ? (
+                <div>
+                  {/* Key metrics */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginBottom: '24px' }}>
+                    {[
+                      { label: 'New Today', value: analytics.regsToday || 0, color: '#7B1D2E', sub: `${analytics.regsWeek || 0} this week` },
+                      { label: 'Active Today', value: analytics.activeToday || 0, color: '#0891b2', sub: `${analytics.activeWeek || 0} this week` },
+                      { label: 'Interests Today', value: analytics.interestsToday || 0, color: '#7c3aed', sub: `${analytics.interestsWeek || 0} this week` },
+                      { label: 'Accept Rate', value: `${analytics.acceptRate}%`, color: '#16a34a', sub: `${analytics.accepted || 0} accepted total` },
+                      { label: 'Premium Users', value: analytics.premiumUsers || 0, color: '#C07800', sub: `${analytics.conversionRate}% conversion` },
+                      { label: 'Total Profiles', value: analytics.total || 0, color: '#374151', sub: `${analytics.femaleCount || 0}F · ${analytics.maleCount || 0}M` },
+                    ].map(({ label, value, color, sub }) => (
+                      <div key={label} style={{ background: 'white', borderRadius: '12px', padding: '16px', border: '1px solid #f1f5f9', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                        <p style={{ margin: '0 0 4px', fontSize: '11px', color: '#9ca3af', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>{label}</p>
+                        <p style={{ margin: '0 0 4px', fontSize: '26px', fontWeight: 800, color }}>{value}</p>
+                        <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{sub}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Daily registrations chart */}
+                  <div style={{ background: 'white', borderRadius: '14px', padding: '20px', marginBottom: '16px', border: '1px solid #f1f5f9' }}>
+                    <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>New Registrations — Last 7 Days</h3>
+                    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', height: '80px' }}>
+                      {Object.entries(analytics.dailyRegs).map(([day, count]: [string, any]) => {
+                        const maxVal = Math.max(...Object.values(analytics.dailyRegs) as number[], 1)
+                        const h = Math.max(4, Math.round((count / maxVal) * 72))
+                        return (
+                          <div key={day} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#7B1D2E' }}>{count || ''}</span>
+                            <div style={{ width: '100%', height: `${h}px`, background: '#7B1D2E', borderRadius: '4px 4px 0 0', opacity: 0.8 }} />
+                            <span style={{ fontSize: '10px', color: '#9ca3af', textAlign: 'center' }}>{day}</span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Conversion funnel */}
+                  <div style={{ background: 'white', borderRadius: '14px', padding: '20px', marginBottom: '16px', border: '1px solid #f1f5f9' }}>
+                    <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>Conversion Funnel</h3>
+                    {[
+                      { label: 'Registered', value: analytics.total || 0, color: '#7B1D2E' },
+                      { label: 'Sent at least 1 interest', value: analytics.sentAny || 0, color: '#9D174D' },
+                      { label: 'Got interest accepted', value: analytics.accepted || 0, color: '#0891b2' },
+                      { label: 'Upgraded to premium', value: analytics.premiumUsers || 0, color: '#C07800' },
+                    ].map(({ label, value, color }, i, arr) => {
+                      const pct = arr[0].value ? Math.round((value / arr[0].value) * 100) : 0
+                      return (
+                        <div key={label} style={{ marginBottom: '10px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                            <span style={{ fontSize: '13px', color: '#374151' }}>{label}</span>
+                            <span style={{ fontSize: '13px', fontWeight: 700, color }}>{value} <span style={{ color: '#9ca3af', fontWeight: 400 }}>({pct}%)</span></span>
+                          </div>
+                          <div style={{ height: '6px', background: '#f1f5f9', borderRadius: '3px' }}>
+                            <div style={{ height: '100%', width: `${pct}%`, background: color, borderRadius: '3px', transition: 'width 0.5s' }} />
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  {/* Top districts */}
+                  <div style={{ background: 'white', borderRadius: '14px', padding: '20px', marginBottom: '16px', border: '1px solid #f1f5f9' }}>
+                    <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>Top Locations</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '8px' }}>
+                      {analytics.topDistricts.map(([district, count]: [string, number], i: number) => (
+                        <div key={district} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px' }}>
+                          <span style={{ fontSize: '13px', color: '#374151' }}>📍 {district}</span>
+                          <span style={{ fontSize: '13px', fontWeight: 700, color: '#7B1D2E' }}>{count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Social media */}
+                  <div style={{ background: 'white', borderRadius: '14px', padding: '20px', border: '1px solid #f1f5f9' }}>
+                    <h3 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: 700, color: '#111827' }}>Social Media</h3>
+                    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                      <a href="https://www.facebook.com/profile.php?id=61590028991299" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', background: '#1877f2', color: 'white', borderRadius: '10px', textDecoration: 'none', fontSize: '13px', fontWeight: 700 }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        Biyekori Facebook
+                      </a>
+                      <a href="https://analytics.google.com" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', background: '#f1f5f9', color: '#374151', borderRadius: '10px', textDecoration: 'none', fontSize: '13px', fontWeight: 700, border: '1px solid #e5e7eb' }}>
+                        📊 Google Analytics
+                      </a>
+                      <a href="https://vercel.com/raaddohs-droid/bandhanbd/analytics" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', background: '#f1f5f9', color: '#374151', borderRadius: '10px', textDecoration: 'none', fontSize: '13px', fontWeight: 700, border: '1px solid #e5e7eb' }}>
+                        ▲ Vercel Analytics
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <button onClick={loadAnalytics} style={{ padding: '14px 28px', background: '#7B1D2E', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontSize: '14px' }}>Load Analytics</button>
+              )}
+            </div>
+          )}
+
         </div>
       </div>
 
@@ -899,5 +1086,6 @@ function VerifyCard({ v, filter, onApprove, onReject }: { v: any, filter: string
     </div>
   )
 }
+
 
 
