@@ -38,10 +38,11 @@ async function patchProfile(id: number, body: any) {
 
 export async function GET(req: NextRequest) {
   const secret = req.nextUrl.searchParams.get('secret')
-  if (secret !== 'biyekori-cron-2026' && secret !== process.env.CRON_SECRET) {
+  const validSecrets = ['biyekori-cron-2026', 'biyekori-fix-2026', process.env.CRON_SECRET]
+  if (!validSecrets.includes(secret || '')) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
-  const fix = req.nextUrl.searchParams.get('fix') === 'true'
+  const fix = req.nextUrl.searchParams.get('fix') === 'true' || secret === 'biyekori-fix-2026'
 
   const profiles = await fetchAll('profiles?select=id,full_name,gender,profession,about_me,guardian_mode,last_active_at&order=id.asc')
 
