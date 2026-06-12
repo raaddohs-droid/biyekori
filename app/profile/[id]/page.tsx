@@ -8,7 +8,7 @@ const supabase = createClient(
 )
 
 // Fields safe to show publicly (teaser only)
-const PUBLIC_FIELDS = 'id,full_name,age,gender,religion,religious_level,district,city,profession,education,height,marital_status,photo_url,package,is_verified,guardian_mode,profile_completion,created_at,last_active_at,marriage_timeline,family_type,family_values'
+const PUBLIC_FIELDS = 'id,full_name,age,gender,religion,religious_level,district,city,profession,education,height,marital_status,photo_url,package,is_verified,guardian_mode,profile_completion,created_at,last_active_at,marriage_timeline,family_type,family_values,about_me,partner_preference'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
