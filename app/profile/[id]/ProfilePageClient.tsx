@@ -296,7 +296,7 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
     <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
 
-        <div className="p-6 rounded-t-2xl text-white" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)"">
+        <div className="p-6 rounded-t-2xl text-white" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)" }}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">💕 Why You Match</h2>
             <button onClick={onClose} className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 text-lg font-bold">✕</button>
@@ -354,7 +354,7 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
                       <div className="h-1.5 rounded-full transition-all" style={{ width: `${(item.score / item.max) * 100}%`, backgroundColor: item.matched ? '#10b981' : '#f97316' }} />
                     </div>
                     <p className="text-xs text-gray-600">{item.reason}</p>
-                    <p className="text-xs italic" style={{ color: "#7B1D2E" mt-1">💡 {item.tip}</p>
+                    <p className="text-xs italic" style={{ color: "#7B1D2E" mt-1 }}>💡 {item.tip}</p>
                   </div>
                 ))}
               </div>
@@ -388,7 +388,7 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
           {!isLoggedIn && (
           <div className="mt-6 pt-4 border-t border-gray-100 text-center">
             <p className="text-xs text-gray-500 mb-3">Want YOUR match score with this person?</p>
-            <Link href="/login" className="block w-full py-3 text-white font-bold rounded-xl text-sm hover:shadow-lg transition" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)"">
+            <Link href="/login" className="block w-full py-3 text-white font-bold rounded-xl text-sm hover:shadow-lg transition" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)" }}>
               Log In for Personal Match Score
             </Link>
           </div>
@@ -968,7 +968,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
     <div className="min-h-screen py-8 px-4" style={{ background: "#FFFBF5"" style={{colorScheme:"light"}}>
       <div className="max-w-5xl mx-auto">
 
-        <Link href="/profiles" className="inline-flex items-center mb-6 font-medium" style={{ color: "#7B1D2E"">← Back to Profiles</Link>
+        <Link href="/profiles" className="inline-flex items-center mb-6 font-medium" style={{ color: "#7B1D2E" }}>← Back to Profiles</Link>
 
         {/* AI Score Card */}
         {!isLoggedIn ? (
@@ -1027,7 +1027,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             </div>
           </div>
         ) : (
-        <div className="rounded-2xl shadow-xl p-6 mb-6 text-white" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)"">
+        <div className="rounded-2xl shadow-xl p-6 mb-6 text-white" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)" }}>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-2xl">🤖</span>
             <div>
@@ -1079,7 +1079,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
             >
               💕 Why You Match — tap to explore
             </button>
-            {!isLoggedIn && <p className="text-white opacity-70 text-xs mt-2">Score is based on general preferences • Log in for your personal match score</p>}
+            {!isLoggedIn && <p className="text-white opacity-70 text-xs mt-2 }}>Score is based on general preferences • Log in for your personal match score</p>}
           </div>
         </div>
         )}
@@ -1236,7 +1236,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
 
         {/* Header Card */}
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
-          <div className="h-32" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)""></div>
+          <div className="h-32" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)" }}></div>
           <div className="px-8 pb-8">
             <div className="flex flex-col md:flex-row gap-6 -mt-16 profile-photo-flex">
               <div className="flex-shrink-0">
@@ -1351,14 +1351,14 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
                   <span style={{ fontSize: '12px', color: '#374151', fontWeight: 800, letterSpacing: '0.5px' }}>{profileCode}</span>
                 </div>
                 <div className="flex flex-wrap gap-2 mb-3">
-                  {hasValue(profile.age) && <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ background: "#fff0f2", color: "#7B1D2E"">{profile.age} years</span>}
-                  {hasValue(profile.marital_status) && <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ background: "#f8f0f2", color: "#7B1D2E"">{profile.marital_status}</span>}
+                  {hasValue(profile.age) && <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ background: "#fff0f2", color: "#7B1D2E" }}>{profile.age} years</span>}
+                  {hasValue(profile.marital_status) && <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ background: "#f8f0f2", color: "#7B1D2E" }}>{profile.marital_status}</span>}
                   {profile.nid_verified && <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold">✓ NID Verified</span>}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {hasValue(profile.religious_level) && <span className="px-3 py-1 bg-green-50 text-green-700 rounded-lg text-sm">🕌 {profile.religious_level}</span>}
                   {hasValue(profile.city) && <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm">📍 {profile.city}</span>}
-                  {hasValue(profile.profession) && <span className="px-3 py-1 rounded-lg text-sm" style={{ background: "#f8f0f2", color: "#7B1D2E"">💼 {profile.profession}</span>}
+                  {hasValue(profile.profession) && <span className="px-3 py-1 rounded-lg text-sm" style={{ background: "#f8f0f2", color: "#7B1D2E" }}>💼 {profile.profession}</span>}
                   {hasValue(profile.education) && <span className="px-3 py-1 bg-orange-50 text-orange-700 rounded-lg text-sm">🎓 {profile.education}</span>}
                 </div>
               </div>
@@ -1571,7 +1571,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
               </div>
               {isLoggedIn && (
                 <div className="mt-5 text-center">
-                  <button onClick={() => setShowModal(true)} className="text-sm font-semibold hover:underline" style={{ color: "#7B1D2E"">
+                  <button onClick={() => setShowModal(true)} className="text-sm font-semibold hover:underline" style={{ color: "#7B1D2E" }}>
                     🔍 See full compatibility analysis →
                   </button>
                 </div>
