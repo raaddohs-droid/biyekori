@@ -5,7 +5,7 @@ import Link from 'next/link'
 export default function DemoExperience() {
   const [tab, setTab] = useState<'call'|'chat'|'game'>('call')
   const [callState, setCallState] = useState<'idle'|'ringing'|'connected'|'ended'>('idle')
-  const [messages, setMessages] = useState([{ from: 'them', text: 'Assalamu alaikum! 👋 Apni ki Biyekori-te notun?' }])
+  const [messages, setMessages] = useState([{ from: 'them', text: 'Assalamu alaikum 😊' }])
   const [input, setInput] = useState('')
   const [msgCount, setMsgCount] = useState(0)
   const [chatEnded, setChatEnded] = useState(false)
@@ -148,7 +148,7 @@ export default function DemoExperience() {
         <div style={{ width:'50px', height:'50px', borderRadius:'50%', background:'linear-gradient(135deg,#DB2777,#9D174D)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'22px', flexShrink:0 }}>🧕</div>
         <div>
           <div style={{ fontSize:'15px', fontWeight:600 }}>Sumaiya A., 26 · Dhaka</div>
-          <div style={{ fontSize:'12px', color:'rgba(253,246,238,0.55)', marginTop:'2px', fontFamily:'system-ui' }}>Religious · Master&apos;s · Software Engineer</div>
+          <div style={{ fontSize:'12px', color:'rgba(253,246,238,0.55)', marginTop:'2px', fontFamily:'system-ui' }}>Religious · Master&apos;s · Teacher</div>
         </div>
         <div style={{ marginLeft:'auto', background:'#10b981', borderRadius:'20px', padding:'4px 10px', fontSize:'12px', fontWeight:700, color:'white', whiteSpace:'nowrap' }}>86% match</div>
       </div>
@@ -236,3 +236,4 @@ export default function DemoExperience() {
     </div>
   )
 }
+
