@@ -116,7 +116,7 @@ export default function LandingClient() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(240,192,64,0.12)' }}>
                 <div>
                   <div style={{ fontSize: '13px', color: '#6b7280', letterSpacing: '1px', marginBottom: '4px' }}>WHY YOU MATCH</div>
-                  <div style={{ fontSize: '16px', color: '#1a0a0d', fontWeight: 600 }}>Sumaiya, 26 \u00b7 Dhaka</div>
+                  <div style={{ fontSize: '16px', color: '#1a0a0d', fontWeight: 600 }}>Sumaiya, 26 · Dhaka</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '40px', fontWeight: 900, color: '#10b981', lineHeight: 1 }}>86%</div>
@@ -127,13 +127,13 @@ export default function LandingClient() {
                 { icon: '\ud83d\udd4c', label: 'Religion', you: 'Islam', them: 'Islam', match: true, pts: '15/15' },
                 { icon: '\ud83c\udf82', label: 'Age', you: '25\u201332 yrs', them: '28 yrs', match: true, pts: '12/12' },
                 { icon: '\ud83c\udf93', label: 'Education', you: "Master's+", them: "Master's", match: true, pts: '8/8' },
-                { icon: '\ud83d\udcb0', label: 'Income', you: '\u09f3 50,000+', them: '\u09f3 45,000', match: false, pts: '3/7' },
+                { icon: '\ud83d\udcb0', label: 'Income', you: '৳ 50,000+', them: '৳ 45,000', match: false, pts: '3/7' },
                 { icon: '\ud83d\udccd', label: 'Location', you: 'Dhaka', them: 'Dhaka', match: true, pts: '7/7' },
               ].map(({ icon, label, you, them, match, pts }) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 12px', borderRadius: '10px', marginBottom: '7px', background: match ? 'rgba(16,185,129,0.08)' : 'rgba(249,115,22,0.08)', border: `1px solid ${match ? 'rgba(16,185,129,0.2)' : 'rgba(249,115,22,0.2)'}` }}>
                   <span style={{ fontSize: '16px', width: '22px' }}>{icon}</span>
                   <span style={{ fontSize: '13px', color: '#1a0a0d', width: '68px', fontWeight: 600 }}>{label}</span>
-                  <span style={{ fontSize: '11px', color: '#6b7280', flex: 1 }}>You: {you} \u00b7 Profile: {them}</span>
+                  <span style={{ fontSize: '11px', color: '#6b7280', flex: 1 }}>You: {you} · Profile: {them}</span>
                   <span style={{ fontSize: '14px' }}>{match ? '\u2705' : '\u274c'}</span>
                   <span style={{ fontSize: '11px', color: '#9ca3af', width: '34px', textAlign: 'right' }}>{pts}</span>
                 </div>
@@ -296,7 +296,7 @@ export default function LandingClient() {
             <p style={{ fontSize: 'clamp(18px, 2vw, 26px)', color: '#2d1010', lineHeight: 2.0, fontStyle: 'italic', margin: '0 0 28px' }}>
               &ldquo;We built Biyekori because finding the right match should feel as careful and respectful as the families doing the searching.&rdquo;
             </p>
-            <p style={{ fontSize: '13px', color: '#9ca3af', letterSpacing: '2px', fontFamily: 'system-ui, sans-serif' }}>THE BIYEKORI TEAM \u00b7 DHAKA, BANGLADESH</p>
+            <p style={{ fontSize: '13px', color: '#9ca3af', letterSpacing: '2px', fontFamily: 'system-ui, sans-serif' }}>THE BIYEKORI TEAM · DHAKA, BANGLADESH</p>
           </div>
         </FadeIn>
       </section>
