@@ -1128,7 +1128,7 @@ export default function Navbar() {
 
 
 
-              padding: '8px 14px', background: 'rgba(240,192,64,0.15)',
+              padding: '8px 14px', background: '#7B1D2E',
 
 
 
