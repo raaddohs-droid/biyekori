@@ -293,8 +293,7 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
   const [tab, setTab] = useState<'match' | 'predict'>('match')
 
   return (
-    <>
-      <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
 
         <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 rounded-t-2xl text-white">
@@ -396,7 +395,6 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
           )}
         </div>
       </div>
-    </>
   )
 }
 
