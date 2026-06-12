@@ -1128,7 +1128,7 @@ export default function Navbar() {
 
 
 
-              padding: '8px 14px', background: '#7B1D2E',
+              padding: '8px 14px', background: 'rgba(240,192,64,0.15)',
 
 
 
@@ -1148,7 +1148,7 @@ export default function Navbar() {
 
 
 
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7B1D2E" strokeWidth="2.5">
 
 
 
