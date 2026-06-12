@@ -236,46 +236,43 @@ export default function AdminDashboard() {
   const loadAnalytics = async () => {
     setAnalyticsLoading(true)
     try {
-      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
-
       const now = new Date()
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
       const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
-      // Registrations today
-      const { count: regsToday } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', today)
-      // Registrations this week
-      const { count: regsWeek } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', weekAgo)
-      // Registrations this month
-      const { count: regsMonth } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', monthAgo)
+      const countQ = async (table: string, filter: string) => {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${filter}&select=id`, { headers: { ...headers, 'Prefer': 'count=exact', 'Range': '0-0' } })
+        return parseInt(res.headers.get('content-range')?.split('/')[1] || '0')
+      }
 
-      // Active users today (last_active_at)
-      const { count: activeToday } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('last_active_at', today)
-      // Active this week
-      const { count: activeWeek } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('last_active_at', weekAgo)
-
-      // Interests sent today
-      const { count: interestsToday } = await supabase.from('interests').select('*', { count: 'exact', head: true }).gte('sent_at', today)
-      // Interests this week
-      const { count: interestsWeek } = await supabase.from('interests').select('*', { count: 'exact', head: true }).gte('sent_at', weekAgo)
-
-      // Accepted interests (all time)
-      const { count: accepted } = await supabase.from('interests').select('*', { count: 'exact', head: true }).eq('status', 'accepted')
-      // Total interests
-      const { count: totalInterests } = await supabase.from('interests').select('*', { count: 'exact', head: true })
-
-      // Premium users
-      const { count: premiumUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).neq('package', 'prottasha')
+      const [regsToday, regsWeek, regsMonth, activeToday, activeWeek,
+             interestsToday, interestsWeek, accepted, totalInterests,
+             premiumUsers, total, femaleCount, maleCount, sentAny] = await Promise.all([
+        countQ('profiles', `created_at=gte.${today}`),
+        countQ('profiles', `created_at=gte.${weekAgo}`),
+        countQ('profiles', `created_at=gte.${monthAgo}`),
+        countQ('profiles', `last_active_at=gte.${today}`),
+        countQ('profiles', `last_active_at=gte.${weekAgo}`),
+        countQ('interests', `sent_at=gte.${today}`),
+        countQ('interests', `sent_at=gte.${weekAgo}`),
+        countQ('interests', 'status=eq.accepted'),
+        countQ('interests', 'id=gte.0'),
+        countQ('profiles', 'package=neq.prottasha'),
+        countQ('profiles', 'id=gte.0'),
+        countQ('profiles', 'gender=eq.female'),
+        countQ('profiles', 'gender=eq.male'),
+        countQ('interests', `sent_at=gte.${monthAgo}`),
+      ])
 
       // Top districts
-      const { data: districtData } = await supabase.from('profiles').select('district').not('district', 'is', null).limit(1000)
+      const districtData = await sb(`profiles?select=district&district=not.is.null&limit=2000`)
       const districtCount: Record<string, number> = {}
       districtData?.forEach((p: any) => { if (p.district) districtCount[p.district] = (districtCount[p.district] || 0) + 1 })
       const topDistricts = Object.entries(districtCount).sort((a, b) => b[1] - a[1]).slice(0, 8)
 
       // Daily registrations last 7 days
-      const { data: recentRegs } = await supabase.from('profiles').select('created_at').gte('created_at', weekAgo).order('created_at', { ascending: true })
+      const recentRegs = await sb(`profiles?select=created_at&created_at=gte.${weekAgo}&order=created_at.asc`)
       const dailyRegs: Record<string, number> = {}
       for (let i = 6; i >= 0; i--) {
         const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000)
@@ -287,14 +284,6 @@ export default function AdminDashboard() {
         if (dailyRegs[key] !== undefined) dailyRegs[key]++
       })
 
-      // Gender split
-      const { count: femaleCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('gender', 'female')
-      const { count: maleCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('gender', 'male')
-
-      // Conversion funnel: total → active → sent interest → premium
-      const { count: total } = await supabase.from('profiles').select('*', { count: 'exact', head: true })
-      const { count: sentAny } = await supabase.from('interests').select('sender_id', { count: 'exact', head: true })
-
       setAnalytics({
         regsToday, regsWeek, regsMonth,
         activeToday, activeWeek,
@@ -304,8 +293,8 @@ export default function AdminDashboard() {
         topDistricts, dailyRegs,
         femaleCount, maleCount,
         sentAny,
-        acceptRate: totalInterests ? Math.round((accepted! / totalInterests) * 100) : 0,
-        conversionRate: total ? Math.round((premiumUsers! / total!) * 100) : 0,
+        acceptRate: totalInterests ? Math.round((accepted / totalInterests) * 100) : 0,
+        conversionRate: total ? Math.round((premiumUsers / total) * 100) : 0,
       })
     } catch (e) { console.error('analytics error', e) }
     setAnalyticsLoading(false)
