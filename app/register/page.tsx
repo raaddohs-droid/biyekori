@@ -138,7 +138,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-12 px-4" style={{ paddingTop: '120px' }}>
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-12 px-4" style={{ paddingTop: '160px' }}>
       {/* Language Toggle */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
         <div style={{ background: 'white', borderRadius: '30px', padding: '4px', display: 'flex', gap: '2px', boxShadow: '0 1px 8px rgba(0,0,0,0.08)', border: '1px solid rgba(123,29,46,0.1)' }}>
