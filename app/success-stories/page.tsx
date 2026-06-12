@@ -1,10 +1,6 @@
-import type { Metadata } from 'next'
-import Link from 'next/link'
+'use client'
 
-export const metadata: Metadata = {
-  title: 'Success Stories | Biyekori',
-  description: 'Real couples who found each other on Biyekori — Bangladesh\'s privacy-first matrimony platform.',
-}
+import Link from 'next/link'
 
 const stories = [
   {
