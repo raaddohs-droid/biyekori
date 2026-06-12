@@ -431,9 +431,8 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   // Mask name unless mutual match — show first name + last initial only
   function getDisplayName(full: string, loggedIn: boolean, mutual: boolean): string {
     if (mutual) return full || 'Anonymous'
-    const parts = (full || '').trim().split(' ')
-    if (parts.length === 1) return parts[0] + ' ***'
-    return parts[0] + ' ' + parts[1].charAt(0) + '.'
+    const parts = (full || '').trim().split(' ').filter(Boolean)
+    return parts.map(w => w.charAt(0) + '*'.repeat(Math.max(w.length - 1, 3))).join(' ')
   }
   const { matchScore, dataConfidence } = calculateScores(fp, viewerProfile)
   const [galleryPhotos, setGalleryPhotos] = useState<any[]>([])
