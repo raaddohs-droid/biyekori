@@ -354,7 +354,7 @@ function ScoreModal({ profile, onClose, isLoggedIn, viewerProfile }: { profile: 
                       <div className="h-1.5 rounded-full transition-all" style={{ width: `${(item.score / item.max) * 100}%`, backgroundColor: item.matched ? '#10b981' : '#f97316' }} />
                     </div>
                     <p className="text-xs text-gray-600">{item.reason}</p>
-                    <p className="text-xs italic" style={{ color: "#7B1D2E" mt-1 }}>💡 {item.tip}</p>
+                    <p className="text-xs italic mt-1" style={{ color: "#7B1D2E" }}>💡 {item.tip}</p>
                   </div>
                 ))}
               </div>
@@ -1075,7 +1075,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
           <div className="mt-4 text-center">
             <button
               onClick={() => setShowModal(true)}
-              className="inline-flex items-center gap-2 bg-white font-bold px-6 py-2.5 rounded-xl" style={{ color: "#7B1D2E" transition text-sm hover:bg-purple-50 shadow-lg"
+              className="inline-flex items-center gap-2 bg-white font-bold px-6 py-2.5 rounded-xl text-sm transition hover:bg-pink-50 shadow-lg" style={{ color: "#7B1D2E" }}
             >
               💕 Why You Match — tap to explore
             </button>
