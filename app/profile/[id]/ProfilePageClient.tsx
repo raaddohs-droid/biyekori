@@ -1084,6 +1084,20 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
         </div>
         )}
 
+
+        {/* Porichiti game entry — only when viewing someone else's profile */}
+        {isLoggedIn && viewerProfile && Number(viewerProfile.id) !== profile.id && (
+          <a href={`/game?with=${profile.id}`} style={{ display: 'block', textDecoration: 'none', marginBottom: '16px' }}>
+            <div style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: '14px', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}>
+              <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#4A1A6B', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>✦</div>
+              <div style={{ flex: 1 }}>
+                <p style={{ margin: '0 0 3px', fontSize: '15px', fontWeight: 700, color: '#111827' }}>পরিচিতি গেম খেলে উনাকে আরেকটু বুঝুন</p>
+                <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>(🔒 দুজনেই শেষ না করলে কিছু দেখা যাবে না)</p>
+              </div>
+              <div style={{ flexShrink: 0, background: '#7B1D2E', color: '#fff', borderRadius: '20px', padding: '8px 20px', fontSize: '14px', fontWeight: 700, whiteSpace: 'nowrap' }}>খেলুন →</div>
+            </div>
+          </a>
+        )}
         {/* Own profile selfie verification banner */}
         {isLoggedIn && viewerProfile && Number(viewerProfile.id) === profile.id && profile.selfie_status === 'approved' && (
           <div style={{ background: '#f0fdf4', borderRadius: '14px', padding: '14px 18px', marginBottom: '16px', border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: '10px' }}>
