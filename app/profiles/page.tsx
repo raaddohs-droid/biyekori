@@ -85,7 +85,15 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
 
   if (!isPaid && currentPage > FREE_MAX_PAGES) {
     return (
-      <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', overflowX: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <style>{`
+      @media (max-width: 900px) {
+        .profiles-sidebar { display: none !important; visibility: hidden !important; width: 0 !important; min-width: 0 !important; overflow: hidden !important; padding: 0 !important; margin: 0 !important; }
+        .profiles-content { flex: 1 !important; min-width: 0 !important; max-width: 100vw !important; overflow-x: hidden !important; }
+        .profiles-tabs { overflow-x: auto !important; }
+        .profiles-tabs::-webkit-scrollbar { display: none; }
+      }
+    `}</style>
+    <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', overflowX: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center', maxWidth: '480px', padding: '40px 24px' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>💍</div>
           <h2 style={{ margin: '0 0 12px', fontSize: '24px', fontWeight: 700, color: C.text }}>আরো প্রোফাইল দেখতে আপগ্রেড করুন</h2>
@@ -214,6 +222,15 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   ]
 
   return (
+    <>
+    <style>{`
+      @media (max-width: 900px) {
+        .profiles-sidebar { display: none !important; visibility: hidden !important; width: 0 !important; min-width: 0 !important; overflow: hidden !important; padding: 0 !important; margin: 0 !important; }
+        .profiles-content { flex: 1 !important; min-width: 0 !important; max-width: 100vw !important; overflow-x: hidden !important; }
+        .profiles-tabs { overflow-x: auto !important; }
+        .profiles-tabs::-webkit-scrollbar { display: none; }
+      }
+    `}</style>
     <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', overflowX: 'hidden', fontFamily: 'var(--font-inter), Inter, system-ui, sans-serif' }}>
       <GuestGate page={currentPage} />
 
@@ -249,18 +266,10 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         </div>
 
         {/* Main layout: sidebar + content */}
-        <div className="profiles-main-layout" style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '24px', alignItems: 'flex-start' }}>
-        <style>{`
-          @media (max-width: 768px) {
-            .profiles-main-layout { grid-template-columns: 1fr !important; }
-            .profiles-sidebar { display: none !important; }
-            .profiles-tabs { overflow-x: auto !important; scrollbar-width: none !important; }
-            .profiles-tabs::-webkit-scrollbar { display: none !important; }
-          }
-        `}</style>
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', overflow: 'hidden' }}>
 
           {/* LEFT SIDEBAR */}
-          <div className="profiles-sidebar" style={{ flexShrink: 0, width: 'min(240px, 100%)', position: 'sticky', top: '100px' }}>
+          <div className="profiles-sidebar" style={{ flexShrink: 0, width: '240px', minWidth: '240px', position: 'sticky', top: '100px' }}>
             <form method="GET" action="/profiles">
               <input type="hidden" name="userGender" value={userGender} />
               <input type="hidden" name="excludeId" value={excludeId} />
@@ -346,7 +355,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
           </div>
 
           {/* RIGHT CONTENT */}
-          <div className="profiles-content" style={{ flex: 1, minWidth: 0 }}>
+          <div className="profiles-content" style={{ flex: 1, minWidth: 0, maxWidth: '100%', overflow: 'hidden' }}>
 
             {/* Sort bar + count */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
@@ -447,5 +456,6 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         }} />
       )}
     </div>
+     </>
   )
 }
