@@ -750,6 +750,7 @@ export default function Navbar() {
         @media (max-width: 767px) {
           .bk-desktop-nav { display: none !important; }
           .bk-search-bar { display: none !important; }
+          .bk-search-bar input::placeholder { color: #6b7280 !important; opacity: 1; }
           .bk-login-btns { display: none !important; }
           .bk-mobile-hamburger { display: flex !important; }
         }
