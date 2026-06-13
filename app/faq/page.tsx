@@ -60,9 +60,9 @@ export default function FAQPage() {
       <div style={{ maxWidth: '760px', margin: '0 auto', padding: '0 20px' }}>
 
         <div style={{ marginBottom: '48px', textAlign: 'center' }}>
-          <p style={{ margin: '0 0 8px', fontSize: '12px', letterSpacing: '3px', color: '#e11d48', fontWeight: 700, textTransform: 'uppercase' }}>FAQ</p>
+          <p style={{ margin: '0 0 8px', fontSize: '12px', letterSpacing: '3px', color: '#7B1D2E', fontWeight: 700, textTransform: 'uppercase' }}>FAQ</p>
           <h1 style={{ margin: '0 0 16px', fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 900, color: '#111827' }}>Frequently Asked Questions</h1>
-          <p style={{ margin: 0, fontSize: '16px', color: '#6b7280' }}>Can't find your answer? Email us at <a href="mailto:support@biyekori.com" style={{ color: '#e11d48', fontWeight: 700 }}>support@biyekori.com</a></p>
+          <p style={{ margin: 0, fontSize: '16px', color: '#6b7280' }}>Can't find your answer? Email us at <a href="mailto:support@biyekori.com" style={{ color: '#7B1D2E', fontWeight: 700 }}>support@biyekori.com</a></p>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -73,13 +73,13 @@ export default function FAQPage() {
                 cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', textAlign: 'left'
               }}>
                 <span style={{ fontSize: '15px', fontWeight: 700, color: '#111827', lineHeight: 1.4 }}>{faq.q}</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={open === i ? '#e11d48' : '#9ca3af'} strokeWidth="2" style={{ flexShrink: 0, transform: open === i ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={open === i ? '#7B1D2E' : '#9ca3af'} strokeWidth="2" style={{ flexShrink: 0, transform: open === i ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}>
                   <path d="M6 9l6 6 6-6"/>
                 </svg>
               </button>
               {open === i && (
                 <div style={{ padding: '0 24px 20px' }}>
-                  <p style={{ margin: 0, fontSize: '14px', color: '#374151', lineHeight: 1.8 }}>{faq.a}</p>
+                  <p style={{ margin: 0, fontSize: 'clamp(14px, 3.5vw, 16px)', color: '#374151', lineHeight: 1.8 }}>{faq.a}</p>
                 </div>
               )}
             </div>
@@ -88,8 +88,8 @@ export default function FAQPage() {
 
         <div style={{ textAlign: 'center', marginTop: '48px', background: 'white', borderRadius: '20px', padding: '36px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
           <h3 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 800, color: '#111827' }}>Still have questions?</h3>
-          <p style={{ margin: '0 0 20px', fontSize: '14px', color: '#6b7280' }}>We respond to all emails within 24 hours.</p>
-          <a href="mailto:support@biyekori.com" style={{ display: 'inline-block', padding: '12px 28px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', borderRadius: '10px', fontSize: '14px', fontWeight: 700, textDecoration: 'none' }}>
+          <p style={{ margin: '0 0 20px', fontSize: 'clamp(14px, 3.5vw, 16px)', color: '#6b7280' }}>We respond to all emails within 24 hours.</p>
+          <a href="mailto:support@biyekori.com" style={{ display: 'inline-block', padding: '12px 28px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', borderRadius: '10px', fontSize: 'clamp(14px, 3.5vw, 16px)', fontWeight: 700, textDecoration: 'none' }}>
             Email Support
           </a>
         </div>
