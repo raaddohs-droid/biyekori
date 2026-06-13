@@ -85,7 +85,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
 
   if (!isPaid && currentPage > FREE_MAX_PAGES) {
     return (
-      <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', overflowX: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center', maxWidth: '480px', padding: '40px 24px' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>💍</div>
           <h2 style={{ margin: '0 0 12px', fontSize: '24px', fontWeight: 700, color: C.text }}>আরো প্রোফাইল দেখতে আপগ্রেড করুন</h2>
@@ -214,20 +214,10 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', fontFamily: 'var(--font-inter), Inter, system-ui, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', overflowX: 'hidden', fontFamily: 'var(--font-inter), Inter, system-ui, sans-serif' }}>
       <GuestGate page={currentPage} />
 
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(12px, 4vw, 24px) 64px' }}>
-        <style>{`
-          @media (max-width: 768px) {
-            .profiles-sidebar { display: none !important; }
-            .profiles-content { width: 100% !important; min-width: 0 !important; }
-            .profiles-topbar { flex-wrap: wrap !important; gap: 8px !important; }
-            .profiles-tabs { overflow-x: auto !important; flex-wrap: nowrap !important; scrollbar-width: none; padding-bottom: 4px; }
-            .profiles-tabs::-webkit-scrollbar { display: none; }
-          }
-        `}</style>
-
         {/* Page header */}
         <div style={{ marginBottom: '24px' }}>
           <h1 style={{ margin: '0 0 4px', fontSize: '26px', fontWeight: 700, color: C.text, letterSpacing: '-0.02em' }}>
@@ -259,7 +249,15 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         </div>
 
         {/* Main layout: sidebar + content */}
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+        <div className="profiles-main-layout" style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '24px', alignItems: 'flex-start' }}>
+        <style>{`
+          @media (max-width: 768px) {
+            .profiles-main-layout { grid-template-columns: 1fr !important; }
+            .profiles-sidebar { display: none !important; }
+            .profiles-tabs { overflow-x: auto !important; scrollbar-width: none !important; }
+            .profiles-tabs::-webkit-scrollbar { display: none !important; }
+          }
+        `}</style>
 
           {/* LEFT SIDEBAR */}
           <div className="profiles-sidebar" style={{ flexShrink: 0, width: 'min(240px, 100%)', position: 'sticky', top: '100px' }}>
