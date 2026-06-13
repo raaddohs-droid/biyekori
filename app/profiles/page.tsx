@@ -88,9 +88,9 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
       <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center', maxWidth: '480px', padding: '40px 24px' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>💍</div>
-          <h2 style={{ margin: '0 0 12px', fontSize: '24px', fontWeight: 700, color: C.text }}>Upgrade to See More Profiles</h2>
+          <h2 style={{ margin: '0 0 12px', fontSize: '24px', fontWeight: 700, color: C.text }}>আরো প্রোফাইল দেখতে আপগ্রেড করুন</h2>
           <p style={{ margin: '0 0 24px', fontSize: '15px', color: C.textMuted, lineHeight: 1.6 }}>
-            You have browsed the free limit. Premium members get unlimited access to verified profiles.
+            আপনি বিনামূল্যে ব্রাউজের সীমা পেরিয়ে গেছেন। প্রিমিয়াম সদস্যরা যাচাইকৃত প্রোফাইলে সীমাহীন অ্যাক্সেস পান।
           </p>
           <Link href="/pricing" style={{ display: 'inline-block', padding: '14px 32px', background: C.maroon, color: 'white', borderRadius: '10px', fontSize: '15px', fontWeight: 600, textDecoration: 'none' }}>
             View Plans
@@ -421,7 +421,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
               </>
             ) : (
               <div style={{ background: 'white', borderRadius: '16px', padding: '64px 24px', textAlign: 'center', border: `1px solid ${C.border}` }}>
-                <p style={{ fontSize: '18px', fontWeight: 600, color: C.textMuted, margin: '0 0 8px' }}>No profiles match your criteria</p>
+                <p style={{ fontSize: '18px', fontWeight: 600, color: C.textMuted, margin: '0 0 8px' }}>কোনো প্রোফাইল মেলেনি your criteria</p>
                 <p style={{ fontSize: '14px', color: C.textLight, margin: '0 0 24px' }}>Try adjusting your filters</p>
                 <Link href={`${baseUrl}&view=${viewMode}&tab=${activeTab}`} style={{ display: 'inline-block', padding: '11px 28px', background: C.maroon, color: 'white', borderRadius: '10px', fontWeight: 600, textDecoration: 'none', fontSize: '14px' }}>Clear Filters</Link>
               </div>
