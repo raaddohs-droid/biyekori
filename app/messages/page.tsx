@@ -129,7 +129,7 @@ export default function MessagesPage() {
       <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "0 16px 40px" }}>
         <h1 style={{ margin: "0 0 20px", fontSize: "24px", fontWeight: 800, color: "#111827" }}>Messages</h1>
 
-        <div style={{ display: "grid", gridTemplateColumns: "300px 1fr", gap: "16px", height: "calc(100vh - 180px)" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px", minHeight: "calc(100vh - 180px)" }}>
 
           {/* Conversations list */}
           <div style={{ background: "white", borderRadius: "16px", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column" }}>
