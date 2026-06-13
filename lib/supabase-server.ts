@@ -3,22 +3,35 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 export async function getProfiles() {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .order('created_at', { ascending: false })
+  // Supabase default limit is 1000 — fetch all in batches
+  const allProfiles: any[] = []
+  const BATCH = 1000
+  let from = 0
 
-  if (error) {
-    console.error('Error fetching profiles:', error)
-    return []
+  while (true) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .range(from, from + BATCH - 1)
+
+    if (error) {
+      console.error('Error fetching profiles:', error)
+      break
+    }
+
+    if (!data || data.length === 0) break
+    allProfiles.push(...data)
+    if (data.length < BATCH) break
+    from += BATCH
   }
 
-  return data || []
+  return allProfiles
 }
 
 export async function getProfileById(id: string) {
