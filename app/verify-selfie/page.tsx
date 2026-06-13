@@ -73,7 +73,13 @@ export default function VerifySelfie() {
           setStage('challenge')
           try {
             setErrorMsg('AI মডেল লোড হচ্ছে... একটু অপেক্ষা করুন')
+            const loadTimeout = setTimeout(() => {
+              setErrorMsg('AI মডেল লোড হয়নি। ভালো ইন্টারনেট কানেকশন দিয়ে আবার চেষ্টা করুন।')
+              stopCamera()
+              setStage('landing')
+            }, 15000)
             await initMediaPipe()
+            clearTimeout(loadTimeout)
             setErrorMsg('')
             startDetection()
           } catch (e) {
