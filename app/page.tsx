@@ -36,11 +36,14 @@ export default function Home() {
 
         <p style={{ fontSize: 'clamp(16px, 2vw, 22px)', color: '#F0C040', margin: '0 0 14px', letterSpacing: '3px', position: 'relative', zIndex: 2, fontStyle: 'italic' }}>
         </p>
-        <h1 style={{ fontSize: 'clamp(40px, 6.5vw, 90px)', fontWeight: 700, color: '#FFFFFF', margin: '0 0 20px', lineHeight: 1.0, letterSpacing: '-2px', position: 'relative', zIndex: 2, textShadow: '0 2px 30px rgba(0,0,0,0.4)' }}>
+        <h1 style={{ fontSize: 'clamp(40px, 6.5vw, 90px)', fontWeight: 700, color: '#FFFFFF', margin: '0 0 12px', lineHeight: 1.0, letterSpacing: '-2px', position: 'relative', zIndex: 2, textShadow: '0 2px 30px rgba(0,0,0,0.4)' }}>
           Someone is waiting<br/>for you.
         </h1>
-        <p style={{ fontSize: 'clamp(16px, 1.6vw, 20px)', color: 'rgba(255,255,255,0.85)', margin: '0 0 40px', lineHeight: 1.8, maxWidth: '520px', position: 'relative', zIndex: 2, fontFamily: 'system-ui, sans-serif' }}>
-          Bangladesh&apos;s most thoughtful matrimony platform. Real profiles, real families — and AI that tells you <em>exactly</em> why two people belong together.
+        <p style={{ fontSize: 'clamp(22px, 3vw, 36px)', fontWeight: 600, color: 'rgba(255,255,255,0.7)', margin: '0 0 20px', lineHeight: 1.3, position: 'relative', zIndex: 2, fontFamily: "'Hind Siliguri', sans-serif" }}>
+          যেখানে দুটি পরিবার একটি স্বপ্ন বুনে
+        </p>
+        <p style={{ fontSize: 'clamp(16px, 1.6vw, 20px)', color: 'rgba(255,255,255,0.85)', margin: '0 0 40px', lineHeight: 1.8, maxWidth: '520px', position: 'relative', zIndex: 2, fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
+          Bangladesh&apos;s most trusted matrimony platform. Privacy-first, consent-based — and AI that tells you <em>exactly</em> why two people belong together.
         </p>
         <div style={{ position: 'relative', zIndex: 2, marginBottom: '40px' }}>
           <HomeCTA />
