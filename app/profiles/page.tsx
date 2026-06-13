@@ -239,11 +239,11 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         </div>
 
         {/* Top tabs */}
-        <div style={{ display: 'flex', gap: '4px', marginBottom: '20px', background: 'white', padding: '4px', borderRadius: '12px', border: `1px solid ${C.border}`, boxShadow: '0 1px 3px rgba(0,0,0,0.04)', width: 'fit-content' }}>
+        <div style={{ className='profiles-tabs' style={{ display: 'flex', gap: '4px', marginBottom: '20px', background: 'white', padding: '4px', borderRadius: '12px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', border: `1px solid ${C.border}`, boxShadow: '0 1px 3px rgba(0,0,0,0.04)', width: 'fit-content' }}>
           {TABS.map(tab => (
             <Link key={tab.key} href={tabUrl(tab.key)} style={{
               display: 'flex', alignItems: 'center', gap: '6px',
-              padding: '8px 18px', borderRadius: '9px', fontSize: '13px', fontWeight: 600,
+              padding: 'clamp(6px, 2vw, 8px) clamp(10px, 3vw, 18px)', borderRadius: '9px', fontSize: 'clamp(12px, 3vw, 13px)', fontWeight: 600,
               textDecoration: 'none', whiteSpace: 'nowrap', transition: 'all 0.15s',
               background: activeTab === tab.key ? C.maroon : 'transparent',
               color: activeTab === tab.key ? 'white' : C.textMuted,
