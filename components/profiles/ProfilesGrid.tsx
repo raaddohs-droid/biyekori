@@ -197,21 +197,42 @@ function getActivityStatus(profile: any): { label: string; color: string; isOnli
   return { label: 'Recently active', color: '#9ca3af', isOnline: false }
 }
 
+
+const C = {
+  maroon: '#7B1D2E',
+  gold: '#B8892A',
+  goldLight: '#F5E6C8',
+  border: '#E8E0D8',
+  text: '#1C1917',
+  textMuted: '#78716C',
+  textLight: '#A8A29E',
+}
+
+function getBKId(profile: any): string {
+  const id = profile.id
+  const dt = new Date(profile.created_at || '')
+  const yy = String(dt.getFullYear()).slice(2)
+  const mm = String(dt.getMonth() + 1).padStart(2, '0')
+  const nnnn = (id * 7 + dt.getSeconds() * 13 + id * 31) % 9000 + 1000
+  return isNaN(nnnn) ? `BK-${id}` : `BK-${yy}${mm}-${nnnn}`
+}
+
 function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewerProfile: any, interestMap?: Record<string, string> }) {
   const score = computeMatchScore(profile, viewerProfile)
   const activity = getActivityStatus(profile)
   const creationBadge = getCreationBadge(profile)
   const photoUrl = profile.photo_url || profile.photoUrl
   const isPremium = profile.package !== 'prottasha'
+  const isFeatured = profile.is_featured && profile.featured_until && new Date(profile.featured_until) > new Date()
   const [interestSent, setInterestSent] = useState(false)
   const [showLimitNudge, setShowLimitNudge] = useState(false)
   const [limitData, setLimitData] = useState<any>(null)
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [isShortlisted, setIsShortlisted] = useState(false)
   const [photoRequested, setPhotoRequested] = useState(false)
   const relationshipStatus = (interestMap?.[String(profile.id)] ?? 'none') as 'none'|'sent'|'received'|'accepted'
   const rawName = profile.full_name || profile.name || 'Anonymous'
   const name = maskName(rawName, relationshipStatus)
+  const bkId = getBKId(profile)
 
   useEffect(() => {
     if (relationshipStatus === 'sent' || relationshipStatus === 'accepted') setInterestSent(true)
@@ -226,268 +247,200 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
       fetch('/api/shortlists?userId=' + user.id)
         .then(r => r.json())
         .then(data => {
-          const found = (data.shortlists || []).some((s: any) => String(s.profile_id) === String(profile.id))
-          setIsShortlisted(found)
+          setIsShortlisted((data.shortlists || []).some((s: any) => String(s.profile_id) === String(profile.id)))
         }).catch(() => {})
-    } catch(e) {}
+    } catch {}
   }, [profile.id])
 
-  const handleShortlistRow = async (e: React.MouseEvent) => {
+  const handleShortlist = async (e: React.MouseEvent) => {
     e.stopPropagation()
     const stored = localStorage.getItem('biyekori_user')
     if (!stored) { window.location.href = '/login'; return }
     const user = JSON.parse(stored)
     if (!user?.id) return
-    if (isShortlisted) {
-      await fetch('/api/shortlists', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, profileId: profile.id })
-      })
-      setIsShortlisted(false)
-    } else {
-      await fetch('/api/shortlists', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, profileId: profile.id })
-      })
-      setIsShortlisted(true)
-    }
+    await fetch('/api/shortlists', {
+      method: isShortlisted ? 'DELETE' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user.id, profileId: profile.id })
+    })
+    setIsShortlisted(!isShortlisted)
   }
 
   const handleSendInterest = async (e: React.MouseEvent) => {
     e.stopPropagation()
     const stored = localStorage.getItem('biyekori_user')
-    if (!stored) { window.location.href = '/register?reason=interest'; return; }
+    if (!stored) { window.location.href = '/register?reason=interest'; return }
     if (interestSent) return
     const user = JSON.parse(stored)
-    try {
-      const res = await fetch('/api/interests/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ senderId: user.id, receiverId: profile.id })
-      })
-      const data = await res.json()
-      if (res.status === 403 && data.upgrade) {
-        setLimitData({ used: data.used || data.limit, limit: data.limit, remaining: 0 })
-        setShowLimitNudge(true)
-        return
-      }
-      if (data.success) setInterestSent(true)
-    } catch(e) {}
+    const res = await fetch('/api/interests/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ senderId: user.id, receiverId: profile.id })
+    })
+    const data = await res.json()
+    if (res.status === 403 && data.upgrade) {
+      setLimitData({ used: data.used || data.limit, limit: data.limit, remaining: 0 })
+      setShowLimitNudge(true)
+      return
+    }
+    if (data.success) setInterestSent(true)
   }
-
-  const religionLevel = profile.religious_level && profile.religious_level !== 'Unknown' ? ', ' + profile.religious_level : ''
-  const isFeatured = profile.is_featured && profile.featured_until && new Date(profile.featured_until) > new Date()
-  const infoRows = [
-    [
-      profile.age ? profile.age + ' yrs' + (profile.height ? ', ' + profile.height : '') : null,
-      (profile.marital_status && profile.marital_status !== 'Not specified') ? profile.marital_status : null
-    ],
-    [
-      profile.religion ? profile.religion + religionLevel : null,
-      (profile.city || profile.district) || null
-    ],
-    [
-      profile.education || null,
-      profile.profession || null
-    ]
-  ]
 
   return (
     <>
-    <div
-      onClick={() => window.location.href = '/profile/' + profile.id}
-      style={{
-        background: 'white', borderRadius: '16px',
-        border: isPremium ? '2px solid #fcd34d' : '1px solid #e5e7eb',
-        boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-        display: 'flex', gap: '0', alignItems: 'stretch',
-        transition: 'box-shadow 0.2s, transform 0.1s', cursor: 'pointer',
-        overflow: 'visible'
-      }}
-      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)' }}
-      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'none' }}
-    >
-      <div style={{ position: 'relative', flexShrink: 0, width: '320px', height: '340px', borderRadius: '16px 0 0 16px', overflow: 'visible', paddingBottom: '20px' }}>
-        {photoUrl ? (
-          <img src={photoUrl} alt={name} style={{ width: '320px', height: '320px', objectFit: 'cover', objectPosition: 'center 15%', display: 'block', borderRadius: '16px 0 0 16px' }} />
-        ) : (
-          <div style={{ width: '320px', height: '320px', overflow: 'hidden', position: 'relative', borderRadius: '16px 0 0 16px', background: profile.gender === 'female' ? '#FFF0F6' : '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {profile.gender === 'female' ? (
-              <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@7.4.47/svg/face-woman.svg" width="220" height="220" style={{ filter: 'invert(27%) sepia(80%) saturate(1500%) hue-rotate(300deg) brightness(90%)', opacity: 0.55, marginBottom: '30px' }} alt=""/>
-            ) : (
-              <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@7.4.47/svg/account-tie.svg" width="220" height="220" style={{ filter: 'invert(27%) sepia(80%) saturate(500%) hue-rotate(180deg) brightness(90%)', opacity: 0.55, marginBottom: '30px' }} alt=""/>
-            )}
-            {/* Gold accent line */}
-            <div style={{ position: 'absolute', bottom: '44px', left: '25%', right: '25%', height: '1px', background: 'linear-gradient(90deg,transparent,#F0C040,transparent)' }}/>
-          <div style={{ position: 'absolute', bottom: '12px', left: '50%', transform: 'translateX(-50%)', zIndex: 10, whiteSpace: 'nowrap' }}>
-              {photoRequested ? (
-                <span style={{ fontSize: '11px', fontWeight: 700, color: '#15803d', background: 'rgba(255,255,255,0.95)', padding: '4px 12px', borderRadius: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>✓ Request sent</span>
-              ) : (
+      <div
+        onClick={() => window.location.href = '/profile/' + profile.id}
+        style={{
+          background: 'white',
+          borderRadius: '16px',
+          border: isFeatured ? `1.5px solid ${C.gold}` : `1px solid ${C.border}`,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06)',
+          display: 'flex',
+          alignItems: 'stretch',
+          transition: 'box-shadow 0.2s, transform 0.15s',
+          cursor: 'pointer',
+          overflow: 'hidden',
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 20px rgba(0,0,0,0.12)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)' }}
+        onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'none' }}
+      >
+        {/* Photo */}
+        <div style={{ position: 'relative', flexShrink: 0, width: '200px' }}>
+          {photoUrl ? (
+            <img src={photoUrl} alt={name} style={{ width: '200px', height: '100%', objectFit: 'cover', objectPosition: 'center 10%', display: 'block', minHeight: '220px' }} />
+          ) : (
+            <div style={{ width: '200px', minHeight: '220px', height: '100%', background: profile.gender === 'female' ? '#FDF2F8' : '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '12px' }}>
+              <img
+                src={profile.gender === 'female'
+                  ? "https://cdn.jsdelivr.net/npm/@mdi/svg@7.4.47/svg/face-woman.svg"
+                  : "https://cdn.jsdelivr.net/npm/@mdi/svg@7.4.47/svg/account-tie.svg"}
+                width="100" height="100"
+                style={{ opacity: 0.3, filter: profile.gender === 'female' ? 'invert(27%) sepia(80%) saturate(1500%) hue-rotate(300deg)' : 'invert(27%) sepia(80%) saturate(500%) hue-rotate(180deg)' }}
+                alt=""
+              />
+              {!photoRequested ? (
                 <button onClick={e => {
-                    e.stopPropagation()
-                    setPhotoRequested(true)
-                    try {
-                      const stored = localStorage.getItem('biyekori_user')
-                      if (stored) {
-                        const user = JSON.parse(stored)
-                        fetch('/api/photo-request', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ requesterId: user.id, requestedId: profile.id })
-                        })
-                      }
-                    } catch(e) {}
-                  }} style={{ fontSize: '11px', fontWeight: 700, color: 'white', background: profile.gender === 'female' ? 'linear-gradient(135deg,#DB2777,#9D174D)' : 'linear-gradient(135deg,#1D4ED8,#1E40AF)', border: 'none', padding: '5px 14px', borderRadius: '20px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.2)', letterSpacing: '0.3px' }}>Photo on Request</button>
+                  e.stopPropagation(); setPhotoRequested(true)
+                  try { const u = JSON.parse(localStorage.getItem('biyekori_user') || '{}'); if (u.id) fetch('/api/photo-request', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ requesterId: u.id, requestedId: profile.id }) }) } catch {}
+                }} style={{ fontSize: '11px', fontWeight: 600, color: 'white', background: C.maroon, border: 'none', padding: '5px 12px', borderRadius: '20px', cursor: 'pointer' }}>
+                  Photo on Request
+                </button>
+              ) : (
+                <span style={{ fontSize: '11px', fontWeight: 600, color: '#15803d', background: 'rgba(255,255,255,0.95)', padding: '4px 10px', borderRadius: '20px' }}>✓ Request sent</span>
               )}
             </div>
+          )}
+          {/* Activity badge */}
+          <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.92)', padding: '3px 8px', borderRadius: '20px' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: activity.color, flexShrink: 0, boxShadow: activity.isOnline ? `0 0 0 2px rgba(22,163,74,0.3)` : 'none' }} />
+            <span style={{ fontSize: '10px', color: activity.color, fontWeight: 600, whiteSpace: 'nowrap' }}>{activity.label}</span>
           </div>
-        )}
-        {/* Score badge */}
-        <a href={`/profile/${profile.id}`} onClick={(e) => { e.stopPropagation() }} style={{ position: 'absolute', bottom: '-22px', left: '50%', transform: 'translateX(-50%)', zIndex: 20, textDecoration: 'none' }}>
-          <div style={{ background: viewerProfile ? getScoreColor(score) : '#6b7280', borderRadius: '24px', padding: '6px 18px', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 3px 12px rgba(0,0,0,0.25), 0 0 0 3px white', whiteSpace: 'nowrap', cursor: 'pointer' }}>
-            <span style={{ fontSize: '13px', color: 'white', fontWeight: 900 }}>{viewerProfile ? '♥ ' + score + '%' : '🔒'}</span>
-            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.9)', fontWeight: 600, borderLeft: '1px solid rgba(255,255,255,0.4)', paddingLeft: '6px' }}>{viewerProfile ? 'মিল দেখুন' : 'লগইন করুন'}</span>
-          </div>
-        </a>
-      </div>
+          {/* Match score */}
+          {viewerProfile && (
+            <Link href={`/profile/${profile.id}`} onClick={e => e.stopPropagation()}
+              style={{ position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)', background: getScoreColor(score), borderRadius: '20px', padding: '4px 12px', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 2px 8px rgba(0,0,0,0.2), 0 0 0 2px white', whiteSpace: 'nowrap', textDecoration: 'none' }}>
+              <span style={{ fontSize: '11px', color: 'white', fontWeight: 700 }}>♥ {score}% match</span>
+            </Link>
+          )}
+        </div>
 
-      <div style={{ flex: 1, padding: '20px 20px 16px', minWidth: 0 }}>
-        {creationBadge && (
-          <div style={{ marginBottom: '4px' }}>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: creationBadge.color, background: creationBadge.bg, borderRadius: '20px', padding: '2px 10px', letterSpacing: '0.3px' }}>
-              {creationBadge.label}
-            </span>
+        {/* Content */}
+        <div style={{ flex: 1, padding: '18px 20px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {/* Name row */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px' }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                <span style={{ fontSize: '16px', fontWeight: 700, color: C.text }}>{name}</span>
+                {creationBadge && (
+                  <span style={{ fontSize: '10px', fontWeight: 700, color: creationBadge.color, background: creationBadge.bg, padding: '2px 8px', borderRadius: '20px' }}>{creationBadge.label}</span>
+                )}
+                {isFeatured && (
+                  <span style={{ fontSize: '10px', fontWeight: 700, color: 'white', background: C.gold, padding: '2px 8px', borderRadius: '20px' }}>★ Featured</span>
+                )}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '10px', color: C.textLight, fontWeight: 600, background: '#F5F5F4', padding: '2px 7px', borderRadius: '6px' }}>{bkId}</span>
+                {profile.guardian_mode ? (
+                  <span style={{ fontSize: '10px', fontWeight: 600, color: '#7c3aed', background: '#EDE9FE', padding: '2px 7px', borderRadius: '20px' }}>👨‍👩‍👧 Family Managed</span>
+                ) : (
+                  <span style={{ fontSize: '10px', fontWeight: 600, color: '#0369a1', background: '#E0F2FE', padding: '2px 7px', borderRadius: '20px' }}>👤 Self Managed</span>
+                )}
+                {isPremium && (
+                  <span style={{ fontSize: '10px', fontWeight: 600, color: '#b45309', background: '#FEF3C7', border: '1px solid #FCD34D', padding: '2px 7px', borderRadius: '6px' }}>Premium</span>
+                )}
+              </div>
+            </div>
+            {/* Relationship badges */}
+            {relationshipStatus === 'received' && (
+              <span style={{ flexShrink: 0, fontSize: '12px', fontWeight: 700, color: 'white', background: '#7c3aed', padding: '5px 12px', borderRadius: '20px' }}>❤ Likes You!</span>
+            )}
+            {relationshipStatus === 'accepted' && (
+              <span style={{ flexShrink: 0, fontSize: '12px', fontWeight: 700, color: 'white', background: '#059669', padding: '5px 12px', borderRadius: '20px' }}>✓ Matched</span>
+            )}
+            {relationshipStatus === 'sent' && (
+              <span style={{ flexShrink: 0, fontSize: '11px', fontWeight: 600, color: C.textMuted, background: '#F5F5F4', padding: '4px 10px', borderRadius: '20px' }}>✓ Interest Sent</span>
+            )}
           </div>
-        )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '17px', fontWeight: 800, color: '#111827' }}>{name}</span>
-          {profile.guardian_mode ? (
-            <span style={{ fontSize: '10px', fontWeight: 700, color: '#7c3aed', background: '#ede9fe', padding: '2px 7px', borderRadius: '20px', border: '1px solid #c4b5fd' }}>👨‍👩‍👧 পরিবার পরিচালিত</span>
-          ) : (
-            <span style={{ fontSize: '10px', fontWeight: 700, color: '#0369a1', background: '#e0f2fe', padding: '2px 7px', borderRadius: '20px', border: '1px solid #bae6fd' }}>👤 নিজে পরিচালিত</span>
-          )}
-              {relationshipStatus === 'none' && (
-                <span style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 600, background: '#f3f4f6', borderRadius: '6px', padding: '2px 6px' }}>
-                  {(() => { const id = profile.id; const dt = new Date(profile.created_at || ''); const yy = String(dt.getFullYear()).slice(2); const mm = String(dt.getMonth()+1).padStart(2,'0'); const nnnn = (id*7+dt.getSeconds()*13+id*31)%9000+1000; return isNaN(nnnn) ? 'BK-'+id : `BK-${yy}${mm}-${nnnn}` })()}
-                </span>
-              )}
-          {isFeatured && (
-            <span style={{ fontSize: '10px', fontWeight: 800, color: 'white', background: 'linear-gradient(135deg,#f59e0b,#d97706)', borderRadius: '20px', padding: '2px 8px', display: 'flex', alignItems: 'center', gap: '3px' }}>
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              Featured
-            </span>
-          )}
-          {isPremium && (
-            <span style={{ fontSize: '10px', fontWeight: 700, color: '#b45309', background: '#fef3c7', border: '1px solid #fcd34d', borderRadius: '6px', padding: '2px 7px' }}>Premium</span>
-          )}
-          {profile.nid_verified && (
-            <span style={{ fontSize: '10px', fontWeight: 700, color: '#059669', background: '#ecfdf5', border: '1px solid #6ee7b7', borderRadius: '6px', padding: '2px 7px' }}>NID Verified</span>
-          )}
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: activity.color, display: 'inline-block', flexShrink: 0, boxShadow: activity.isOnline ? '0 0 0 2px rgba(16,185,129,0.25)' : 'none' }} />
-            <span style={{ fontSize: '11px', color: activity.color, fontWeight: 700 }}>{activity.label}</span>
+
+          {/* Info grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
+            {profile.age && <span style={{ fontSize: '13px', color: C.textMuted }}>{profile.age} yrs{profile.height ? `, ${profile.height}` : ''}</span>}
+            {(profile.city || profile.district) && <span style={{ fontSize: '13px', color: C.textMuted }}>📍 {profile.city || profile.district}</span>}
+            {profile.profession && <span style={{ fontSize: '13px', color: C.textMuted }}>💼 {profile.profession}</span>}
+            {profile.education && <span style={{ fontSize: '13px', color: C.textMuted }}>🎓 {profile.education}</span>}
+            {profile.religion && profile.religion !== 'Not specified' && <span style={{ fontSize: '13px', color: C.textMuted }}>{profile.religion}{profile.religious_level && profile.religious_level !== 'Unknown' ? ` · ${profile.religious_level}` : ''}</span>}
+            {profile.marital_status && profile.marital_status !== 'Not specified' && <span style={{ fontSize: '13px', color: C.textMuted }}>{profile.marital_status}</span>}
           </div>
-          {relationshipStatus === 'received' && (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '13px', fontWeight: 800, color: 'white', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', borderRadius: '20px', padding: '5px 14px', boxShadow: '0 2px 8px rgba(124,58,237,0.4)' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-              Likes You!
-            </span>
+
+          {/* Verification badges */}
+          {(profile.is_verified || profile.nid_verified || profile.phone_verified) && (
+            <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+              {profile.is_verified && <span style={{ fontSize: '10px', fontWeight: 600, color: '#059669', background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '2px 7px', borderRadius: '6px' }}>✓ Verified</span>}
+              {profile.nid_verified && <span style={{ fontSize: '10px', fontWeight: 600, color: '#059669', background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '2px 7px', borderRadius: '6px' }}>✓ NID Verified</span>}
+              {profile.phone_verified && !profile.nid_verified && <span style={{ fontSize: '10px', fontWeight: 600, color: '#2563eb', background: '#EFF6FF', border: '1px solid #BFDBFE', padding: '2px 7px', borderRadius: '6px' }}>✓ Phone Verified</span>}
+            </div>
           )}
-          {relationshipStatus === 'accepted' && (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '13px', fontWeight: 800, color: 'white', background: 'linear-gradient(135deg, #059669, #10b981)', borderRadius: '20px', padding: '5px 14px', boxShadow: '0 2px 8px rgba(16,185,129,0.4)' }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              You &amp; {profile.gender === 'Male' ? 'Him' : 'Her'} ✓
-            </span>
-          )}
-          {relationshipStatus === 'sent' && (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '11px', fontWeight: 600, color: '#6b7280', background: '#f3f4f6', borderRadius: '20px', padding: '2px 8px' }}>
-              ✓ Interest Sent
-            </span>
-          )}
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 20px', marginBottom: '8px' }}>
-          {infoRows.map((row, i) => row.some(Boolean) && (
-            <React.Fragment key={i}>
-              {row[0] && <span style={{ fontSize: '13px', color: '#374151', fontWeight: 500 }}>{row[0]}</span>}
-              {row[1] && <span style={{ fontSize: '13px', color: '#374151', fontWeight: 500 }}>{row[1]}</span>}
-            </React.Fragment>
-          ))}
-        </div>
-        {profile.about_me && (
-          <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '8px', marginTop: '4px' }}>
-            <p style={{ margin: '0 0 2px', fontSize: '11.5px', color: '#6b7280', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontStyle: 'italic' }}>
+
+          {/* Bio */}
+          {profile.about_me && (
+            <p style={{ margin: 0, fontSize: '12.5px', color: C.textMuted, lineHeight: 1.55, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontStyle: 'italic' }}>
               {profile.about_me}
             </p>
-            <a href={'/profile/' + profile.id} onClick={e => e.stopPropagation()} style={{ fontSize: '11px', color: '#e11d48', fontWeight: 600, textDecoration: 'none' }}>More</a>
-          </div>
-        )}
-      </div>
-
-      <div style={{ flexShrink: 0, width: '140px', borderLeft: '1px solid #f3f4f6', background: 'linear-gradient(180deg,#fff5f7,#ffffff)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '16px 12px', minHeight: '100%' }}>
-        <p style={{ margin: 0, fontSize: '11px', color: '#e11d48', fontWeight: 700, textAlign: 'center' }}>Quick Actions</p>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-          <button onClick={handleSendInterest} disabled={interestSent} title={interestSent ? 'Interest Sent' : 'Send Interest'}
-            style={{ width: '48px', height: '48px', borderRadius: '50%', border: 'none', cursor: interestSent ? 'default' : 'pointer', background: interestSent ? '#f3f4f6' : 'linear-gradient(135deg,#10b981,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: interestSent ? 'none' : '0 3px 10px rgba(16,185,129,0.35)', transition: 'all 0.2s' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={interestSent ? '#9ca3af' : 'white'} strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-          </button>
-          <span style={{ fontSize: '10px', color: interestSent ? '#9ca3af' : '#059669', fontWeight: 700 }}>{interestSent ? 'Sent' : 'Connect'}</span>
-          {showLimitNudge && limitData && (
-            <UpgradeNudge type="interest_limit" data={limitData} onDismiss={() => setShowLimitNudge(false)} />
           )}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-          <button onClick={(e) => { e.stopPropagation(); const stored = localStorage.getItem('biyekori_user'); if (!stored) { window.location.href = '/register?reason=contact'; return; } const user = JSON.parse(stored); if (!user.package || user.package === 'prottasha') { setShowUpgradeModal(true); return; } window.location.href = '/profile/' + profile.id; }}
-            title="View Contact" style={{ width: '48px', height: '48px', borderRadius: '50%', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#e11d48,#db2777)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 10px rgba(225,29,72,0.3)', transition: 'all 0.2s' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.97-.97a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          </button>
-          <span style={{ fontSize: '10px', color: '#e11d48', fontWeight: 700 }}>Contact</span>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-          <Link href={'/profile/' + profile.id} onClick={e => e.stopPropagation()}
-            style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2px solid #e5e7eb', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', transition: 'all 0.2s' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </Link>
-          <span style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600 }}>Profile</span>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-          <button onClick={handleShortlistRow}
-            style={{ width: '48px', height: '48px', borderRadius: '50%', border: 'none', cursor: 'pointer', background: isShortlisted ? '#fff1f2' : '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: isShortlisted ? '0 3px 10px rgba(225,29,72,0.2)' : 'none', transition: 'all 0.2s' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill={isShortlisted ? '#e11d48' : 'none'} stroke={isShortlisted ? '#e11d48' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          </button>
-          <span style={{ fontSize: '10px', color: isShortlisted ? '#e11d48' : '#9ca3af', fontWeight: 700 }}>{isShortlisted ? 'Shortlisted' : 'Shortlist'}</span>
-        </div>
-      </div>
-    </div>
-    {showUpgradeModal && (
-      <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.65)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowUpgradeModal(false)}>
-        <div style={{ background: 'white', borderRadius: '24px', padding: '36px 28px', maxWidth: '380px', width: '100%', textAlign: 'center', boxShadow: '0 24px 60px rgba(0,0,0,0.35)' }} onClick={e => e.stopPropagation()}>
-          <div style={{ fontSize: '52px', marginBottom: '14px' }}>🔒</div>
-          <h2 style={{ margin: '0 0 10px', fontSize: '22px', fontWeight: 900, color: '#111827' }}>Upgrade to Contact</h2>
-          <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280', lineHeight: 1.7 }}>View contact details and connect directly with <strong>{profile.full_name || 'this member'}</strong>.</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
-            <a href="/pricing" style={{ display: 'block', padding: '15px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', borderRadius: '14px', fontWeight: 800, fontSize: '15px', textDecoration: 'none' }}>⭐ Upgrade to Silver — ৳499/mo</a>
-            <a href="/pricing" style={{ display: 'block', padding: '15px', background: 'linear-gradient(135deg,#7c3aed,#e11d48)', color: 'white', borderRadius: '14px', fontWeight: 800, fontSize: '15px', textDecoration: 'none' }}>👑 Upgrade to Gold — ৳999/mo</a>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', paddingTop: '8px' }}>
+            <button onClick={handleShortlist}
+              style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '7px 14px', background: isShortlisted ? '#FDF2F4' : 'white', border: `1px solid ${isShortlisted ? C.maroon : C.border}`, borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: isShortlisted ? C.maroon : C.textMuted, cursor: 'pointer' }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill={isShortlisted ? C.maroon : 'none'} stroke={isShortlisted ? C.maroon : C.textLight} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              {isShortlisted ? 'Shortlisted' : 'Shortlist'}
+            </button>
+            <Link href={`/profile/${profile.id}`} onClick={e => e.stopPropagation()}
+              style={{ display: 'flex', alignItems: 'center', padding: '7px 16px', background: 'white', border: `1px solid ${C.border}`, borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: C.text, textDecoration: 'none' }}>
+              View Profile
+            </Link>
+            <button onClick={handleSendInterest} disabled={interestSent}
+              style={{ display: 'flex', alignItems: 'center', padding: '7px 16px', background: interestSent ? '#F5F5F4' : C.maroon, border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 600, color: interestSent ? C.textLight : 'white', cursor: interestSent ? 'default' : 'pointer' }}>
+              {interestSent ? '✓ Interest Sent' : 'Send Interest'}
+            </button>
           </div>
-          <button onClick={() => setShowUpgradeModal(false)} style={{ background: 'none', border: 'none', color: '#9ca3af', fontSize: '14px', cursor: 'pointer', padding: '8px 16px' }}>Maybe later</button>
         </div>
       </div>
-    )}
+      {showLimitNudge && limitData && (
+        <UpgradeNudge type="interest_limit" data={limitData} onDismiss={() => setShowLimitNudge(false)} />
+      )}
     </>
   )
 }
 
 export function ViewToggle({ view, onToggle }: { view: 'grid' | 'list', onToggle: (v: 'grid' | 'list') => void }) {
   return (
-    <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-      <button onClick={() => onToggle('list')} title="List view" style={{ padding: '6px 8px', borderRadius: '7px', border: '2px solid', borderColor: view === 'list' ? '#e11d48' : '#e5e7eb', background: view === 'list' ? '#fff1f2' : 'white', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={view === 'list' ? '#e11d48' : '#9ca3af'} strokeWidth="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <div style={{ display: 'flex', gap: '2px', background: 'white', padding: '3px', borderRadius: '9px', border: '1px solid #E8E0D8' }}>
+      <button onClick={() => onToggle('list')} title="List view" style={{ padding: '5px 8px', borderRadius: '7px', border: 'none', background: view === 'list' ? '#7B1D2E' : 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={view === 'list' ? 'white' : '#A8A29E'} strokeWidth="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
-      <button onClick={() => onToggle('grid')} title="Grid view" style={{ padding: '6px 8px', borderRadius: '7px', border: '2px solid', borderColor: view === 'grid' ? '#e11d48' : '#e5e7eb', background: view === 'grid' ? '#fff1f2' : 'white', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={view === 'grid' ? '#e11d48' : '#9ca3af'} strokeWidth="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <button onClick={() => onToggle('grid')} title="Grid view" style={{ padding: '5px 8px', borderRadius: '7px', border: 'none', background: view === 'grid' ? '#7B1D2E' : 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={view === 'grid' ? 'white' : '#A8A29E'} strokeWidth="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       </button>
     </div>
   )
@@ -500,10 +453,7 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
   const [interestUsage, setInterestUsage] = useState<{used:number,limit:number,pkg:string}|null>(null)
   const [currentUser, setCurrentUser] = useState<any>(null)
 
-  useEffect(() => {
-    // Default order when no viewer — keep as-is
-    setSortedProfiles(profiles)
-  }, [profiles])
+  useEffect(() => { setSortedProfiles(profiles) }, [profiles])
 
   useEffect(() => {
     try {
@@ -519,67 +469,50 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
           if (Array.isArray(data) && data[0]) {
             const vp = data[0]
             setViewerProfile(vp)
-            // Sort profiles by match score descending
-            const ranked = [...profiles].sort((a, b) =>
-              computeMatchScore(b, vp) - computeMatchScore(a, vp)
-            )
+            const ranked = [...profiles].sort((a, b) => computeMatchScore(b, vp) - computeMatchScore(a, vp))
             setSortedProfiles(ranked)
-            // Will re-sort with mutuals on top once interestMap loads
           }
-        })
-        .catch(() => {})
+        }).catch(() => {})
 
-      // Fetch interest usage
       setCurrentUser(user)
       fetch('/api/interests/send?userId=' + user.id)
         .then(r => r.json())
-        .then(data => { if (data.limit) setInterestUsage(data) })
-        .catch(() => {})
+        .then(data => { if (data.limit) setInterestUsage(data) }).catch(() => {})
 
-      // Fetch all interests once and build lookup map
       fetch('/api/interests/list?userId=' + user.id)
         .then(r => r.json())
         .then(data => {
           const map: Record<string, string> = {}
-          ;(data.sent || []).forEach((s: any) => {
-            map[String(s.receiver_id)] = s.status === 'accepted' ? 'accepted' : 'sent'
-          })
+          ;(data.sent || []).forEach((s: any) => { map[String(s.receiver_id)] = s.status === 'accepted' ? 'accepted' : 'sent' })
           ;(data.received || []).forEach((r: any) => {
             const id = String(r.sender_id)
             if (!map[id]) map[id] = r.status === 'accepted' ? 'accepted' : 'received'
             else if (r.status === 'accepted') map[id] = 'accepted'
           })
           setInterestMap(map)
-          // Re-sort: mutuals first, then by score
           setSortedProfiles(prev => [...prev].sort((a, b) => {
-            const aStatus = map[String(a.id)] || 'none'
-            const bStatus = map[String(b.id)] || 'none'
-            const aIsMutual = aStatus === 'accepted'
-            const bIsMutual = bStatus === 'accepted'
-            if (aIsMutual && !bIsMutual) return -1
-            if (!aIsMutual && bIsMutual) return 1
-            return 0
+            const aM = map[String(a.id)] === 'accepted', bM = map[String(b.id)] === 'accepted'
+            if (aM && !bM) return -1; if (!aM && bM) return 1; return 0
           }))
-        })
-        .catch(() => {})
-    } catch(e) {}
+        }).catch(() => {})
+    } catch {}
   }, [profiles])
 
   return (
     <div>
+      {interestUsage && currentUser && (
+        <InterestCounter used={interestUsage.used} limit={interestUsage.limit} pkg={interestUsage.pkg} />
+      )}
       {view === 'list' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
-          {interestUsage && currentUser && (
-            <InterestCounter used={interestUsage.used} limit={interestUsage.limit} pkg={interestUsage.pkg} />
-          )}
           {sortedProfiles.map((profile: any) => (
             <ListRow key={profile.id} profile={profile} viewerProfile={viewerProfile} interestMap={interestMap} />
           ))}
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '32px' }}>
           {sortedProfiles.map((profile: any) => (
-            <ProfileCard key={profile.id} profile={profile} viewerProfile={viewerProfile} />
+            <ProfileCard key={profile.id} profile={profile} viewerProfile={viewerProfile} interestMap={interestMap} />
           ))}
         </div>
       )}
