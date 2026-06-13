@@ -611,25 +611,17 @@ export default function Dashboard() {
               </div>
 
               {!isPremium ? (
-                <div style={{ background: 'linear-gradient(135deg,#faf5ff,#fff1f2)', borderRadius: '12px', padding: '16px', border: '1px solid #e9d5ff' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                    <div>
-                      <p style={{ margin: '0 0 2px', fontSize: '13px', fontWeight: 700, color: '#111827' }}>Premium Feature</p>
-                      <p style={{ margin: 0, fontSize: '11px', color: '#6b7280' }}>See exactly who is interested in you</p>
-                    </div>
-                    <Link href="/pricing" style={{ padding: '7px 14px', background: 'linear-gradient(135deg,#7B1D2E,#7B1D2E)', color: 'white', borderRadius: '8px', fontSize: '12px', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-                      Upgrade
-                    </Link>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', filter: 'blur(5px)', pointerEvents: 'none', userSelect: 'none' }}>
+                <div style={{ background: '#fdf6ee', borderRadius: '12px', padding: '16px', border: '1px solid #f0d9c0' }}>
+                  <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#9B2D3E', fontWeight: 700 }}>🔒 Gold এ আপগ্রেড করুন — কে দেখেছে জানুন</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', filter: 'blur(2px)', pointerEvents: 'none', userSelect: 'none' }}>
                     {[1,2,3].map(i => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 10px', background: 'white', borderRadius: '10px' }}>
-                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#e5e7eb', flexShrink: 0 }} />
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: 'white', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
+                        <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#bbb', flexShrink: 0 }} />
                         <div style={{ flex: 1 }}>
-                          <div style={{ width: '100px', height: '10px', background: '#e5e7eb', borderRadius: '4px', marginBottom: '5px' }} />
-                          <div style={{ width: '70px', height: '8px', background: '#f3f4f6', borderRadius: '4px' }} />
+                          <div style={{ width: '120px', height: '12px', background: '#aaa', borderRadius: '4px', marginBottom: '6px' }} />
+                          <div style={{ width: '80px', height: '10px', background: '#ccc', borderRadius: '4px' }} />
                         </div>
-                        <div style={{ width: '40px', height: '8px', background: '#f3f4f6', borderRadius: '4px' }} />
+                        <div style={{ width: '44px', height: '10px', background: '#ccc', borderRadius: '4px' }} />
                       </div>
                     ))}
                   </div>
