@@ -8,6 +8,20 @@ const IVORY = '#FFFBF5'
 export default function FloatingChat() {
   const [visible, setVisible] = useState(false)
   const [open, setOpen] = useState(false)
+  const [sumaiyaTyping, setSumaiyaTyping] = useState(false)
+  const [hoverTimeout, setHoverTimeout] = useState<any>(null)
+
+  const handleBubbleHover = () => {
+    if (!open) {
+      setSumaiyaTyping(true)
+      const t = setTimeout(() => setSumaiyaTyping(false), 2500)
+      setHoverTimeout(t)
+    }
+  }
+  const handleBubbleLeave = () => {
+    if (hoverTimeout) clearTimeout(hoverTimeout)
+    setSumaiyaTyping(false)
+  }
   const [messages, setMessages] = useState([{ from: 'them', text: 'Assalamu alaikum! 😊 Biyekori Support-e swagotom. Kono proshno thakle bolun — registration, features, ba onyo kichhu.' }])
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
@@ -61,7 +75,7 @@ export default function FloatingChat() {
       {open && (
         <div style={{
           className='floating-chat-window' style={{ position: 'fixed', bottom: 'max(90px, calc(64px + 26px))', right: '24px', zIndex: 998,
-          width: '320px', maxWidth: 'calc(100vw - 48px)',
+          width: 'min(320px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)',
           background: IVORY, borderRadius: '20px',
           border: `1px solid rgba(123,29,46,0.15)`,
           boxShadow: '0 8px 40px rgba(123,29,46,0.15)',
@@ -122,7 +136,24 @@ export default function FloatingChat() {
       <button
         onClick={() => setOpen(o => !o)}
         style={{
-          className='floating-chat-btn' style={{ position: 'fixed', bottom: 'max(24px, calc(64px + 10px))', right: '24px', zIndex: 999,
+          onMouseEnter={handleBubbleHover} onMouseLeave={handleBubbleLeave} >
+  <style>{`
+    @keyframes bk-typing-dot {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+    .bk-typing-dot { animation: bk-typing-dot 1.2s infinite; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #7B1D2E; margin: 0 2px; }
+    .bk-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .bk-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  `}</style>{sumaiyaTyping && !open && (
+        <div style={{ position: 'absolute', bottom: '70px', right: '0', background: 'white', borderRadius: '16px 16px 4px 16px', padding: '10px 16px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '4px', border: '1px solid #f0e0e4' }}>
+          <span className="bk-typing-dot"></span>
+          <span className="bk-typing-dot"></span>
+          <span className="bk-typing-dot"></span>
+          <span style={{ fontSize: '11px', color: '#9ca3af', marginLeft: '4px' }}>Sumaiya is typing...</span>
+        </div>
+      )}
+      <button onMouseEnter={handleBubbleHover} onMouseLeave={handleBubbleLeave} className='floating-chat-btn' style={{ position: 'fixed', bottom: 'max(24px, calc(64px + 10px))', right: '24px', zIndex: 999,
           width: '56px', height: '56px', borderRadius: '50%',
           background: MAROON, border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
