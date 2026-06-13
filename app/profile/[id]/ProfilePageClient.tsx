@@ -837,7 +837,7 @@ export default function ProfilePageClient({ profile }: { profile: any }) {
   return (
     <>
       <style>{`
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
           .profile-photo-flex { flex-direction: column !important; align-items: center !important; }
           .profile-detail-grid { grid-template-columns: 1fr !important; }
           .profile-tab-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; }
