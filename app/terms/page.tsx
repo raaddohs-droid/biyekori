@@ -3,7 +3,7 @@ export default function TermsPage() {
     <div style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: '80px', paddingBottom: '80px' }}>
       <div style={{ maxWidth: '760px', margin: '0 auto', padding: '0 20px' }}>
         <div style={{ marginBottom: '48px' }}>
-          <p style={{ margin: '0 0 8px', fontSize: '12px', letterSpacing: '3px', color: '#e11d48', fontWeight: 700, textTransform: 'uppercase' }}>Terms of Use</p>
+          <p style={{ margin: '0 0 8px', fontSize: '12px', letterSpacing: '3px', color: '#7B1D2E', fontWeight: 700, textTransform: 'uppercase' }}>Terms of Use</p>
           <h1 style={{ margin: '0 0 16px', fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 900, color: '#111827' }}>Terms of Use</h1>
           <p style={{ margin: 0, fontSize: '15px', color: '#6b7280' }}>Last updated: June 2026. By using Biyekori, you agree to these terms.</p>
         </div>
@@ -48,7 +48,7 @@ export default function TermsPage() {
         ].map((section, i) => (
           <div key={i} style={{ background: 'white', borderRadius: '20px', padding: '28px', marginBottom: '16px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
             <h2 style={{ margin: '0 0 12px', fontSize: '18px', fontWeight: 800, color: '#111827' }}>{section.title}</h2>
-            <p style={{ margin: 0, fontSize: '14px', color: '#374151', lineHeight: 1.8 }}>{section.content}</p>
+            <p style={{ margin: 0, fontSize: 'clamp(14px, 3.5vw, 16px)', color: '#374151', lineHeight: 1.8 }}>{section.content}</p>
           </div>
         ))}
       </div>
