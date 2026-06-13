@@ -59,7 +59,7 @@ export default function VerifySelfie() {
       if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
         setErrorMsg('camera_denied')
       } else {
-        setErrorMsg('ক্যামেরা চালু হয়নি। অন্য ব্রাউজার দিয়ে চেষ্টা করুন।')
+        setErrorMsg('ক্যামেরা চালু হয়নি। Chrome এ: অ্যাড্রেস বারের 🔒 আইকন → Site settings → Camera → Allow করুন। তারপর রিফ্রেশ করুন।')
       }
     }
   }
