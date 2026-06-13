@@ -6,7 +6,7 @@ export default function SafetyPage() {
       <div style={{ maxWidth: '760px', margin: '0 auto', padding: '0 20px' }}>
 
         <div style={{ marginBottom: '48px' }}>
-          <p style={{ margin: '0 0 8px', fontSize: '12px', letterSpacing: '3px', color: '#e11d48', fontWeight: 700, textTransform: 'uppercase' }}>Safety</p>
+          <p style={{ margin: '0 0 8px', fontSize: '12px', letterSpacing: '3px', color: '#7B1D2E', fontWeight: 700, textTransform: 'uppercase' }}>Safety</p>
           <h1 style={{ margin: '0 0 16px', fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 900, color: '#111827', lineHeight: 1.2 }}>Your safety is our priority</h1>
           <p style={{ margin: 0, fontSize: '18px', color: '#6b7280', lineHeight: 1.7 }}>Please read these guidelines before connecting with anyone on Biyekori.</p>
         </div>
@@ -68,16 +68,16 @@ export default function SafetyPage() {
             </div>
             <ul style={{ margin: 0, padding: '0 0 0 20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {section.items.map((item, j) => (
-                <li key={j} style={{ fontSize: '14px', color: '#374151', lineHeight: 1.7 }}>{item}</li>
+                <li key={j} style={{ fontSize: 'clamp(14px, 3.5vw, 16px)', color: '#374151', lineHeight: 1.7 }}>{item}</li>
               ))}
             </ul>
           </div>
         ))}
 
         <div style={{ background: '#fff1f2', borderRadius: '20px', padding: '28px', border: '1px solid #fecdd3' }}>
-          <h2 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 800, color: '#e11d48' }}>Emergency contact</h2>
-          <p style={{ margin: '0 0 12px', fontSize: '14px', color: '#374151', lineHeight: 1.7 }}>If you feel unsafe or are being harassed, contact us immediately.</p>
-          <a href="mailto:support@biyekori.com" style={{ fontSize: '15px', color: '#e11d48', fontWeight: 700, textDecoration: 'none' }}>support@biyekori.com</a>
+          <h2 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 800, color: '#7B1D2E' }}>Emergency contact</h2>
+          <p style={{ margin: '0 0 12px', fontSize: 'clamp(14px, 3.5vw, 16px)', color: '#374151', lineHeight: 1.7 }}>If you feel unsafe or are being harassed, contact us immediately.</p>
+          <a href="mailto:support@biyekori.com" style={{ fontSize: '15px', color: '#7B1D2E', fontWeight: 700, textDecoration: 'none' }}>support@biyekori.com</a>
         </div>
 
       </div>
