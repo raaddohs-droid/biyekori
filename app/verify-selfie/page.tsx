@@ -280,19 +280,15 @@ export default function VerifySelfie() {
   // ── LANDING STAGE ──────────────────────────────────────────────
   if (stage === 'landing') {
     return (
-      <div style={{ minHeight: '100vh', background: '#fff', paddingBottom: '60px' }}>
+      <div style={{ minHeight: '100vh', background: '#fff', paddingBottom: '60px', paddingTop: '70px' }}>
 
         {/* Hero banner */}
-        <div style={{ background: 'linear-gradient(135deg, #7B1D2E 0%, #4A1A6B 100%)', padding: '48px 24px 40px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ background: 'linear-gradient(135deg, #7B1D2E 0%, #4A1A6B 100%)', padding: '32px 24px 32px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', inset: 0, opacity: 0.08 }}>
             {Array.from({ length: 20 }, (_, i) => (
               <div key={i} style={{ position: 'absolute', borderRadius: '50%', background: '#fff', width: `${20 + Math.random() * 40}px`, height: `${20 + Math.random() * 40}px`, left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }} />
             ))}
           </div>
-          <Link href="/dashboard" style={{ position: 'absolute', top: '20px', left: '20px', display: 'inline-flex', alignItems: 'center', gap: '5px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, fontSize: '13px', textDecoration: 'none' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Back
-          </Link>
           <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: '2px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', position: 'relative', zIndex: 1 }}>
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
