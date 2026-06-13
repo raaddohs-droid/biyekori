@@ -80,7 +80,7 @@ export async function POST(req: Request) {
       const myAnswers = answers?.filter(a => a.user_id === userId) || []
       const partnerAnswers = answers?.filter(a => a.user_id === partnerId) || []
 
-      if (myAnswers.length < 12 || partnerAnswers.length < 12) {
+      if (myAnswers.length < 5 || partnerAnswers.length < 5) {
         return NextResponse.json({ success: false, message: 'Game not complete' })
       }
 
@@ -91,7 +91,7 @@ export async function POST(req: Request) {
       }))
 
       const matchCount = matches.filter(m => m.matched).length
-      const score = Math.round((matchCount / 12) * 100)
+      const score = Math.round((matchCount / 5) * 100)
 
       // Get profile names
       const { data: profiles } = await supabase
