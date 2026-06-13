@@ -351,9 +351,10 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
                   {maxAge !== 70 && <input type="hidden" name="maxAge" value={maxAge} />}
                   {maritalFilter && <input type="hidden" name="marital" value={maritalFilter} />}
                   <label style={{ fontSize: '13px', color: C.textMuted, fontWeight: 500, whiteSpace: 'nowrap' }}>Sort by</label>
-                  <select name="sort" defaultValue={sortBy} onChange={(e) => (e.target.form as HTMLFormElement)?.submit()} style={{ padding: '7px 10px', borderRadius: '8px', border: `1px solid ${C.border}`, fontSize: '13px', color: C.text, background: 'white', outline: 'none', cursor: 'pointer' }}>
+                  <select name="sort" defaultValue={sortBy} style={{ padding: '7px 10px', borderRadius: '8px', border: `1px solid ${C.border}`, fontSize: '13px', color: C.text, background: 'white', outline: 'none', cursor: 'pointer' }}>
                     {SORTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
                   </select>
+                  <button type="submit" style={{ padding: '7px 14px', background: C.maroon, color: 'white', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>Go</button>
                 </form>
 
                 {/* View toggle */}
