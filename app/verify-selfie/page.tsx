@@ -82,7 +82,7 @@ export default function VerifySelfie() {
         }
       }
     } catch (e) {
-      setErrorMsg('Camera access denied. Please allow camera access and try again.')
+      setErrorMsg('ক্যামেরা অ্যাক্সেস বন্ধ আছে। ব্রাউজারের অ্যাড্রেস বারে ক্যামেরা আইকনে ক্লিক করে Allow করুন, তারপর আবার চেষ্টা করুন।')
       setStage('landing')
     }
   }
@@ -369,7 +369,12 @@ export default function VerifySelfie() {
           )}
 
           {errorMsg && (
-            <p style={{ margin: '12px 0 0', fontSize: '13px', color: '#e11d48', textAlign: 'center' }}>{errorMsg}</p>
+            <div style={{ marginTop: '12px', background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '12px', padding: '14px 16px' }}>
+              <p style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 700, color: '#c2410c' }}>ক্যামেরা চালু করতে:</p>
+              <p style={{ margin: '0 0 4px', fontSize: '12px', color: '#9a3412', lineHeight: 1.5 }}>১. ব্রাউজারের উপরে অ্যাড্রেস বারে 🔒 বা 📷 আইকনে ক্লিক করুন</p>
+              <p style={{ margin: '0 0 4px', fontSize: '12px', color: '#9a3412', lineHeight: 1.5 }}>২. Camera → Allow করুন</p>
+              <p style={{ margin: 0, fontSize: '12px', color: '#9a3412', lineHeight: 1.5 }}>৩. পেজ রিফ্রেশ করে আবার চেষ্টা করুন</p>
+            </div>
           )}
         </div>
       </div>
