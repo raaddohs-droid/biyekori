@@ -417,6 +417,29 @@ export default function Dashboard() {
               }} />
             )}
 
+            {/* Porichiti dashboard card */}
+            {mutualMatches.length > 0 && (
+              <div style={{ background: 'linear-gradient(135deg,#0d0521,#4A1A6B)', borderRadius: '16px', padding: '20px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                  <span style={{ fontSize: '18px' }}>✦</span>
+                  <h2 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#FAD95A' }}>{gm ? 'পরিচিতি' : 'Porichiti'}</h2>
+                </div>
+                <p style={{ margin: '0 0 14px', fontSize: '13px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.5 }}>
+                  {gm ? 'আপনার match এর সাথে একটি দিন কাটান — আলাদাভাবে। দেখুন কতটুকু মেলে।' : 'Spend a day with your match — separately. See how much you align.'}
+                </p>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '14px' }}>
+                  {mutualMatches.slice(0, 3).map((p: any) => (
+                    <div key={p.id} style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '20px', padding: '4px 12px', fontSize: '11px', color: 'rgba(255,255,255,0.7)' }}>
+                      {p.full_name ? p.full_name.split(' ')[0][0] + '*** ' + (p.full_name.split(' ')[1]?.[0] || '') + '***' : 'Match'} — অপেক্ষায়
+                    </div>
+                  ))}
+                </div>
+                <a href={mutualMatches[0] ? `/game?with=${mutualMatches[0].id}` : '/profiles'} style={{ display: 'block', textAlign: 'center', background: '#FAD95A', borderRadius: '10px', padding: '10px', color: '#0d0521', fontSize: '14px', fontWeight: 800, textDecoration: 'none', fontFamily: 'Georgia, serif' }}>
+                  {gm ? 'এখনই খেলুন →' : 'Play Now →'}
+                </a>
+              </div>
+            )}
+
             {/* Mutual Matches */}
             {mutualMatches.length > 0 && (
               <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '1.5px solid #bbf7d0' }}>
