@@ -750,6 +750,7 @@ export default function Navbar() {
         @media (max-width: 767px) {
           .bk-desktop-nav { display: none !important; }
           .bk-search-bar { display: none !important; }
+          .bk-profile-search::placeholder { color: #1a1a1a !important; opacity: 1 !important; font-weight: 600 !important; }
           .bk-search-bar input::placeholder { color: #000000 !important; opacity: 1; font-weight: 600; }
           .bk-login-btns { display: none !important; }
           .bk-mobile-hamburger { display: flex !important; }
@@ -1093,6 +1094,7 @@ export default function Navbar() {
 
 
               placeholder="Profile ID..."
+              className="bk-profile-search"
 
 
 
