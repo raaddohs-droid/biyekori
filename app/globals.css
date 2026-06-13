@@ -24,3 +24,10 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+.bk-profile-search::placeholder {
+  color: #1a1a1a !important;
+  opacity: 1 !important;
+  font-weight: 600 !important;
+}
