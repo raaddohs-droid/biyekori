@@ -29,13 +29,13 @@ export default function UrgencyBar() {
   const signal = SIGNALS[current]
 
   return (
-    <div style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "40px" }}>
+    <div className="bk-urgency-bar" style={{ background: "linear-gradient(135deg, #7B1D2E, #9D174D)", padding: "8px 16px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "40px", width: "100%", overflow: "hidden" }}>
       <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}`}</style>
-      <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#fca5a5", flexShrink: 0, animation: "pulse 2s ease-in-out infinite" }} />
-      <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.92)", fontFamily: "system-ui", fontWeight: 500, opacity: fade ? 1 : 0, transition: "opacity 0.3s ease", textAlign: "center" }}>
+      <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#fca5a5", flexShrink: 0, animation: "pulse 2s ease-in-out infinite" }} />
+      <span style={{ fontSize: "clamp(11px, 3vw, 13px)", color: "rgba(255,255,255,0.92)", fontFamily: "system-ui", fontWeight: 500, opacity: fade ? 1 : 0, transition: "opacity 0.3s ease", textAlign: "center", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, minWidth: 0 }}>
         <span style={{ marginRight: "6px" }}>{signal.icon}</span>{signal.text}
       </span>
-      <div style={{ display: "flex", gap: "4px", marginLeft: "8px" }}>
+      <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
         {SIGNALS.map((_, i) => (
           <div key={i} style={{ width: "4px", height: "4px", borderRadius: "50%", background: i === current ? "white" : "rgba(255,255,255,0.3)", transition: "background 0.3s" }} />
         ))}
