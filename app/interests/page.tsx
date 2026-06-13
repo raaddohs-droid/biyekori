@@ -134,7 +134,7 @@ export default function InterestsPage() {
           {["received", "shortlisted", "sent", "filtered"].map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               flex: 1, padding: "12px", borderRadius: "12px", border: "none", cursor: "pointer", fontWeight: 700, fontSize: "13px", fontFamily: "Georgia, serif", transition: "all 0.2s",
-              background: tab === t ? (t === "filtered" ? "linear-gradient(135deg, #f59e0b, #d97706)" : t === "shortlisted" ? "linear-gradient(135deg, #e11d48, #7c3aed)" : "linear-gradient(135deg, #e11d48, #db2777)") : "transparent",
+              background: tab === t ? (t === "filtered" ? "linear-gradient(135deg, #f59e0b, #d97706)" : t === "shortlisted" ? "linear-gradient(135deg, #7B1D2E, #7B1D2E)" : "linear-gradient(135deg, #7B1D2E, #7B1D2E)") : "transparent",
               color: tab === t ? "white" : "#6b7280"
             }}>
               {t === "received" ? `Received (${received.length})` : t === "shortlisted" ? `Shortlisted (${shortlisted.length})` : t === "sent" ? `Sent (${sent.length})` : `Filtered (${filtered.length})`}
@@ -155,7 +155,7 @@ export default function InterestsPage() {
               {tab === "received" ? "No interests received yet." : tab === "filtered" ? "No filtered interests. Your contact filter criteria is not excluding anyone yet." : "You haven't sent any interests yet."}
             </p>
             {tab === "sent" && (
-              <Link href="/profiles" style={{ display: "inline-block", padding: "12px 28px", background: "linear-gradient(135deg, #e11d48, #db2777)", color: "white", borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
+              <Link href="/profiles" style={{ display: "inline-block", padding: "12px 28px", background: "linear-gradient(135deg, #7B1D2E, #7B1D2E)", color: "white", borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
                 Browse Profiles →
               </Link>
             )}
@@ -175,7 +175,7 @@ export default function InterestsPage() {
                       : <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "32px", background: "linear-gradient(135deg,#fce7f3,#ede9fe)" }}>?</div>
                     }
                     <div style={{ position: "absolute", top: "8px", right: "8px" }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#e11d48" stroke="#e11d48" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#7B1D2E" stroke="#7B1D2E" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     </div>
                   </div>
                   <div style={{ padding: "10px 12px" }}>
@@ -215,7 +215,7 @@ export default function InterestsPage() {
                       <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
                         <h3 style={{ margin: "0", fontSize: "16px", fontWeight: 700, color: "#1a1a2e" }}>{person?.full_name || "Unknown"}</h3>
                         {isGuardian ? (
-                          <span style={{ fontSize: "10px", fontWeight: 700, color: "#7c3aed", background: "#ede9fe", padding: "2px 7px", borderRadius: "20px", border: "1px solid #c4b5fd" }}>
+                          <span style={{ fontSize: "10px", fontWeight: 700, color: "#7B1D2E", background: "#ede9fe", padding: "2px 7px", borderRadius: "20px", border: "1px solid #c4b5fd" }}>
                             👨‍👩‍👧 পরিবার পরিচালিত
                           </span>
                         ) : (
@@ -255,7 +255,7 @@ export default function InterestsPage() {
                         </div>
                       )}
 
-                      <Link href={"/profile/" + profileId} style={{ fontSize: "12px", color: "#e11d48", textDecoration: "none", fontWeight: 600 }}>
+                      <Link href={"/profile/" + profileId} style={{ fontSize: "12px", color: "#7B1D2E", textDecoration: "none", fontWeight: 600 }}>
                         View Profile →
                       </Link>
                     </div>
@@ -273,7 +273,7 @@ export default function InterestsPage() {
                       {isGuardian && (
                         <div style={{ marginBottom: "12px", padding: "10px 14px", background: "#faf5ff", borderRadius: "10px", border: "1px solid #e9d5ff", display: "flex", alignItems: "flex-start", gap: "8px" }}>
                           <span style={{ fontSize: "16px", flexShrink: 0 }}>👨‍👩‍👧</span>
-                          <p style={{ margin: 0, fontSize: "12px", color: "#7c3aed", lineHeight: "1.5" }}>
+                          <p style={{ margin: 0, fontSize: "12px", color: "#7B1D2E", lineHeight: "1.5" }}>
                             <strong>পরিবার পরিচালিত প্রোফাইল</strong> — This profile is managed by a family guardian. Please keep your messages respectful and formal. Introduce yourself clearly.
                           </p>
                         </div>
@@ -301,10 +301,10 @@ export default function InterestsPage() {
                           background: "white", border: "1.5px solid #e9d5ff",
                           transition: "all 0.15s", cursor: "pointer"
                         }}>
-                          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "linear-gradient(135deg,#7c3aed,#db2777)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "linear-gradient(135deg,#7B1D2E,#7B1D2E)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                           </div>
-                          <span style={{ fontSize: "11px", fontWeight: 700, color: "#7c3aed", textAlign: "center" }}>Message</span>
+                          <span style={{ fontSize: "11px", fontWeight: 700, color: "#7B1D2E", textAlign: "center" }}>Message</span>
                         </button>
 
                         {/* A Day Together game */}
@@ -346,7 +346,7 @@ export default function InterestsPage() {
             </div>
 
             <div style={{ background: "#faf5ff", borderRadius: "12px", padding: "14px", marginBottom: "20px", border: "1px solid #e9d5ff" }}>
-              <p style={{ margin: "0 0 8px", fontSize: "13px", fontWeight: 700, color: "#7c3aed" }}>Please keep in mind:</p>
+              <p style={{ margin: "0 0 8px", fontSize: "13px", fontWeight: 700, color: "#7B1D2E" }}>Please keep in mind:</p>
               <ul style={{ margin: 0, paddingLeft: "16px", display: "flex", flexDirection: "column", gap: "6px" }}>
                 <li style={{ fontSize: "12px", color: "#6b7280", lineHeight: "1.5" }}>Introduce yourself clearly with your name and background</li>
                 <li style={{ fontSize: "12px", color: "#6b7280", lineHeight: "1.5" }}>Keep language respectful and formal</li>
@@ -363,7 +363,7 @@ export default function InterestsPage() {
               </button>
               <button
                 onClick={() => openChat(chatWith, guardianWarningFor)}
-                style={{ flex: 1, padding: "12px", background: "linear-gradient(135deg,#7c3aed,#db2777)", color: "white", border: "none", borderRadius: "12px", fontSize: "14px", fontWeight: 700, cursor: "pointer" }}
+                style={{ flex: 1, padding: "12px", background: "linear-gradient(135deg,#7B1D2E,#7B1D2E)", color: "white", border: "none", borderRadius: "12px", fontSize: "14px", fontWeight: 700, cursor: "pointer" }}
               >
                 I Understand
               </button>
@@ -386,7 +386,7 @@ export default function InterestsPage() {
                   <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                     <p style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#111827" }}>{chatWith.full_name || "Unknown"}</p>
                     {chatWith.guardian_mode && (
-                      <span style={{ fontSize: "10px", fontWeight: 700, color: "#7c3aed", background: "#ede9fe", padding: "1px 6px", borderRadius: "20px" }}>পরিবার পরিচালিত</span>
+                      <span style={{ fontSize: "10px", fontWeight: 700, color: "#7B1D2E", background: "#ede9fe", padding: "1px 6px", borderRadius: "20px" }}>পরিবার পরিচালিত</span>
                     )}
                   </div>
                   <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>
@@ -401,7 +401,7 @@ export default function InterestsPage() {
             {chatWith.guardian_mode && (
               <div style={{ padding: "8px 16px", background: "#faf5ff", borderBottom: "1px solid #e9d5ff", display: "flex", alignItems: "center", gap: "8px" }}>
                 <span style={{ fontSize: "14px" }}>👨‍👩‍👧</span>
-                <p style={{ margin: 0, fontSize: "11px", color: "#7c3aed" }}>This profile is family managed. Please introduce yourself and keep language respectful.</p>
+                <p style={{ margin: 0, fontSize: "11px", color: "#7B1D2E" }}>This profile is family managed. Please introduce yourself and keep language respectful.</p>
               </div>
             )}
 
@@ -417,7 +417,7 @@ export default function InterestsPage() {
                 const isMine = String(msg.sender_id) === String(userId)
                 return (
                   <div key={i} style={{ display: "flex", justifyContent: isMine ? "flex-end" : "flex-start" }}>
-                    <div style={{ maxWidth: "70%", padding: "10px 14px", borderRadius: isMine ? "16px 16px 4px 16px" : "16px 16px 16px 4px", background: isMine ? "linear-gradient(135deg,#e11d48,#db2777)" : "#f3f4f6", color: isMine ? "white" : "#111827", fontSize: "13px", lineHeight: 1.5 }}>
+                    <div style={{ maxWidth: "70%", padding: "10px 14px", borderRadius: isMine ? "16px 16px 4px 16px" : "16px 16px 16px 4px", background: isMine ? "linear-gradient(135deg,#7B1D2E,#7B1D2E)" : "#f3f4f6", color: isMine ? "white" : "#111827", fontSize: "13px", lineHeight: 1.5 }}>
                       {msg.content}
                     </div>
                   </div>
@@ -434,7 +434,7 @@ export default function InterestsPage() {
                 placeholder={chatWith.guardian_mode ? "Introduce yourself respectfully..." : "Type a message..."}
                 style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1.5px solid #e5e7eb", fontSize: "13px", outline: "none", color: "#111827", background: "white" }}
               />
-              <button onClick={sendMessage} disabled={sendingMsg || !msgInput.trim()} style={{ padding: "10px 18px", background: "linear-gradient(135deg,#e11d48,#db2777)", color: "white", border: "none", borderRadius: "12px", fontWeight: 700, fontSize: "13px", cursor: "pointer" }}>
+              <button onClick={sendMessage} disabled={sendingMsg || !msgInput.trim()} style={{ padding: "10px 18px", background: "linear-gradient(135deg,#7B1D2E,#7B1D2E)", color: "white", border: "none", borderRadius: "12px", fontWeight: 700, fontSize: "13px", cursor: "pointer" }}>
                 Send
               </button>
             </div>
