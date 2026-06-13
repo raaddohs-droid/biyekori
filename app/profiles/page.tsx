@@ -215,8 +215,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   ]
 
   return (
-    <>
-<div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', overflowX: 'hidden', fontFamily: 'var(--font-inter), Inter, system-ui, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', overflowX: 'hidden', fontFamily: 'var(--font-inter), Inter, system-ui, sans-serif' }}>
       <GuestGate page={currentPage} />
 
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(12px, 4vw, 24px) 64px' }}>
