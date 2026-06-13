@@ -29,7 +29,7 @@ function PrioritySelector({ value, onChange, mustMatchCount }: {
   const options: { val: Priority; label: string; color: string; bg: string }[] = [
     { val: 'flexible', label: 'Flexible', color: '#6b7280', bg: '#f3f4f6' },
     { val: 'prefer', label: 'Prefer', color: '#0ea5e9', bg: '#e0f2fe' },
-    { val: 'must', label: 'Must Match', color: '#7B1D2E', bg: '#fff1f2' },
+    { val: 'must', label: 'Must Match', color: '#e11d48', bg: '#fff1f2' },
   ]
   return (
     <div style={{ display: 'flex', gap: '4px' }}>
@@ -59,7 +59,7 @@ function PrioritySelector({ value, onChange, mustMatchCount }: {
 
 function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
   return (
-    <button onClick={() => onChange(!value)} type="button" style={{ width: '48px', height: '26px', borderRadius: '13px', border: 'none', cursor: 'pointer', background: value ? '#7B1D2E' : '#d1d5db', position: 'relative', transition: 'background 0.2s', flexShrink: 0 }}>
+    <button onClick={() => onChange(!value)} type="button" style={{ width: '48px', height: '26px', borderRadius: '13px', border: 'none', cursor: 'pointer', background: value ? '#e11d48' : '#d1d5db', position: 'relative', transition: 'background 0.2s', flexShrink: 0 }}>
       <span style={{ position: 'absolute', top: '3px', left: value ? '25px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
     </button>
   )
@@ -432,7 +432,7 @@ export default function EditProfilePage() {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: '80px', paddingBottom: '80px', overflowX: 'hidden' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: '80px', paddingBottom: '60px' }}>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       <div style={{ maxWidth: '820px', margin: '0 auto', padding: '0 16px' }}>
 
@@ -598,10 +598,10 @@ export default function EditProfilePage() {
             <div style={{ background: 'white', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
                 <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#111827' }}>Gallery Photos</h3>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: galleryPhotos.length >= 8 ? '#7B1D2E' : '#9ca3af' }}>{galleryPhotos.length}/8</span>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: galleryPhotos.length >= 8 ? '#e11d48' : '#9ca3af' }}>{galleryPhotos.length}/8</span>
               </div>
               <p style={{ margin: '0 0 20px', fontSize: '12px', color: '#9ca3af' }}>Full body, candid or family photos. Max 8.</p>
-              {galleryError && <div style={{ padding: '10px 14px', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '8px', fontSize: '13px', color: '#7B1D2E', marginBottom: '16px' }}>{galleryError}</div>}
+              {galleryError && <div style={{ padding: '10px 14px', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '8px', fontSize: '13px', color: '#e11d48', marginBottom: '16px' }}>{galleryError}</div>}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '16px' }}>
                 {galleryPhotos.map((photo: any) => (
                   <div key={photo.id} style={{ position: 'relative', aspectRatio: '1', borderRadius: '10px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
@@ -972,7 +972,7 @@ export default function EditProfilePage() {
                 setPriorityReligion('flexible'); setPriorityLocation('flexible');
                 setPriorityChildren('flexible'); setPriorityLiving('flexible');
                 setPrioritySmoking('flexible'); setPriorityCareer('flexible');
-              }} style={{ fontSize: '12px', color: '#7B1D2E', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, textDecoration: 'underline' }}>
+              }} style={{ fontSize: '12px', color: '#e11d48', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, textDecoration: 'underline' }}>
                 Clear all preferences
               </button>
             </div>
@@ -995,16 +995,16 @@ export default function EditProfilePage() {
                   <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                       <span style={{ fontSize: '13px', color: '#6b7280' }}>Min age</span>
-                      <span style={{ fontSize: '15px', fontWeight: 800, color: '#7B1D2E' }}>{partnerAgeMin || '18'} – {partnerAgeMax || '65'}</span>
+                      <span style={{ fontSize: '15px', fontWeight: 800, color: '#e11d48' }}>{partnerAgeMin || '18'} – {partnerAgeMax || '65'}</span>
                       <span style={{ fontSize: '13px', color: '#6b7280' }}>Max age</span>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                       <div>
-                        <input type="range" min="18" max="65" value={partnerAgeMin || 18} onChange={e => setPartnerAgeMin(e.target.value)} style={{ width: '100%', accentColor: '#7B1D2E' }} />
+                        <input type="range" min="18" max="65" value={partnerAgeMin || 18} onChange={e => setPartnerAgeMin(e.target.value)} style={{ width: '100%', accentColor: '#e11d48' }} />
                         <div style={{ fontSize: '11px', color: '#9ca3af', textAlign: 'center' }}>Min: {partnerAgeMin || 18}</div>
                       </div>
                       <div>
-                        <input type="range" min="18" max="65" value={partnerAgeMax || 65} onChange={e => setPartnerAgeMax(e.target.value)} style={{ width: '100%', accentColor: '#7B1D2E' }} />
+                        <input type="range" min="18" max="65" value={partnerAgeMax || 65} onChange={e => setPartnerAgeMax(e.target.value)} style={{ width: '100%', accentColor: '#e11d48' }} />
                         <div style={{ fontSize: '11px', color: '#9ca3af', textAlign: 'center' }}>Max: {partnerAgeMax || 65}</div>
                       </div>
                     </div>
@@ -1056,7 +1056,7 @@ export default function EditProfilePage() {
                             if (selected) setExpectedMaritalStatus(current.filter(x => x !== m).join(','))
                             else setExpectedMaritalStatus([...current, m].join(','))
                           }}
-                          style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '10px', cursor: 'pointer', border: 'none', background: selected ? '#7B1D2E' : '#f3f4f6', color: selected ? 'white' : '#374151', fontSize: '13px', fontWeight: selected ? 700 : 500, transition: 'all 0.15s' }}
+                          style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '10px', cursor: 'pointer', border: 'none', background: selected ? '#e11d48' : '#f3f4f6', color: selected ? 'white' : '#374151', fontSize: '13px', fontWeight: selected ? 700 : 500, transition: 'all 0.15s' }}
                         >
                           <span style={{ fontSize: '12px' }}>{selected ? '✓' : '○'}</span>
                           {m}
@@ -1095,7 +1095,7 @@ export default function EditProfilePage() {
                     {[
                       { value: true, label: 'Yes', activeColor: '#16a34a', activeBg: '#f0fdf4' },
                       { value: 'discussion', label: 'Open to discussion', activeColor: '#0ea5e9', activeBg: '#e0f2fe' },
-                      { value: false, label: 'No', activeColor: '#7B1D2E', activeBg: '#fef2f2' },
+                      { value: false, label: 'No', activeColor: '#e11d48', activeBg: '#fef2f2' },
                     ].map(opt => {
                       const selected = acceptsChildren === opt.value
                       return (
@@ -1227,7 +1227,7 @@ export default function EditProfilePage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                     <span style={{ fontSize: '18px' }}>👨‍👩‍👧</span>
                     <p style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#111827' }}>Guardian Mode</p>
-                    {guardianMode && <span style={{ fontSize: '10px', fontWeight: 700, color: '#7B1D2E', background: '#ede9fe', padding: '2px 8px', borderRadius: '20px' }}>Active</span>}
+                    {guardianMode && <span style={{ fontSize: '10px', fontWeight: 700, color: '#7c3aed', background: '#ede9fe', padding: '2px 8px', borderRadius: '20px' }}>Active</span>}
                   </div>
                   <p style={{ margin: '0 0 8px', fontSize: '13px', color: '#6b7280', lineHeight: '1.5' }}>
                     This profile is managed by a family member. A "Family Managed" badge will appear on your profile card.
@@ -1235,12 +1235,12 @@ export default function EditProfilePage() {
                   {guardianMode && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '10px', padding: '8px 12px', background: 'white', borderRadius: '8px', border: '1px solid #e9d5ff', width: 'fit-content' }}>
                       <span style={{ fontSize: '13px' }}>👨‍👩‍👧</span>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#7B1D2E' }}>পরিবার পরিচালিত</span>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#7c3aed' }}>পরিবার পরিচালিত</span>
                       <span style={{ fontSize: '11px', color: '#9ca3af' }}>— badge preview</span>
                     </div>
                   )}
                 </div>
-                <button onClick={() => setGuardianMode(!guardianMode)} style={{ width: '52px', height: '28px', borderRadius: '14px', border: 'none', cursor: 'pointer', background: guardianMode ? '#7B1D2E' : '#d1d5db', position: 'relative', transition: 'background 0.2s', flexShrink: 0 }}>
+                <button onClick={() => setGuardianMode(!guardianMode)} style={{ width: '52px', height: '28px', borderRadius: '14px', border: 'none', cursor: 'pointer', background: guardianMode ? '#7c3aed' : '#d1d5db', position: 'relative', transition: 'background 0.2s', flexShrink: 0 }}>
                   <span style={{ position: 'absolute', top: '4px', left: guardianMode ? '27px' : '4px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
                 </button>
               </div>
@@ -1320,7 +1320,7 @@ export default function EditProfilePage() {
             <div style={{ padding: '16px', background: '#fffbeb', borderRadius: '12px', border: '1px solid #fde68a' }}>
               <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#92400e' }}>Want to delete your account?</p>
               <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#92400e' }}>Email us at support@biyekori.com and we will delete all your data within 48 hours.</p>
-              <a href="mailto:support@biyekori.com?subject=Account Deletion Request" style={{ fontSize: '13px', color: '#7B1D2E', fontWeight: 700 }}>Request Account Deletion</a>
+              <a href="mailto:support@biyekori.com?subject=Account Deletion Request" style={{ fontSize: '13px', color: '#e11d48', fontWeight: 700 }}>Request Account Deletion</a>
             </div>
           </div>
         )}
