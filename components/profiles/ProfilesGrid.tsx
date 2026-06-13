@@ -305,11 +305,11 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
         onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'none' }}
       >
         {/* Photo */}
-        <div style={{ position: 'relative', flexShrink: 0, width: '200px' }}>
+        <div style={{ position: 'relative', flexShrink: 0, width: 'clamp(100px, 30vw, 200px)' }}>
           {photoUrl ? (
-            <img src={photoUrl} alt={name} style={{ width: '200px', height: '100%', objectFit: 'cover', objectPosition: 'center 10%', display: 'block', minHeight: '220px' }} />
+            <img src={photoUrl} alt={name} style={{ width: 'clamp(100px, 30vw, 200px)', height: '100%', objectFit: 'cover', objectPosition: 'center 10%', display: 'block', minHeight: '220px' }} />
           ) : (
-            <div style={{ width: '200px', minHeight: '220px', height: '100%', background: profile.gender === 'female' ? '#FDF2F8' : '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ width: 'clamp(100px, 30vw, 200px)', minHeight: '180px', height: '100%', background: profile.gender === 'female' ? '#FDF2F8' : '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '12px' }}>
               <img
                 src={profile.gender === 'female'
                   ? "https://cdn.jsdelivr.net/npm/@mdi/svg@7.4.47/svg/face-woman.svg"
