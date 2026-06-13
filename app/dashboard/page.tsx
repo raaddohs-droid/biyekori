@@ -604,10 +604,14 @@ export default function Dashboard() {
                   <h2 style={{ margin: '0 0 2px', fontSize: '15px', fontWeight: 800, color: '#111827' }}>{gm ? 'কে প্রোফাইল দেখেছে' : 'Who Viewed My Profile'}</h2>
                   <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>{viewCount} total views</p>
                 </div>
-                {isPremium && (
-                  <button onClick={handleShowViewers} style={{ padding: '6px 14px', background: 'linear-gradient(135deg,#7c3aed,#9333ea)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>
-                    See who
+                {isPremium ? (
+                  <button onClick={handleShowViewers} style={{ padding: '6px 14px', background: 'linear-gradient(135deg,#7B1D2E,#4A1A6B)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>
+                    দেখুন →
                   </button>
+                ) : (
+                  <Link href="/pricing" style={{ padding: '6px 14px', background: 'linear-gradient(135deg,#7B1D2E,#4A1A6B)', color: 'white', borderRadius: '8px', fontSize: '12px', fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+                    Gold এ আপগ্রেড করুন →
+                  </Link>
                 )}
               </div>
 
