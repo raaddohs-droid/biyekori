@@ -167,8 +167,8 @@ export default function SuccessStoriesPage() {
 
       {/* Footer nav */}
       <div style={{ textAlign: 'center', padding: '40px 24px', background: '#FFFBF5', display: 'flex', justifyContent: 'center', gap: '32px', flexWrap: 'wrap' }}>
-        <Link href="/profiles" style={{ fontSize: '14px', color: '#7B1D2E', fontWeight: 600, textDecoration: 'none', fontFamily: 'system-ui, sans-serif' }}>← Browse Profiles</Link>
-        <Link href="/register" style={{ fontSize: '14px', color: '#7B1D2E', fontWeight: 600, textDecoration: 'none', fontFamily: 'system-ui, sans-serif' }}>Create Your Profile →</Link>
+        <Link href="/profiles" style={{ fontSize: 'clamp(14px, 3.5vw, 16px)', color: '#7B1D2E', fontWeight: 600, textDecoration: 'none', fontFamily: 'system-ui, sans-serif' }}>← Browse Profiles</Link>
+        <Link href="/register" style={{ fontSize: 'clamp(14px, 3.5vw, 16px)', color: '#7B1D2E', fontWeight: 600, textDecoration: 'none', fontFamily: 'system-ui, sans-serif' }}>Create Your Profile →</Link>
       </div>
 
     </main>
