@@ -351,7 +351,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
           <div className="profiles-content" style={{ flex: 1, minWidth: 0 }}>
 
             {/* Sort bar + count */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
               <span style={{ fontSize: '13px', color: C.textMuted, fontWeight: 500 }}>
                 Showing <strong style={{ color: C.text }}>{paginatedProfiles.length}</strong> of <strong style={{ color: C.text }}>{totalProfiles.toLocaleString()}</strong> profiles
               </span>
