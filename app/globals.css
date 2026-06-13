@@ -1,31 +1,15 @@
 @import "tailwindcss";
 
-/* ── Google Fonts ─────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-/* ── CSS variables ────────────────────────────────────────── */
 :root {
   --background: #FDF6EE;
   --foreground: #171717;
-
-  /* Brand */
   --bk-maroon: #7B1D2E;
   --bk-maroon-dark: #5C1522;
   --bk-gold: #F0C040;
   --bk-teal: #1D9E75;
   --bk-ivory: #FDF6EE;
-  --bk-ivory-dark: #F5EBE0;
-
-  /* Type scale */
-  --text-xs: 11px;
-  --text-sm: 13px;
-  --text-base: 15px;
-  --text-lg: 17px;
-  --text-xl: 20px;
-  --text-2xl: 26px;
-  --text-3xl: 32px;
-
-  /* Motion */
   --transition-fast: 0.15s ease;
   --transition-med: 0.25s ease;
 }
@@ -37,59 +21,52 @@
   --font-bengali: var(--font-hind-siliguri);
 }
 
-/* ── Base ─────────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; }
+/* ═══════════════════════════════════════════
+   NUCLEAR OVERFLOW FIX — stops ALL horizontal scroll
+   ═══════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
 
 body {
+  overflow-x: hidden;
+  max-width: 100vw;
   background: var(--bk-ivory);
   color: var(--foreground);
-  font-family: 'Plus Jakarta Sans', var(--font-inter), Inter, system-ui, sans-serif;
+  font-family: 'Hind Siliguri', 'Plus Jakarta Sans', var(--font-hind-siliguri), system-ui, sans-serif;
   font-weight: 400;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Bengali text ─────────────────────────────────────────── */
-:lang(bn),
-.font-bangla,
-[class*="bn-"],
-p, span, div, label, button, a, h1, h2, h3, h4, h5, h6 {
-  font-family: 'Hind Siliguri', 'Plus Jakarta Sans', var(--font-hind-siliguri), sans-serif;
+/* Every div/section/article cannot overflow its parent */
+div, section, article, aside, main, nav, header, footer, form {
+  max-width: 100%;
 }
 
-/* English UI elements use Plus Jakarta Sans */
+/* Images and media never overflow */
+img, video, iframe, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ── Headings ── */
+h1 { font-weight: 800; line-height: 1.2; }
+h2 { font-weight: 700; line-height: 1.3; }
+h3 { font-weight: 700; line-height: 1.4; }
+
+/* ── Form elements ── */
 input, select, textarea {
-  font-family: 'Plus Jakarta Sans', var(--font-inter), system-ui, sans-serif;
-}
-
-/* ── Headings ─────────────────────────────────────────────── */
-h1 { font-size: var(--text-3xl); font-weight: 800; line-height: 1.2; }
-h2 { font-size: var(--text-2xl); font-weight: 700; line-height: 1.3; }
-h3 { font-size: var(--text-xl); font-weight: 700; line-height: 1.4; }
-
-/* ── Global micro-interactions ────────────────────────────── */
-
-/* Button press feedback */
-button, [role="button"], a[href] {
-  transition: transform var(--transition-fast), opacity var(--transition-fast), box-shadow var(--transition-fast);
-}
-button:active, [role="button"]:active {
-  transform: scale(0.97);
-}
-
-/* Card hover lift */
-.profile-card, .card-hover {
-  transition: transform var(--transition-med), box-shadow var(--transition-med);
-  cursor: pointer;
-}
-.profile-card:hover, .card-hover:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(123, 29, 46, 0.12);
-}
-
-/* Form field focus transitions */
-input, select, textarea {
+  max-width: 100%;
+  font-family: inherit;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 input:focus, select:focus, textarea:focus {
@@ -98,39 +75,35 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(123, 29, 46, 0.1);
 }
 
-/* Interest/like button pulse */
-@keyframes bk-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+/* ── Buttons ── */
+button, [role="button"] {
+  font-family: inherit;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  max-width: 100%;
 }
-.bk-pulse { animation: bk-pulse 0.3s ease; }
+button:active { transform: scale(0.97); }
 
-/* Mutual match celebration */
-@keyframes bk-celebrate {
-  0% { transform: scale(0.8); opacity: 0; }
-  60% { transform: scale(1.05); }
-  100% { transform: scale(1); opacity: 1; }
+/* ── Accessibility focus rings ── */
+:focus-visible {
+  outline: 2px solid var(--bk-maroon);
+  outline-offset: 2px;
 }
-.bk-celebrate { animation: bk-celebrate 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-/* Page fade-in */
-@keyframes bk-fadein {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ── Profile search placeholder ── */
+.bk-profile-search::placeholder {
+  color: #1a1a1a !important;
+  opacity: 1 !important;
+  font-weight: 600 !important;
 }
-.bk-fadein { animation: bk-fadein 0.3s ease forwards; }
 
-/* Staggered card entrance */
-.bk-stagger > * { opacity: 0; animation: bk-fadein 0.3s ease forwards; }
-.bk-stagger > *:nth-child(1) { animation-delay: 0.05s; }
-.bk-stagger > *:nth-child(2) { animation-delay: 0.1s; }
-.bk-stagger > *:nth-child(3) { animation-delay: 0.15s; }
-.bk-stagger > *:nth-child(4) { animation-delay: 0.2s; }
-.bk-stagger > *:nth-child(5) { animation-delay: 0.25s; }
-.bk-stagger > *:nth-child(6) { animation-delay: 0.3s; }
+/* ── Guest blur ── */
+.profiles-guest-blur > *:first-child {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
 
-/* ── Skeleton shimmer ─────────────────────────────────────── */
+/* ── Skeleton shimmer ── */
 @keyframes bk-shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -142,31 +115,49 @@ input:focus, select:focus, textarea:focus {
   border-radius: 8px;
 }
 
-/* ── Contrast fix ─────────────────────────────────────────── */
-/* #9ca3af fails WCAG AA — globally upgrade muted text */
-.text-gray-400 { color: #6b7280 !important; }
+/* ── Card hover ── */
+.card-hover {
+  transition: transform var(--transition-med), box-shadow var(--transition-med);
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(123, 29, 46, 0.1);
+}
 
-/* ── Mobile bottom navigation ─────────────────────────────── */
+/* ── Animations ── */
+@keyframes bk-fadein {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.bk-fadein { animation: bk-fadein 0.3s ease forwards; }
+
+@keyframes bk-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.bk-pulse { animation: bk-pulse 0.3s ease; }
+
+/* ═══════════════════════════════════════════
+   MOBILE BOTTOM NAV
+   ═══════════════════════════════════════════ */
 .bk-bottom-nav {
   display: none;
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 64px;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
   background: white;
   border-top: 1px solid #e5e7eb;
   z-index: 100;
   align-items: center;
   justify-content: space-around;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 .bk-bottom-nav-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 8px 12px;
+  gap: 2px;
+  padding: 6px 10px;
   text-decoration: none;
   color: #9ca3af;
   font-size: 10px;
@@ -176,232 +167,133 @@ input:focus, select:focus, textarea:focus {
   justify-content: center;
   transition: color var(--transition-fast);
 }
-.bk-bottom-nav-item.active, .bk-bottom-nav-item:hover {
-  color: var(--bk-maroon);
-}
-.bk-bottom-nav-item svg { width: 22px; height: 22px; }
+.bk-bottom-nav-item.active { color: var(--bk-maroon); }
+.bk-bottom-nav-item svg { width: 20px; height: 20px; }
 
+/* ═══════════════════════════════════════════
+   MOBILE — everything below 768px
+   ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
+
+  /* Bottom nav */
   .bk-bottom-nav { display: flex; }
-  body { padding-bottom: 64px; }
-  .bk-desktop-only { display: none !important; }
-}
+  body { padding-bottom: 60px; }
 
-/* ── Profile search placeholder ──────────────────────────── */
-.bk-profile-search::placeholder {
-  color: #1a1a1a !important;
-  opacity: 1 !important;
-  font-weight: 600 !important;
-}
+  /* Touch targets */
+  button, a, [role="button"] { min-height: 44px; }
 
-/* ── Guest blur ───────────────────────────────────────────── */
-.profiles-guest-blur > *:first-child {
-  filter: blur(6px);
-  pointer-events: none;
-  user-select: none;
-}
+  /* Prevent iOS input zoom */
+  input, select, textarea { font-size: 16px !important; }
 
-/* ── Accessibility: focus rings ───────────────────────────── */
-:focus-visible {
-  outline: 2px solid var(--bk-maroon);
-  outline-offset: 2px;
-}
+  /* Hide desktop sidebar on profiles page */
+  .profiles-sidebar { display: none !important; }
+  .profiles-content { width: 100% !important; min-width: 0 !important; }
 
-/* ── PWA safe area support ────────────────────────────────── */
-@supports (padding: env(safe-area-inset-bottom)) {
-  .bk-bottom-nav { padding-bottom: env(safe-area-inset-bottom); }
-}
-
-/* ── Smooth scrolling ─────────────────────────────────────── */
-html { scroll-behavior: smooth; }
-
-/* ═══════════════════════════════════════════════════════════
-   MOBILE RESPONSIVE — Global fixes for all pages
-   ═══════════════════════════════════════════════════════════ */
-
-/* Prevent horizontal scroll globally */
-html, body {
-  overflow-x: hidden;
-  max-width: 100vw;
-}
-
-/* ── Navbar clearance — applied via Tailwind min-h-screen class ── */
-.min-h-screen {
-  padding-top: max(80px, env(safe-area-inset-top, 80px));
-}
-
-/* ── Global responsive container ─────────────────────────── */
-.bk-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 clamp(16px, 4vw, 40px);
-}
-
-/* ── Touch targets — minimum 44px on mobile ───────────────── */
-@media (max-width: 768px) {
-  button, a, [role="button"], input[type="submit"], input[type="button"] {
-    min-height: 44px;
+  /* Tabs scroll horizontally */
+  .profiles-tabs,
+  .edit-profile-tabs,
+  .interests-tabs {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
+  .profiles-tabs::-webkit-scrollbar,
+  .edit-profile-tabs::-webkit-scrollbar,
+  .interests-tabs::-webkit-scrollbar { display: none; }
 
-  /* Forms */
-  input, select, textarea {
-    font-size: 16px !important; /* prevents iOS zoom on focus */
-    padding: 12px 14px;
-  }
+  /* Grids collapse to single column */
+  .profiles-grid,
+  .dashboard-grid,
+  .pricing-grid,
+  .stories-grid { grid-template-columns: 1fr !important; }
 
-  /* ── Profile cards on mobile ── */
-  .profiles-grid {
-    grid-template-columns: 1fr !important;
-    gap: 12px;
-  }
-
-  /* ── Dashboard ── */
-  .dashboard-grid {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* ── Pricing cards ── */
-  .pricing-grid {
-    grid-template-columns: 1fr !important;
-    gap: 16px;
-  }
-
-  /* ── Filter bars ── */
-  .filter-bar {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .filter-bar select, .filter-bar input {
-    flex: 1 1 calc(50% - 4px);
-    min-width: 120px;
-  }
-
-  /* ── Messages ── */
+  /* Messages stacks */
   .messages-layout {
     flex-direction: column !important;
+    height: auto !important;
   }
   .messages-sidebar {
     width: 100% !important;
     max-height: 200px;
     overflow-y: auto;
-  }
-  .messages-chat {
-    flex: 1;
-  }
-
-  /* ── Tables → stack ── */
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
+    border-right: none !important;
+    border-bottom: 1px solid #e5e7eb;
   }
 
-  /* ── Large headings scale down ── */
-  h1 { font-size: clamp(24px, 7vw, 48px) !important; }
-  h2 { font-size: clamp(20px, 5vw, 32px) !important; }
-  h3 { font-size: clamp(17px, 4vw, 24px) !important; }
+  /* Headings scale */
+  h1 { font-size: clamp(22px, 7vw, 40px) !important; }
+  h2 { font-size: clamp(18px, 5vw, 28px) !important; }
+  h3 { font-size: clamp(16px, 4vw, 22px) !important; }
 
-  /* ── Modals ── */
-  .bk-modal {
-    margin: 16px;
-    max-height: calc(100vh - 32px);
-    overflow-y: auto;
+  /* UrgencyBar fix */
+  .bk-urgency-bar {
+    flex-wrap: wrap !important;
+    padding: 8px 12px !important;
+    gap: 4px !important;
+    font-size: 12px !important;
   }
 
-  /* ── No horizontal overflow on grids ── */
-  [style*="grid-template-columns"] {
-    min-width: 0;
+  /* Floating chat above bottom nav */
+  .floating-chat-btn,
+  .floating-chat-window {
+    bottom: calc(60px + 12px) !important;
   }
 
-  /* ── Interests page tabs ── */
-  .interests-tabs {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+  /* Profile page */
+  .profile-photo-flex { flex-direction: column !important; align-items: center !important; }
+  .profile-detail-grid { grid-template-columns: 1fr !important; }
+  .profile-tab-bar {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
     scrollbar-width: none;
-  }
-  .interests-tabs::-webkit-scrollbar { display: none; }
-
-  /* ── Edit profile tabs ── */
-  .edit-profile-tabs {
-    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    white-space: nowrap;
-    scrollbar-width: none;
   }
+  .profile-tab-bar::-webkit-scrollbar { display: none; }
+  .profile-actions-row { flex-direction: column !important; gap: 8px !important; }
 
-  /* ── Stats bar on homepage ── */
+  /* Stat bars on homepage */
   .bk-stats-bar {
     flex-wrap: wrap !important;
     position: static !important;
   }
-  .bk-stats-bar > div {
-    width: 50% !important;
+  .bk-stats-bar > div { width: 50% !important; }
+
+  /* Modals fit screen */
+  .bk-modal {
+    margin: 12px !important;
+    max-height: calc(100vh - 80px) !important;
+    overflow-y: auto;
+    border-radius: 16px !important;
   }
 
-  /* ── Floating chat ── */
-  .floating-chat {
-    bottom: 80px !important; /* above bottom nav */
-    right: 12px !important;
+  /* Tables scroll */
+  .bk-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* ── Success stories ── */
-  .stories-grid {
-    grid-template-columns: 1fr !important;
-  }
+  /* Porichiti game choices */
+  .choice-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
 
-  /* ── Pricing page ── */
-  .pricing-money-back {
-    flex-direction: column !important;
-    text-align: center;
-  }
-
-  /* ── Profile page hero ── */
-  .profile-hero {
-    flex-direction: column !important;
-    padding: 20px !important;
-  }
-
-  /* ── Game/Porichiti ── */
-  .choice-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 8px !important;
-  }
+  /* Hide desktop-only elements */
+  .bk-desktop-only { display: none !important; }
 }
 
-/* ── Small phones (< 380px) ─────────────────────────────── */
 @media (max-width: 380px) {
-  .bk-bottom-nav-item {
-    padding: 6px 8px;
-    font-size: 9px;
-  }
-  .bk-bottom-nav-item svg {
-    width: 18px;
-    height: 18px;
-  }
+  .bk-bottom-nav-item { padding: 4px 6px; font-size: 9px; }
+  .bk-bottom-nav-item svg { width: 18px; height: 18px; }
 }
 
-/* ── Tablet (768px - 1024px) ─────────────────────────────── */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .pricing-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  .profiles-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-/* ── Desktop keeps bottom nav hidden ─────────────────────── */
 @media (min-width: 769px) {
   .bk-bottom-nav { display: none !important; }
   body { padding-bottom: 0 !important; }
 }
 
-/* ── Landscape mobile ────────────────────────────────────── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .pricing-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
 @media (max-width: 768px) and (orientation: landscape) {
-  .bk-hero {
-    min-height: auto !important;
-    padding: 100px 24px 60px !important;
-  }
+  .bk-hero { min-height: auto !important; padding-top: 80px !important; }
 }
