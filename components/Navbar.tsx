@@ -1161,7 +1161,7 @@ export default function Navbar() {
 
 
 
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7B1D2E" strokeWidth="2.5">
 
 
 
