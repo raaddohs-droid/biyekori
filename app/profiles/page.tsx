@@ -85,15 +85,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
 
   if (!isPaid && currentPage > FREE_MAX_PAGES) {
     return (
-      <style>{`
-      @media (max-width: 900px) {
-        .profiles-sidebar { display: none !important; visibility: hidden !important; width: 0 !important; min-width: 0 !important; overflow: hidden !important; padding: 0 !important; margin: 0 !important; }
-        .profiles-content { flex: 1 !important; min-width: 0 !important; max-width: 100vw !important; overflow-x: hidden !important; }
-        .profiles-tabs { overflow-x: auto !important; }
-        .profiles-tabs::-webkit-scrollbar { display: none; }
-      }
-    `}</style>
-    <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', overflowX: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+  <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', overflowX: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center', maxWidth: '480px', padding: '40px 24px' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>💍</div>
           <h2 style={{ margin: '0 0 12px', fontSize: '24px', fontWeight: 700, color: C.text }}>আরো প্রোফাইল দেখতে আপগ্রেড করুন</h2>
@@ -223,15 +215,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
 
   return (
     <>
-    <style>{`
-      @media (max-width: 900px) {
-        .profiles-sidebar { display: none !important; visibility: hidden !important; width: 0 !important; min-width: 0 !important; overflow: hidden !important; padding: 0 !important; margin: 0 !important; }
-        .profiles-content { flex: 1 !important; min-width: 0 !important; max-width: 100vw !important; overflow-x: hidden !important; }
-        .profiles-tabs { overflow-x: auto !important; }
-        .profiles-tabs::-webkit-scrollbar { display: none; }
-      }
-    `}</style>
-    <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', overflowX: 'hidden', fontFamily: 'var(--font-inter), Inter, system-ui, sans-serif' }}>
+<div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', overflowX: 'hidden', fontFamily: 'var(--font-inter), Inter, system-ui, sans-serif' }}>
       <GuestGate page={currentPage} />
 
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(12px, 4vw, 24px) 64px' }}>
@@ -266,96 +250,10 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         </div>
 
         {/* Main layout: sidebar + content */}
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', overflow: 'hidden' }}>
+        <div style={{ display: 'block' }}>
 
-          {/* LEFT SIDEBAR */}
-          <div className="profiles-sidebar" data-sidebar="true" style={{ flexShrink: 0, width: '240px', minWidth: '240px', position: 'sticky', top: '100px', transition: 'width 0.3s' }}>
-            <form method="GET" action="/profiles">
-              <input type="hidden" name="userGender" value={userGender} />
-              <input type="hidden" name="excludeId" value={excludeId} />
-              <input type="hidden" name="view" value={viewMode} />
-              <input type="hidden" name="tab" value={activeTab} />
-              <input type="hidden" name="sort" value={sortBy} />
 
-              <div style={{ background: 'white', borderRadius: '16px', border: `1px solid ${C.border}`, boxShadow: C.cardShadow, overflow: 'hidden' }}>
-                <div style={{ padding: '16px 20px', borderBottom: `1px solid ${C.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '14px', fontWeight: 700, color: C.text }}>Filters</span>
-                  {hasActiveFilters && (
-                    <Link href={`${baseUrl}&view=${viewMode}&tab=${activeTab}&sort=${sortBy}`} style={{ fontSize: '12px', color: C.maroon, fontWeight: 600, textDecoration: 'none' }}>Clear All</Link>
-                  )}
-                </div>
-
-                <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-
-                  {/* Age Range */}
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>Age Range</label>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                      <select name="minAge" defaultValue={String(minAge)} style={{ flex: 1, padding: '7px 8px', borderRadius: '8px', border: `1px solid ${C.border}`, fontSize: '13px', color: C.text, background: 'white', outline: 'none' }}>
-                        {Array.from({ length: 53 }, (_, i) => i + 18).map(a => <option key={a} value={a}>{a}</option>)}
-                      </select>
-                      <span style={{ fontSize: '12px', color: C.textLight }}>–</span>
-                      <select name="maxAge" defaultValue={String(maxAge)} style={{ flex: 1, padding: '7px 8px', borderRadius: '8px', border: `1px solid ${C.border}`, fontSize: '13px', color: C.text, background: 'white', outline: 'none' }}>
-                        {Array.from({ length: 53 }, (_, i) => i + 18).map(a => <option key={a} value={a}>{a}</option>)}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* District */}
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>District</label>
-                    <select name="district" defaultValue={districtFilter} style={{ width: '100%', padding: '7px 10px', borderRadius: '8px', border: `1px solid ${C.border}`, fontSize: '13px', color: C.text, background: 'white', outline: 'none' }}>
-                      <option value="">All Districts</option>
-                      {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
-                    </select>
-                  </div>
-
-                  {/* Education */}
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>Education</label>
-                    <select name="edu" defaultValue={eduFilter} style={{ width: '100%', padding: '7px 10px', borderRadius: '8px', border: `1px solid ${C.border}`, fontSize: '13px', color: C.text, background: 'white', outline: 'none' }}>
-                      <option value="">Any Education</option>
-                      {EDUCATIONS.map(e => <option key={e} value={e}>{e}</option>)}
-                    </select>
-                  </div>
-
-                  {/* Profession */}
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>Profession</label>
-                    <select name="prof" defaultValue={profFilter} style={{ width: '100%', padding: '7px 10px', borderRadius: '8px', border: `1px solid ${C.border}`, fontSize: '13px', color: C.text, background: 'white', outline: 'none' }}>
-                      <option value="">Any Profession</option>
-                      {PROFESSIONS.map(p => <option key={p} value={p}>{p}</option>)}
-                    </select>
-                  </div>
-
-                  {/* Religion */}
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>Religion</label>
-                    <select name="religion" defaultValue={religionFilter} style={{ width: '100%', padding: '7px 10px', borderRadius: '8px', border: `1px solid ${C.border}`, fontSize: '13px', color: C.text, background: 'white', outline: 'none' }}>
-                      <option value="">Any Religion</option>
-                      {RELIGIONS.map(r => <option key={r} value={r}>{r}</option>)}
-                    </select>
-                  </div>
-
-                  {/* Marital Status */}
-                  <div>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: C.textMuted, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>Marital Status</label>
-                    <select name="marital" defaultValue={maritalFilter} style={{ width: '100%', padding: '7px 10px', borderRadius: '8px', border: `1px solid ${C.border}`, fontSize: '13px', color: C.text, background: 'white', outline: 'none' }}>
-                      <option value="">Any Status</option>
-                      {MARITAL_STATUSES.map(m => <option key={m} value={m}>{m}</option>)}
-                    </select>
-                  </div>
-
-                  <button type="submit" style={{ width: '100%', padding: '10px', background: C.maroon, color: 'white', borderRadius: '10px', fontSize: '14px', fontWeight: 600, border: 'none', cursor: 'pointer', letterSpacing: '0.01em' }}>
-                    Apply Filters
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-
-          {/* RIGHT CONTENT */}
-          <div className="profiles-content" style={{ flex: 1, minWidth: 0, maxWidth: '100%', overflow: 'hidden' }}>
+          <div style={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
 
             {/* Sort bar + count */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
@@ -456,6 +354,5 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         }} />
       )}
     </div>
-     </>
   )
 }
