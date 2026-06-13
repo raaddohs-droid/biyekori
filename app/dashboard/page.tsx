@@ -191,7 +191,7 @@ export default function Dashboard() {
   };
 
   if (!user) {
-    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div style={{ fontSize: '14px', color: '#9ca3af' }}>Loading...</div></div>;
+    return <div style={{ minHeight: '100vh', overflowX: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div style={{ fontSize: '14px', color: '#9ca3af' }}>Loading...</div></div>;
   }
 
   const isPremium = user?.package && user.package !== 'prottasha';
@@ -208,7 +208,7 @@ export default function Dashboard() {
         .dash-suggested img { height: 140px !important; }
       }
     `}</style>
-    <div style={{ minHeight: '100vh', background: '#f1f5f9', paddingTop: '80px' }}>
+    <div style={{ minHeight: '100vh', overflowX: 'hidden', background: '#f1f5f9', paddingTop: '80px' }}>
       <div style={{ maxWidth: '1120px', margin: '0 auto', padding: '0 20px 60px' }}>
 
         {/* Hero welcome bar */}
