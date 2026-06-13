@@ -1,14 +1,22 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono, Hind_Siliguri } from "next/font/google"
+import { Inter, Hind_Siliguri } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/Navbar"
 import UrgencyBar from "@/components/UrgencyBar"
 import ActivityToastWrapper from "@/components/ActivityToastWrapper"
 import FloatingChat from "@/components/FloatingChat"
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] })
-const hindSiliguri = Hind_Siliguri({ variable: "--font-hind-siliguri", subsets: ["bengali", "latin"], weight: ["400", "600", "700"] })
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] })
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+})
+
+const hindSiliguri = Hind_Siliguri({
+  variable: "--font-hind-siliguri",
+  subsets: ["bengali", "latin"],
+  weight: ["400", "500", "600", "700"],
+})
 
 export const metadata: Metadata = {
   title: "Biyekori - Bangladesh AI Matrimony",
@@ -19,7 +27,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${inter.variable} ${hindSiliguri.variable}`}>
         <Navbar />
         <div style={{ position: 'fixed', top: '60px', left: 0, right: 0, zIndex: 49 }}><UrgencyBar /></div>
         {children}
@@ -29,4 +37,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
-
