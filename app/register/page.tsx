@@ -148,7 +148,7 @@ export default function RegisterPage() {
               </div>
             )}
 
-            {errorMsg && <p style={{ color: '#e11d48', fontSize: '13px', margin: '0 0 12px' }}>{errorMsg}</p>}
+            {errorMsg && <p style={{ color: '#7B1D2E', fontSize: '13px', margin: '0 0 12px' }}>{errorMsg}</p>}
 
             <button onClick={() => { if (!otpVerified) { setErrorMsg(t('Verify your phone first', 'আগে ফোন যাচাই করুন')); return; } setErrorMsg(''); setStep(2); }} style={btnPrimary}>
               {t('Continue →', 'পরবর্তী →')}
@@ -208,7 +208,7 @@ export default function RegisterPage() {
               <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle} placeholder={t('At least 6 characters', 'কমপক্ষে ৬ অক্ষর')} />
             </div>
 
-            {errorMsg && <p style={{ color: '#e11d48', fontSize: '13px', margin: '0 0 12px' }}>{errorMsg}</p>}
+            {errorMsg && <p style={{ color: '#7B1D2E', fontSize: '13px', margin: '0 0 12px' }}>{errorMsg}</p>}
 
             <div style={{ display: 'flex', gap: '10px' }}>
               <button onClick={() => { setStep(1); setErrorMsg(''); }} style={{ ...btnSecondary, flex: '0 0 auto' }}>←</button>
