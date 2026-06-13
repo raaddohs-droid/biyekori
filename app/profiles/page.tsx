@@ -284,4 +284,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
                 )}
               </div>
             )}
-          </div>}
+          </div>
+    </>
+  )
+}
