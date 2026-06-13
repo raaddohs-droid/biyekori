@@ -26,5 +26,6 @@
     "social"
   ],
   "lang": "bn",
-  "dir": "ltr"
+  "dir": "ltr",
+  "version": "1.0.1"
 }
