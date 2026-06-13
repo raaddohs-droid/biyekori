@@ -54,7 +54,17 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const hideViewed = params.hideViewed === '1'
   const viewerIdForViewed = typeof params.excludeId === 'string' ? params.excludeId : ''
 
-  if (currentPage > FREE_MAX_PAGES) {
+  // Fetch user package
+  let userPackage = 'prottasha'
+  if (excludeId) {
+    const { createClient } = await import('@supabase/supabase-js')
+    const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+    const { data: prof } = await sb.from('profiles').select('package').eq('id', excludeId).single()
+    if (prof?.package) userPackage = prof.package
+  }
+  const isPaid = ['silver', 'gold', 'milon'].includes(userPackage)
+
+  if (!isPaid && currentPage > FREE_MAX_PAGES) {
     return (
       <div style={{ minHeight: '100vh', background: '#fff5f7', paddingTop: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center', maxWidth: '480px', padding: '40px 24px' }}>
@@ -375,16 +385,16 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
                   <Link href={buildUrl(currentPage - 1)} style={{ padding: '8px 16px', background: 'white', border: '2px solid #e5e7eb', borderRadius: '8px', fontWeight: 700, color: '#1f2937', textDecoration: 'none', fontSize: '13px' }}>Prev</Link>
                 )}
                 {Array.from({ length: Math.min(totalPages, 10) }, (_, i) => i + 1).map(pageNum =>
-                  pageNum > FREE_MAX_PAGES ? (
+                  (!isPaid && pageNum > FREE_MAX_PAGES) ? (
                     <Link key={pageNum} href="/pricing" style={{ padding: '8px 14px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '8px', fontWeight: 700, color: '#d1d5db', textDecoration: 'none', fontSize: '13px' }} title="Upgrade to access">{pageNum}</Link>
                   ) : (
                     <Link key={pageNum} href={buildUrl(pageNum)} style={{ padding: '8px 14px', background: currentPage === pageNum ? 'linear-gradient(135deg,#e11d48,#db2777)' : 'white', border: currentPage === pageNum ? '2px solid #e11d48' : '2px solid #e5e7eb', borderRadius: '8px', fontWeight: 700, color: currentPage === pageNum ? 'white' : '#1f2937', textDecoration: 'none', fontSize: '13px' }}>{pageNum}</Link>
                   )
                 )}
-                {currentPage < Math.min(totalPages, FREE_MAX_PAGES) && (
+                {currentPage < Math.min(totalPages, isPaid ? totalPages : FREE_MAX_PAGES) && (
                   <Link href={buildUrl(currentPage + 1)} style={{ padding: '8px 16px', background: 'white', border: '2px solid #e5e7eb', borderRadius: '8px', fontWeight: 700, color: '#1f2937', textDecoration: 'none', fontSize: '13px' }}>Next</Link>
                 )}
-                {currentPage >= FREE_MAX_PAGES && (
+                {!isPaid && currentPage >= FREE_MAX_PAGES && (
                   <Link href="/pricing" style={{ padding: '8px 20px', background: 'linear-gradient(135deg,#e11d48,#db2777)', border: '2px solid #e11d48', borderRadius: '8px', fontWeight: 700, color: 'white', textDecoration: 'none', fontSize: '13px' }}>Upgrade for More</Link>
                 )}
               </div>
@@ -399,7 +409,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         )}
       </div>
 
-      {currentPage >= 3 && currentPage <= 5 && (
+      {!isPaid && currentPage >= 3 && currentPage <= 5 && (
         <UpgradeNudge type="soft" data={{
           message: currentPage === 5
             ? 'You are on the last free page. Upgrade Silver to browse all profiles.'
