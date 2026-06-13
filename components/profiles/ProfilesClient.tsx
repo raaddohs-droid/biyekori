@@ -92,7 +92,7 @@ export default function ProfilesClient({ profiles, viewerProfile, initialFilters
       </div>
 
       {/* Profiles grid */}
-      <ProfilesGrid profiles={profiles} view={view} viewerProfile={viewerProfile} />
+      <ProfilesGrid profiles={profiles} view={view} />
 
       {/* Filter bottom sheet */}
       {showFilter && (
