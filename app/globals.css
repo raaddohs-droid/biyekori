@@ -417,3 +417,9 @@ button:active { transform: scale(0.97); }
     visibility: hidden !important;
   }
 }
+
+/* ── Messages page responsive ─────────────────────────── */
+@media (max-width: 768px) {
+  .msg-list-mobile-hidden { display: none !important; }
+  .msg-chat-mobile-hidden { display: none !important; }
+}
