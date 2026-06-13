@@ -173,5 +173,7 @@ export default function ProfilesClient({ profiles, viewerProfile, initialFilters
         </>
       )}
     </div>
+          </div>
+          </div>
   )
 }
