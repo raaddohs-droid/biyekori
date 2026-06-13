@@ -32,7 +32,7 @@ const TOAST_LABELS: Record<Toast['type'], (name: string) => string> = {
   viewed:  (n) => `${n} আজ প্রোফাইল দেখেছেন`,
 }
 
-const MAX_TOASTS_PER_SESSION = 8
+const MAX_TOASTS_PER_SESSION = 15
 
 function maskName(full: string): string {
   const parts = full.trim().split(' ')
@@ -56,7 +56,7 @@ export default function ActivityToast({ viewerGender }: { viewerGender?: string 
       .then(data => {
         if (Array.isArray(data.profiles) && data.profiles.length) {
           // Only keep 8 profiles from the pool — no need for more
-          setProfiles(data.profiles.slice(0, MAX_TOASTS_PER_SESSION))
+          setProfiles(data.profiles.slice(0, 20))
         }
       })
       .catch(() => {})
@@ -94,16 +94,25 @@ export default function ActivityToast({ viewerGender }: { viewerGender?: string 
     }
 
     function isBDNightTime(): boolean {
-      // BD time = UTC+6. Suppress toasts 11pm-8am BD (17:00-02:00 UTC)
+      // BD time = UTC+6. Suppress toasts 11pm-7am BD (17:00-01:00 UTC)
       const utcHour = new Date().getUTCHours()
-      return utcHour >= 17 || utcHour < 2
+      return utcHour >= 17 || utcHour < 1
     }
 
     function getNextDelay(): number {
-      // 20% chance of long gap (3-5 min), 80% normal (45s-3min)
-      const longGap = Math.random() < 0.2
-      if (longGap) return 180000 + Math.random() * 120000 // 3-5 min
-      return 45000 + Math.random() * 135000 // 45s-3min
+      // BD time = UTC+6
+      const bdHour = (new Date().getUTCHours() + 6) % 24
+
+      // Peak hours: 12pm-4pm & 6pm-9pm BD → short intervals (30-90s)
+      if ((bdHour >= 12 && bdHour < 16) || (bdHour >= 18 && bdHour < 21)) {
+        return 30000 + Math.random() * 60000 // 30-90s
+      }
+      // Morning 8am-12pm & Evening 9pm-11pm → moderate (90s-3min)
+      if ((bdHour >= 8 && bdHour < 12) || (bdHour >= 21 && bdHour < 23)) {
+        return 90000 + Math.random() * 90000 // 90s-3min
+      }
+      // Early morning 7-8am → slow (3-6min)
+      return 180000 + Math.random() * 180000 // 3-6min
     }
 
     function scheduleNext() {
