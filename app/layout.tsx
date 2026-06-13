@@ -59,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="theme-color" content="#7B1D2E" />
       </head>
-      <body className={`${inter.variable} ${hindSiliguri.variable}`}>
+      <body className={`${inter.variable} ${hindSiliguri.variable}`} style={{ overflowX: "hidden", maxWidth: "100vw" }}>
         <Navbar />
         <div style={{ position: 'fixed', top: '60px', left: 0, right: 0, zIndex: 49 }}><UrgencyBar /></div>
         {children}
