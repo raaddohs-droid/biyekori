@@ -106,16 +106,16 @@ export default function MessagesPage() {
       <div style={{ minHeight: "100vh", background: "#f8fafc", paddingTop: "80px", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ background: "white", borderRadius: "20px", padding: "48px 32px", textAlign: "center", maxWidth: "420px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
           <div style={{ width: "64px", height: "64px", background: "#f5f3ff", borderRadius: "20px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7B1D2E" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
           <h2 style={{ margin: "0 0 8px", fontSize: "20px", fontWeight: 800, color: "#111827" }}>No Mutual Matches Yet</h2>
           <p style={{ margin: "0 0 8px", fontSize: "14px", color: "#6b7280", lineHeight: 1.6 }}>Messaging is free once you have a mutual match — when both of you accept each other's interest.</p>
           <p style={{ margin: "0 0 24px", fontSize: "13px", color: "#9ca3af" }}>Premium members can message anyone directly.</p>
           <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/profiles" style={{ display: "inline-block", padding: "12px 24px", background: "linear-gradient(135deg,#e11d48,#be185d)", color: "white", borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
+            <Link href="/profiles" style={{ display: "inline-block", padding: "12px 24px", background: "linear-gradient(135deg,#7B1D2E,#be185d)", color: "white", borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
               Browse Profiles
             </Link>
-            <Link href="/pricing" style={{ display: "inline-block", padding: "12px 24px", background: "linear-gradient(135deg,#7c3aed,#6d28d9)", color: "white", borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
+            <Link href="/pricing" style={{ display: "inline-block", padding: "12px 24px", background: "linear-gradient(135deg,#7B1D2E,#7B1D2E)", color: "white", borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
               Upgrade to Premium
             </Link>
           </div>
@@ -142,7 +142,7 @@ export default function MessagesPage() {
               ) : conversations.length === 0 ? (
                 <div style={{ padding: "24px", textAlign: "center" }}>
                   <p style={{ color: "#9ca3af", fontSize: "13px", margin: "0 0 12px" }}>No conversations yet</p>
-                  <Link href="/interests" style={{ fontSize: "12px", color: "#e11d48", fontWeight: 700, textDecoration: "none" }}>View accepted interests</Link>
+                  <Link href="/interests" style={{ fontSize: "12px", color: "#7B1D2E", fontWeight: 700, textDecoration: "none" }}>View accepted interests</Link>
                 </div>
               ) : conversations.map((convo: any, i: number) => (
                 <button key={i} onClick={() => openConversation(convo)} style={{
@@ -188,7 +188,7 @@ export default function MessagesPage() {
                     <p style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#111827" }}>{activeConvo.person?.full_name}</p>
                     <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>Premium messaging</p>
                   </div>
-                  <Link href={"/profile/" + activeConvo.personId} style={{ marginLeft: "auto", fontSize: "12px", color: "#e11d48", fontWeight: 700, textDecoration: "none" }}>View Profile</Link>
+                  <Link href={"/profile/" + activeConvo.personId} style={{ marginLeft: "auto", fontSize: "12px", color: "#7B1D2E", fontWeight: 700, textDecoration: "none" }}>View Profile</Link>
                 </div>
 
                 {/* Messages */}
@@ -214,7 +214,7 @@ export default function MessagesPage() {
                         <div style={{
                           maxWidth: "65%", padding: "10px 14px",
                           borderRadius: isMine ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-                          background: isMine ? "linear-gradient(135deg,#e11d48,#db2777)" : "#f3f4f6",
+                          background: isMine ? "linear-gradient(135deg,#7B1D2E,#7B1D2E)" : "#f3f4f6",
                           color: isMine ? "white" : "#111827", fontSize: "13px", lineHeight: 1.5
                         }}>
                           {msg.content?.startsWith('📞') ? (
@@ -250,7 +250,7 @@ export default function MessagesPage() {
                     style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1.5px solid #e5e7eb", fontSize: "13px", outline: "none", color: "#111827", background: "white" }}
                   />
                   <button onClick={sendMessage} disabled={sending || !msgInput.trim()} style={{
-                    padding: "10px 20px", background: "linear-gradient(135deg,#e11d48,#db2777)",
+                    padding: "10px 20px", background: "linear-gradient(135deg,#7B1D2E,#7B1D2E)",
                     color: "white", border: "none", borderRadius: "12px", fontWeight: 700,
                     fontSize: "13px", cursor: "pointer", opacity: sending || !msgInput.trim() ? 0.6 : 1
                   }}>
