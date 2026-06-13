@@ -303,18 +303,18 @@ export default function Dashboard() {
                 {user.selfie_status !== 'pending' && (
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center', background: '#E1F5EE', borderRadius: '10px', padding: '12px' }}>
                     {[
-                      { icon: '📷', label: 'Camera opens' },
+                      { icon: '📷', label: 'ক্যামেরা' },
                       { icon: '→', label: '' },
-                      { icon: '↔️', label: 'Turn head' },
+                      { icon: '🤳', label: 'সেলফি তুলুন' },
                       { icon: '→', label: '' },
                       { icon: '✅', label: 'Verified!' },
                     ].map((step, i) => (
                       step.icon === '→' ? (
-                        <span key={i} style={{ color: '#94a3b8', fontSize: '12px' }}>→</span>
+                        <span key={i} style={{ color: '#94a3b8', fontSize: '16px' }}>→</span>
                       ) : (
                         <div key={i} style={{ textAlign: 'center' }}>
-                          <div style={{ fontSize: '20px', marginBottom: '2px' }}>{step.icon}</div>
-                          <div style={{ fontSize: '9px', color: '#64748b', fontWeight: 600, whiteSpace: 'nowrap' }}>{step.label}</div>
+                          <div style={{ fontSize: '28px', marginBottom: '4px' }}>{step.icon}</div>
+                          <div style={{ fontSize: '11px', color: '#0F6E56', fontWeight: 700, whiteSpace: 'nowrap' }}>{step.label}</div>
                         </div>
                       )
                     ))}
