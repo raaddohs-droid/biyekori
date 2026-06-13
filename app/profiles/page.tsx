@@ -217,7 +217,16 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
     <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', fontFamily: 'var(--font-inter), Inter, system-ui, sans-serif' }}>
       <GuestGate page={currentPage} />
 
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px 64px' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 clamp(12px, 4vw, 24px) 64px' }}>
+        <style>{`
+          @media (max-width: 768px) {
+            .profiles-sidebar { display: none !important; }
+            .profiles-content { width: 100% !important; min-width: 0 !important; }
+            .profiles-topbar { flex-wrap: wrap !important; gap: 8px !important; }
+            .profiles-tabs { overflow-x: auto !important; flex-wrap: nowrap !important; scrollbar-width: none; padding-bottom: 4px; }
+            .profiles-tabs::-webkit-scrollbar { display: none; }
+          }
+        `}</style>
 
         {/* Page header */}
         <div style={{ marginBottom: '24px' }}>
@@ -250,10 +259,10 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         </div>
 
         {/* Main layout: sidebar + content */}
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
 
           {/* LEFT SIDEBAR */}
-          <div style={{ flexShrink: 0, width: '240px', position: 'sticky', top: '100px' }}>
+          <div className="profiles-sidebar" style={{ flexShrink: 0, width: 'min(240px, 100%)', position: 'sticky', top: '100px' }}>
             <form method="GET" action="/profiles">
               <input type="hidden" name="userGender" value={userGender} />
               <input type="hidden" name="excludeId" value={excludeId} />
@@ -339,7 +348,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
           </div>
 
           {/* RIGHT CONTENT */}
-          <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="profiles-content" style={{ flex: 1, minWidth: 0 }}>
 
             {/* Sort bar + count */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -385,8 +394,8 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
                 <div className={excludeId ? 'profiles-blurable' : 'profiles-guest-blur'} style={{ position: 'relative' }}>
                   <ProfilesGrid profiles={paginatedProfiles} view={viewMode} />
                   {!excludeId && (
-                    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 10, background: 'rgba(250,250,247,0.7)', backdropFilter: 'blur(2px)' }}>
-                      <div style={{ background: 'white', borderRadius: '20px', padding: '36px 32px', textAlign: 'center', maxWidth: '360px', boxShadow: '0 8px 40px rgba(0,0,0,0.15)', border: `1.5px solid ${C.border}` }}>
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 10, background: 'rgba(250,250,247,0.7)', backdropFilter: 'blur(2px)', padding: '16px' }}>
+                      <div style={{ background: 'white', borderRadius: '20px', padding: 'clamp(20px, 5vw, 36px) clamp(16px, 5vw, 32px)', textAlign: 'center', width: '100%', maxWidth: '360px', boxShadow: '0 8px 40px rgba(0,0,0,0.15)', border: `1.5px solid ${C.border}` }}>
                         <div style={{ fontSize: '40px', marginBottom: '14px' }}>🔒</div>
                         <h3 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 700, color: C.text }}>প্রোফাইল দেখতে লগইন করুন</h3>
                         <p style={{ margin: '0 0 22px', fontSize: '14px', color: C.textMuted, lineHeight: 1.6 }}>বিয়েকরিতে বিনামূল্যে নিবন্ধন করুন এবং হাজারো প্রোফাইল দেখুন।</p>
