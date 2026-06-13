@@ -72,10 +72,12 @@ export default function VerifySelfie() {
           await videoRef.current!.play()
           setStage('challenge')
           try {
+            setErrorMsg('AI মডেল লোড হচ্ছে... একটু অপেক্ষা করুন')
             await initMediaPipe()
+            setErrorMsg('')
             startDetection()
           } catch (e) {
-            setErrorMsg('Failed to load face detection. Please check your internet connection and try again.')
+            setErrorMsg('AI মডেল লোড হয়নি। ভালো ইন্টারনেট কানেকশন দিয়ে আবার চেষ্টা করুন।')
             stopCamera()
             setStage('landing')
           }
