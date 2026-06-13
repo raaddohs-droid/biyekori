@@ -305,11 +305,11 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
         onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = '0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06)'; (e.currentTarget as HTMLDivElement).style.transform = 'none' }}
       >
         {/* Photo */}
-        <div style={{ position: 'relative', flexShrink: 0, width: 'clamp(100px, 30vw, 200px)' }}>
+        <div style={{ position: 'relative', flexShrink: 0, width: '200px' }}>
           {photoUrl ? (
-            <img src={photoUrl} alt={name} style={{ width: 'clamp(100px, 30vw, 200px)', height: '100%', objectFit: 'cover', objectPosition: 'center 10%', display: 'block', minHeight: '220px' }} />
+            <img src={photoUrl} alt={name} style={{ width: '200px', height: '100%', objectFit: 'cover', objectPosition: 'center 10%', display: 'block', minHeight: '220px' }} />
           ) : (
-            <div style={{ width: 'clamp(100px, 30vw, 200px)', minHeight: '180px', height: '100%', background: profile.gender === 'female' ? '#FDF2F8' : '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ width: '200px', minHeight: '220px', height: '100%', background: profile.gender === 'female' ? '#FDF2F8' : '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '12px' }}>
               <img
                 src={profile.gender === 'female'
                   ? "https://cdn.jsdelivr.net/npm/@mdi/svg@7.4.47/svg/face-woman.svg"
@@ -383,7 +383,7 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
           </div>
 
           {/* Info grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '4px 24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
             {profile.age && <span style={{ fontSize: '13px', color: C.textMuted }}>{profile.age} yrs{profile.height ? `, ${profile.height}` : ''}</span>}
             {(profile.city || profile.district) && <span style={{ fontSize: '13px', color: C.textMuted }}>📍 {profile.city || profile.district}</span>}
             {profile.profession && <span style={{ fontSize: '13px', color: C.textMuted }}>💼 {profile.profession}</span>}
@@ -510,7 +510,7 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
           ))}
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '32px' }}>
           {sortedProfiles.map((profile: any) => (
             <ProfileCard key={profile.id} profile={profile} viewerProfile={viewerProfile} interestMap={interestMap} />
           ))}
