@@ -87,7 +87,7 @@ export default function PricingPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#FDF6EE', paddingTop: '80px', paddingBottom: '80px' }}>
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 20px' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 clamp(12px, 4vw, 20px)' }}>
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '16px' }}>
