@@ -54,14 +54,7 @@ function PrioritySelector({ value, onChange, mustMatchCount }: {
         )
       })}
     </div>
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
-)
+  )
 }
 
 function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
