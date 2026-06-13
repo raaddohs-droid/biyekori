@@ -375,8 +375,19 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
 
         {paginatedProfiles.length > 0 ? (
           <>
-            <div className="profiles-blurable">
+            <div className={excludeId ? 'profiles-blurable' : 'profiles-guest-blur'} style={{ position: 'relative' }}>
               <ProfilesGrid profiles={paginatedProfiles} view={viewMode} />
+              {!excludeId && (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 10, background: 'rgba(255,251,245,0.6)', backdropFilter: 'blur(0px)' }}>
+                  <div style={{ background: 'white', borderRadius: '20px', padding: '32px 28px', textAlign: 'center', maxWidth: '340px', boxShadow: '0 8px 40px rgba(0,0,0,0.15)', border: '1.5px solid #f0c0c0' }}>
+                    <div style={{ fontSize: '42px', marginBottom: '12px' }}>🔒</div>
+                    <h3 style={{ margin: '0 0 8px', fontSize: '20px', fontWeight: 900, color: '#111827' }}>প্রোফাইল দেখতে লগইন করুন</h3>
+                    <p style={{ margin: '0 0 20px', fontSize: '14px', color: '#6b7280', lineHeight: 1.6 }}>বিয়েকরিতে বিনামূল্যে নিবন্ধন করুন এবং হাজারো প্রোফাইল দেখুন।</p>
+                    <a href="/register" style={{ display: 'block', padding: '13px', background: 'linear-gradient(135deg,#7B1D2E,#4A1A6B)', color: 'white', borderRadius: '12px', fontWeight: 800, fontSize: '15px', textDecoration: 'none', marginBottom: '10px' }}>বিনামূল্যে নিবন্ধন করুন →</a>
+                    <a href="/login" style={{ display: 'block', fontSize: '13px', color: '#7B1D2E', fontWeight: 600, textDecoration: 'none' }}>ইতিমধ্যে অ্যাকাউন্ট আছে? লগইন করুন</a>
+                  </div>
+                </div>
+              )}
             </div>
 
             {totalPages > 1 && (
