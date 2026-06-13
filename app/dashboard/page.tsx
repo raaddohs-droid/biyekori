@@ -529,7 +529,12 @@ export default function Dashboard() {
                           {p.photo_url ? (
                             <img src={p.photo_url} alt={p.full_name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 15%' }} />
                           ) : (
-                            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#fce7f3,#ede9fe)', fontSize: '28px' }}>?</div>
+                            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#f5e6ea,#ede0f0)' }}>
+                              <svg width="52" height="52" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="35" r="22" fill="rgba(123,29,46,0.2)"/>
+                                <path d="M10 95 C10 65 90 65 90 95" fill="rgba(123,29,46,0.2)"/>
+                              </svg>
+                            </div>
                           )}
                         </div>
                         <div style={{ padding: '8px' }}>
