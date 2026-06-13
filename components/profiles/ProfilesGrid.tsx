@@ -383,7 +383,7 @@ function ListRow({ profile, viewerProfile, interestMap }: { profile: any, viewer
           </div>
 
           {/* Info grid */}
-          <div style={{ className='profiles-grid' style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '4px 24px' }}>
             {profile.age && <span style={{ fontSize: '13px', color: C.textMuted }}>{profile.age} yrs{profile.height ? `, ${profile.height}` : ''}</span>}
             {(profile.city || profile.district) && <span style={{ fontSize: '13px', color: C.textMuted }}>📍 {profile.city || profile.district}</span>}
             {profile.profession && <span style={{ fontSize: '13px', color: C.textMuted }}>💼 {profile.profession}</span>}
@@ -510,7 +510,7 @@ export default function ProfilesGrid({ profiles, view }: { profiles: any[], view
           ))}
         </div>
       ) : (
-        <div style={{ className='profiles-grid' style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '32px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '32px' }}>
           {sortedProfiles.map((profile: any) => (
             <ProfileCard key={profile.id} profile={profile} viewerProfile={viewerProfile} interestMap={interestMap} />
           ))}
