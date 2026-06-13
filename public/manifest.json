@@ -1,13 +1,35 @@
 {
-  "name": "\u09ac\u09bf\u09af\u09bc\u09c7\u0995\u09b0\u09bf \u2014 Bangladesh Matrimony",
+  "name": "বিয়েকরি — Bangladesh Matrimony",
   "short_name": "Biyekori",
-  "description": "Bangladesh's most thoughtful matrimony platform",
+  "description": "Bangladesh's most trusted matrimony platform. Privacy-first, AI-powered.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FDF6EE",
   "theme_color": "#7B1D2E",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
+  "lang": "bn",
+  "dir": "ltr",
+  "scope": "/",
+  "categories": ["lifestyle", "social"],
   "icons": [
+    {
+      "src": "/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
@@ -21,11 +43,28 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": [
-    "lifestyle",
-    "social"
+  "shortcuts": [
+    {
+      "name": "প্রোফাইল দেখুন",
+      "short_name": "Browse",
+      "url": "/profiles",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "বার্তা",
+      "short_name": "Messages",
+      "url": "/messages",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    }
   ],
-  "lang": "bn",
-  "dir": "ltr",
+  "screenshots": [
+    {
+      "src": "/hero-wedding.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Biyekori Homepage"
+    }
+  ],
   "version": "1.0.1"
 }
