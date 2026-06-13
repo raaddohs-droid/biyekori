@@ -6,6 +6,7 @@ import UrgencyBar from "@/components/UrgencyBar"
 import ActivityToastWrapper from "@/components/ActivityToastWrapper"
 import FloatingChat from "@/components/FloatingChat"
 import MobileBottomNav from "@/components/MobileBottomNav"
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration"
 import Link from "next/link"
 
 const inter = Inter({
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <MobileBottomNav />
         <ActivityToastWrapper />
         <FloatingChat />
+        <ServiceWorkerRegistration />
       </body>
     </html>
   )
