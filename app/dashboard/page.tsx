@@ -645,7 +645,7 @@ export default function Dashboard() {
                     const viewer = view.viewer;
                     if (!viewer) return null;
                     return (
-                      <Link key={i} href={'/profile/' + viewer.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: '#f8fafc', borderRadius: '10px', textDecoration: 'none', border: '1px solid #f1f5f9' }}>
+                      <Link key={i} href={'/profile/' + viewer.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: '#f8fafc', borderRadius: '10px', textDecoration: 'none', border: '1px solid #e5e7eb', cursor: 'pointer', transition: 'background 0.15s' }} onMouseEnter={e=>(e.currentTarget.style.background='#f1f5f9')} onMouseLeave={e=>(e.currentTarget.style.background='#f8fafc')}>
                         {viewer.photo_url ? (
                           <img src={viewer.photo_url} alt={viewer.full_name} style={{ width: '38px', height: '38px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
                         ) : (
@@ -656,6 +656,7 @@ export default function Dashboard() {
                           <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{viewer.age} yrs · {viewer.city} · {viewer.profession}</p>
                         </div>
                         <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af', flexShrink: 0 }}>{new Date(view.viewed_at).toLocaleDateString('en-GB')}</p>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5" style={{ flexShrink: 0 }}><path d="M9 18l6-6-6-6"/></svg>
                       </Link>
                     );
                   })}
