@@ -37,8 +37,8 @@ export default function PricingPage() {
       period: 'per month',
       yearly: '৳4,999/year',
       yearlySave: 'Save ৳1,000',
-      color: '#e11d48',
-      borderColor: '#e11d48',
+      color: '#7B1D2E',
+      borderColor: '#7B1D2E',
       popular: true,
       features: [
         'Everything in Free',
@@ -52,7 +52,7 @@ export default function PricingPage() {
       missing: [],
       cta: 'Upgrade to Silver',
       ctaHref: 'mailto:support@biyekori.com?subject=Upgrade to Silver',
-      ctaBg: '#e11d48',
+      ctaBg: '#7B1D2E',
       ctaColor: 'white',
       ctaBorder: 'none',
     },
@@ -86,7 +86,7 @@ export default function PricingPage() {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f3f4f6', paddingTop: '80px', paddingBottom: '80px' }}>
+    <div style={{ minHeight: '100vh', background: '#FDF6EE', paddingTop: '80px', paddingBottom: '80px' }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 20px' }}>
 
         {/* Header */}
@@ -148,7 +148,7 @@ export default function PricingPage() {
 
               {/* Popular badge */}
               {plan.popular && (
-                <div style={{ background: '#e11d48', color: 'white', textAlign: 'center', padding: '7px', fontSize: '11px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase' }}>
+                <div style={{ background: '#7B1D2E', color: 'white', textAlign: 'center', padding: '7px', fontSize: '11px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase' }}>
                   MOST POPULAR
                 </div>
               )}
