@@ -1121,7 +1121,7 @@ export default function Navbar() {
 
 
 
-                color: isHome ? 'white' : '#111827'
+                color: isHome ? '#1f2937' : '#111827'
 
 
 
