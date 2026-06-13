@@ -214,3 +214,197 @@ input:focus, select:focus, textarea:focus {
 
 /* ── Smooth scrolling ─────────────────────────────────────── */
 html { scroll-behavior: smooth; }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — Global fixes for all pages
+   ═══════════════════════════════════════════════════════════ */
+
+/* Prevent horizontal scroll globally */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* ── Navbar clearance — all pages get proper top spacing ── */
+/* Any full-page container gets auto navbar clearance */
+.min-h-screen,
+[style*="minHeight: '100vh'"],
+[style*='minHeight: "100vh"'] {
+  padding-top: max(80px, env(safe-area-inset-top, 80px));
+}
+
+/* ── Global responsive container ─────────────────────────── */
+.bk-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 40px);
+}
+
+/* ── Touch targets — minimum 44px on mobile ───────────────── */
+@media (max-width: 768px) {
+  button, a, [role="button"], input[type="submit"], input[type="button"] {
+    min-height: 44px;
+  }
+
+  /* Forms */
+  input, select, textarea {
+    font-size: 16px !important; /* prevents iOS zoom on focus */
+    padding: 12px 14px;
+  }
+
+  /* ── Profile cards on mobile ── */
+  .profiles-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  /* ── Dashboard ── */
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Pricing cards ── */
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+
+  /* ── Filter bars ── */
+  .filter-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .filter-bar select, .filter-bar input {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 120px;
+  }
+
+  /* ── Messages ── */
+  .messages-layout {
+    flex-direction: column !important;
+  }
+  .messages-sidebar {
+    width: 100% !important;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .messages-chat {
+    flex: 1;
+  }
+
+  /* ── Tables → stack ── */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── Large headings scale down ── */
+  h1 { font-size: clamp(24px, 7vw, 48px) !important; }
+  h2 { font-size: clamp(20px, 5vw, 32px) !important; }
+  h3 { font-size: clamp(17px, 4vw, 24px) !important; }
+
+  /* ── Modals ── */
+  .bk-modal {
+    margin: 16px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+
+  /* ── No horizontal overflow on grids ── */
+  [style*="grid-template-columns"] {
+    min-width: 0;
+  }
+
+  /* ── Interests page tabs ── */
+  .interests-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .interests-tabs::-webkit-scrollbar { display: none; }
+
+  /* ── Edit profile tabs ── */
+  .edit-profile-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  /* ── Stats bar on homepage ── */
+  .bk-stats-bar {
+    flex-wrap: wrap !important;
+    position: static !important;
+  }
+  .bk-stats-bar > div {
+    width: 50% !important;
+  }
+
+  /* ── Floating chat ── */
+  .floating-chat {
+    bottom: 80px !important; /* above bottom nav */
+    right: 12px !important;
+  }
+
+  /* ── Success stories ── */
+  .stories-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Pricing page ── */
+  .pricing-money-back {
+    flex-direction: column !important;
+    text-align: center;
+  }
+
+  /* ── Profile page hero ── */
+  .profile-hero {
+    flex-direction: column !important;
+    padding: 20px !important;
+  }
+
+  /* ── Game/Porichiti ── */
+  .choice-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+}
+
+/* ── Small phones (< 380px) ─────────────────────────────── */
+@media (max-width: 380px) {
+  .bk-bottom-nav-item {
+    padding: 6px 8px;
+    font-size: 9px;
+  }
+  .bk-bottom-nav-item svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* ── Tablet (768px - 1024px) ─────────────────────────────── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .pricing-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .profiles-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ── Desktop keeps bottom nav hidden ─────────────────────── */
+@media (min-width: 769px) {
+  .bk-bottom-nav { display: none !important; }
+  body { padding-bottom: 0 !important; }
+}
+
+/* ── Landscape mobile ────────────────────────────────────── */
+@media (max-width: 768px) and (orientation: landscape) {
+  .bk-hero {
+    min-height: auto !important;
+    padding: 100px 24px 60px !important;
+  }
+}
