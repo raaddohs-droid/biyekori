@@ -529,66 +529,11 @@ export default function Dashboard() {
                           {p.photo_url ? (
                             <img src={p.photo_url} alt={p.full_name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 15%' }} />
                           ) : (
-                            <div style={{ position: 'absolute', inset: 0 }}>
+                            <div style={{ position: 'absolute', inset: 0, background: user?.gender === 'male' ? '#FFF0F6' : '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                               {user?.gender === 'male' ? (
-                                <svg width="100%" height="100%" viewBox="0 0 200 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-                                  <rect width="200" height="256" fill="#FFF0F6"/>
-                                  <circle cx="100" cy="128" r="110" fill="#FCE7F3" opacity="0.45"/>
-                                  <circle cx="20" cy="30" r="50" fill="#FBCFE8" opacity="0.2"/>
-                                  <circle cx="185" cy="220" r="65" fill="#FBCFE8" opacity="0.2"/>
-                                  <g transform="translate(100,118)">
-                                    <ellipse rx="9" ry="24" fill="#F9A8D4" opacity="0.3" transform="rotate(0)"/>
-                                    <ellipse rx="9" ry="24" fill="#F9A8D4" opacity="0.3" transform="rotate(45)"/>
-                                    <ellipse rx="9" ry="24" fill="#F9A8D4" opacity="0.3" transform="rotate(90)"/>
-                                    <ellipse rx="9" ry="24" fill="#F9A8D4" opacity="0.3" transform="rotate(135)"/>
-                                    <ellipse rx="9" ry="24" fill="#EC4899" opacity="0.14" transform="rotate(22.5)"/>
-                                    <ellipse rx="9" ry="24" fill="#EC4899" opacity="0.14" transform="rotate(67.5)"/>
-                                    <ellipse rx="9" ry="24" fill="#EC4899" opacity="0.14" transform="rotate(112.5)"/>
-                                    <ellipse rx="9" ry="24" fill="#EC4899" opacity="0.14" transform="rotate(157.5)"/>
-                                    <circle r="6" fill="#DB2777" opacity="0.28"/>
-                                  </g>
-                                  <circle cx="30" cy="78" r="2" fill="#F9A8D4" opacity="0.4"/>
-                                  <circle cx="170" cy="58" r="1.5" fill="#F9A8D4" opacity="0.35"/>
-                                  <circle cx="158" cy="208" r="2" fill="#F9A8D4" opacity="0.35"/>
-                                  <path d="M78 96 Q62 118 60 152 Q60 172 64 188 Q72 200 80 208 Q85 190 84 168 Q83 144 84 118 Q82 108 78 96Z" fill="#9D174D" opacity="0.55"/>
-                                  <path d="M122 96 Q138 118 140 152 Q140 172 136 188 Q128 200 120 208 Q115 190 116 168 Q117 144 116 118 Q118 108 122 96Z" fill="#9D174D" opacity="0.55"/>
-                                  <ellipse cx="100" cy="100" rx="27" ry="28" fill="#9D174D" opacity="0.62"/>
-                                  <line x1="100" y1="74" x2="100" y2="92" stroke="#7C1652" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
-                                  <rect x="93" y="126" width="14" height="6" rx="3" fill="#DB2777" opacity="0.58"/>
-                                  <path d="M62 230 Q60 186 100 182 Q140 186 138 230 L138 242 Q120 235 100 234 Q80 235 62 242Z" fill="#DB2777" opacity="0.6"/>
-                                  <rect x="88" y="130" width="24" height="22" rx="4" fill="#DB2777" opacity="0.6"/>
-                                  <ellipse cx="82" cy="165" rx="10" ry="14" fill="#C81E6B" opacity="0.18"/>
-                                  <ellipse cx="118" cy="165" rx="10" ry="14" fill="#C81E6B" opacity="0.18"/>
-                                  <line x1="68" y1="248" x2="132" y2="248" stroke="#F0C040" strokeWidth="1.2" strokeLinecap="round"/>
-                                  <circle cx="68" cy="248" r="1.8" fill="#F0C040"/>
-                                  <circle cx="132" cy="248" r="1.8" fill="#F0C040"/>
-                                </svg>
+                                <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@7.4.47/svg/face-woman.svg" width="80" height="80" style={{ filter: 'invert(27%) sepia(80%) saturate(1500%) hue-rotate(300deg) brightness(90%)', opacity: 0.55 }} alt=""/>
                               ) : (
-                                <svg width="100%" height="100%" viewBox="0 0 200 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-                                  <rect width="200" height="256" fill="#EFF6FF"/>
-                                  <circle cx="100" cy="128" r="110" fill="#DBEAFE" opacity="0.45"/>
-                                  <circle cx="175" cy="25" r="45" fill="#BFDBFE" opacity="0.16"/>
-                                  <circle cx="15" cy="230" r="55" fill="#BFDBFE" opacity="0.16"/>
-                                  <polygon points="100,28 118,58 82,58" fill="#3B82F6" opacity="0.08"/>
-                                  <polygon points="26,98 46,132 8,132" fill="#1D4ED8" opacity="0.06"/>
-                                  <polygon points="172,158 192,192 152,192" fill="#3B82F6" opacity="0.07"/>
-                                  <rect x="154" y="48" width="26" height="26" rx="3" fill="#1D4ED8" opacity="0.06" transform="rotate(20 167 61)"/>
-                                  <rect x="14" y="152" width="20" height="20" rx="3" fill="#3B82F6" opacity="0.06" transform="rotate(-15 24 162)"/>
-                                  <circle cx="165" cy="106" r="1.8" fill="#93C5FD" opacity="0.38"/>
-                                  <circle cx="35" cy="58" r="1.5" fill="#93C5FD" opacity="0.32"/>
-                                  <ellipse cx="100" cy="100" rx="27" ry="26" fill="#0F3896" opacity="0.72"/>
-                                  <path d="M82 88 Q100 82 118 88" fill="none" stroke="#0A2880" strokeWidth="1.2" strokeLinecap="round" opacity="0.4"/>
-                                  <path d="M78 96 Q100 90 122 96" fill="none" stroke="#0A2880" strokeWidth="1" strokeLinecap="round" opacity="0.3"/>
-                                  <rect x="91" y="124" width="18" height="6" rx="3" fill="#1D4ED8" opacity="0.65"/>
-                                  <path d="M38 230 Q36 182 100 178 Q164 182 162 230 L162 242 Q134 235 100 234 Q66 235 38 242Z" fill="#1D4ED8" opacity="0.62"/>
-                                  <rect x="86" y="128" width="28" height="22" rx="4" fill="#1D4ED8" opacity="0.62"/>
-                                  <line x1="100" y1="148" x2="100" y2="195" stroke="#BFDBFE" strokeWidth="1.2" strokeLinecap="round" opacity="0.45"/>
-                                  <ellipse cx="78" cy="168" rx="13" ry="17" fill="#1540A8" opacity="0.22"/>
-                                  <ellipse cx="122" cy="168" rx="13" ry="17" fill="#1540A8" opacity="0.22"/>
-                                  <line x1="68" y1="248" x2="132" y2="248" stroke="#F0C040" strokeWidth="1.2" strokeLinecap="round"/>
-                                  <circle cx="68" cy="248" r="1.8" fill="#F0C040"/>
-                                  <circle cx="132" cy="248" r="1.8" fill="#F0C040"/>
-                                </svg>
+                                <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@7.4.47/svg/account-tie.svg" width="80" height="80" style={{ filter: 'invert(27%) sepia(80%) saturate(500%) hue-rotate(180deg) brightness(90%)', opacity: 0.55 }} alt=""/>
                               )}
                             </div>
                           )}
