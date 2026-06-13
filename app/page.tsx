@@ -30,7 +30,7 @@ export default function Home() {
           .bk-stats-bar > div { width: 50% !important; padding: 10px 8px !important; border-right: none !important; border-bottom: 1px solid rgba(240,192,64,0.15) !important; }
         }
       `}</style>
-      <section className="bk-hero" style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', backgroundImage: "url('/hero-wedding.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundRepeat: 'no-repeat', padding: 'clamp(100px,12vw,120px) clamp(16px,5vw,24px) 80px clamp(16px,5vw,50%)', textAlign: 'left', overflow: 'hidden' }}>
+      <section className="bk-hero" style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', backgroundImage: "url('/hero-wedding.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundRepeat: 'no-repeat', padding: 'clamp(100px,12vw,120px) clamp(16px,5vw,24px) 80px clamp(16px,5vw,40%)', textAlign: 'left', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%)', pointerEvents: 'none' }}/>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 'min(800px, 100%)', height: 'min(800px, 100%)', borderRadius: '50%', background: 'radial-gradient(circle,rgba(240,192,64,0.08) 0%,transparent 65%)', pointerEvents: 'none' }}/>
 
@@ -66,7 +66,7 @@ export default function Home() {
       </section>
 
       {/* DEMO EXPERIENCE */}
-      <section style={{ padding: 'clamp(60px,8vw,100px) clamp(24px,6vw,80px)', background: '#FFFBF5', borderTop: '1px solid rgba(123,29,46,0.08)' }}>
+      <section style={{ padding: 'clamp(40px,6vw,80px) clamp(16px,4vw,48px)', overflowX: 'hidden', background: '#FFFBF5', borderTop: '1px solid rgba(123,29,46,0.08)' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '64px', alignItems: 'center' }}>
           <div>
             <p style={{ fontSize: '13px', color: '#7B1D2E', letterSpacing: '3px', marginBottom: '16px', fontFamily: 'system-ui, sans-serif', textTransform: 'uppercase', opacity: 0.7 }}>Try before you join</p>
@@ -138,7 +138,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div style={{ borderTop: '1px solid rgba(240,192,64,0.15)', paddingTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ borderTop: '1px solid rgba(240,192,64,0.15)', paddingTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', flexWrap: 'wrap', gap: '16px' }}>
           <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.3)', fontFamily: 'system-ui, sans-serif' }}>&copy; 2026 Biyekori. All rights reserved.</span>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <a href="https://www.facebook.com/profile.php?id=61590028991299" target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '42px', height: '42px', borderRadius: '50%', background: 'rgba(240,192,64,0.1)', border: '1px solid rgba(240,192,64,0.2)' }}>
