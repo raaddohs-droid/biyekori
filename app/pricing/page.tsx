@@ -121,9 +121,9 @@ export default function PricingPage() {
                 <textPath href="#topArc" startOffset="10%">MONEY BACK</textPath>
               </text>
             </svg>
-            <p style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#374151' }}>Money Back Guarantee</p>
+            <p style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#374151' }}>৩০ দিনের মানি-ব্যাক গ্যারান্টি</p>
             <p style={{ margin: 0, fontSize: '13px', color: '#6b7280', textAlign: 'center', lineHeight: 1.5 }}>
-              If you receive no interests within 30 days of upgrading, we refund your full payment — no questions asked.
+              If you don&apos;t get a mutual match within 30 days of upgrading, we refund your full payment — no questions asked.
             </p>
           </div>
         </div>
