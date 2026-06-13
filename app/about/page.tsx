@@ -6,7 +6,7 @@ export default function AboutPage() {
       <div style={{ maxWidth: '760px', margin: '0 auto', padding: '0 20px' }}>
 
         <div style={{ marginBottom: '48px' }}>
-          <p style={{ margin: '0 0 8px', fontSize: '12px', letterSpacing: '3px', color: '#e11d48', fontWeight: 700, textTransform: 'uppercase' }}>About Us</p>
+          <p style={{ margin: '0 0 8px', fontSize: '12px', letterSpacing: '3px', color: '#7B1D2E', fontWeight: 700, textTransform: 'uppercase' }}>About Us</p>
           <h1 style={{ margin: '0 0 16px', fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 900, color: '#111827', lineHeight: 1.2 }}>
             Bangladesh's privacy-first matrimony platform
           </h1>
@@ -42,7 +42,7 @@ export default function AboutPage() {
                 <span style={{ fontSize: '24px', flexShrink: 0 }}>{item.icon}</span>
                 <div>
                   <p style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 700, color: '#111827' }}>{item.title}</p>
-                  <p style={{ margin: 0, fontSize: '14px', color: '#6b7280', lineHeight: 1.6 }}>{item.desc}</p>
+                  <p style={{ margin: 0, fontSize: 'clamp(14px, 3.5vw, 16px)', color: '#6b7280', lineHeight: 1.6 }}>{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -58,7 +58,7 @@ export default function AboutPage() {
               { value: '24hr', label: 'Support response' },
             ].map((s, i) => (
               <div key={i} style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '28px', fontWeight: 900, color: '#e11d48' }}>{s.value}</div>
+                <div style={{ fontSize: '28px', fontWeight: 900, color: '#7B1D2E' }}>{s.value}</div>
                 <div style={{ fontSize: '13px', color: '#6b7280', marginTop: '4px' }}>{s.label}</div>
               </div>
             ))}
@@ -69,8 +69,8 @@ export default function AboutPage() {
           <h2 style={{ margin: '0 0 16px', fontSize: '22px', fontWeight: 800, color: '#111827' }}>Contact us</h2>
           <p style={{ margin: '0 0 16px', fontSize: '15px', color: '#374151', lineHeight: 1.7 }}>We are a small team passionate about getting this right. If you have questions, feedback, or concerns — we read every message.</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <a href="mailto:support@biyekori.com" style={{ fontSize: '15px', color: '#e11d48', fontWeight: 700, textDecoration: 'none' }}>support@biyekori.com</a>
-            <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>Response time: within 24 hours</p>
+            <a href="mailto:support@biyekori.com" style={{ fontSize: '15px', color: '#7B1D2E', fontWeight: 700, textDecoration: 'none' }}>support@biyekori.com</a>
+            <p style={{ margin: 0, fontSize: 'clamp(14px, 3.5vw, 16px)', color: '#6b7280' }}>Response time: within 24 hours</p>
           </div>
         </div>
 
