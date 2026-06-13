@@ -115,7 +115,7 @@ export default function UpgradeNudge({ type, data, onDismiss }: NudgeProps) {
       }}>
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.05,
           backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)',
-          backgroundSize: '30px 30px' }} />
+          backgroundSize: '30px 30px', pointerEvents: 'none' }} />
         <p style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 800, color: 'white' }}>
           👁️ {count} people viewed your profile this week
         </p>
