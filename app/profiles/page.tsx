@@ -156,10 +156,15 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   const startIndex = (currentPage - 1) * PROFILES_PER_PAGE
   const paginatedProfiles = filtered.slice(startIndex, startIndex + PROFILES_PER_PAGE)
 
-  const baseUrl = `/profiles?userGender=${userGender}&excludeId=${excludeId}`
+  const baseUrl = `/profiles${userGender ? '?userGender=' + userGender : '?'}${excludeId ? '&excludeId=' + excludeId : ''}`
 
   const buildUrl = (page: number) => {
-    let url = `${baseUrl}&page=${page}&view=${viewMode}&tab=${activeTab}&sort=${sortBy}`
+    let url = `/profiles?page=${page}`
+    if (userGender) url += `&userGender=${userGender}`
+    if (excludeId) url += `&excludeId=${excludeId}`
+    if (viewMode !== 'list') url += `&view=${viewMode}`
+    if (activeTab !== 'recommended') url += `&tab=${activeTab}`
+    if (sortBy !== 'recommended') url += `&sort=${sortBy}`
     if (districtFilter) url += `&district=${encodeURIComponent(districtFilter)}`
     if (religionFilter) url += `&religion=${encodeURIComponent(religionFilter)}`
     if (eduFilter) url += `&edu=${encodeURIComponent(eduFilter)}`
@@ -174,7 +179,11 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   }
 
   const tabUrl = (tab: string) => {
-    let url = `${baseUrl}&view=${viewMode}&tab=${tab}&sort=${sortBy}`
+    let url = `/profiles?tab=${tab}`
+    if (userGender) url += `&userGender=${userGender}`
+    if (excludeId) url += `&excludeId=${excludeId}`
+    if (viewMode !== 'list') url += `&view=${viewMode}`
+    if (sortBy !== 'recommended') url += `&sort=${sortBy}`
     if (districtFilter) url += `&district=${encodeURIComponent(districtFilter)}`
     if (religionFilter) url += `&religion=${encodeURIComponent(religionFilter)}`
     if (eduFilter) url += `&edu=${encodeURIComponent(eduFilter)}`
