@@ -60,7 +60,7 @@ export default function FloatingChat() {
       {/* Chat panel */}
       {open && (
         <div style={{
-          position: 'fixed', bottom: '90px', right: '24px', zIndex: 998,
+          className='floating-chat-window' style={{ position: 'fixed', bottom: 'max(90px, calc(64px + 26px))', right: '24px', zIndex: 998,
           width: '320px', maxWidth: 'calc(100vw - 48px)',
           background: IVORY, borderRadius: '20px',
           border: `1px solid rgba(123,29,46,0.15)`,
@@ -122,7 +122,7 @@ export default function FloatingChat() {
       <button
         onClick={() => setOpen(o => !o)}
         style={{
-          position: 'fixed', bottom: '24px', right: '24px', zIndex: 999,
+          className='floating-chat-btn' style={{ position: 'fixed', bottom: 'max(24px, calc(64px + 10px))', right: '24px', zIndex: 999,
           width: '56px', height: '56px', borderRadius: '50%',
           background: MAROON, border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
