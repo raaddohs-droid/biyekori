@@ -297,3 +297,64 @@ button:active { transform: scale(0.97); }
 @media (max-width: 768px) and (orientation: landscape) {
   .bk-hero { min-height: auto !important; padding-top: 80px !important; }
 }
+
+/* ══════════════════════════════════════
+   EXTRA MOBILE OVERFLOW KILLERS
+   ══════════════════════════════════════ */
+
+/* Force ALL elements to respect viewport width */
+* {
+  min-width: 0;
+}
+
+/* Grid and flex children never overflow parent */
+.grid > *, [style*="display: grid"] > *,
+.flex > *, [style*="display: flex"] > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  /* List view cards on mobile - stack image on top */
+  [style*="flexWrap: 'wrap'"][style*="overflow: 'hidden'"] > div:first-child {
+    width: 100% !important;
+    height: 200px !important;
+  }
+
+  /* Any inline style with fixed large widths */
+  [style*="width: '200px'"] { width: 100% !important; max-width: 200px; }
+  [style*="width: '300px'"] { width: 100% !important; max-width: 300px; }
+  [style*="width: '320px'"] { width: 100% !important; max-width: 320px; }
+  [style*="width: '360px'"] { width: 100% !important; max-width: 360px; }
+  [style*="width: '400px'"] { width: 100% !important; max-width: 400px; }
+  [style*="width: '480px'"] { width: 100% !important; max-width: 480px; }
+  [style*="width: '500px'"] { width: 100% !important; max-width: 500px; }
+  [style*="width: '600px'"] { width: 100% !important; max-width: 600px; }
+  [style*="width: '700px'"] { width: 100% !important; max-width: 700px; }
+  [style*="width: '800px'"] { width: 100% !important; max-width: 800px; }
+
+  /* Any inline max-width larger than viewport */
+  [style*="maxWidth: '960px'"] { max-width: 100% !important; }
+  [style*="maxWidth: '1100px'"] { max-width: 100% !important; }
+  [style*="maxWidth: '1200px'"] { max-width: 100% !important; }
+  [style*="maxWidth: '1280px'"] { max-width: 100% !important; }
+
+  /* Padding overrides for large paddings */
+  [style*="padding: '0 40px'"] { padding: 0 16px !important; }
+  [style*="padding: '0 44px'"] { padding: 0 16px !important; }
+  [style*="padding: '0 48px'"] { padding: 0 16px !important; }
+  [style*="padding: '0 60px'"] { padding: 0 16px !important; }
+  [style*="padding: '0 80px'"] { padding: 0 16px !important; }
+  [style*="padding-left: '50%'"] { padding-left: 16px !important; }
+
+  /* How It Works section on homepage */
+  [style*="gridTemplateColumns.*240px"] { grid-template-columns: 1fr !important; }
+  [style*="repeat(3"] { grid-template-columns: 1fr !important; }
+  [style*="repeat(4"] { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Score cards, stat cards */
+  [style*="repeat(auto-fit, minmax(140px"] { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Positioning fixes */
+  [style*="padding.*50%"] { padding-left: 16px !important; padding-right: 16px !important; }
+}
