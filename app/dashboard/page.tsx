@@ -529,11 +529,28 @@ export default function Dashboard() {
                           {p.photo_url ? (
                             <img src={p.photo_url} alt={p.full_name} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 15%' }} />
                           ) : (
-                            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#f5e6ea,#ede0f0)' }}>
-                              <svg width="52" height="52" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="50" cy="35" r="22" fill="rgba(123,29,46,0.2)"/>
-                                <path d="M10 95 C10 65 90 65 90 95" fill="rgba(123,29,46,0.2)"/>
-                              </svg>
+                            <div style={{ position: 'absolute', inset: 0 }}>
+                              {user?.gender === 'male' ? (
+                                <svg width="100%" height="100%" viewBox="0 0 200 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+                                  <rect width="200" height="256" fill="#FFF0F6"/>
+                                  <circle cx="100" cy="128" r="110" fill="#FCE7F3" opacity="0.45"/>
+                                  <path d="M78 96 Q62 118 60 152 Q60 172 64 188 Q72 200 80 208 Q85 190 84 168 Q83 144 84 118 Q82 108 78 96Z" fill="#9D174D" opacity="0.55"/>
+                                  <path d="M122 96 Q138 118 140 152 Q140 172 136 188 Q128 200 120 208 Q115 190 116 168 Q117 144 116 118 Q118 108 122 96Z" fill="#9D174D" opacity="0.55"/>
+                                  <ellipse cx="100" cy="100" rx="27" ry="28" fill="#9D174D" opacity="0.62"/>
+                                  <path d="M62 230 Q60 186 100 182 Q140 186 138 230 L138 242 Q120 235 100 234 Q80 235 62 242Z" fill="#DB2777" opacity="0.6"/>
+                                  <rect x="88" y="130" width="24" height="22" rx="4" fill="#DB2777" opacity="0.6"/>
+                                </svg>
+                              ) : (
+                                <svg width="100%" height="100%" viewBox="0 0 200 256" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+                                  <rect width="200" height="256" fill="#EFF6FF"/>
+                                  <circle cx="100" cy="128" r="110" fill="#DBEAFE" opacity="0.45"/>
+                                  <ellipse cx="100" cy="100" rx="27" ry="26" fill="#0F3896" opacity="0.72"/>
+                                  <path d="M38 230 Q36 182 100 178 Q164 182 162 230 L162 242 Q134 235 100 234 Q66 235 38 242Z" fill="#1D4ED8" opacity="0.62"/>
+                                  <rect x="86" y="128" width="28" height="22" rx="4" fill="#1D4ED8" opacity="0.62"/>
+                                  <ellipse cx="78" cy="168" rx="13" ry="17" fill="#1540A8" opacity="0.22"/>
+                                  <ellipse cx="122" cy="168" rx="13" ry="17" fill="#1540A8" opacity="0.22"/>
+                                </svg>
+                              )}
                             </div>
                           )}
                         </div>
