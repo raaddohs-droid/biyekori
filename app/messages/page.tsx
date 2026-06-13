@@ -2,21 +2,21 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 
-const MAROON = "#7B1D2E"
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export default function MessagesPage() {
   const [user, setUser] = useState<any>(null)
   const [isPremium, setIsPremium] = useState(false)
+  const [hasMutualMatches, setHasMutualMatches] = useState(false)
   const [conversations, setConversations] = useState<any[]>([])
   const [activeConvo, setActiveConvo] = useState<any>(null)
   const [messages, setMessages] = useState<any[]>([])
   const [msgInput, setMsgInput] = useState("")
   const [sending, setSending] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [view, setView] = useState<"list"|"chat">("list")
   const bottomRef = useRef<HTMLDivElement>(null)
   const pollRef = useRef<any>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     try {
@@ -36,14 +36,20 @@ export default function MessagesPage() {
   async function loadConversations(userId: string) {
     setLoading(true)
     try {
+      // Get all accepted interests to find conversation partners
       const res = await fetch("/api/interests/list?userId=" + userId)
       const data = await res.json()
       const all = [
         ...(data.sent || []).filter((i: any) => i.status === "accepted").map((i: any) => ({ person: i.receiver, personId: String(i.receiver_id) })),
         ...(data.received || []).filter((i: any) => i.status === "accepted").map((i: any) => ({ person: i.sender, personId: String(i.sender_id) }))
       ]
+      // Deduplicate by personId
       const seen = new Set()
-      const accepted = all.filter((c: any) => { if (seen.has(c.personId)) return false; seen.add(c.personId); return true })
+      const accepted = all.filter((c: any) => {
+        if (seen.has(c.personId)) return false
+        seen.add(c.personId)
+        return true
+      })
       setConversations(accepted)
     } catch(e) {}
     setLoading(false)
@@ -60,35 +66,32 @@ export default function MessagesPage() {
   async function openConversation(convo: any) {
     setActiveConvo(convo)
     setMessages([])
-    setView("chat")
     if (pollRef.current) clearInterval(pollRef.current)
     await fetchMessages(user.id, convo.personId)
-    pollRef.current = setInterval(() => fetchMessages(user.id, convo.personId), 5000)
-    setTimeout(() => inputRef.current?.focus(), 300)
+    // Poll every 5 seconds
+    pollRef.current = setInterval(() => {
+      fetchMessages(user.id, convo.personId)
+    }, 5000)
   }
 
-  function goBack() {
-    setView("list")
-    setActiveConvo(null)
-    if (pollRef.current) clearInterval(pollRef.current)
-  }
-
-  useEffect(() => { return () => { if (pollRef.current) clearInterval(pollRef.current) } }, [])
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => { if (pollRef.current) clearInterval(pollRef.current) }
+  }, [])
 
   async function sendMessage() {
     if (!msgInput.trim() || !activeConvo || sending) return
     setSending(true)
-    const text = msgInput.trim()
-    setMsgInput("")
     try {
       const res = await fetch("/api/messages/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ senderId: user.id, receiverId: activeConvo.personId, content: text })
+        body: JSON.stringify({ senderId: user.id, receiverId: activeConvo.personId, content: msgInput })
       })
       const data = await res.json()
       if (data.success) {
-        setMessages(prev => [...prev, { sender_id: user.id, content: text, created_at: new Date().toISOString() }])
+        setMessages(prev => [...prev, { sender_id: user.id, content: msgInput, created_at: new Date().toISOString() }])
+        setMsgInput("")
       } else if (data.upgrade) {
         alert("Upgrade to Premium to send messages.")
       }
@@ -98,22 +101,22 @@ export default function MessagesPage() {
 
   if (!user) return null
 
-  // No mutual matches + free user
-  if (!isPremium && conversations.length === 0 && !loading) {
+  if (!isPremium && !hasMutualMatches && !loading) {
     return (
-      <div style={{ minHeight: "100vh", background: "#FDF6EE", paddingTop: "80px", display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 20px 40px" }}>
-        <div style={{ background: "white", borderRadius: "20px", padding: "clamp(24px,6vw,48px)", textAlign: "center", maxWidth: "420px", width: "100%", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
-          <div style={{ width: "64px", height: "64px", background: "#fff1f2", borderRadius: "20px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={MAROON} strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <div style={{ minHeight: "100vh", background: "#f8fafc", paddingTop: "80px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ background: "white", borderRadius: "20px", padding: "48px 32px", textAlign: "center", maxWidth: "420px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
+          <div style={{ width: "64px", height: "64px", background: "#f5f3ff", borderRadius: "20px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7B1D2E" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
-          <h2 style={{ margin: "0 0 8px", fontSize: "20px", fontWeight: 800, color: "#111827" }}>এখনো কোনো ম্যাচ নেই</h2>
-          <p style={{ margin: "0 0 24px", fontSize: "14px", color: "#6b7280", lineHeight: 1.6 }}>মিউচুয়াল ম্যাচ হলে বিনামূল্যে মেসেজ করতে পারবেন। প্রিমিয়াম সদস্যরা যেকাউকে মেসেজ করতে পারেন।</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <Link href="/profiles" style={{ display: "block", padding: "13px", background: MAROON, color: "white", borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
-              প্রোফাইল দেখুন
+          <h2 style={{ margin: "0 0 8px", fontSize: "20px", fontWeight: 800, color: "#111827" }}>No Mutual Matches Yet</h2>
+          <p style={{ margin: "0 0 8px", fontSize: "14px", color: "#6b7280", lineHeight: 1.6 }}>Messaging is free once you have a mutual match — when both of you accept each other's interest.</p>
+          <p style={{ margin: "0 0 24px", fontSize: "13px", color: "#9ca3af" }}>Premium members can message anyone directly.</p>
+          <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
+            <Link href="/profiles" style={{ display: "inline-block", padding: "12px 24px", background: "linear-gradient(135deg,#7B1D2E,#be185d)", color: "white", borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
+              Browse Profiles
             </Link>
-            <Link href="/pricing" style={{ display: "block", padding: "13px", background: "white", color: MAROON, border: `1.5px solid ${MAROON}`, borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
-              আপগ্রেড করুন
+            <Link href="/pricing" style={{ display: "inline-block", padding: "12px 24px", background: "linear-gradient(135deg,#7B1D2E,#7B1D2E)", color: "white", borderRadius: "12px", fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>
+              Upgrade to Premium
             </Link>
           </div>
         </div>
@@ -122,165 +125,141 @@ export default function MessagesPage() {
   }
 
   return (
-    <>
-<div style={{ height: "100vh", background: "#FDF6EE", paddingTop: "60px", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+    <div style={{ minHeight: "100vh", background: "#f8fafc", paddingTop: "80px" }}>
+      <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "0 16px 40px" }}>
+        <h1 style={{ margin: "0 0 20px", fontSize: "24px", fontWeight: 800, color: "#111827" }}>Messages</h1>
 
-        {/* Mobile header */}
-        <div style={{ background: MAROON, padding: "12px 16px", display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
-          {view === "chat" && activeConvo && (
-            <button onClick={goBack} style={{ background: "none", border: "none", color: "white", cursor: "pointer", padding: "4px", display: "flex", alignItems: "center" }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-            </button>
-          )}
-          {view === "chat" && activeConvo ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1 }}>
-              <div style={{ width: "36px", height: "36px", borderRadius: "50%", overflow: "hidden", background: "rgba(255,255,255,0.2)", flexShrink: 0 }}>
-                {activeConvo.person?.photo_url
-                  ? <img src={activeConvo.person.photo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>👤</div>
-                }
-              </div>
-              <div>
-                <p style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "white" }}>{activeConvo.person?.full_name || "Unknown"}</p>
-                <p style={{ margin: 0, fontSize: "11px", color: "rgba(255,255,255,0.7)" }}>{activeConvo.person?.age} yrs · {activeConvo.person?.district}</p>
-              </div>
-              <Link href={"/profile/" + activeConvo.personId} style={{ marginLeft: "auto", fontSize: "12px", color: "#F0C040", fontWeight: 700, textDecoration: "none" }}>Profile</Link>
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px", minHeight: "calc(100vh - 200px)" }}>
+
+          {/* Conversations list */}
+          <div style={{ background: "white", borderRadius: "16px", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column" }}>
+            <div style={{ padding: "16px", borderBottom: "1px solid #f8fafc" }}>
+              <p style={{ margin: 0, fontSize: "13px", fontWeight: 700, color: "#6b7280" }}>Conversations</p>
             </div>
-          ) : (
-            <p style={{ margin: 0, fontSize: "18px", fontWeight: 800, color: "white" }}>বার্তা</p>
-          )}
-        </div>
-
-        {/* Body */}
-        <div style={{ flex: 1, overflow: "hidden", display: "flex" }}>
-
-          {/* Conversation list — hidden on mobile when chat is open */}
-          <div className={view === "chat" ? "msg-chat-mobile-hidden" : ""} style={{
-            width: "100%", maxWidth: "100%", background: "white",
-            overflowY: "auto", borderRight: "1px solid #f1f5f9",
-            display: "flex", flexDirection: "column"
-          }}>
-            <div style={{ padding: "14px 16px", borderBottom: "1px solid #f5f5f5" }}>
-              <p style={{ margin: 0, fontSize: "12px", fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "1px" }}>
-                {conversations.length} কথোপকথন
-              </p>
+            <div style={{ flex: 1, overflowY: "auto" }}>
+              {loading ? (
+                <div style={{ padding: "24px", textAlign: "center", color: "#9ca3af", fontSize: "13px" }}>Loading...</div>
+              ) : conversations.length === 0 ? (
+                <div style={{ padding: "24px", textAlign: "center" }}>
+                  <p style={{ color: "#9ca3af", fontSize: "13px", margin: "0 0 12px" }}>No conversations yet</p>
+                  <Link href="/interests" style={{ fontSize: "12px", color: "#7B1D2E", fontWeight: 700, textDecoration: "none" }}>View accepted interests</Link>
+                </div>
+              ) : conversations.map((convo: any, i: number) => (
+                <button key={i} onClick={() => openConversation(convo)} style={{
+                  width: "100%", padding: "14px 16px", display: "flex", alignItems: "center", gap: "10px",
+                  background: activeConvo?.personId === convo.personId ? "#faf5ff" : "white",
+                  border: "none", borderBottom: "1px solid #f8fafc", cursor: "pointer", textAlign: "left"
+                }}>
+                  <div style={{ width: "42px", height: "42px", borderRadius: "50%", overflow: "hidden", background: "#f3f4f6", flexShrink: 0 }}>
+                    {convo.person?.photo_url ? (
+                      <img src={convo.person.photo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>?</div>
+                    )}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ margin: "0 0 2px", fontSize: "14px", fontWeight: 700, color: "#111827", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{convo.person?.full_name || "Unknown"}</p>
+                    <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>{convo.person?.age} yrs · {convo.person?.district}</p>
+                  </div>
+                </button>
+              ))}
             </div>
-            {loading ? (
-              <div style={{ padding: "40px", textAlign: "center", color: "#9ca3af", fontSize: "14px" }}>লোড হচ্ছে...</div>
-            ) : conversations.length === 0 ? (
-              <div style={{ padding: "40px 24px", textAlign: "center" }}>
-                <p style={{ color: "#9ca3af", fontSize: "14px", margin: "0 0 12px" }}>কোনো কথোপকথন নেই</p>
-                <Link href="/interests" style={{ fontSize: "13px", color: MAROON, fontWeight: 700, textDecoration: "none" }}>আগ্রহ দেখুন →</Link>
-              </div>
-            ) : conversations.map((convo: any, i: number) => (
-              <button key={i} onClick={() => openConversation(convo)} style={{
-                width: "100%", padding: "14px 16px",
-                display: "flex", alignItems: "center", gap: "12px",
-                background: activeConvo?.personId === convo.personId ? "#fff5f5" : "white",
-                border: "none", borderBottom: "1px solid #f9fafb",
-                cursor: "pointer", textAlign: "left", minHeight: "72px"
-              }}>
-                <div style={{ width: "48px", height: "48px", borderRadius: "50%", overflow: "hidden", background: "#f3f4f6", flexShrink: 0 }}>
-                  {convo.person?.photo_url
-                    ? <img src={convo.person.photo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>👤</div>
-                  }
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ margin: "0 0 3px", fontSize: "15px", fontWeight: 700, color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {convo.person?.full_name || "Unknown"}
-                  </p>
-                  <p style={{ margin: 0, fontSize: "12px", color: "#9ca3af" }}>
-                    {convo.person?.age} বছর · {convo.person?.district || "Bangladesh"}
-                  </p>
-                </div>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
-              </button>
-            ))}
           </div>
 
-          {/* Chat area — hidden on mobile when list is showing */}
-          {activeConvo && (
-            <div className={view === "list" ? "msg-list-mobile-hidden" : ""} style={{
-              flex: 1, display: "flex", flexDirection: "column",
-              background: "#FDF6EE", width: "100%", overflow: "hidden"
-            }}>
-              {/* Messages */}
-              <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "6px" }}>
-                {messages.length === 0 ? (
-                  <div style={{ textAlign: "center", color: "#9ca3af", fontSize: "14px", marginTop: "60px" }}>
-                    <p style={{ fontSize: "40px", margin: "0 0 12px" }}>👋</p>
-                    <p style={{ margin: 0 }}>প্রথম বার্তা পাঠান!</p>
+          {/* Chat area */}
+          <div style={{ background: "white", borderRadius: "16px", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9", display: "flex", flexDirection: "column" }}>
+            {!activeConvo ? (
+              <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "12px" }}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <p style={{ color: "#9ca3af", fontSize: "14px" }}>Select a conversation to start messaging</p>
+              </div>
+            ) : (
+              <>
+                {/* Chat header */}
+                <div style={{ padding: "14px 20px", borderBottom: "1px solid #f8fafc", display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div style={{ width: "38px", height: "38px", borderRadius: "50%", overflow: "hidden", background: "#f3f4f6" }}>
+                    {activeConvo.person?.photo_url ? (
+                      <img src={activeConvo.person.photo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>?</div>
+                    )}
                   </div>
-                ) : messages.map((msg: any, i: number) => {
-                  const isMine = String(msg.sender_id) === String(user.id)
-                  const msgDate = new Date(msg.created_at).toDateString()
-                  const prevDate = i > 0 ? new Date(messages[i-1].created_at).toDateString() : null
-                  const showDate = msgDate !== prevDate
-                  const today = new Date().toDateString()
-                  const yesterday = new Date(Date.now() - 86400000).toDateString()
-                  const dateLabel = msgDate === today ? "আজ" : msgDate === yesterday ? "গতকাল" : new Date(msg.created_at).toLocaleDateString("bn-BD", { day: "numeric", month: "long" })
-                  const time = new Date(msg.created_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
-                  return (
-                    <div key={i}>
-                      {showDate && (
-                        <div style={{ textAlign: "center", margin: "12px 0 8px" }}>
-                          <span style={{ fontSize: "11px", color: "#9ca3af", background: "rgba(255,255,255,0.8)", padding: "3px 12px", borderRadius: "20px" }}>{dateLabel}</span>
-                        </div>
-                      )}
-                      <div style={{ display: "flex", justifyContent: isMine ? "flex-end" : "flex-start", marginBottom: "2px" }}>
+                  <div>
+                    <p style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#111827" }}>{activeConvo.person?.full_name}</p>
+                    <p style={{ margin: 0, fontSize: "11px", color: "#9ca3af" }}>Premium messaging</p>
+                  </div>
+                  <Link href={"/profile/" + activeConvo.personId} style={{ marginLeft: "auto", fontSize: "12px", color: "#7B1D2E", fontWeight: 700, textDecoration: "none" }}>View Profile</Link>
+                </div>
+
+                {/* Messages */}
+                <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {messages.length === 0 ? (
+                    <div style={{ textAlign: "center", color: "#9ca3af", fontSize: "13px", marginTop: "40px" }}>No messages yet. Say hello!</div>
+                  ) : messages.map((msg: any, i: number) => {
+                    const isMine = String(msg.sender_id) === String(user.id)
+                    const msgDate = new Date(msg.created_at).toDateString()
+                    const prevMsgDate = i > 0 ? new Date(messages[i-1].created_at).toDateString() : null
+                    const showDateSep = msgDate !== prevMsgDate
+                    const today = new Date().toDateString()
+                    const yesterday = new Date(Date.now() - 86400000).toDateString()
+                    const dateLabel = msgDate === today ? 'Today' : msgDate === yesterday ? 'Yesterday' : new Date(msg.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })
+                    return (
+                      <div key={i}>
+                        {showDateSep && (
+                          <div style={{ textAlign: 'center', margin: '8px 0' }}>
+                            <span style={{ fontSize: '11px', color: '#9ca3af', background: '#f8fafc', padding: '2px 10px', borderRadius: '20px' }}>{dateLabel}</span>
+                          </div>
+                        )}
+                        <div style={{ display: "flex", justifyContent: isMine ? "flex-end" : "flex-start" }}>
                         <div style={{
-                          maxWidth: "75%", padding: "10px 14px",
-                          borderRadius: isMine ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-                          background: isMine ? MAROON : "white",
-                          color: isMine ? "white" : "#111827",
-                          fontSize: "14px", lineHeight: 1.5,
-                          boxShadow: "0 1px 2px rgba(0,0,0,0.08)"
+                          maxWidth: "65%", padding: "10px 14px",
+                          borderRadius: isMine ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+                          background: isMine ? "linear-gradient(135deg,#7B1D2E,#7B1D2E)" : "#f3f4f6",
+                          color: isMine ? "white" : "#111827", fontSize: "13px", lineHeight: 1.5
                         }}>
-                          <p style={{ margin: "0 0 4px" }}>{msg.content}</p>
-                          <p style={{ margin: 0, fontSize: "10px", opacity: 0.6, textAlign: "right" }}>{time}</p>
+                          {msg.content?.startsWith('📞') ? (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>{msg.content}</span>
+                          ) : msg.content}
+                          <p style={{ margin: "4px 0 0", fontSize: "10px", opacity: 0.7, textAlign: "right" }}>
+                            {(() => {
+                              const d = new Date(msg.created_at)
+                              const today = new Date()
+                              const yesterday = new Date(today)
+                              yesterday.setDate(yesterday.getDate() - 1)
+                              const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+                              if (d.toDateString() === today.toDateString()) return time
+                              if (d.toDateString() === yesterday.toDateString()) return `Yesterday ${time}`
+                              return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }) + " " + time
+                            })()}
+                          </p>
+                        </div>
                         </div>
                       </div>
-                    </div>
-                  )
-                })}
-                <div ref={bottomRef} />
-              </div>
+                    )
+                  })}
+                  <div ref={bottomRef} />
+                </div>
 
-              {/* Input bar */}
-              <div style={{ padding: "10px 12px", background: "white", borderTop: "1px solid #f1f5f9", display: "flex", gap: "8px", alignItems: "center", paddingBottom: "max(10px, env(safe-area-inset-bottom))" }}>
-                <input
-                  ref={inputRef}
-                  value={msgInput}
-                  onChange={e => setMsgInput(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
-                  placeholder="বার্তা লিখুন..."
-                  style={{ flex: 1, padding: "11px 16px", borderRadius: "24px", border: "1.5px solid #e5e7eb", fontSize: "15px", outline: "none", color: "#111827", background: "#f9fafb" }}
-                />
-                <button
-                  onClick={sendMessage}
-                  disabled={sending || !msgInput.trim()}
-                  style={{
-                    width: "44px", height: "44px", borderRadius: "50%",
-                    background: msgInput.trim() ? MAROON : "#e5e7eb",
-                    border: "none", cursor: "pointer",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    flexShrink: 0, transition: "background 0.2s"
-                  }}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Desktop: show placeholder when no convo selected */}
-          {!activeConvo && (
-            <div className="msg-chat-mobile-hidden" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "12px", background: "#FDF6EE" }}>
-              <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              <p style={{ color: "#9ca3af", fontSize: "14px" }}>একটি কথোপকথন বেছে নিন</p>
-            </div>
-          )}
+                {/* Input */}
+                <div style={{ padding: "12px 16px", borderTop: "1px solid #f8fafc", display: "flex", gap: "8px" }}>
+                  <input
+                    value={msgInput}
+                    onChange={e => setMsgInput(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage()}
+                    placeholder="Type a message..."
+                    style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1.5px solid #e5e7eb", fontSize: "13px", outline: "none", color: "#111827", background: "white" }}
+                  />
+                  <button onClick={sendMessage} disabled={sending || !msgInput.trim()} style={{
+                    padding: "10px 20px", background: "linear-gradient(135deg,#7B1D2E,#7B1D2E)",
+                    color: "white", border: "none", borderRadius: "12px", fontWeight: 700,
+                    fontSize: "13px", cursor: "pointer", opacity: sending || !msgInput.trim() ? 0.6 : 1
+                  }}>
+                    Send
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
