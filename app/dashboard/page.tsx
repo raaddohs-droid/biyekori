@@ -352,11 +352,6 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* Viewer tease nudge */}
-            {parseInt(viewCount) >= 3 && (
-              <UpgradeNudge type="viewer_tease" data={{ count: parseInt(viewCount) }} />
-            )}
-
             {/* Daily Best Match */}
             <div style={{ background: 'linear-gradient(135deg,#fffbeb,#fef3c7)', borderRadius: '16px', padding: '20px', marginBottom: '20px', border: '1.5px solid #F0C040', boxShadow: '0 2px 12px rgba(240,192,64,0.15)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
