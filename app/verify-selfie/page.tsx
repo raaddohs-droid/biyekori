@@ -280,66 +280,72 @@ export default function VerifySelfie() {
   // ── LANDING STAGE ──────────────────────────────────────────────
   if (stage === 'landing') {
     return (
-      <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg, #fff1f2 0%, #fdf4ff 50%, #eff6ff 100%)', paddingTop: '80px', paddingBottom: '60px' }}>
-        <div style={{ maxWidth: '560px', margin: '0 auto', padding: '0 20px' }}>
+      <div style={{ minHeight: '100vh', background: '#fff', paddingBottom: '60px' }}>
 
-          {/* Back */}
-          <Link href="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#e11d48', fontWeight: 600, fontSize: '13px', textDecoration: 'none', marginBottom: '32px' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Back to Dashboard
-          </Link>
-
-          {/* Hero */}
-          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, #e11d48, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', boxShadow: '0 8px 24px rgba(225,29,72,0.3)' }}>
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                <path d="M9 12l2 2 4-4"/>
-              </svg>
-            </div>
-            <h1 style={{ margin: '0 0 8px', fontSize: '28px', fontWeight: 900, color: '#111827', lineHeight: 1.2 }}>Selfie Verification</h1>
-            <p style={{ margin: 0, fontSize: '15px', color: '#6b7280', lineHeight: 1.6 }}>আপনার পরিবার জানুক, এই মানুষটি সত্যিই সে</p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#9ca3af' }}>Let your family know this person is truly who they say</p>
+        {/* Hero banner */}
+        <div style={{ background: 'linear-gradient(135deg, #7B1D2E 0%, #4A1A6B 100%)', padding: '48px 24px 40px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, opacity: 0.08 }}>
+            {Array.from({ length: 20 }, (_, i) => (
+              <div key={i} style={{ position: 'absolute', borderRadius: '50%', background: '#fff', width: `${20 + Math.random() * 40}px`, height: `${20 + Math.random() * 40}px`, left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }} />
+            ))}
           </div>
+          <Link href="/dashboard" style={{ position: 'absolute', top: '20px', left: '20px', display: 'inline-flex', alignItems: 'center', gap: '5px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, fontSize: '13px', textDecoration: 'none' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back
+          </Link>
+          <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: '2px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', position: 'relative', zIndex: 1 }}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+          </div>
+          <h1 style={{ margin: '0 0 8px', fontSize: '28px', fontWeight: 900, color: '#fff', lineHeight: 1.2, position: 'relative', zIndex: 1 }}>পরিচয় যাচাই করুন</h1>
+          <p style={{ margin: '0 0 4px', fontSize: '15px', color: 'rgba(255,255,255,0.8)', position: 'relative', zIndex: 1 }}>Verify My Identity</p>
+          <p style={{ margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.55)', position: 'relative', zIndex: 1 }}>২ মিনিট · বিনামূল্যে · একবারই</p>
+        </div>
 
-          {/* Why it matters */}
-          <div style={{ background: 'white', borderRadius: '20px', padding: '24px', marginBottom: '20px', boxShadow: '0 2px 16px rgba(0,0,0,0.06)', border: '1px solid #fce7f3' }}>
-            <h3 style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: 800, color: '#111827' }}>Why this matters</h3>
+        <div style={{ maxWidth: '520px', margin: '0 auto', padding: '28px 20px 0' }}>
+
+          {/* Trust badge row */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px', marginBottom: '28px' }}>
             {[
-              { icon: '🛡️', title: 'Proves you are real', desc: 'Confirms the person in your profile photo is actually you — not someone else\'s photo' },
-              { icon: '💕', title: 'Builds deeper trust', desc: 'Verified profiles receive significantly more serious responses from families' },
-              { icon: '👨‍👩‍👧', title: 'Reassures families', desc: 'Parents checking your profile can see you passed live face verification' },
-            ].map((item, i) => (
-              <div key={i} style={{ display: 'flex', gap: '14px', marginBottom: i < 2 ? '16px' : 0 }}>
-                <span style={{ fontSize: '24px', flexShrink: 0 }}>{item.icon}</span>
-                <div>
-                  <p style={{ margin: '0 0 2px', fontSize: '13px', fontWeight: 700, color: '#111827' }}>{item.title}</p>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#6b7280', lineHeight: 1.5 }}>{item.desc}</p>
-                </div>
+              { icon: '🛡️', label: 'AI Verified' },
+              { icon: '🔒', label: 'Never shown publicly' },
+              { icon: '💕', label: '3× more responses' },
+            ].map((b, i) => (
+              <div key={i} style={{ background: '#f8f0ff', borderRadius: '12px', padding: '12px 8px', textAlign: 'center', border: '1px solid #e9d5ff' }}>
+                <div style={{ fontSize: '22px', marginBottom: '4px' }}>{b.icon}</div>
+                <p style={{ margin: 0, fontSize: '11px', fontWeight: 700, color: '#6B1A4A', lineHeight: 1.3 }}>{b.label}</p>
               </div>
             ))}
           </div>
 
-          {/* Privacy notice */}
-          <div style={{ background: '#f0fdf4', borderRadius: '14px', padding: '16px', marginBottom: '20px', border: '1px solid #bbf7d0', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2" style={{ flexShrink: 0, marginTop: '1px' }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <div>
-              <p style={{ margin: '0 0 2px', fontSize: '13px', fontWeight: 700, color: '#15803d' }}>Your privacy is protected</p>
-              <p style={{ margin: 0, fontSize: '12px', color: '#166534', lineHeight: 1.5 }}>Your selfie is used only for one-time verification and is <strong>never shown publicly</strong>, shared with other users, or sold to anyone.</p>
-            </div>
+          {/* Why it matters */}
+          <div style={{ background: '#fff', borderRadius: '16px', padding: '20px', marginBottom: '16px', border: '1.5px solid #f3e8ff' }}>
+            <p style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 800, color: '#111827' }}>কেন এটি গুরুত্বপূর্ণ</p>
+            {[
+              { icon: '✅', text: 'প্রোফাইল ফটোতে আপনি সত্যিই আছেন তা প্রমাণ করে — অন্য কারো ছবি নয়' },
+              { icon: '👨‍👩‍👧', text: 'পরিবার আপনার প্রোফাইল দেখলে Verified ব্যাজ দেখতে পাবে' },
+              { icon: '💬', text: 'Verified প্রোফাইলে সিরিয়াস পরিবার বেশি সাড়া দেয়' },
+            ].map((item, i) => (
+              <div key={i} style={{ display: 'flex', gap: '10px', marginBottom: i < 2 ? '12px' : 0 }}>
+                <span style={{ fontSize: '18px', flexShrink: 0 }}>{item.icon}</span>
+                <p style={{ margin: 0, fontSize: '13px', color: '#374151', lineHeight: 1.5 }}>{item.text}</p>
+              </div>
+            ))}
           </div>
 
           {/* How it works */}
-          <div style={{ background: 'white', borderRadius: '20px', padding: '24px', marginBottom: '28px', boxShadow: '0 2px 16px rgba(0,0,0,0.06)', border: '1px solid #e5e7eb' }}>
-            <h3 style={{ margin: '0 0 16px', fontSize: '15px', fontWeight: 800, color: '#111827' }}>How it works — 2 minutes</h3>
+          <div style={{ background: '#fff', borderRadius: '16px', padding: '20px', marginBottom: '16px', border: '1px solid #e5e7eb' }}>
+            <p style={{ margin: '0 0 14px', fontSize: '14px', fontWeight: 800, color: '#111827' }}>কীভাবে কাজ করে — ২ মিনিট</p>
             {[
-              { step: '1', text: 'Allow camera access' },
-              { step: '2', text: 'Place your face in the oval frame' },
-              { step: '3', text: 'Look straight at camera and open your eyes slightly wider' },
-              { step: '4', text: 'AI instantly verifies and adds your badge' },
+              { step: '১', text: 'ক্যামেরা অ্যাক্সেস দিন' },
+              { step: '২', text: 'ওভাল ফ্রেমে মুখ রাখুন' },
+              { step: '৩', text: 'সরাসরি ক্যামেরার দিকে তাকান' },
+              { step: '৪', text: 'AI যাচাই করে Verified ব্যাজ যোগ করবে' },
             ].map((item, i) => (
-              <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: i < 3 ? '12px' : 0 }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #e11d48, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: i < 3 ? '10px' : 0 }}>
+                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #7B1D2E, #4A1A6B)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <span style={{ fontSize: '12px', fontWeight: 800, color: 'white' }}>{item.step}</span>
                 </div>
                 <p style={{ margin: 0, fontSize: '13px', color: '#374151', fontWeight: 500 }}>{item.text}</p>
@@ -347,24 +353,22 @@ export default function VerifySelfie() {
             ))}
           </div>
 
+          {/* Privacy */}
+          <div style={{ background: '#f0fdf4', borderRadius: '14px', padding: '14px 16px', marginBottom: '24px', border: '1px solid #bbf7d0', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2" style={{ flexShrink: 0, marginTop: '1px' }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <p style={{ margin: 0, fontSize: '12px', color: '#166534', lineHeight: 1.5 }}>আপনার সেলফি শুধু একবারই যাচাইয়ের জন্য ব্যবহার হবে এবং <strong>কখনো প্রকাশ্যে দেখানো হবে না।</strong></p>
+          </div>
+
           {attempts >= 3 ? (
             <div style={{ background: '#fff1f2', borderRadius: '14px', padding: '16px', border: '1px solid #fecdd3', textAlign: 'center' }}>
-              <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#e11d48' }}>Maximum attempts reached</p>
-              <p style={{ margin: 0, fontSize: '13px', color: '#9ca3af' }}>You have used all 3 attempts this month. Contact support@biyekori.com if you need help.</p>
+              <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: 700, color: '#e11d48' }}>সর্বোচ্চ চেষ্টা শেষ</p>
+              <p style={{ margin: 0, fontSize: '13px', color: '#9ca3af' }}>এই মাসে ৩টি চেষ্টা ব্যবহার হয়ে গেছে। সাহায্যের জন্য support@biyekori.com এ যোগাযোগ করুন।</p>
             </div>
           ) : (
-            <button onClick={startCamera} style={{
-              width: '100%', padding: '16px', borderRadius: '16px',
-              background: 'linear-gradient(135deg, #e11d48, #7c3aed)',
-              color: 'white', border: 'none', fontSize: '16px', fontWeight: 800,
-              cursor: 'pointer', boxShadow: '0 8px 24px rgba(225,29,72,0.35)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px'
-            }}>
+            <button onClick={startCamera} style={{ width: '100%', padding: '16px', borderRadius: '16px', background: 'linear-gradient(135deg, #7B1D2E, #4A1A6B)', color: 'white', border: 'none', fontSize: '16px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-              Start Verification
-              <span style={{ fontSize: '12px', background: 'rgba(255,255,255,0.2)', borderRadius: '8px', padding: '2px 8px' }}>
-                {3 - attempts} attempt{3 - attempts !== 1 ? 's' : ''} remaining
-              </span>
+              যাচাই শুরু করুন
+              <span style={{ fontSize: '12px', background: 'rgba(255,255,255,0.2)', borderRadius: '8px', padding: '2px 8px' }}>{3 - attempts}টি সুযোগ বাকি</span>
             </button>
           )}
 
