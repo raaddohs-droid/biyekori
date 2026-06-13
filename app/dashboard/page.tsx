@@ -323,22 +323,6 @@ export default function Dashboard() {
               </div>
             )}
 
-                        {/* Game Card — hidden for Guardian Mode */}
-            {!gm && (
-            <div style={{ background: 'linear-gradient(135deg,#0d0521,#4A1A6B)', borderRadius: '16px', padding: '20px', boxShadow: '0 4px 16px rgba(13,5,33,0.3)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <span style={{ fontSize: '24px' }}>✦</span>
-                <div>
-                  <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 800, color: '#FAD95A', fontFamily: 'Georgia, serif' }}>Porichiti</p>
-                  <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>পরিচিতি · Compatibility Journey</p>
-                </div>
-              </div>
-              <p style={{ margin: '0 0 14px', fontSize: '12px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
-                Live the same day separately. See how your days align. A sealed game — no way to impress, only honest answers.
-              </p>
-              <p style={{ margin: 0, fontSize: '11px', color: 'rgba(250,217,90,0.5)', fontStyle: 'italic' }}>Open a profile with mutual interest to play →</p>
-            </div>
-            )}
             {gm && (
             <div style={{ background: 'linear-gradient(135deg,#f5f3ff,#ede9fe)', borderRadius: '16px', padding: '20px', border: '1.5px solid #c4b5fd' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
