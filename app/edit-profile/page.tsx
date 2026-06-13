@@ -432,7 +432,7 @@ export default function EditProfilePage() {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: '80px', paddingBottom: '60px' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: '80px', paddingBottom: '80px', overflowX: 'hidden' }}>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       <div style={{ maxWidth: '820px', margin: '0 auto', padding: '0 16px' }}>
 
