@@ -31,3 +31,9 @@ body {
   opacity: 1 !important;
   font-weight: 600 !important;
 }
+
+.profiles-guest-blur > *:first-child {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
