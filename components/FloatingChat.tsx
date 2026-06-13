@@ -197,7 +197,6 @@ export default function FloatingChat() {
           <div style={{ position: 'absolute', top: '4px', right: '4px', width: '10px', height: '10px', borderRadius: '50%', background: '#F0C040', border: '2px solid white' }} />
         )}
       </button>
-    </div>
     </>
   )
 }
