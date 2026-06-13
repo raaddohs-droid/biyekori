@@ -85,7 +85,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
 
   if (!isPaid && currentPage > FREE_MAX_PAGES) {
     return (
-      <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center', maxWidth: '480px', padding: '40px 24px' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>💍</div>
           <h2 style={{ margin: '0 0 12px', fontSize: '24px', fontWeight: 700, color: C.text }}>আরো প্রোফাইল দেখতে আপগ্রেড করুন</h2>
@@ -214,7 +214,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
   ]
 
   return (
-    <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: '120px', fontFamily: 'var(--font-inter), Inter, system-ui, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: C.ivory, paddingTop: 'clamp(90px, 15vw, 130px)', fontFamily: 'var(--font-inter), Inter, system-ui, sans-serif' }}>
       <GuestGate page={currentPage} />
 
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px 64px' }}>
