@@ -77,7 +77,7 @@ export default function VerifyNIDPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 pt-24 pb-12 px-4">
       <div className="max-w-4xl mx-auto">
         
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
