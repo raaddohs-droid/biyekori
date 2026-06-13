@@ -123,21 +123,7 @@ export default function MessagesPage() {
 
   return (
     <>
-      <style>{`
-        @media (min-width: 769px) {
-          .msg-layout { display: grid !important; grid-template-columns: 300px 1fr !important; }
-          .msg-list { display: flex !important; }
-          .msg-chat { display: flex !important; }
-          .msg-back { display: none !important; }
-        }
-        @media (max-width: 768px) {
-          .msg-layout { display: block !important; }
-          .msg-list-mobile-hidden { display: none !important; }
-          .msg-chat-mobile-hidden { display: none !important; }
-        }
-      `}</style>
-
-      <div style={{ height: "100vh", background: "#FDF6EE", paddingTop: "60px", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+<div style={{ height: "100vh", background: "#FDF6EE", paddingTop: "60px", display: "flex", flexDirection: "column", overflow: "hidden" }}>
 
         {/* Mobile header */}
         <div style={{ background: MAROON, padding: "12px 16px", display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
@@ -298,6 +284,5 @@ export default function MessagesPage() {
         </div>
       </div>
     </div>
-    </>
   )
 }
