@@ -225,11 +225,8 @@ html, body {
   max-width: 100vw;
 }
 
-/* ── Navbar clearance — all pages get proper top spacing ── */
-/* Any full-page container gets auto navbar clearance */
-.min-h-screen,
-[style*="minHeight: '100vh'"],
-[style*='minHeight: "100vh"'] {
+/* ── Navbar clearance — applied via Tailwind min-h-screen class ── */
+.min-h-screen {
   padding-top: max(80px, env(safe-area-inset-top, 80px));
 }
 
