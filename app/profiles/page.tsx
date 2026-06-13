@@ -269,7 +269,7 @@ export default async function ProfilesPage({ searchParams }: PageProps) {
         <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', overflow: 'hidden' }}>
 
           {/* LEFT SIDEBAR */}
-          <div className="profiles-sidebar" style={{ flexShrink: 0, width: '240px', minWidth: '240px', position: 'sticky', top: '100px' }}>
+          <div className="profiles-sidebar" data-sidebar="true" style={{ flexShrink: 0, width: '240px', minWidth: '240px', position: 'sticky', top: '100px', transition: 'width 0.3s' }}>
             <form method="GET" action="/profiles">
               <input type="hidden" name="userGender" value={userGender} />
               <input type="hidden" name="excludeId" value={excludeId} />
