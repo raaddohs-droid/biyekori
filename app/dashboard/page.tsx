@@ -191,7 +191,7 @@ export default function Dashboard() {
   };
 
   if (!user) {
-    return <div style={{ minHeight: '100vh', overflowX: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div style={{ fontSize: '14px', color: '#9ca3af' }}>Loading...</div></div>;
+    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div style={{ fontSize: '14px', color: '#9ca3af' }}>Loading...</div></div>;
   }
 
   const isPremium = user?.package && user.package !== 'prottasha';
@@ -200,15 +200,7 @@ export default function Dashboard() {
   const gm = !!user.guardian_mode;
 
   return (
-    <>
-    <style>{`
-      @media (max-width: 768px) {
-        .dash-main { padding: 12px !important; }
-        .dash-card { padding: 16px !important; }
-        .dash-suggested img { height: 140px !important; }
-      }
-    `}</style>
-    <div style={{ minHeight: '100vh', overflowX: 'hidden', background: '#f1f5f9', paddingTop: '80px' }}>
+    <div style={{ minHeight: '100vh', background: '#f1f5f9', paddingTop: '80px' }}>
       <div style={{ maxWidth: '1120px', margin: '0 auto', padding: '0 20px 60px' }}>
 
         {/* Hero welcome bar */}
@@ -235,7 +227,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr)', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '20px' }}>
           <div>
 
             {/* Stats row - 4 compact cards */}
@@ -709,7 +701,6 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
-    </>
   );
 }
 
