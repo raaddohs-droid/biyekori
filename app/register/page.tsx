@@ -1,478 +1,246 @@
 "use client";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import AIPhotoCropper from '@/components/profiles/AIPhotoCropper';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   const [lang, setLang] = useState<'en'|'bn'>('en');
-
-  // Translation helper
   const t = (en: string, bn: string) => lang === 'bn' ? bn : en;
-  const [guardianMode, setGuardianMode] = useState(false);
 
-  // Step 1
-  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
-  const [additionalPhotos, setAdditionalPhotos] = useState<File[]>([]);
-  const [photoPrivacy, setPhotoPrivacy] = useState(false);
-  const [iAm, setIAm] = useState(''); // 'bride' or 'groom'
-  const [managedBy, setManagedBy] = useState('Self');
-
-  // Step 2
-  const [fullName, setFullName] = useState('');
-  const [age, setAge] = useState('');
-  const [dobDay, setDobDay] = useState('');
-  const [dobMonth, setDobMonth] = useState('');
-  const [dobYear, setDobYear] = useState('');
-  const [city, setCity] = useState('');
-  const [education, setEducation] = useState('');
-  const [profession, setProfession] = useState('');
-  const [aboutMe, setAboutMe] = useState('');
-
-  // Step 3
+  // Step 1 — Phone
   const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
   const [sentOtp, setSentOtp] = useState('');
   const [otpVerified, setOtpVerified] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
 
-  const DISTRICTS = ["Bagerhat","Bandarban","Barguna","Barishal","Bhola","Bogura","Brahmanbaria","Chandpur","Chapai Nawabganj","Chattogram","Chuadanga","Cox's Bazar","Cumilla","Dhaka","Dinajpur","Faridpur","Feni","Gaibandha","Gazipur","Gopalganj","Habiganj","Jamalpur","Jashore","Jhalokathi","Jhenaidah","Joypurhat","Khagrachhari","Khulna","Kishoreganj","Kurigram","Kushtia","Lakshmipur","Lalmonirhat","Madaripur","Magura","Manikganj","Meherpur","Moulvibazar","Munshiganj","Mymensingh","Naogaon","Narail","Narayanganj","Narsingdi","Natore","Netrokona","Nilphamari","Noakhali","Pabna","Panchagarh","Patuakhali","Pirojpur","Rajbari","Rajshahi","Rangamati","Rangpur","Satkhira","Shariatpur","Sherpur","Sirajganj","Sunamganj","Sylhet","Tangail","Thakurgaon"];
+  // Step 2 — Basic info
+  const [iAm, setIAm] = useState(''); // 'bride' or 'groom'
+  const [fullName, setFullName] = useState('');
+  const [age, setAge] = useState('');
+  const [password, setPassword] = useState('');
+  const [guardianMode, setGuardianMode] = useState(false);
 
-  const handlePhotoSelect = (file: File) => setSelectedPhoto(file);
-
-  const handleAdditionalPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setAdditionalPhotos([...additionalPhotos, ...files].slice(0, 8));
-  };
-
-  const removeAdditionalPhoto = (index: number) => {
-    setAdditionalPhotos(additionalPhotos.filter((_, i) => i !== index));
-  };
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleSendOtp = async () => {
-    if (!phone || phone.length !== 11) { alert('Please enter a valid 11-digit phone number'); return; }
-    setLoading(true);
+    if (!phone || phone.length !== 11) { setErrorMsg(t('Enter a valid 11-digit number', 'সঠিক ১১ সংখ্যার নম্বর দিন')); return; }
+    setLoading(true); setErrorMsg('');
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
     setSentOtp(generatedOtp);
     try {
-      const response = await fetch('/api/send-sms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone: phone.startsWith('0') ? `+880${phone.substring(1)}` : `+880${phone}`,
-          message: `Your Biyekori OTP is: ${generatedOtp}`
-        })
+      const res = await fetch('/api/send-sms', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: phone.startsWith('0') ? `+880${phone.substring(1)}` : `+880${phone}`, message: `Your Biyekori OTP is: ${generatedOtp}` })
       });
-      const data = await response.json();
-      if (data.success) { alert(`OTP sent to ${phone}!`); }
-      else { alert('Failed to send OTP. Please try again.'); }
-    } catch { alert('Error sending OTP'); }
+      const data = await res.json();
+      if (data.success) setOtpSent(true);
+      else setErrorMsg(t('Failed to send OTP. Try again.', 'OTP পাঠানো যায়নি। আবার চেষ্টা করুন।'));
+    } catch { setErrorMsg(t('Network error. Try again.', 'নেটওয়ার্ক সমস্যা। আবার চেষ্টা করুন।')); }
     finally { setLoading(false); }
   };
 
   const handleVerifyOtp = () => {
-    if (otp === sentOtp) { setOtpVerified(true); alert('Phone verified successfully!'); }
-    else { alert('Invalid OTP. Please try again.'); }
+    if (otp === sentOtp) { setOtpVerified(true); setErrorMsg(''); }
+    else setErrorMsg(t('Wrong OTP. Try again.', 'ভুল OTP। আবার চেষ্টা করুন।'));
   };
 
   const handleSubmit = async () => {
-    if (!otpVerified) { alert('Please verify your phone number first'); return; }
-    setLoading(true);
+    if (!iAm) { setErrorMsg(t('Please select bride or groom', 'পাত্র বা পাত্রী নির্বাচন করুন')); return; }
+    if (!fullName.trim()) { setErrorMsg(t('Enter your full name', 'পুরো নাম লিখুন')); return; }
+    if (!age || parseInt(age) < 18 || parseInt(age) > 70) { setErrorMsg(t('Enter a valid age (18-70)', 'সঠিক বয়স দিন (১৮-৭০)')); return; }
+    if (!password || password.length < 6) { setErrorMsg(t('Password must be at least 6 characters', 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে')); return; }
+    setLoading(true); setErrorMsg('');
     try {
-      let photoUrl = '';
-      if (selectedPhoto) {
-        const formData = new FormData();
-        formData.append('file', selectedPhoto);
-        const uploadResponse = await fetch('/api/upload-photo', { method: 'POST', body: formData });
-        const uploadData = await uploadResponse.json();
-        if (uploadData.success) photoUrl = uploadData.url;
-      }
-      const additionalPhotoUrls: string[] = [];
-      for (const photo of additionalPhotos) {
-        const formData = new FormData();
-        formData.append('file', photo);
-        const uploadResponse = await fetch('/api/upload-photo', { method: 'POST', body: formData });
-        const uploadData = await uploadResponse.json();
-        if (uploadData.success) additionalPhotoUrls.push(uploadData.url);
-      }
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch('/api/register', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          full_name: fullName,
-          age: dobDay && dobMonth && dobYear ? Math.floor((Date.now() - new Date(parseInt(dobYear), parseInt(dobMonth)-1, parseInt(dobDay)).getTime()) / (365.25*24*60*60*1000)) : parseInt(age),
-          date_of_birth: dobDay && dobMonth && dobYear ? `${dobYear}-${dobMonth.padStart(2,'0')}-${dobDay.padStart(2,'0')}` : null,
-          city,
-          district: city,
-          education,
-          profession,
-          about_me: aboutMe,
+          full_name: fullName.trim(),
+          age: parseInt(age),
           phone,
-          email,
           password,
-          looking_for: iAm === 'bride' ? 'groom' : 'bride',
           gender: iAm === 'bride' ? 'female' : 'male',
-          managed_by: managedBy,
-          photo_url: photoUrl,
-          additional_photos: additionalPhotoUrls,
-          photo_privacy: photoPrivacy,
+          looking_for: iAm === 'bride' ? 'groom' : 'bride',
+          managed_by: guardianMode ? 'Guardian' : 'Self',
+          guardian_mode: guardianMode,
           package: 'prottasha',
           phone_verified: true,
-          guardian_mode: guardianMode
+          city: '',
+          district: '',
+          education: '',
+          profession: '',
         })
       });
-      const data = await response.json();
-      if (data.success) { setStep(4); }
+      const data = await res.json();
+      if (data.success) { setStep(3); }
       else {
-        if (data.error && data.error.includes('duplicate') || data.error && data.error.includes('unique')) {
-          alert('This phone number or email is already registered. Please login instead.');
+        if (data.error?.includes('duplicate') || data.error?.includes('unique')) {
+          setErrorMsg(t('This phone is already registered. Please login.', 'এই নম্বরে ইতিমধ্যে অ্যাকাউন্ট আছে। লগইন করুন।'));
         } else {
-          alert(data.error || 'Registration failed. Please try again.');
+          setErrorMsg(data.error || t('Registration failed. Try again.', 'নিবন্ধন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।'));
         }
       }
-    } catch { alert('Registration error. Please try again.'); }
+    } catch { setErrorMsg(t('Error. Try again.', 'সমস্যা হয়েছে। আবার চেষ্টা করুন।')); }
     finally { setLoading(false); }
   };
 
+  const inputStyle = { width: '100%', padding: '13px 16px', border: '1.5px solid #e5e7eb', borderRadius: '12px', fontSize: '15px', outline: 'none', color: '#111827', background: '#fff', fontFamily: 'system-ui, sans-serif', boxSizing: 'border-box' as const };
+  const btnPrimary = { width: '100%', padding: '15px', background: 'linear-gradient(135deg,#7B1D2E,#4A1A6B)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 800, cursor: 'pointer', fontFamily: 'system-ui, sans-serif' };
+  const btnSecondary = { padding: '13px 20px', background: '#f3f4f6', color: '#374151', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: 700, cursor: 'pointer', fontFamily: 'system-ui, sans-serif' };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-12 px-4" style={{ paddingTop: '160px' }}>
-      {/* Language Toggle */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-        <div style={{ background: 'white', borderRadius: '30px', padding: '4px', display: 'flex', gap: '2px', boxShadow: '0 1px 8px rgba(0,0,0,0.08)', border: '1px solid rgba(123,29,46,0.1)' }}>
-          <button onClick={() => setLang('en')} style={{ padding: '6px 20px', borderRadius: '24px', border: 'none', background: lang === 'en' ? '#7B1D2E' : 'transparent', color: lang === 'en' ? 'white' : '#4b5563', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: 'system-ui, sans-serif', transition: 'all 0.2s' }}>EN</button>
-          <button onClick={() => setLang('bn')} style={{ padding: '6px 20px', borderRadius: '24px', border: 'none', background: lang === 'bn' ? '#7B1D2E' : 'transparent', color: lang === 'bn' ? 'white' : '#4b5563', fontSize: '13px', fontWeight: 700, cursor: 'pointer', fontFamily: 'Hind Siliguri, system-ui, sans-serif', transition: 'all 0.2s' }}>বাংলা</button>
+    <div style={{ minHeight: '100vh', background: '#FDF6EE', paddingTop: '90px', paddingBottom: '60px' }}>
+
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+        <a href="/" style={{ textDecoration: 'none' }}>
+          <span style={{ fontSize: '22px', fontWeight: 900, color: '#7B1D2E', fontFamily: 'Georgia, serif', letterSpacing: '-0.5px' }}>BIYEKORI</span>
+        </a>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '16px' }}>
+          {[1,2].map(s => (
+            <div key={s} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: step >= s ? '#7B1D2E' : '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 800, color: step >= s ? 'white' : '#9ca3af' }}>{s}</div>
+              {s < 2 && <div style={{ width: '40px', height: '2px', background: step > s ? '#7B1D2E' : '#e5e7eb', borderRadius: '2px' }} />}
+            </div>
+          ))}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+          <div style={{ background: 'white', borderRadius: '30px', padding: '4px', display: 'flex', gap: '2px', border: '1px solid #e5e7eb' }}>
+            <button onClick={() => setLang('en')} style={{ padding: '5px 16px', borderRadius: '24px', border: 'none', background: lang === 'en' ? '#7B1D2E' : 'transparent', color: lang === 'en' ? 'white' : '#6b7280', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>EN</button>
+            <button onClick={() => setLang('bn')} style={{ padding: '5px 16px', borderRadius: '24px', border: 'none', background: lang === 'bn' ? '#7B1D2E' : 'transparent', color: lang === 'bn' ? 'white' : '#6b7280', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>বাংলা</button>
+          </div>
         </div>
       </div>
-      <div className="max-w-2xl mx-auto">
 
-        {/* Step 0 — Mode Selection */}
-        {step === 0 && (
-          <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-              <h1 style={{ fontSize: '28px', fontWeight: 900, color: '#111827', margin: '0 0 8px' }}>Welcome to Biyekori</h1>
-              <p style={{ fontSize: '15px', color: '#6b7280', margin: 0 }}>How will this profile be managed?</p>
-            </div>
+      <div style={{ maxWidth: '440px', margin: '0 auto', padding: '0 20px' }}>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', width: '100%', maxWidth: '560px' }}>
-
-              {/* Self Mode */}
-              <button onClick={() => { setGuardianMode(false); setStep(1); }} style={{
-                padding: '28px 20px', borderRadius: '20px', border: '2px solid #e5e7eb',
-                background: 'white', cursor: 'pointer', textAlign: 'center',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.06)', transition: 'all 0.2s'
-              }}
-              onMouseOver={e => (e.currentTarget.style.borderColor = '#e11d48')}
-              onMouseOut={e => (e.currentTarget.style.borderColor = '#e5e7eb')}
-              >
-                <div style={{ fontSize: '48px', marginBottom: '12px' }}>👤</div>
-                <h3 style={{ margin: '0 0 8px', fontSize: '17px', fontWeight: 800, color: '#111827' }}>নিজে পরিচালিত</h3>
-                <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280', lineHeight: 1.5 }}>{t('I am the bride or groom and will manage this profile myself', 'আমি নিজেই আমার প্রোফাইল পরিচালনা করব')}</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  {['Full profile control', 'Direct messaging', 'Voice calls', 'Porichiti game'].map(f => (
-                    <span key={f} style={{ fontSize: '11px', color: '#10b981', fontWeight: 600 }}>✓ {f}</span>
-                  ))}
-                </div>
-                <div style={{ marginTop: '16px', padding: '10px', background: 'linear-gradient(135deg,#e11d48,#db2777)', borderRadius: '10px', color: 'white', fontSize: '13px', fontWeight: 700 }}>
-                  {t('Choose Self Mode', 'নিজে শুরু করুন')}
-                </div>
-              </button>
-
-              {/* Guardian Mode */}
-              <button onClick={() => { setGuardianMode(true); setStep(1); }} style={{
-                padding: '28px 20px', borderRadius: '20px', border: '2px solid #e5e7eb',
-                background: 'white', cursor: 'pointer', textAlign: 'center',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.06)', transition: 'all 0.2s'
-              }}
-              onMouseOver={e => (e.currentTarget.style.borderColor = '#7c3aed')}
-              onMouseOut={e => (e.currentTarget.style.borderColor = '#e5e7eb')}
-              >
-                <div style={{ fontSize: '48px', marginBottom: '12px' }}>👨‍👩‍👧</div>
-                <h3 style={{ margin: '0 0 8px', fontSize: '17px', fontWeight: 800, color: '#111827' }}>পরিবার পরিচালিত</h3>
-                <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#6b7280', lineHeight: 1.5 }}>{t('A parent or family member is setting up this profile on behalf of the bride/groom', 'পিতামাতা বা পরিবারের সদস্য পাত্র/পাত্রীর পক্ষে প্রোফাইল তৈরি করছেন')}</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  {['Bengali interface', 'Formal messaging', 'Family-first approach', 'Guardian badge on profile'].map(f => (
-                    <span key={f} style={{ fontSize: '11px', color: '#7c3aed', fontWeight: 600 }}>✓ {f}</span>
-                  ))}
-                </div>
-                <div style={{ marginTop: '16px', padding: '10px', background: 'linear-gradient(135deg,#7c3aed,#a855f7)', borderRadius: '10px', color: 'white', fontSize: '13px', fontWeight: 700 }}>
-                  {t('Choose Guardian Mode', 'পরিবার হিসেবে শুরু করুন')}
-                </div>
-              </button>
-            </div>
-
-            <p style={{ marginTop: '20px', fontSize: '11px', color: '#9ca3af', textAlign: 'center' }}>
-              {t('You can switch modes later from Settings after OTP verification.', 'OTP যাচাইয়ের পরে সেটিংস থেকে পরিবর্তন করা যাবে।')}
-            </p>
-          </div>
-        )}
-
-      {/* Progress */}
-        {step > 0 && <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
-          <div className="flex items-center justify-between">
-            {[1,2,3].map((s) => (
-              <div key={s} className="flex items-center">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${step >= s ? 'bg-rose-500 text-white' : 'bg-gray-200 text-gray-500'}`}>{s}</div>
-                {s < 3 && <div className={`w-24 h-1 mx-2 ${step > s ? 'bg-rose-500' : 'bg-gray-200'}`}></div>}
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-between mt-2 text-xs font-bold text-gray-600">
-            <span>{t('Photo & Info', 'ছবি ও তথ্য')}</span><span>{t('Basic Details', 'বিস্তারিত')}</span><span>{t('Contact & Verify', 'যোগাযোগ')}</span>
-          </div>
-        </div>}
-
-        {/* Step 1 */}
+        {/* ── STEP 1: Phone ── */}
         {step === 1 && (
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-black text-gray-900 mb-6">{t('Create Your Profile', 'আপনার প্রোফাইল তৈরি করুন')}</h2>
+          <div style={{ background: 'white', borderRadius: '20px', padding: '28px', boxShadow: '0 2px 20px rgba(0,0,0,0.07)' }}>
+            <h2 style={{ margin: '0 0 6px', fontSize: '22px', fontWeight: 900, color: '#111827' }}>{t('Your phone number', 'আপনার ফোন নম্বর')}</h2>
+            <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280' }}>{t('We\'ll send a one-time code to verify', 'যাচাইয়ের জন্য একটি কোড পাঠাব')}</p>
 
-            {/* I am a */}
-            <div className="mb-5">
-              <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? t("Registering for a...", "যার জন্য নিবন্ধন করছেন...") : t("I am a...", "আমি একজন...")}</label>
-              <select
-                value={iAm}
-                onChange={(e) => setIAm(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900"
-                required
-              >
-                <option value="">Select one</option>
-                <option value="bride">{guardianMode ? t("Bride (Patri) - Registering a bride", "পাত্রী - একজন পাত্রীর জন্য নিবন্ধন") : t("Bride (Patri) - I am a woman looking for a groom", "পাত্রী - আমি একজন নারী, পাত্র খুঁজছি")}</option>
-                <option value="groom">{guardianMode ? t("Groom (Patro) - Registering a groom", "পাত্র - একজন পাত্রের জন্য নিবন্ধন") : t("Groom (Patro) - I am a man looking for a bride", "পাত্র - আমি একজন পুরুষ, পাত্রী খুঁজছি")}</option>
-              </select>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>{t('Phone number', 'ফোন নম্বর')}</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} style={{ ...inputStyle, flex: 1 }} placeholder="01XXXXXXXXX" maxLength={11} />
+                <button onClick={handleSendOtp} disabled={loading || otpVerified} style={{ padding: '13px 16px', background: otpVerified ? '#1D9E75' : '#7B1D2E', color: 'white', border: 'none', borderRadius: '12px', fontSize: '13px', fontWeight: 800, cursor: loading || otpVerified ? 'default' : 'pointer', whiteSpace: 'nowrap' }}>
+                  {loading ? '...' : otpVerified ? '✓' : t('Send OTP', 'OTP পাঠান')}
+                </button>
+              </div>
             </div>
 
-            {/* Mode badge */}
-            {guardianMode && (
-              <div style={{ marginBottom: '20px', padding: '12px 16px', background: '#ede9fe', borderRadius: '12px', border: '1.5px solid #c4b5fd', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '20px' }}>👨‍👩‍👧</span>
-                <div>
-                  <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#7c3aed' }}>পরিবার পরিচালিত মোড চালু আছে</p>
-                  <p style={{ margin: 0, fontSize: '11px', color: '#9ca3af' }}>Profile will show "Family Managed" badge · <button onClick={() => setStep(0)} style={{ background: 'none', border: 'none', color: '#e11d48', fontSize: '11px', fontWeight: 700, cursor: 'pointer', padding: 0 }}>Change</button></p>
+            {otpSent && !otpVerified && (
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>{t('Enter OTP', 'OTP লিখুন')}</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input type="text" value={otp} onChange={e => setOtp(e.target.value)} style={{ ...inputStyle, flex: 1, letterSpacing: '4px', textAlign: 'center', fontSize: '20px' }} placeholder="------" maxLength={6} />
+                  <button onClick={handleVerifyOtp} style={{ padding: '13px 16px', background: '#1D9E75', color: 'white', border: 'none', borderRadius: '12px', fontSize: '13px', fontWeight: 800, cursor: 'pointer' }}>{t('Verify', 'যাচাই')}</button>
                 </div>
               </div>
             )}
 
-            {/* Main Photo */}
-            <div className="mb-5">
-              <label className="block text-sm font-bold text-gray-900 mb-2">{t('Profile Photo', 'প্রোফাইল ছবি')}</label>
-              <AIPhotoCropper onPhotoSelect={handlePhotoSelect} uploadCount={0} />
-
-              {/* Photo privacy toggle */}
-              <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-bold text-gray-800">{t('Photo Privacy', 'ছবির গোপনীয়তা')}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">{t('Only show my photo to people whose interest I accept', 'শুধুমাত্র যাদের আগ্রহ গ্রহণ করব তাদের ছবি দেখাবে')}</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setPhotoPrivacy(!photoPrivacy)}
-                    className={`relative w-12 h-6 rounded-full transition-colors ${photoPrivacy ? 'bg-rose-500' : 'bg-gray-300'}`}
-                  >
-                    <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${photoPrivacy ? 'translate-x-6' : 'translate-x-0'}`} />
-                  </button>
-                </div>
+            {otpVerified && (
+              <div style={{ padding: '12px 16px', background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: '10px', marginBottom: '16px', fontSize: '13px', fontWeight: 700, color: '#15803d' }}>
+                ✓ {t('Phone verified!', 'ফোন যাচাই হয়েছে!')}
               </div>
-            </div>
+            )}
 
-            {/* Additional Photos */}
-            <div className="mb-5">
-              <label className="block text-sm font-bold text-gray-900 mb-2">{t('Additional Photos (Optional, up to 8)', 'অতিরিক্ত ছবি (ঐচ্ছিক, সর্বোচ্চ ৮টি)')}</label>
-              <div className="grid grid-cols-4 gap-2 mb-2">
-                {additionalPhotos.map((photo, index) => (
-                  <div key={index} className="relative aspect-square rounded-lg overflow-hidden border-2 border-rose-200">
-                    <img src={URL.createObjectURL(photo)} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
-                    <button onClick={() => removeAdditionalPhoto(index)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">x</button>
-                  </div>
-                ))}
-                {additionalPhotos.length < 8 && (
-                  <label className="aspect-square rounded-lg border-2 border-dashed border-gray-300 hover:border-rose-500 flex flex-col items-center justify-center cursor-pointer bg-gray-50 hover:bg-rose-50 transition">
-                    <span className="text-2xl text-gray-400">+</span>
-                    <span className="text-xs text-gray-500">Add</span>
-                    <input type="file" accept="image/*" multiple onChange={handleAdditionalPhotoUpload} className="hidden" />
-                  </label>
-                )}
-              </div>
-            </div>
+            {errorMsg && <p style={{ color: '#e11d48', fontSize: '13px', margin: '0 0 12px' }}>{errorMsg}</p>}
 
-            <button
-              onClick={() => setStep(2)}
-              disabled={!selectedPhoto || !iAm}
-              className={`w-full py-4 rounded-xl font-bold transition ${selectedPhoto && iAm ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:shadow-xl' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-            >
-              {t('Next', 'পরবর্তী')}
+            <button onClick={() => { if (!otpVerified) { setErrorMsg(t('Verify your phone first', 'আগে ফোন যাচাই করুন')); return; } setErrorMsg(''); setStep(2); }} style={btnPrimary}>
+              {t('Continue →', 'পরবর্তী →')}
             </button>
+
+            <p style={{ textAlign: 'center', fontSize: '13px', color: '#6b7280', marginTop: '16px' }}>
+              {t('Already registered?', 'ইতিমধ্যে অ্যাকাউন্ট আছে?')} <a href="/login" style={{ color: '#7B1D2E', fontWeight: 700, textDecoration: 'none' }}>{t('Login', 'লগইন করুন')}</a>
+            </p>
           </div>
         )}
 
-        {/* Step 2 */}
+        {/* ── STEP 2: Basic Info ── */}
         {step === 2 && (
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-black text-gray-900 mb-6">{t('Basic Information', 'মৌলিক তথ্য')}</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? t("Her Full Name", "তার পুরো নাম") : t("His Full Name", "তার পুরো নাম")) : t("Full Name", "পুরো নাম")}</label>
-                <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" placeholder={guardianMode ? (iAm === "bride" ? t("Enter her full name", "তার পুরো নাম লিখুন") : t("Enter his full name", "তার পুরো নাম লিখুন")) : t("Enter your full name", "আপনার পুরো নাম লিখুন")} required />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? t("Her Date of Birth", "তার জন্ম তারিখ") : t("His Date of Birth", "তার জন্ম তারিখ")) : t("Date of Birth", "জন্ম তারিখ")}</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    <select value={dobDay} onChange={(e) => setDobDay(e.target.value)} className="px-2 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 text-sm">
-                      <option value="">Day</option>
-                      {Array.from({length: 31}, (_, i) => i + 1).map(d => (
-                        <option key={d} value={d}>{d}</option>
-                      ))}
-                    </select>
-                    <select value={dobMonth} onChange={(e) => setDobMonth(e.target.value)} className="px-2 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 text-sm">
-                      <option value="">{t("Month", "মাস")}</option>
-                      {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((m, i) => (
-                        <option key={i+1} value={i+1}>{m}</option>
-                      ))}
-                    </select>
-                    <select value={dobYear} onChange={(e) => setDobYear(e.target.value)} className="px-2 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 text-sm">
-                      <option value="">{t("Year", "বছর")}</option>
-                      {Array.from({length: 53}, (_, i) => new Date().getFullYear() - 18 - i).map(y => (
-                        <option key={y} value={y}>{y}</option>
-                      ))}
-                    </select>
-                  </div>
-                  {dobDay && dobMonth && dobYear && (
-                    <p className="text-xs text-rose-500 font-semibold mt-1">
-                      {t('Age', 'বয়স')}: {Math.floor((Date.now() - new Date(parseInt(dobYear), parseInt(dobMonth)-1, parseInt(dobDay)).getTime()) / (365.25*24*60*60*1000))} years
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? t("Her District", "তার জেলা") : t("His District", "তার জেলা")) : t("District", "জেলা")}</label>
-                  <select value={city} onChange={(e) => setCity(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" required>
-                    <option value="">{t("Select District", "জেলা নির্বাচন করুন")}</option>
-                    {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? t("Her Education", "তার শিক্ষা") : t("His Education", "তার শিক্ষা")) : t("Education", "শিক্ষাগত যোগ্যতা")}</label>
-                <select value={education} onChange={(e) => setEducation(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" required>
-                  <option value="">{t("Select Education", "শিক্ষা নির্বাচন করুন")}</option>
-                  <option value="SSC">SSC</option>
-                  <option value="HSC">HSC</option>
-                  <option value="Bachelor">Bachelor</option>
-                  <option value="Masters">Masters</option>
-                  <option value="PhD">PhD</option>
-                  <option value="MBBS">MBBS / Medical</option>
-                  <option value="Engineering">Engineering</option>
-                  <option value="Diploma">Diploma</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? "Her Profession" : "His Profession") : "Profession"}</label>
-                <select value={profession} onChange={(e) => setProfession(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" required>
-                  <option value="">{t("Select Profession", "পেশা নির্বাচন করুন")}</option>
-                  <option value="Student">Student</option>
-                  <option value="Doctor">Doctor</option>
-                  <option value="Engineer">Engineer</option>
-                  <option value="Teacher">Teacher</option>
-                  <option value="Business">Business</option>
-                  <option value="Banker">Banker</option>
-                  <option value="Software Engineer">Software Engineer</option>
-                  <option value="Government Job">Government Job</option>
-                  <option value="Private Job">Private Job</option>
-                  <option value="Homemaker">Homemaker</option>
-                  <option value="NRB">NRB / Abroad</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
-            <div className="mt-4">
-              <label className="block text-sm font-bold text-gray-900 mb-2">{guardianMode ? (iAm === "bride" ? t("About Her", "তার সম্পর্কে") : t("About Him", "তার সম্পর্কে")) : t("About Me", "আমার সম্পর্কে")} <span className="text-gray-400 font-normal">({t("optional", "ঐচ্ছিক")})</span></label>
-              <textarea value={aboutMe} onChange={(e) => setAboutMe(e.target.value)} rows={3} placeholder={guardianMode ? (iAm === "bride" ? "Describe her background, character and what the family is looking for in a groom..." : "Describe his background, character and what the family is looking for in a bride...") : "Tell potential matches about yourself, your values, and what you are looking for..."} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900 resize-none" />
-            </div>
-            <div className="flex gap-4 mt-6">
-              <button onClick={() => setStep(1)} className="flex-1 py-4 bg-gray-100 text-gray-900 rounded-xl font-bold hover:bg-gray-200">Back</button>
-              <button onClick={() => setStep(3)} disabled={!fullName || (!age && !(dobDay && dobMonth && dobYear)) || !city || !education || !profession} className={`flex-1 py-4 rounded-xl font-bold ${fullName && (age || (dobDay && dobMonth && dobYear)) && city && education && profession ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>Next</button>
-            </div>
-          </div>
-        )}
+          <div style={{ background: 'white', borderRadius: '20px', padding: '28px', boxShadow: '0 2px 20px rgba(0,0,0,0.07)' }}>
+            <h2 style={{ margin: '0 0 6px', fontSize: '22px', fontWeight: 900, color: '#111827' }}>{t('A few basics', 'কিছু মৌলিক তথ্য')}</h2>
+            <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#6b7280' }}>{t('You can add more from your dashboard later', 'বাকি তথ্য পরে ড্যাশবোর্ড থেকে যোগ করা যাবে')}</p>
 
-        {/* Step 3 */}
-        {step === 3 && (
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-black text-gray-900 mb-6">{t('Contact & Verification', 'যোগাযোগ ও যাচাইকরণ')}</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">{t('Phone Number', 'ফোন নম্বর')}</label>
-                <div className="flex gap-2">
-                  <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" placeholder="01XXXXXXXXX" maxLength={11} />
-                  <button onClick={handleSendOtp} disabled={loading || otpVerified} className="px-4 py-3 bg-rose-500 text-white rounded-xl font-bold hover:bg-rose-600 disabled:bg-gray-300 text-sm">
-                    {loading ? '...' : otpVerified ? t('Verified ✓', 'যাচাই হয়েছে ✓') : t('Send OTP', 'OTP পাঠান')}
+            {/* I am */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>{t('I am a...', 'আমি একজন...')}</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                {[{ val: 'bride', bn: 'পাত্রী', en: 'Bride (woman)', icon: '👰' }, { val: 'groom', bn: 'পাত্র', en: 'Groom (man)', icon: '🤵' }].map(opt => (
+                  <button key={opt.val} onClick={() => setIAm(opt.val)} style={{ padding: '14px', border: `2px solid ${iAm === opt.val ? '#7B1D2E' : '#e5e7eb'}`, borderRadius: '12px', background: iAm === opt.val ? '#FDF6EE' : 'white', cursor: 'pointer', textAlign: 'center', transition: 'all 0.15s' }}>
+                    <div style={{ fontSize: '24px', marginBottom: '4px' }}>{opt.icon}</div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: iAm === opt.val ? '#7B1D2E' : '#374151' }}>{lang === 'bn' ? opt.bn : opt.en}</div>
                   </button>
-                </div>
-              </div>
-              {sentOtp && !otpVerified && (
-                <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-2">{t('Enter OTP', 'OTP লিখুন')}</label>
-                  <div className="flex gap-2">
-                    <input type="text" value={otp} onChange={(e) => setOtp(e.target.value)} className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" placeholder="6-digit OTP" maxLength={6} />
-                    <button onClick={handleVerifyOtp} className="px-4 py-3 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 text-sm">{t('Verify', 'যাচাই করুন')}</button>
-                  </div>
-                </div>
-              )}
-              {otpVerified && <div className="p-3 bg-green-50 border-2 border-green-400 rounded-xl text-green-800 font-bold text-sm">Phone verified successfully!</div>}
-              <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">Email (Optional)</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" placeholder="your@email.com" />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">Password</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-rose-500 focus:outline-none bg-white text-gray-900" placeholder="Create a password" />
+                ))}
               </div>
             </div>
-            <div className="flex gap-4 mt-6">
-              <button onClick={() => setStep(2)} className="flex-1 py-4 bg-gray-100 text-gray-900 rounded-xl font-bold">Back</button>
-              <button onClick={handleSubmit} disabled={loading || !otpVerified || !password} className={`flex-1 py-4 rounded-xl font-bold ${!loading && otpVerified && password ? 'bg-gradient-to-r from-rose-500 to-pink-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>
-                {loading ? t('Registering...', 'নিবন্ধন হচ্ছে...') : t('Complete Registration', 'নিবন্ধন সম্পন্ন করুন')}
+
+            {/* Guardian mode toggle */}
+            <div style={{ padding: '12px 14px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e5e7eb', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+              <div>
+                <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#374151' }}>{t('Family-managed profile', 'পরিবার পরিচালিত প্রোফাইল')}</p>
+                <p style={{ margin: '2px 0 0', fontSize: '11px', color: '#9ca3af' }}>{t('Registering on behalf of a family member', 'পরিবারের কারো জন্য নিবন্ধন করছেন')}</p>
+              </div>
+              <button onClick={() => setGuardianMode(!guardianMode)} style={{ width: '44px', height: '24px', borderRadius: '12px', border: 'none', background: guardianMode ? '#7B1D2E' : '#d1d5db', cursor: 'pointer', position: 'relative', flexShrink: 0 }}>
+                <span style={{ position: 'absolute', top: '2px', left: guardianMode ? '22px' : '2px', width: '20px', height: '20px', borderRadius: '50%', background: 'white', transition: 'left 0.2s' }} />
+              </button>
+            </div>
+
+            {/* Full name */}
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>{t('Full name', 'পুরো নাম')}</label>
+              <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} style={inputStyle} placeholder={t('Your full name', 'আপনার পুরো নাম')} />
+            </div>
+
+            {/* Age */}
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>{t('Age', 'বয়স')}</label>
+              <input type="number" value={age} onChange={e => setAge(e.target.value)} style={inputStyle} placeholder={t('Your age', 'আপনার বয়স')} min={18} max={70} />
+            </div>
+
+            {/* Password */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>{t('Create password', 'পাসওয়ার্ড তৈরি করুন')}</label>
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle} placeholder={t('At least 6 characters', 'কমপক্ষে ৬ অক্ষর')} />
+            </div>
+
+            {errorMsg && <p style={{ color: '#e11d48', fontSize: '13px', margin: '0 0 12px' }}>{errorMsg}</p>}
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button onClick={() => { setStep(1); setErrorMsg(''); }} style={{ ...btnSecondary, flex: '0 0 auto' }}>←</button>
+              <button onClick={handleSubmit} disabled={loading} style={{ ...btnPrimary, flex: 1, opacity: loading ? 0.7 : 1 }}>
+                {loading ? t('Creating account...', 'অ্যাকাউন্ট তৈরি হচ্ছে...') : t('Create Account →', 'অ্যাকাউন্ট তৈরি করুন →')}
               </button>
             </div>
           </div>
         )}
 
-      {/* STEP 4: Optional Verification */}
-        {step === 4 && (
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <div style={{ fontSize: '48px', marginBottom: '8px' }}>🎉</div>
-              <h2 className="text-2xl font-black text-gray-900 mb-2">You're registered!</h2>
-              <p style={{ fontSize: '14px', color: '#6b7280' }}>Add verifications now to build trust — or skip and do it later from your profile.</p>
-            </div>
+        {/* ── STEP 3: Welcome ── */}
+        {step === 3 && (
+          <div style={{ background: 'white', borderRadius: '20px', padding: '32px 28px', boxShadow: '0 2px 20px rgba(0,0,0,0.07)', textAlign: 'center' }}>
+            <div style={{ fontSize: '56px', marginBottom: '16px' }}>🎉</div>
+            <h2 style={{ margin: '0 0 8px', fontSize: '24px', fontWeight: 900, color: '#111827' }}>{t('Welcome to Biyekori!', 'বিয়েকরিতে স্বাগতম!')}</h2>
+            <p style={{ margin: '0 0 28px', fontSize: '14px', color: '#6b7280', lineHeight: 1.6 }}>{t('Your account is ready. Add a photo and more details from your dashboard to get better matches.', 'আপনার অ্যাকাউন্ট তৈরি হয়েছে। ভালো ম্যাচের জন্য ড্যাশবোর্ড থেকে ছবি ও বিস্তারিত তথ্য যোগ করুন।')}</p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px', textAlign: 'left' }}>
               {[
-                { icon: '🤳', title: 'Selfie Verification', desc: 'Live face check — 2 minutes — Free', href: '/verify-selfie', badge: 'Recommended' },
-                { icon: '🎓', title: 'Education Certificate', desc: 'Upload your degree or certificate', href: '/edit-profile?tab=verification', badge: 'Optional' },
-                { icon: '💼', title: 'Job / Business', desc: 'Upload trade license or employment letter', href: '/edit-profile?tab=verification', badge: 'Optional' },
+                { icon: '🤳', text: t('Verify your identity — builds 4× more trust', 'পরিচয় যাচাই করুন — ৪ গুণ বেশি বিশ্বাস তৈরি হয়'), href: '/verify-selfie' },
+                { icon: '📸', text: t('Add a profile photo', 'প্রোফাইল ছবি যোগ করুন'), href: '/edit-profile' },
+                { icon: '📝', text: t('Complete your profile', 'প্রোফাইল সম্পূর্ণ করুন'), href: '/edit-profile' },
               ].map((item, i) => (
-                <a key={i} href={item.href} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e5e7eb', textDecoration: 'none' }}>
-                  <span style={{ fontSize: '24px' }}>{item.icon}</span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#111827' }}>{item.title}</p>
-                      <span style={{ fontSize: '10px', fontWeight: 700, color: i === 0 ? '#e11d48' : '#6b7280', background: i === 0 ? '#fff1f2' : '#f3f4f6', padding: '1px 6px', borderRadius: '20px' }}>{item.badge}</span>
-                    </div>
-                    <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>{item.desc}</p>
-                  </div>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                <a key={i} href={item.href} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e5e7eb', textDecoration: 'none' }}>
+                  <span style={{ fontSize: '22px' }}>{item.icon}</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#374151' }}>{item.text}</span>
+                  <svg style={{ marginLeft: 'auto', flexShrink: 0 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
                 </a>
               ))}
             </div>
 
-            <button onClick={() => router.push('/login')} style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg,#e11d48,#db2777)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: 700, cursor: 'pointer', marginBottom: '10px' }}>
-              Go to Login
-            </button>
-            <p style={{ textAlign: 'center', fontSize: '12px', color: '#9ca3af', margin: 0 }}>You can complete verifications anytime from Edit Profile</p>
+            <button onClick={() => router.push('/login')} style={btnPrimary}>{t('Go to Dashboard →', 'ড্যাশবোর্ডে যান →')}</button>
           </div>
         )}
 
@@ -480,4 +248,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-
