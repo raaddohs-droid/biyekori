@@ -30,9 +30,9 @@ export default function Home() {
           .bk-stats-bar > div { width: 50% !important; padding: 10px 8px !important; border-right: none !important; border-bottom: 1px solid rgba(240,192,64,0.15) !important; }
         }
       `}</style>
-      <section className="bk-hero" style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', backgroundImage: "url('/hero-wedding.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundRepeat: 'no-repeat', padding: '120px 24px 80px 50%', textAlign: 'left', overflow: 'hidden' }}>
+      <section className="bk-hero" style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', backgroundImage: "url('/hero-wedding.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top', backgroundRepeat: 'no-repeat', padding: 'clamp(100px,12vw,120px) clamp(16px,5vw,24px) 80px clamp(16px,5vw,50%)', textAlign: 'left', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%)', pointerEvents: 'none' }}/>
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '800px', height: '800px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(240,192,64,0.08) 0%,transparent 65%)', pointerEvents: 'none' }}/>
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 'min(800px, 100%)', height: 'min(800px, 100%)', borderRadius: '50%', background: 'radial-gradient(circle,rgba(240,192,64,0.08) 0%,transparent 65%)', pointerEvents: 'none' }}/>
 
         <p style={{ fontSize: 'clamp(16px, 2vw, 22px)', color: '#F0C040', margin: '0 0 14px', letterSpacing: '3px', position: 'relative', zIndex: 2, fontStyle: 'italic' }}>
         </p>
@@ -86,7 +86,7 @@ export default function Home() {
 
       {/* FINAL CTA */}
       <section style={{ minHeight: '50vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#7B1D2E', textAlign: 'center', padding: 'clamp(60px,8vw,100px) 24px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '700px', height: '700px', borderRadius: '50%', background: 'radial-gradient(circle,rgba(240,192,64,0.08) 0%,transparent 70%)', pointerEvents: 'none' }}/>
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 'min(700px, 100%)', height: 'min(700px, 100%)', borderRadius: '50%', background: 'radial-gradient(circle,rgba(240,192,64,0.08) 0%,transparent 70%)', pointerEvents: 'none' }}/>
         <p style={{ fontSize: 'clamp(18px, 2vw, 24px)', color: '#F0C040', margin: '0 0 16px', position: 'relative', zIndex: 2, letterSpacing: '2px' }}>
         </p>
         <h2 style={{ fontSize: 'clamp(32px, 4.5vw, 62px)', fontWeight: 700, color: '#FFFFFF', margin: '0 0 20px', lineHeight: 1.05, position: 'relative', zIndex: 2, letterSpacing: '-1.5px' }}>
