@@ -105,7 +105,7 @@ export default function SuccessStoriesPage() {
                 <img
                   src={story.photo}
                   alt={story.names}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', display: 'block' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
                   onContextMenu={e => e.preventDefault()}
                   onDragStart={e => e.preventDefault()}
                 />
@@ -174,3 +174,4 @@ export default function SuccessStoriesPage() {
     </main>
   )
 }
+
