@@ -750,7 +750,7 @@ export default function Navbar() {
         @media (max-width: 767px) {
           .bk-desktop-nav { display: none !important; }
           .bk-search-bar { display: none !important; }
-          .bk-search-bar input::placeholder { color: #111827 !important; opacity: 1; font-weight: 500; }
+          .bk-search-bar input::placeholder { color: #000000 !important; opacity: 1; font-weight: 600; }
           .bk-login-btns { display: none !important; }
           .bk-mobile-hamburger { display: flex !important; }
         }
@@ -1117,7 +1117,7 @@ export default function Navbar() {
 
 
 
-                background: isHome ? 'rgba(255,255,255,0.1)' : '#f9fafb',
+                background: '#ffffff',
 
 
 
